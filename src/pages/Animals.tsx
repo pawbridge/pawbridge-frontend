@@ -1,9 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getAnimals } from '../api/animals.api';
+import { getMockAnimals } from '../api/animals.api.mock';
 import SearchBar from '../components/common/SearchBar';
 import AnimalFilters from '../components/common/AnimalFilters';
 import AnimalCard from '../components/common/AnimalCard';
+
+// 개발 환경에서는 Mock 데이터 사용
+const USE_MOCK_DATA = true; // 백엔드 연동 시 false로 변경
 
 export default function Animals() {
   // 검색어 상태
@@ -17,10 +21,10 @@ export default function Animals() {
     sortBy: 'latest',
   });
 
-  // 데이터 가져오기
+  // 데이터 가져오기 (Mock 또는 실제 API)
   const { data: animals, isLoading, error } = useQuery({
     queryKey: ['animals'],
-    queryFn: getAnimals,
+    queryFn: USE_MOCK_DATA ? getMockAnimals : getAnimals,
   });
 
   // 필터 변경 핸들러

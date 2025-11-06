@@ -1,0 +1,133 @@
+import type { Animal } from '../types/api.types';
+
+// Mock 데이터 (개발용)
+export const mockAnimals: Animal[] = [
+  {
+    id: 1,
+    name: '뭉치',
+    species: '강아지',
+    breed: '믹스견',
+    age: 3,
+    gender: 'MALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 2,
+    name: '나비',
+    species: '고양이',
+    breed: '코리안 숏헤어',
+    age: 2,
+    gender: 'FEMALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 3,
+    name: '초코',
+    species: '강아지',
+    breed: '푸들',
+    age: 5,
+    gender: 'FEMALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 4,
+    name: '호두',
+    species: '강아지',
+    breed: '시츄',
+    age: 1,
+    gender: 'MALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 5,
+    name: '별이',
+    species: '고양이',
+    breed: '러시안 블루',
+    age: 4,
+    gender: 'FEMALE',
+    imageUrl: '',
+    status: 'ADOPTED',
+  },
+  {
+    id: 6,
+    name: '구름',
+    species: '고양이',
+    breed: '페르시안',
+    age: 3,
+    gender: 'MALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 7,
+    name: '콩이',
+    species: '강아지',
+    breed: '웰시코기',
+    age: 2,
+    gender: 'MALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 8,
+    name: '달이',
+    species: '고양이',
+    breed: '벵갈',
+    age: 1,
+    gender: 'FEMALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 9,
+    name: '바둑이',
+    species: '강아지',
+    breed: '진돗개',
+    age: 6,
+    gender: 'MALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 10,
+    name: '치즈',
+    species: '고양이',
+    breed: '스코티시 폴드',
+    age: 2,
+    gender: 'FEMALE',
+    imageUrl: '',
+    status: 'ADOPTED',
+  },
+  {
+    id: 11,
+    name: '복실이',
+    species: '강아지',
+    breed: '포메라니안',
+    age: 4,
+    gender: 'FEMALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+  {
+    id: 12,
+    name: '까망이',
+    species: '고양이',
+    breed: '봄베이',
+    age: 3,
+    gender: 'MALE',
+    imageUrl: '',
+    status: 'AVAILABLE',
+  },
+];
+
+// Mock API 함수
+export const getMockAnimals = async (): Promise<Animal[]> => {
+  // 네트워크 지연 시뮬레이션
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return mockAnimals;
+};
+
