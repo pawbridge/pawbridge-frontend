@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Documentation and reference files (not to be committed)
+*.pdf
+*.md
+!README.md
