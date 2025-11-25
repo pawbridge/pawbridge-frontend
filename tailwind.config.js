@@ -8,14 +8,21 @@ export default {
     theme: {
       extend: {
         colors: {
-          "primary": "#2bee8d",
-          "background-light": "#f8fcfa",
-          "background-dark": "#102219",
+          "primary": "#34d399",
+          "background-light": "#f0fdfa",
+          "background-dark": "#0d1a16",
+          "text-light": "#052e16",
+          "text-dark": "#d1fae5",
+          "card-light": "#ffffff",
+          "card-dark": "#052e16",
+          "border-light": "#99f6e4",
+          "border-dark": "#14532d",
+          // 기존 색상 호환성 유지
           "primary-content": "#0d1b14",
           "secondary-content": "#4c9a73"
         },
         fontFamily: {
-          "display": ["Plus Jakarta Sans", "Noto Sans KR", "sans-serif"]
+          "display": ["Inter", "Noto Sans KR", "sans-serif"]
         },
         borderRadius: {
           "DEFAULT": "0.5rem",

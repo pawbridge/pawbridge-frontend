@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '../store/authStore.ts';  // 추가
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api/v1',
+  baseURL: import.meta.env.DEV ? '' : 'http://localhost:9020', // 개발 환경에서는 프록시 사용
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
