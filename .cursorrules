@@ -266,3 +266,8 @@ type: 간단한 설명
 유효성 검증 포함, 로그인 시 /api/auth/login으로 POST 요청, 
 성공하면 토큰 저장하고 /dashboard로 이동, 
 실패하면 에러 메시지 표시. Tailwind로 스타일링하고 모바일 반응형."
+
+## Git 작업 규칙
+- Git 변경 작업(add, commit, push, checkout, branch 생성 등)은 사용자가 직접 수행합니다
+- AI는 Git 변경 명령어와 커밋 메시지 예시만 안내해주세요
+- Git 조회 명령어(status, log, branch 등)는 AI가 자유롭게 사용 가능합니다
