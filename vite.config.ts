@@ -9,6 +9,10 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:9020',
         changeOrigin: true,
+      },
+      '/login': {
+        target: 'http://localhost:9020',
+        changeOrigin: true,
       }
     }
   }

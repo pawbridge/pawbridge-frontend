@@ -22,17 +22,40 @@ export interface LoginRequest {
 
 // 로그인 응답
 export interface LoginResponse {
+  userId: number;
+  email: string;
+  name: string;
   accessToken: string;
   refreshToken: string;
-  user: User;
 }
 
 // 회원가입 요청
 export interface SignupRequest {
   email: string;
-  password: string;
   name: string;
-  userType: 'GENERAL' | 'SHELTER';
+  password: string;
+  rePassword: string;
+  userType?: 'GENERAL' | 'SHELTER';
+}
+
+// 회원가입 응답
+export interface SignupResponse {
+  userId: number;
+  email: string;
+  name: string;
+  nickname: string;
+}
+
+// 비밀번호 재설정 - 1단계 요청 (인증 코드 발송)
+export interface ResetPasswordRequestRequest {
+  email: string;
+}
+
+// 비밀번호 재설정 - 2단계 요청 (인증 및 비밀번호 변경)
+export interface ResetPasswordRequest {
+  email: string;
+  code: string;
+  newPassword: string;
 }
 
 // 동물 상태 타입

@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import { useAuthStore } from './store/authStore.ts';
 import Home from './pages/Home.tsx';
 import Login from './pages/Login.tsx';
+import Signup from './pages/Signup.tsx';
+import ResetPassword from './pages/ResetPassword.tsx';
 import Animals from './pages/Animals.tsx';
 import AnimalDetail from './pages/AnimalDetail.tsx';
 import NotFound from './pages/NotFound.tsx';
@@ -16,6 +18,8 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
       <Route path="*" element={<NotFound />} />
