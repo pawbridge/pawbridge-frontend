@@ -6,13 +6,13 @@ import Footer from '../components/layout/Footer';
 
 export default function Home() {
   // 동물 데이터 가져오기
-  const { data: animals } = useQuery({
+  const { data } = useQuery({
     queryKey: ['animals'],
     queryFn: getMockAnimals,
   });
 
   // 최근 등록 동물 (4마리만)
-  const featuredAnimals = animals?.slice(0, 4) || [];
+  const featuredAnimals = data?.content?.slice(0, 4) || [];
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
