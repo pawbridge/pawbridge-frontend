@@ -81,12 +81,12 @@ export default function AnimalCard({ animal, onFavorite }: AnimalCardProps) {
         <div className="absolute bottom-3 left-3">
           <span
             className={`inline-block px-3 py-1.5 rounded-full text-sm font-bold shadow-md backdrop-blur-sm ${
-              animal.status === 'AVAILABLE'
+              animal.status === 'PROTECT'
                 ? 'bg-green-500/90 text-white'
                 : 'bg-gray-600/90 text-white'
             }`}
           >
-            {animal.status === 'AVAILABLE' ? '✅ 입양 가능' : '💝 입양 완료'}
+            {animal.status === 'PROTECT' ? '입양 가능' : '입양 완료'}
           </span>
         </div>
       </div>

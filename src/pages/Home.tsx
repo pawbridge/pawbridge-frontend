@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getMockAnimals } from '../api/animals.api.mock';
+import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import AnimalCardSimple from '../components/common/AnimalCardSimple';
 
 export default function Home() {
   // 동물 데이터 가져오기
   const { data } = useQuery({
     queryKey: ['animals'],
-    queryFn: getMockAnimals,
+    queryFn: () => getMockAnimals(),
   });
 
   // 최근 등록 동물 (4마리만)
@@ -98,38 +100,16 @@ export default function Home() {
             <div className="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 sm:-mx-6 lg:-mx-8">
               <div className="flex items-stretch p-4 sm:p-6 lg:p-8 gap-6">
                 {featuredAnimals.length > 0 ? (
-                  featuredAnimals.map((animal) => (
+                  featuredAnimals.map((animal: Animal) => (
                     <AnimalCardSimple
                       key={animal.id}
-                      name={animal.name}
-                      breed={animal.breed}
-                      imageUrl={animal.imageUrl}
-                      id={animal.id}
+                      animal={animal}
                     />
                   ))
                 ) : (
-                  <>
-                    <AnimalCardSimple
-                      name="바둑이"
-                      breed="골든 리트리버"
-                      imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuDMgcBlbR5P0T3UC_6l3JrHd9DE9I2zz87Uag3cRuF5czZ7nEQmabQcYrFI2DPanljMdEaKqA_0gyrENYMQJfvGWo1DGVwwSZK7o91ryg8akNxCiiN7wY0UTBe4V6QM3cjy8KObdTJzDs9agtDpj0LJlyD0Xe02CGu5-WhyWuKZNEn78nadkEbAjuaFjt4BKRvaFZ2H_XAX3XqkeTkuS1Y2eqQ4LKCWvnSl4-XlraCG2Y3UnNpr6Oga1Xtldz_uMQIH7vgQ0Mx9DHA"
-                    />
-                    <AnimalCardSimple
-                      name="나비"
-                      breed="코리안 숏헤어"
-                      imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuCyrmkyDD6KenRKrm2H7JstrlMRPv4zAm-kCPDsiNdkwyyveBSw2PeiscrB2s_wUQMsZYlhMoSbMsJpQ50f5cEtIfxJmbTlPoqnppFEFYmK3Gn0e43ICQRskLAn74rujZliYFA1NouLUCRUNM-sIBuklj0dW05wRYhUPMXcZRH8o6qIYq2I_grKbjyU7qzLnQ3J7uT30bkNCSivG8Wlw2ypGSMUyeZgenXsVyQjfzo-C_46AHdsywFrRPIaX8XPvU4TPmxi5BgZ1B4"
-                    />
-                    <AnimalCardSimple
-                      name="뭉치"
-                      breed="말티즈"
-                      imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuB2u3wtkaHV9mXKaJ9n1pNyo69MetKl86Tf3wdSMJ5LEcJ3FhMbx3ECb0Ovfc-kN7Af_ypKVJHfyoKGzyIp38PPREXJjp_GnzDs_UTiajKaq6ppm8C48YryVw38b2dXRUkbbtUTxOPpW_wkwf2SDftYg8ChEATuyxND4zsFEGAL7ApGgTiy1yOS595-jirdiryHNRNcfEHAgep_IZTrsOAYkXlzBBWUCCoqGQD9olWQqUkOdDO0SlueiAsQiTQ1hWqH3yrnoMJgo6A"
-                    />
-                    <AnimalCardSimple
-                      name="까미"
-                      breed="믹스"
-                      imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuCbMqOyqi1z3PEo4w20mta8PS1bghve1x-UiD33zdPCWICNqhB0Y2dQqTBWI4RZ47B7geMYBYrUhXcleL_T4ykC0b-DFCT-itLN5WozZrdx0_U61V_lGnuoBMkaCKjSmTXulOY7xevIK-tP3zwbvlCAv7fNB4K8QUxQA3HbhxDs7g6jRkCGvqcIQWnRQvYTEzixmQd70QeWneYzNs2LqydMqG0-CjJ1amtQD4saGw2t3Bz4gN0vHVBdC1WZOdWsWzjjoW5NbUCAFoo"
-                    />
-                  </>
+                  <div className="text-center text-gray-500 py-8">
+                    동물 정보를 불러오는 중...
+                  </div>
                 )}
               </div>
             </div>
@@ -213,43 +193,6 @@ function QuickNavCard({ title, description, imageUrl, linkTo }: QuickNavCardProp
         <p className="text-secondary-content dark:text-gray-400 text-sm font-normal leading-normal">
           {description}
         </p>
-      </div>
-    </Link>
-  );
-}
-
-// Simple Animal Card 컴포넌트
-interface AnimalCardSimpleProps {
-  name: string;
-  breed: string;
-  imageUrl: string;
-  id?: number;
-}
-
-function AnimalCardSimple({ name, breed, imageUrl, id }: AnimalCardSimpleProps) {
-  const linkTo = id ? `/animals/${id}` : '/animals';
-  
-  return (
-    <Link
-      to={linkTo}
-      className="flex flex-col gap-4 rounded-xl bg-white dark:bg-background-dark dark:border dark:border-primary/20 shadow-sm min-w-64 sm:min-w-72 hover:shadow-lg transition-shadow"
-    >
-      <div
-        className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-t-xl"
-        style={{ backgroundImage: `url("${imageUrl}")` }}
-      />
-      <div className="flex flex-col flex-1 justify-between p-4 pt-0 gap-4">
-        <div>
-          <p className="text-primary-content dark:text-white text-base font-bold leading-normal">
-            {name}
-          </p>
-          <p className="text-secondary-content dark:text-gray-400 text-sm font-normal leading-normal">
-            {breed}
-          </p>
-        </div>
-        <button className="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary/20 text-primary-content dark:bg-primary/30 dark:text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/30 dark:hover:bg-primary/40 transition-colors">
-          <span className="truncate">더보기</span>
-        </button>
       </div>
     </Link>
   );
