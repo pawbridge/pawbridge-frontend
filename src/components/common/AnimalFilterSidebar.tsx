@@ -182,7 +182,7 @@ export default function AnimalFilterSidebar({
           <p className="text-base font-medium pb-2 text-text-light dark:text-text-dark">성별</p>
           <select
             value={filters.gender || ''}
-            onChange={(e) => handleChange('gender', e.target.value)}
+            onChange={(e) => handleImmediateChange('gender', e.target.value)}
             className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>
@@ -197,7 +197,7 @@ export default function AnimalFilterSidebar({
           <p className="text-base font-medium pb-2 text-text-light dark:text-text-dark">중성화 여부</p>
           <select
             value={filters.neuterStatus || ''}
-            onChange={(e) => handleChange('neuterStatus', e.target.value)}
+            onChange={(e) => handleImmediateChange('neuterStatus', e.target.value)}
             className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>

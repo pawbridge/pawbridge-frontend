@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
@@ -22,7 +22,6 @@ export default function Animals() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['animals', filters],
     queryFn: () => getAnimals(filters),
-    keepPreviousData: true,
   });
 
 

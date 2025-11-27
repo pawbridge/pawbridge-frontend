@@ -78,8 +78,10 @@ export interface Animal {
   species: 'DOG' | 'CAT' | 'ETC' | string;
   breed: string;
   age: number;
+  birthYear?: number;          // 출생 연도
   gender: 'MALE' | 'FEMALE' | 'UNKNOWN';
   imageUrl: string;
+  imageUrl2?: string;          // 추가 이미지
   status: AnimalStatus;
   // APMS 공공데이터 정보
   noticeNo?: string;           // 공고번호 (프론트 호환용)
@@ -89,12 +91,14 @@ export interface Animal {
   region?: string;             // 지역 (시/도)
   city?: string;               // 시/군/구
   foundPlace?: string;         // 발견 장소
+  happenPlace?: string;        // 발견 장소 (API 실제 필드)
+  happenDate?: string;         // 접수일
   shelterName?: string;        // 보호소 이름
   shelter?: {                  // 보호소 정보 (중첩)
     id: number;
     name: string;
-    phone: string;             // 전화번호 (백엔드 제공 예정)
-    address: string;           // 주소 (백엔드 제공 예정)
+    phone?: string;            // 전화번호 (백엔드 제공 예정)
+    address?: string;          // 주소 (백엔드 제공 예정)
     operatingHours?: string;   // 운영시간 (백엔드 제공 예정)
   };
   weight?: string;             // 체중
@@ -102,6 +106,8 @@ export interface Animal {
   neuterStatus?: 'YES' | 'NO' | 'UNKNOWN';  // 중성화 여부
   neutered?: boolean;          // 중성화 여부 (호환성)
   description?: string;        // 특징 및 설명
+  specialMark?: string;        // 특이사항
+  favoriteCount?: number;      // 찜 횟수
   createdAt?: string;          // 등록일
 }
 

@@ -294,10 +294,12 @@ export default function AnimalDetail() {
                       <strong>연락처:</strong>{' '}
                       <button
                         onClick={() => {
-                          const phone = animal.shelter!.phone;
-                          navigator.clipboard.writeText(phone).then(() => {
-                            alert(`전화번호가 복사되었습니다!\n${phone}`);
-                          });
+                          const phone = animal.shelter?.phone || '';
+                          if (phone) {
+                            navigator.clipboard.writeText(phone).then(() => {
+                              alert(`전화번호가 복사되었습니다!\n${phone}`);
+                            });
+                          }
                         }}
                         className="text-primary hover:underline font-medium cursor-pointer"
                       >
@@ -353,8 +355,13 @@ export default function AnimalDetail() {
                 // 전화번호가 있으면 전화/복사 옵션 제공
                 <button
                   onClick={() => {
-                    const phone = animal.shelter!.phone;
+                    const phone = animal.shelter?.phone || '';
                     const message = `입양 문의\n\n보호소: ${animal.shelterName}\n전화: ${phone}\n\n공고번호: ${animal.apmsNoticeNo || 'N/A'}\n\n※ 공고번호를 먼저 말씀해주시면\n   빠른 상담이 가능합니다.`;
+                    
+                    if (!phone) {
+                      alert('보호소 연락처 정보가 없습니다.');
+                      return;
+                    }
                     
                     // 모바일 환경 체크
                     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
