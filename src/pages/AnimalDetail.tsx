@@ -67,7 +67,7 @@ export default function AnimalDetail() {
   const speciesLabel = animal.species === 'DOG' ? '개' : animal.species === 'CAT' ? '고양이' : '기타';
   
   // 메인 이미지 (선택된 이미지 또는 기본 이미지)
-  const mainImage = selectedImage || animal.imageUrl || `https://via.placeholder.com/800?text=${encodeURIComponent(animal.breed)}`;
+  const mainImage = selectedImage || animal.imageUrl || '';
   
   // 이미지 목록 (메인 + 추가 이미지)
   const images = [animal.imageUrl, animal.imageUrl2].filter(Boolean) as string[];
@@ -137,7 +137,7 @@ export default function AnimalDetail() {
                 alt={`${animal.breed} 메인 사진`}
                 className="w-full h-full object-contain"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = `https://via.placeholder.com/800x600?text=${encodeURIComponent(animal.breed)}`;
+                  (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             </div>
