@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getMockAnimals } from '../api/animals.api.mock';
+import { getAnimals } from '../api/animals.api';
 import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
 
 export default function Home() {
-  // 동물 데이터 가져오기
+  // 동물 데이터 가져오기 (실제 백엔드 API)
   const { data } = useQuery({
-    queryKey: ['animals'],
-    queryFn: () => getMockAnimals(),
+    queryKey: ['featured-animals'],
+    queryFn: () => getAnimals({ page: 0, size: 4, sort: 'createdAt,desc', status: 'PROTECT' }),
   });
 
   // 최근 등록 동물 (4마리만)

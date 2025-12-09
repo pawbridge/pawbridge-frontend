@@ -67,8 +67,8 @@ export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
   // 공고번호 (백엔드 필드명 apmsNoticeNo 우선)
   const noticeNumber = animal.apmsNoticeNo || animal.noticeNo;
 
-  // 이미지 URL (없으면 플레이스홀더)
-  const imageUrl = animal.imageUrl || `https://via.placeholder.com/400?text=${encodeURIComponent(animal.name)}`;
+  // 이미지 URL
+  const imageUrl = animal.imageUrl;
 
   return (
     <Link
@@ -76,16 +76,22 @@ export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
       className="flex flex-col bg-card-light dark:bg-card-dark rounded-xl overflow-hidden shadow-sm border border-border-light dark:border-border-dark transition-transform hover:-translate-y-1"
     >
       {/* 이미지 */}
-      <div className="aspect-square w-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={animal.name}
-          className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-          loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = `https://via.placeholder.com/400?text=${encodeURIComponent(animal.name)}`;
-          }}
-        />
+      <div className="aspect-square w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={animal.name}
+            className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+            loading="lazy"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
+            <span className="text-gray-500 dark:text-gray-400 text-sm">이미지 없음</span>
+          </div>
+        )}
       </div>
 
       {/* 정보 */}
