@@ -19,7 +19,8 @@ export default function Login() {
         id: data.userId,
         email: data.email,
         name: data.name,
-        userType: 'GENERAL' as const,
+        role: (data as any).role ?? 'ROLE_USER',
+        careRegNo: (data as any).careRegNo,
         createdAt: new Date().toISOString(),
       };
       setAuth(user, data.accessToken, data.refreshToken);

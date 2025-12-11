@@ -12,11 +12,12 @@ import type {
 
 // 로그인
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post<LoginResponse>(
-    '/login',
-    credentials
-  );
-  return response.data;
+  const response = await apiClient.post<{
+    code: number;
+    message: string;
+    data: LoginResponse;
+  }>('/api/v1/auth/login', credentials);
+  return response.data.data;
 };
 
 // 회원가입

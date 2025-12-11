@@ -10,7 +10,8 @@ export interface User {
   id: number;
   email: string;
   name: string;
-  userType: 'GENERAL' | 'SHELTER';
+  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드 JWT에 포함되는 역할
+  careRegNo?: string;          // 보호소 직원일 때만 존재
   createdAt: string;
 }
 
@@ -25,6 +26,8 @@ export interface LoginResponse {
   userId: number;
   email: string;
   name: string;
+  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드가 내려줄 경우 반영
+  careRegNo?: string;           // 보호소 직원일 때만 존재
   accessToken: string;
   refreshToken: string;
 }
@@ -151,4 +154,161 @@ export interface AnimalSearchParams {
   region?: string;
   city?: string;
   keyword?: string;            // 통합 검색
+}
+
+// ========== 상품(Store) 관련 타입 ==========
+
+// 상품 상태
+export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'SOLD_OUT';
+
+// 상품 카테고리
+export interface Category {
+  id: number;
+  name: string;
+  parentId?: number;
+}
+
+// SKU 옵션
+export interface SkuOption {
+  [key: string]: string;       // 예: { "Color": "Red", "Size": "L" }
+}
+
+// SKU (재고 관리 단위)
+export interface ProductSku {
+  skuId: number;
+  skuCode: string;
+  price: number;
+  stockQuantity: number;
+  options: SkuOption;
+}
+
+// 상품 정보 (상세)
+export interface Product {
+  productId: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  status: ProductStatus;
+  viewCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  categoryId?: number;
+  categoryName?: string;
+  skus?: ProductSku[];
+}
+
+// 상품 목록 아이템 (검색 결과)
+export interface ProductListItem {
+  id: number;
+  skuId: number;
+  name: string;
+  optionName?: string;         // 예: "Color: Red, Size: L"
+  price: number;
+  totalStock: number;
+  imageUrl?: string;
+  status?: ProductStatus;
+}
+
+// 상품 검색 파라미터
+export interface ProductSearchParams {
+  keyword?: string;            // 검색어 (상품명, 설명, 옵션명)
+  categoryId?: number;         // 카테고리 ID
+  minPrice?: number;           // 최소 가격
+  maxPrice?: number;           // 최대 가격
+  inStockOnly?: boolean;       // 재고 있는 상품만 (기본: false)
+  sortBy?: 'price' | 'createdAt' | 'skuId';  // 정렬 기준 (기본: skuId)
+  sortOrder?: 'asc' | 'desc';  // 정렬 순서 (기본: desc)
+  page?: number;               // 페이지 번호 (기본 0)
+  size?: number;               // 페이지 크기 (기본 20)
+}
+
+// 상품 검색 응답
+export interface ProductSearchResponse {
+  items: ProductListItem[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  hasNext: boolean;
+}
+
+// 장바구니 아이템
+export interface CartItem {
+  skuId: number;
+  productId: number;
+  productName: string;
+  skuCode: string;
+  price: number;
+  quantity: number;
+  imageUrl: string;
+}
+
+// 장바구니 추가 요청
+export interface AddToCartRequest {
+  skuId: number;
+  quantity: number;
+}
+
+// ========== 주문(Order) 관련 타입 ==========
+
+// 주문 상태
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+
+// 주문 생성 요청 (장바구니 기반)
+export interface CreateOrderRequest {
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+}
+
+// 바로 주문 요청 (장바구니 생략)
+export interface DirectOrderRequest {
+  skuId: number;
+  quantity: number;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+}
+
+// 주문 생성 응답
+export interface CreateOrderResponse {
+  orderId: number;
+  orderUuid: string;
+  totalAmount: number;
+  status: OrderStatus;
+  orderedAt: string;
+  receiverName: string;
+}
+
+// 주문 아이템
+export interface OrderItem {
+  productName: string;
+  skuCode: string;
+  price: number;
+  quantity: number;
+}
+
+// 주문 상세
+export interface OrderDetail {
+  orderId: number;
+  orderUuid?: string;
+  status: OrderStatus;
+  totalAmount: number;
+  deliveryAddress: string;
+  receiverName?: string;
+  receiverPhone?: string;
+  deliveryMessage?: string;
+  orderedAt?: string;
+  orderItems: OrderItem[];
+}
+
+// 바로 주문 요청 (장바구니 생략)
+export interface DirectOrderRequest {
+  skuId: number;
+  quantity: number;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
 }

@@ -19,6 +19,17 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
+    // ✅ Store Service용 X-User-Id 헤더 (실제 로그인 사용자 ID 사용)
+    const user = useAuthStore.getState().user;
+    if (user?.id) {
+      config.headers['X-User-Id'] = user.id;
+    } else {
+      // 비회원/로그아웃 시 헤더 제거
+      if (config.headers['X-User-Id']) {
+        delete config.headers['X-User-Id'];
+      }
+    }
+    
     return config;
   },
   (error) => {
