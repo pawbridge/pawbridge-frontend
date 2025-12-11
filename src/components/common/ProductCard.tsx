@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { ProductListItem } from '../../types/api.types';
+import placeholderImg from '../../assets/image-placeholder.svg';
 
 interface ProductCardProps {
   product: ProductListItem;
@@ -24,6 +25,20 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     }
   };
 
+  const isBlockedPlaceholder = (url?: string) => {
+    if (!url) return true;
+    try {
+      const hostname = new URL(url).hostname;
+      return hostname.includes('placeholder.com');
+    } catch {
+      return true;
+    }
+  };
+
+  const resolvedImage = !isBlockedPlaceholder(product.imageUrl)
+    ? product.imageUrl
+    : placeholderImg;
+
   return (
     <Link
       to={`/products/${product.id}`}
@@ -31,14 +46,14 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     >
       {/* 이미지 */}
       <div className="relative">
-        {product.imageUrl ? (
+        {resolvedImage ? (
           <img
-            src={product.imageUrl}
+            src={resolvedImage}
             alt={product.name}
             className="h-56 w-full object-cover"
             loading="lazy"
             onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
+              (e.target as HTMLImageElement).src = placeholderImg;
             }}
           />
         ) : (

@@ -5,6 +5,7 @@ import { getProductById, addToCart } from '../api/products.api';
 import type { ProductSku } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import placeholderImg from '../assets/image-placeholder.svg';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -176,6 +177,20 @@ export default function ProductDetail() {
     );
   }
 
+  const isBlockedPlaceholder = (url?: string) => {
+    if (!url) return true;
+    try {
+      const hostname = new URL(url).hostname;
+      return hostname.includes('placeholder.com');
+    } catch {
+      return true;
+    }
+  };
+
+  const resolvedMainImage = !isBlockedPlaceholder(mainImage || product.imageUrl)
+    ? (mainImage || product.imageUrl)
+    : placeholderImg;
+
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
       <Header />
@@ -187,13 +202,13 @@ export default function ProductDetail() {
             {/* 이미지 갤러리 */}
             <div className="flex flex-col gap-4">
               <div className="aspect-square w-full bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden">
-                {(mainImage || product.imageUrl) ? (
+                {resolvedMainImage ? (
                   <img
-                    src={mainImage || product.imageUrl}
+                    src={resolvedMainImage}
                     alt={product.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).src = placeholderImg;
                     }}
                   />
                 ) : (

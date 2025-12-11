@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" role="img" aria-labelledby="title desc">
+  <title id="title">이미지 준비 중</title>
+  <desc id="desc">상품 이미지를 불러올 수 없습니다</desc>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e5e7eb"/>
+      <stop offset="100%" stop-color="#d1d5db"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <g fill="none" stroke="#9ca3af" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="80" y="70" width="240" height="170" rx="12" ry="12"/>
+    <path d="M120 190l55-60 45 52 30-36 30 44"/>
+    <circle cx="160" cy="120" r="18"/>
+  </g>
+  <text x="200" y="260" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#6b7280">이미지를 불러올 수 없습니다</text>
+</svg>
+
