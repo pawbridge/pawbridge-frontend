@@ -19,6 +19,11 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
+    // ✅ Store Service용 X-User-Id 헤더 (로그인 전 테스트용)
+    // 로그인 구현 후에는 실제 userId로 교체 필요
+    const user = useAuthStore.getState().user;
+    config.headers['X-User-Id'] = user?.id || 1;  // 기본값 1 (테스트용)
+    
     return config;
   },
   (error) => {
