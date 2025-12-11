@@ -79,6 +79,9 @@ export default function Checkout() {
     deliveryMessage: '',
   });
 
+  // 결제 취소/오류 모달
+  const [paymentModal, setPaymentModal] = useState<{ type: 'cancel' | 'error'; message: string } | null>(null);
+
   // 유효성 검사 에러
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -185,10 +188,10 @@ export default function Checkout() {
       });
     } catch (error: any) {
       if (error.code === 'USER_CANCEL') {
-        alert('결제가 취소되었습니다.');
+        setPaymentModal({ type: 'cancel', message: '결제가 취소되었습니다.' });
       } else {
         console.error('Payment error:', error);
-        alert('결제 중 오류가 발생했습니다.');
+        setPaymentModal({ type: 'error', message: '결제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' });
       }
     }
   };
@@ -330,6 +333,30 @@ export default function Checkout() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+      {paymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
+            <span className="material-symbols-outlined text-4xl text-primary mx-auto">
+              {paymentModal.type === 'cancel' ? 'info' : 'error'}
+            </span>
+            <p className="text-lg font-bold text-text-light dark:text-text-dark">
+              {paymentModal.type === 'cancel' ? '결제가 취소되었습니다' : '결제 오류'}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {paymentModal.message}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => setPaymentModal(null)}
+                className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Header />
 
       <main className="flex flex-1 justify-center py-10 px-4 sm:px-6 lg:px-8">

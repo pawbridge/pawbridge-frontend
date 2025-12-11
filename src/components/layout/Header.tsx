@@ -42,7 +42,7 @@ export default function Header() {
               to="/products"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
-              상점
+              펫마켓
             </Link>
           </nav>
 
@@ -101,7 +101,7 @@ export default function Header() {
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                상점
+                펫마켓
               </Link>
               <div className="pt-2 border-t border-primary/20 sm:hidden">
                 <Link

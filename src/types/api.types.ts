@@ -10,7 +10,8 @@ export interface User {
   id: number;
   email: string;
   name: string;
-  userType: 'GENERAL' | 'SHELTER';
+  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드 JWT에 포함되는 역할
+  careRegNo?: string;          // 보호소 직원일 때만 존재
   createdAt: string;
 }
 
@@ -25,6 +26,8 @@ export interface LoginResponse {
   userId: number;
   email: string;
   name: string;
+  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드가 내려줄 경우 반영
+  careRegNo?: string;           // 보호소 직원일 때만 존재
   accessToken: string;
   refreshToken: string;
 }
