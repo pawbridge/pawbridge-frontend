@@ -1,8 +1,23 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
+import { logout } from '../../api/auth.api';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const user = useAuthStore((state) => state.user);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      alert('로그아웃되었습니다.');
+    } finally {
+      clearAuth();
+      navigate('/');
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
@@ -46,20 +61,38 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* 로그인/회원가입 버튼 & 모바일 메뉴 */}
+          {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link
-              to="/login"
-              className="hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 text-primary dark:text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity border border-primary"
-            >
-              <span className="truncate">로그인</span>
-            </Link>
-            <Link
-              to="/signup"
-              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
-            >
-              <span className="truncate">회원가입</span>
-            </Link>
+            {user ? (
+              // 로그인된 경우: 사용자 이름 + 로그아웃 버튼
+              <>
+                <span className="hidden sm:block text-primary-content dark:text-gray-300 text-sm font-medium">
+                  {user.name}님
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 text-primary dark:text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity border border-primary"
+                >
+                  <span className="truncate">로그아웃</span>
+                </button>
+              </>
+            ) : (
+              // 로그인 안 된 경우: 로그인 + 회원가입 버튼
+              <>
+                <Link
+                  to="/login"
+                  className="hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 text-primary dark:text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity border border-primary"
+                >
+                  <span className="truncate">로그인</span>
+                </Link>
+                <Link
+                  to="/signup"
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
+                >
+                  <span className="truncate">회원가입</span>
+                </Link>
+              </>
+            )}
             <button
               className="md:hidden text-primary-content dark:text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -104,13 +137,30 @@ export default function Header() {
                 펫마켓
               </Link>
               <div className="pt-2 border-t border-primary/20 sm:hidden">
-                <Link
-                  to="/login"
-                  className="block text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  로그인
-                </Link>
+                {user ? (
+                  <>
+                    <div className="text-primary-content dark:text-gray-300 text-sm font-medium mb-2">
+                      {user.name}님
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
+                    >
+                      로그아웃
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    로그인
+                  </Link>
+                )}
               </div>
             </div>
           </nav>

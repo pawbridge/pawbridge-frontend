@@ -30,13 +30,9 @@ export default defineConfig({
           });
         },
       },
-      // User Service (사용자/인증) - 9020
+      // User Service (사용자/인증) - 9020 => minimini1212가 8080으로 변경함. api-gateway 포트로
       '/api': {
-        target: 'http://localhost:9020',
-        changeOrigin: true,
-      },
-      '/login': {
-        target: 'http://localhost:9020',
+        target: 'http://localhost:8080', // API-GATEWAY
         changeOrigin: true,
       }
     }
