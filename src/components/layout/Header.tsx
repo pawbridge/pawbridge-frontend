@@ -27,10 +27,10 @@ export default function Header() {
               동물 검색
             </Link>
             <Link
-              to="/reviews"
+              to="/adoption"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
-              입양 후기
+              입양후기
             </Link>
             <Link
               to="/community"
@@ -83,11 +83,11 @@ export default function Header() {
                 동물 검색
               </Link>
               <Link
-                to="/reviews"
+                to="/adoption"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                입양 후기
+                입양후기
               </Link>
               <Link
                 to="/community"
