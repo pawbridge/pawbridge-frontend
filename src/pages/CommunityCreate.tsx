@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import placeholderImg from '../assets/image-placeholder.svg';
 
 type BoardType = 'MISSING' | 'PROTECTION' | 'REPORT' | 'FREE';
 

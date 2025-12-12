@@ -313,7 +313,7 @@ export default function CommunityDetail() {
               />
               {thumbnails.length > 0 && (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                  {thumbnails.map((url, idx) => (
+                  {thumbnails.map((url: string, idx: number) => (
                     <div
                       key={idx}
                       className={`w-full bg-center bg-no-repeat bg-cover aspect-square rounded-lg ${
