@@ -1,210 +1,99 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
-import placeholderImg from '../assets/image-placeholder.svg';
-
-type BoardType = 'MISSING' | 'PROTECTION' | 'REPORT' | 'FREE';
-
-interface CommunityPostSummary {
-  postId: number;
-  title: string;
-  boardType: BoardType;
-  authorId: number;
-  createdAt: string;
-  imageUrls?: string[];
-  views?: number;
-}
-
-export const mockPosts: CommunityPostSummary[] = [
-  {
-    postId: 1,
-    title: 'OO동에서 실종된 강아지를 찾습니다.',
-    boardType: 'MISSING',
-    authorId: 101,
-    createdAt: '2024-10-26',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuD7Pg_GffqU4AE_Ze3agQyd1yhST4WQTOOmLTkAnBP1VSdNXgsUF51wEbVRCfu8L-m1L-RRt75NmnXYS3kttvoO14JHiGT4qXPjKEngJ7e8QRwUKh2z0GbhleqheavIkiEVWe8bL1wI97vBEpUK8065rXBIQtDeosjZbYXj8t9QmHAiL0CjbD6OP7dKhqB01Y-XJVHk4oYQ0JDhWeGmwq3ssfTbwHPJzP5l0-aP86LfWL-eL_IvzsF37QS-yAvnRAGM5LjQ_RnJir4'],
-  },
-  {
-    postId: 2,
-    title: '보호중인 고양이를 찾습니다.',
-    boardType: 'PROTECTION',
-    authorId: 102,
-    createdAt: '2024-10-26',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuDlJt2QC96OImZuGGTI88NtejEZgWWNasB3AHM3PLGpGXPH23FOTSx0tSivUqmZPHChJ3zYLc_B9t2r7ND4wedxJmKGTM_fpjKUqpoXG5ygaT6EE051Xsga9epHJujI9GH7xHuW5-0QUBRBNIlUWnH8fGaSIC09NHmykj1TA2bwT2XFnc43dX38M-FMNHaM7Be0vYTRy31F2jaDc9gfTUzOIEdYxlo5PsYDSkXnHUL3RpdxqG5wLyn1pJtX2899TJXCQBfhhwy88D0'],
-  },
-  {
-    postId: 3,
-    title: '강아지를 찾습니다.',
-    boardType: 'MISSING',
-    authorId: 103,
-    createdAt: '2024-10-25',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuAl-wzy55nASVdAoFA35PrgwSpNVb_c7CjEkeIMOIqgYvx6nQWEkmvFwjf26WdtS-Klq4xfyGTXu_6xaEsPfbdG3JOyrRaOvxqKWAY9TDTkcJlwhEEOPrRtQXXzu15Z1ItktS6zQSrEY-mkxlOnnmL2wXVUlM4mMsSrhMHQbmQ1hwTyFG9Klo1gm7d4-Wqjpu0xwmFIBkNFqe4aWYSSSLdM7FBvzTPcE1gXdk5G_YHHuJUSFtxn4gOst6pnh3tVmE3r70hOiAR1zNQ'],
-  },
-  {
-    postId: 4,
-    title: '고양이를 찾습니다.',
-    boardType: 'MISSING',
-    authorId: 104,
-    createdAt: '2024-10-25',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuCtSU28pG6PlzxwTplfEoBpUme_p6FbAln7lo46-pk8DcC-XVPrRSOBSeNYy8IuvdGQJbXhG340CoacxYL34QBOSQoQFamEPdguJHuW7_sdoJU2bTOTw0eA5spwlNeX36tBkKuWauGtmdI1S1F_IGNLCOgzO_0Bm1D9gAwxk0Om87dNXIHecV2PkKipLfUjEgMb5HsmSq8rHLEe_1PM7FweUt_qMEdl06cu9hH1EkQ0T1rxVb_-4rdRfColFn-9cQbllxPJ4HWO7qw'],
-  },
-  {
-    postId: 5,
-    title: '보호중인 고양이 주인을 찾습니다.',
-    boardType: 'PROTECTION',
-    authorId: 105,
-    createdAt: '2024-10-24',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuA7I3I3Vth7U5CcYQzJ8n1JD3uJsq1bZ6Kq0190jKizzG6yZdswpf1k0Q-o20R9k07kT1ukkHCOyfXZLP_1iOlCFOhzkpDtE0rd498EiURjDPb8OahlfsEG_DP6hpDk6gBvwT1s3p3GgvJiCo8RnlKsXWWAIPZ2X3wf2YybuVnb_5aH60qINPUrXBzxHHO4SCGJjZ-vLapPl38yN0eeX60u3h9N3DSsd8WT3QIdtDhTM4Ekz46MxG5A4jLTT3tZp_ZYD3xfgRTv75M'],
-  },
-  {
-    postId: 6,
-    title: '강아지 주인을 찾습니다.',
-    boardType: 'PROTECTION',
-    authorId: 106,
-    createdAt: '2024-10-24',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuBUuA-hOGID5mxh4iYCVyrdAu3f2aoxdFGNspyO-ogSpJBAnmAk-hPu4O-Q9LQeko5fkU_H-Fn7uc_wB9LkCxamg7ofvr9oBi8tctjjLi0O6tSSeywKKNcSTDA1tHXhN3Hpv5VNVxeQ-Q9hMp7YZC7Ysp73pGXEzecb5WclGFMcvQmbQN7tXk9lkUShgUGt205gnXTBYVPwPcdAbRq6faAfQj1NjH1RfOv_7sZDHcrapS-2ls0wR1XzJQsiUQoU1DYdgcqkn9vIx5c'],
-  },
-  {
-    postId: 7,
-    title: '주인을 찾습니다.',
-    boardType: 'PROTECTION',
-    authorId: 107,
-    createdAt: '2024-10-23',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuCGMjNyZ4-bbegnCcYOh2kMzUcCyLj_A3BBfDY7ioE6PQt7WATsBOfvdlOHDQtF_FkM5AlR-hlZZmN1AXzVfeAOKIeB6PUnQm-PBkXmWxQnKLEj6yjINNslpJ_c_NF5Q5DnekTMXAeZzCMhAYYECWbN4_yF-9_ACkHONg_VRptDuo_YzHE9QZ6W9M3Q3n2Jq_zFRB01lzJ4rbTwOpg9-YSOORVt29V0-z3fIzyE24CZylI9yzOlRqHmsrKcWJ2lDCy6IWa84jaDy1I'],
-  },
-  {
-    postId: 8,
-    title: 'OO동에서 실종된 고양이를 찾습니다.',
-    boardType: 'MISSING',
-    authorId: 108,
-    createdAt: '2024-10-23',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuC_71watIg2LiSLHQsm-t5nVdSLtIwMyPf-z5ro_MRYDblJzzgs12pw_4JgH-OHz99KHNGPjDA4iM1kYwkzkl0gdvWOdBUNDgcodEGMs8zatd4YSq3YQZc6Pz2hV7WU8dNFe9nvs_i7CgTO3Et_WbZlOf0jdwfikocEv--7FFdODC19LTM8HTAxC6vsdrm8A9qsK-774JmeeCkdtUMtyXG0zOMeFaXm29sFAByPEn0aeGOr2uAJdPRNtwc09l75T-6bSKYsr24A5IA'],
-  },
-  // 제보 게시판 목데이터
-  {
-    postId: 17,
-    title: '유기견으로 보이는 강아지 발견',
-    boardType: 'REPORT',
-    authorId: 301,
-    createdAt: '2024-10-26',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuD7Pg_GffqU4AE_Ze3agQyd1yhST4WQTOOmLTkAnBP1VSdNXgsUF51wEbVRCfu8L-m1L-RRt75NmnXYS3kttvoO14JHiGT4qXPjKEngJ7e8QRwUKh2z0GbhleqheavIkiEVWe8bL1wI97vBEpUK8065rXBIQtDeosjZbYXj8t9QmHAiL0CjbD6OP7dKhqB01Y-XJVHk4oYQ0JDhWeGmwq3ssfTbwHPJzP5l0-aP86LfWL-eL_IvzsF37QS-yAvnRAGM5LjQ_RnJir4'],
-  },
-  {
-    postId: 18,
-    title: '길에서 떠도는 고양이 제보',
-    boardType: 'REPORT',
-    authorId: 302,
-    createdAt: '2024-10-25',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuDlJt2QC96OImZuGGTI88NtejEZgWWNasB3AHM3PLGpGXPH23FOTSx0tSivUqmZPHChJ3zYLc_B9t2r7ND4wedxJmKGTM_fpjKUqpoXG5ygaT6EE051Xsga9epHJujI9GH7xHuW5-0QUBRBNIlUWnH8fGaSIC09NHmykj1TA2bwT2XFnc43dX38M-FMNHaM7Be0vYTRy31F2jaDc9gfTUzOIEdYxlo5PsYDSkXnHUL3RpdxqG5wLyn1pJtX2899TJXCQBfhhwy88D0'],
-  },
-  {
-    postId: 19,
-    title: '상처 입은 강아지 발견 제보',
-    boardType: 'REPORT',
-    authorId: 303,
-    createdAt: '2024-10-24',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuAl-wzy55nASVdAoFA35PrgwSpNVb_c7CjEkeIMOIqgYvx6nQWEkmvFwjf26WdtS-Klq4xfyGTXu_6xaEsPfbdG3JOyrRaOvxqKWAY9TDTkcJlwhEEOPrRtQXXzu15Z1ItktS6zQSrEY-mkxlOnnmL2wXVUlM4mMsSrhMHQbmQ1hwTyFG9Klo1gm7d4-Wqjpu0xwmFIBkNFqe4aWYSSSLdM7FBvzTPcE1gXdk5G_YHHuJUSFtxn4gOst6pnh3tVmE3r70hOiAR1zNQ'],
-  },
-  {
-    postId: 20,
-    title: '공원에서 배회 중인 강아지',
-    boardType: 'REPORT',
-    authorId: 304,
-    createdAt: '2024-10-23',
-    imageUrls: ['https://lh3.googleusercontent.com/aida-public/AB6AXuCtSU28pG6PlzxwTplfEoBpUme_p6FbAln7lo46-pk8DcC-XVPrRSOBSeNYy8IuvdGQJbXhG340CoacxYL34QBOSQoQFamEPdguJHuW7_sdoJU2bTOTw0eA5spwlNeX36tBkKuWauGtmdI1S1F_IGNLCOgzO_0Bm1D9gAwxk0Om87dNXIHecV2PkKipLfUjEgMb5HsmSq8rHLEe_1PM7FweUt_qMEdl06cu9hH1EkQ0T1rxVb_-4rdRfColFn-9cQbllxPJ4HWO7qw'],
-  },
-  // 자유 게시판 목데이터
-  {
-    postId: 9,
-    title: '강아지 사료 추천해주세요!',
-    boardType: 'FREE',
-    authorId: 201,
-    createdAt: '2024-10-26',
-    views: 152,
-  },
-  {
-    postId: 10,
-    title: '고양이랑 친해지는 법 공유해요',
-    boardType: 'FREE',
-    authorId: 202,
-    createdAt: '2024-10-25',
-    views: 201,
-  },
-  {
-    postId: 11,
-    title: '산책하기 좋은 장소 추천!',
-    boardType: 'FREE',
-    authorId: 203,
-    createdAt: '2024-10-25',
-    views: 88,
-  },
-  {
-    postId: 12,
-    title: '새로운 가족이 생겼어요!',
-    boardType: 'FREE',
-    authorId: 204,
-    createdAt: '2024-10-24',
-    views: 312,
-  },
-  {
-    postId: 13,
-    title: '유기동물 봉사활동 후기',
-    boardType: 'FREE',
-    authorId: 205,
-    createdAt: '2024-10-23',
-    views: 450,
-  },
-  {
-    postId: 14,
-    title: '다들 반려동물 이름은 뭔가요?',
-    boardType: 'FREE',
-    authorId: 206,
-    createdAt: '2024-10-22',
-    views: 189,
-  },
-  {
-    postId: 15,
-    title: '고양이 츄르 뭐 먹이세요?',
-    boardType: 'FREE',
-    authorId: 207,
-    createdAt: '2024-10-22',
-    views: 233,
-  },
-  {
-    postId: 16,
-    title: '강아지 미용 어디가 잘하나요?',
-    boardType: 'FREE',
-    authorId: 208,
-    createdAt: '2024-10-21',
-    views: 110,
-  },
-];
+import { getAllPosts, searchPosts } from '../api/community.api';
+import type { BoardType } from '../types/api.types';
+import { useAuthStore } from '../store/authStore';
 
 const boardTabs: { key: BoardType; label: string }[] = [
   { key: 'MISSING', label: '실종 동물' },
   { key: 'PROTECTION', label: '보호 동물' },
   { key: 'REPORT', label: '제보' },
-  { key: 'FREE', label: '소통 게시판' },
+  { key: 'COMMUNICATION', label: '소통 게시판' },
 ];
 
 export default function CommunityList() {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState<BoardType>('MISSING');
+  const [inputValue, setInputValue] = useState(''); // 입력 필드 값
+  const [searchKeyword, setSearchKeyword] = useState(''); // 실제 검색 키워드
+
+  // 게시글 목록 조회 (검색어가 있으면 검색, 없으면 전체 조회)
+  const { data: posts = [], isLoading, error } = useQuery({
+    queryKey: ['posts', searchKeyword],
+    queryFn: () => {
+      if (searchKeyword.trim()) {
+        return searchPosts(searchKeyword.trim());
+      }
+      return getAllPosts();
+    },
+  });
+
+  // 탭에 따라 필터링된 게시글
   const filtered = useMemo(
-    () => mockPosts.filter((p) => p.boardType === activeTab),
-    [activeTab],
+    () => posts.filter((p) => p.boardType === activeTab),
+    [posts, activeTab],
   );
 
-  const resolveImage = (urls?: string[]) => {
-    const first = urls?.[0];
-    if (!first) return placeholderImg;
-    try {
-      const host = new URL(first).hostname;
-      if (host.includes('placeholder.com')) return placeholderImg;
-      return first;
-    } catch {
-      return placeholderImg;
+  // 검색 실행
+  const handleSearchSubmit = () => {
+    setSearchKeyword(inputValue);
+  };
+
+  // 엔터 키 핸들러
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit();
     }
   };
+
+  // 글쓰기 버튼 클릭 핸들러
+  const handleWriteClick = () => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+    navigate(`/community/new?boardType=${activeTab}`);
+  };
+
+  const resolveImage = (urls?: string[]) => {
+    if (!urls || urls.length === 0) return null;
+    const first = urls[0];
+    if (!first) return null;
+    return first;
+  };
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg text-gray-600 dark:text-gray-400">게시글을 불러오는 중...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+        <Header />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg text-red-600 dark:text-red-400">게시글을 불러오는데 실패했습니다.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{(error as Error).message}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
@@ -248,28 +137,35 @@ export default function CommunityList() {
                 <span className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
                 <input
                   className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary/50"
-                  placeholder="제목, 내용으로 검색"
+                  placeholder="제목, 내용으로 검색 (Enter)"
                   type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
               </label>
             </div>
-                  <div className="relative group w-full md:w-auto">
-                    <Link
-                      to={activeTab === 'FREE' ? '/community/new?boardType=FREE' : '/community/new'}
-                      className="w-full flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
-                    >
-                      <span className="material-symbols-outlined text-base">edit</span>
-                      <span>글쓰기</span>
-                    </Link>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max hidden group-hover:block bg-gray-800 text-white text-xs rounded-md py-1.5 px-3 whitespace-nowrap">
-                      글을 작성하려면 로그인이 필요해요.
-                      <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800"></div>
-                    </div>
-                  </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm text-[#5f8c80] dark:text-gray-400">
+                <span className="material-symbols-outlined text-lg">lock</span>
+                <span>로그인이 필요한 서비스입니다.</span>
+              </div>
+              <button
+                onClick={handleWriteClick}
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
+              >
+                <span className="material-symbols-outlined text-base">edit</span>
+                <span>글쓰기</span>
+              </button>
+            </div>
           </div>
 
-          {/* Content: Table for FREE, Grid for others */}
-          {activeTab === 'FREE' ? (
+          {/* Content: Table for COMMUNICATION, Grid for others */}
+          {filtered.length === 0 ? (
+            <div className="flex items-center justify-center py-20">
+              <p className="text-gray-500 dark:text-gray-400">게시글이 없습니다.</p>
+            </div>
+          ) : activeTab === 'COMMUNICATION' ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -286,9 +182,6 @@ export default function CommunityList() {
                     <th className="px-6 py-3 w-32 text-center" scope="col">
                       작성일
                     </th>
-                    <th className="px-6 py-3 w-24 text-center" scope="col">
-                      조회수
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -302,9 +195,8 @@ export default function CommunityList() {
                       <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
                         {post.title}
                       </th>
-                      <td className="px-6 py-4 text-center">작성자ID</td>
-                      <td className="px-6 py-4 text-center">{post.createdAt}</td>
-                      <td className="px-6 py-4 text-center">{post.views || 0}</td>
+                      <td className="px-6 py-4 text-center">{post.authorNickname || `작성자 ${post.authorId}`}</td>
+                      <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -312,22 +204,31 @@ export default function CommunityList() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filtered.map((post) => (
-                <Link key={post.postId} to={`/community/${post.postId}`} className="flex flex-col gap-3 group">
-                  <div
-                    className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${resolveImage(post.imageUrls)})` }}
-                  />
-                  <div>
-                    <p className="text-base font-medium leading-normal text-[#111816] dark:text-white truncate">
-                      {post.title}
-                    </p>
-                    <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
-                      작성자 ID · {post.createdAt}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+              {filtered.map((post) => {
+                const imageUrl = resolveImage(post.imageUrls);
+                return (
+                  <Link key={post.postId} to={`/community/${post.postId}`} className="flex flex-col gap-3 group">
+                    {imageUrl ? (
+                      <div
+                        className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
+                        style={{ backgroundImage: `url(${imageUrl})` }}
+                      />
+                    ) : (
+                      <div className="w-full aspect-square rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-base font-medium leading-normal text-[#111816] dark:text-white truncate">
+                        {post.title}
+                      </p>
+                      <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
+                        {post.authorNickname || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
 
