@@ -1,20 +1,42 @@
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-
-type BoardType = 'MISSING' | 'PROTECTION' | 'REPORT' | 'FREE';
+import { createPost } from '../api/community.api';
+import type { BoardType } from '../types/api.types';
 
 export default function CommunityCreate() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const initialBoardType = (searchParams.get('boardType') as BoardType) || 'MISSING';
-  const isFreeBoard = initialBoardType === 'FREE';
+  const isCommunicationBoard = initialBoardType === 'COMMUNICATION';
 
   const [form, setForm] = useState({
     boardType: initialBoardType,
     title: '',
     content: '',
     files: [] as File[],
+  });
+
+  // 게시글 생성 mutation
+  const createPostMutation = useMutation({
+    mutationFn: (data: { title: string; content: string; boardType: BoardType; files?: File[] }) =>
+      createPost(
+        { title: data.title, content: data.content, boardType: data.boardType },
+        data.files
+      ),
+    onSuccess: (data) => {
+      // 게시글 목록 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      alert('게시글이 작성되었습니다.');
+      navigate(`/community/${data.postId}`);
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || '게시글 작성에 실패했습니다.';
+      alert(message);
+    },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,8 +50,22 @@ export default function CommunityCreate() {
     setForm({ ...form, files: form.files.filter((_, i) => i !== index) });
   };
 
+  const handleSubmit = () => {
+    if (!form.title.trim() || !form.content.trim()) {
+      alert('제목과 내용을 모두 입력해주세요.');
+      return;
+    }
+
+    createPostMutation.mutate({
+      title: form.title,
+      content: form.content,
+      boardType: form.boardType,
+      files: form.files.length > 0 ? form.files : undefined,
+    });
+  };
+
   // 소통게시판 전용 레이아웃
-  if (isFreeBoard) {
+  if (isCommunicationBoard) {
     return (
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display">
         <Header />
@@ -117,8 +153,12 @@ export default function CommunityCreate() {
                   >
                     <span className="truncate">취소</span>
                   </Link>
-                  <button className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white hover:bg-primary/80 transition-colors text-base font-bold leading-normal">
-                    <span className="truncate">등록</span>
+                  <button
+                    onClick={handleSubmit}
+                    disabled={createPostMutation.isPending}
+                    className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white hover:bg-primary/80 transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="truncate">{createPostMutation.isPending ? '등록 중...' : '등록'}</span>
                   </button>
                 </div>
               </div>
@@ -250,8 +290,12 @@ export default function CommunityCreate() {
                 >
                   <span>취소</span>
                 </Link>
-                <button className="flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 bg-primary text-gray-900 text-base font-bold hover:bg-primary/80 transition-colors">
-                  <span>등록하기</span>
+                <button
+                  onClick={handleSubmit}
+                  disabled={createPostMutation.isPending}
+                  className="flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 bg-primary text-gray-900 text-base font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span>{createPostMutation.isPending ? '등록 중...' : '등록하기'}</span>
                 </button>
               </div>
             </div>

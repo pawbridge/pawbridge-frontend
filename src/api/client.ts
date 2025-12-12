@@ -29,7 +29,7 @@ apiClient.interceptors.request.use(
         delete config.headers['X-User-Id'];
       }
     }
-    
+
     return config;
   },
   (error) => {

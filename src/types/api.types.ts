@@ -288,6 +288,58 @@ export interface DirectOrderRequest {
   deliveryMessage?: string;
 }
 
+// ========== 커뮤니티(Community) 관련 타입 ==========
+
+// 게시판 타입
+export type BoardType = 'MISSING' | 'PROTECTION' | 'REPORT' | 'ADOPTION' | 'COMMUNICATION';
+
+// 게시글 생성 요청 (multipart/form-data로 전송)
+export interface CreatePostRequest {
+  title: string;
+  content: string;
+  boardType: BoardType;
+}
+
+// 게시글 수정 요청 (multipart/form-data로 전송)
+export interface UpdatePostRequest {
+  title: string;
+  content: string;
+}
+
+// 게시글 응답
+export interface PostResponse {
+  postId: number;
+  authorId: number;
+  authorNickname: string;
+  title: string;
+  content: string;
+  boardType: BoardType;
+  imageUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 댓글 생성 요청
+export interface CreateCommentRequest {
+  content: string;
+}
+
+// 댓글 수정 요청
+export interface UpdateCommentRequest {
+  content: string;
+}
+
+// 댓글 응답
+export interface CommentResponse {
+  commentId: number;
+  postId: number;
+  authorId: number;
+  authorNickname: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // 주문 생성 응답
 export interface CreateOrderResponse {
   orderId: number;
