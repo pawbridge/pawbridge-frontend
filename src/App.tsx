@@ -13,6 +13,14 @@ import Cart from './pages/Cart.tsx';
 import Checkout from './pages/Checkout.tsx';
 import OrderComplete from './pages/OrderComplete.tsx';
 import NotFound from './pages/NotFound.tsx';
+import CommunityList from './pages/CommunityList.tsx';
+import CommunityDetail from './pages/CommunityDetail.tsx';
+import CommunityCreate from './pages/CommunityCreate.tsx';
+import CommunityEdit from './pages/CommunityEdit.tsx';
+import AdoptionList from './pages/AdoptionList.tsx';
+import AdoptionDetail from './pages/AdoptionDetail.tsx';
+import AdoptionCreate from './pages/AdoptionCreate.tsx';
+import AdoptionEdit from './pages/AdoptionEdit.tsx';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -104,6 +112,18 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* 커뮤니티 (실종/보호/제보) */}
+      <Route path="/community" element={<CommunityList />} />
+      <Route path="/community/:id" element={<CommunityDetail />} />
+      {/* TODO: 임시로 ProtectedRoute 제거 - 페이지 확인용 */}
+      <Route path="/community/new" element={<CommunityCreate />} />
+      <Route path="/community/:id/edit" element={<CommunityEdit />} />
+      {/* 입양 후기 */}
+      <Route path="/adoption" element={<AdoptionList />} />
+      <Route path="/adoption/:id" element={<AdoptionDetail />} />
+      {/* TODO: 임시로 ProtectedRoute 제거 - 페이지 확인용 */}
+      <Route path="/adoption/new" element={<AdoptionCreate />} />
+      <Route path="/adoption/:id/edit" element={<AdoptionEdit />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
