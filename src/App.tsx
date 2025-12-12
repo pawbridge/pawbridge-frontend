@@ -21,6 +21,7 @@ import AdoptionList from './pages/AdoptionList.tsx';
 import AdoptionDetail from './pages/AdoptionDetail.tsx';
 import AdoptionCreate from './pages/AdoptionCreate.tsx';
 import AdoptionEdit from './pages/AdoptionEdit.tsx';
+import OAuthCallback from './pages/OAuthCallback.tsx';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -70,6 +71,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
       <Route

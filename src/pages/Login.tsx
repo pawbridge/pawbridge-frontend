@@ -19,8 +19,8 @@ export default function Login() {
         id: data.userId,
         email: data.email,
         name: data.name,
-        role: (data as any).role ?? 'ROLE_USER',
-        careRegNo: (data as any).careRegNo,
+        role: data.role || 'ROLE_USER',
+        careRegNo: data.careRegNo,
         createdAt: new Date().toISOString(),
       };
       setAuth(user, data.accessToken, data.refreshToken);
@@ -35,6 +35,12 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate({ email, password });
+  };
+
+  const handleGoogleLogin = () => {
+    // 백엔드 OAuth2 엔드포인트로 리다이렉트
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+    window.location.href = `${backendUrl}/oauth2/authorization/google`;
   };
 
   return (
@@ -147,6 +153,7 @@ export default function Login() {
               {/* Google Login Button */}
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="flex items-center justify-center gap-2 w-full h-12 px-4 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
               >
                 <img

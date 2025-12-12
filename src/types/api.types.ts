@@ -38,7 +38,8 @@ export interface SignupRequest {
   name: string;
   password: string;
   rePassword: string;
-  userType?: 'GENERAL' | 'SHELTER';
+  role: 'ROLE_USER' | 'ROLE_SHELTER';  // 백엔드 요구사항에 맞춤
+  careRegNo?: string;  // 보호소 등록번호 (ROLE_SHELTER인 경우 필수)
 }
 
 // 회원가입 응답
@@ -59,6 +60,22 @@ export interface ResetPasswordRequest {
   email: string;
   code: string;
   newPassword: string;
+}
+
+// 이메일 인증 코드 발송 요청
+export interface SendVerificationCodeRequest {
+  email: string;
+}
+
+// 이메일 인증 코드 검증 요청
+export interface VerifyCodeRequest {
+  email: string;
+  code: string;  // 6자리 숫자
+}
+
+// 이메일 인증 코드 검증 응답
+export interface EmailVerifiedResponse {
+  verified: boolean;
 }
 
 // 동물 상태 타입
