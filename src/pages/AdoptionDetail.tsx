@@ -161,7 +161,7 @@ export default function AdoptionDetail() {
                   {post.title}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  작성자 {post.authorId} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                  {post.authorNickname} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                 </p>
               </div>
               {isAuthor && (

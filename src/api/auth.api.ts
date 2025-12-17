@@ -19,7 +19,7 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
     code: number;
     message: string;
     data: LoginResponse;
-  }>('/api/v1/auth/login', credentials);
+  }>('/api/auth/login', credentials);
   return response.data.data;
 };
 
@@ -30,7 +30,7 @@ export const signup = async (userData: SignupRequest): Promise<SignupResponse> =
     message: string;
     data: SignupResponse;
   }>(
-    '/api/v1/users/signup',
+    '/api/users/signup',
     userData
   );
   return response.data.data;
@@ -38,7 +38,7 @@ export const signup = async (userData: SignupRequest): Promise<SignupResponse> =
 
 // 로그아웃
 export const logout = async (): Promise<void> => {
-  await apiClient.post('/api/v1/auth/logout');
+  await apiClient.post('/api/auth/logout');
   // localStorage에서 토큰 제거
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
@@ -59,7 +59,7 @@ export const sendResetCode = async (data: ResetPasswordRequestRequest): Promise<
     message: string;
     data: null;
   }>(
-    '/api/v1/auth/password/reset-request',
+    '/api/auth/password/reset-request',
     data
   );
 };
@@ -71,7 +71,7 @@ export const resetPassword = async (data: ResetPasswordRequest): Promise<void> =
     message: string;
     data: null;
   }>(
-    '/api/v1/auth/password/reset',
+    '/api/auth/password/reset',
     data
   );
 };
@@ -83,7 +83,7 @@ export const sendEmailVerificationCode = async (data: SendVerificationCodeReques
     message: string;
     data: null;
   }>(
-    '/api/v1/email/send',
+    '/api/email/send',
     data
   );
 };
@@ -95,7 +95,7 @@ export const verifyEmailCode = async (data: VerifyCodeRequest): Promise<EmailVer
     message: string;
     data: EmailVerifiedResponse;
   }>(
-    '/api/v1/email/verify',
+    '/api/email/verify',
     data
   );
   return response.data.data;

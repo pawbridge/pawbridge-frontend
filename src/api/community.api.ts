@@ -33,7 +33,7 @@ export const createPost = async (
     code: number;
     message: string;
     data: PostResponse;
-  }>('/api/v1/posts', formData, {
+  }>('/api/posts', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -65,7 +65,7 @@ export const updatePost = async (
     code: number;
     message: string;
     data: PostResponse;
-  }>(`/api/v1/posts/${postId}`, formData, {
+  }>(`/api/posts/${postId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -82,7 +82,7 @@ export const deletePost = async (postId: number): Promise<void> => {
     code: number;
     message: string;
     data: null;
-  }>(`/api/v1/posts/${postId}`);
+  }>(`/api/posts/${postId}`);
 };
 
 /**
@@ -93,7 +93,7 @@ export const getPost = async (postId: number): Promise<PostResponse> => {
     code: number;
     message: string;
     data: PostResponse;
-  }>(`/api/v1/posts/read/${postId}`);
+  }>(`/api/posts/read/${postId}`);
 
   return response.data.data;
 };
@@ -106,7 +106,7 @@ export const getAllPosts = async (): Promise<PostResponse[]> => {
     code: number;
     message: string;
     data: PostResponse[];
-  }>('/api/v1/posts/read');
+  }>('/api/posts/read');
 
   return response.data.data;
 };
@@ -119,7 +119,7 @@ export const searchPosts = async (keyword: string): Promise<PostResponse[]> => {
     code: number;
     message: string;
     data: PostResponse[];
-  }>('/api/v1/posts/search', {
+  }>('/api/posts/search', {
     params: { keyword },
   });
 
@@ -139,7 +139,7 @@ export const createComment = async (
     code: number;
     message: string;
     data: CommentResponse;
-  }>(`/api/v1/comments/posts/${postId}`, data);
+  }>(`/api/comments/posts/${postId}`, data);
 
   return response.data.data;
 };
@@ -155,7 +155,7 @@ export const updateComment = async (
     code: number;
     message: string;
     data: CommentResponse;
-  }>(`/api/v1/comments/${commentId}`, data);
+  }>(`/api/comments/${commentId}`, data);
 
   return response.data.data;
 };
@@ -168,7 +168,7 @@ export const deleteComment = async (commentId: number): Promise<void> => {
     code: number;
     message: string;
     data: null;
-  }>(`/api/v1/comments/${commentId}`);
+  }>(`/api/comments/${commentId}`);
 };
 
 /**
@@ -181,7 +181,7 @@ export const getCommentsByPostId = async (
     code: number;
     message: string;
     data: CommentResponse[];
-  }>(`/api/v1/comments/posts/read/${postId}`);
+  }>(`/api/comments/posts/read/${postId}`);
 
   return response.data.data;
 };
