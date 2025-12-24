@@ -10,6 +10,7 @@ import AnimalDetail from './pages/AnimalDetail.tsx';
 import Products from './pages/Products.tsx';
 import ProductDetail from './pages/ProductDetail.tsx';
 import ProductCreate from './pages/ProductCreate.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
 import Cart from './pages/Cart.tsx';
 import Checkout from './pages/Checkout.tsx';
 import OrderComplete from './pages/OrderComplete.tsx';
@@ -159,6 +160,10 @@ function App() {
             </AdminRoute>
           </ProtectedRoute>
         }
+      />
+      <Route
+        path="/admin/dashboard"
+        element={<AdminDashboard />}
       />
       <Route
         path="/cart"
