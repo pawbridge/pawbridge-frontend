@@ -8,7 +8,11 @@ import type {
   CreateOrderRequest,
   CreateOrderResponse,
   OrderDetail,
-  DirectOrderRequest
+  DirectOrderRequest,
+  CreateProductRequest,
+  OptionGroupResponse,
+  CategoryResponse,
+  ImageUploadResponse
 } from '../types/api.types';
 
 // 상품 목록 검색
@@ -72,5 +76,35 @@ export interface PaymentConfirmRequest {
 
 export const confirmPayment = async (data: PaymentConfirmRequest): Promise<void> => {
   await apiClient.post('/api/payments/confirm', data);
+};
+
+// 상품 등록
+export const createProduct = async (productData: CreateProductRequest): Promise<Product> => {
+  const response = await apiClient.post<Product>('/api/products', productData);
+  return response.data;
+};
+
+// 옵션 그룹 목록 조회
+export const getOptionGroups = async (): Promise<OptionGroupResponse[]> => {
+  const response = await apiClient.get<OptionGroupResponse[]>('/api/option-groups');
+  return response.data;
+};
+
+// 카테고리 목록 조회
+export const getCategories = async (): Promise<CategoryResponse[]> => {
+  const response = await apiClient.get<CategoryResponse[]>('/api/categories');
+  return response.data;
+};
+
+// 이미지 업로드
+export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await apiClient.post<ImageUploadResponse>('/api/images', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
 };
 

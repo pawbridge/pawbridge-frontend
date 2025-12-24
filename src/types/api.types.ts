@@ -248,6 +248,50 @@ export interface ProductSearchResponse {
   hasNext: boolean;
 }
 
+// 옵션 값
+export interface OptionValue {
+  id: number;
+  name: string;
+  groupId: number;
+  groupName: string;
+}
+
+// 옵션 그룹 (API 응답)
+export interface OptionGroupResponse {
+  id: number;
+  name: string;
+  values: OptionValue[];
+}
+
+// 카테고리 (API 응답)
+export interface CategoryResponse {
+  id: number;
+  name: string;
+  parentId: number | null;
+  children: CategoryResponse[];
+}
+
+// 이미지 업로드 응답
+export interface ImageUploadResponse {
+  imageUrl: string;
+}
+
+// 상품 등록 요청 (새 API 스펙)
+export interface CreateSku {
+  skuCode: string;
+  price: number;
+  stockQuantity: number;
+  optionValueIds: number[];  // 옵션 값 ID 배열
+}
+
+export interface CreateProductRequest {
+  name: string;
+  description: string;
+  imageUrl: string;
+  categoryId: number;  // 카테고리 ID 필수
+  skus: CreateSku[];
+}
+
 // 장바구니 아이템
 export interface CartItem {
   skuId: number;
