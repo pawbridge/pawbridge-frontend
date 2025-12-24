@@ -163,7 +163,13 @@ function App() {
       />
       <Route
         path="/admin/dashboard"
-        element={<AdminDashboard />}
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/cart"
