@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createProduct, getOptionGroups, getCategories, uploadImage } from '../api/products.api';
-import type { OptionGroupResponse, CreateSku } from '../types/api.types';
+import type { OptionGroupResponse, CreateSku, CategoryResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
 import CustomSelect from '../components/common/CustomSelect';
 
@@ -87,29 +87,28 @@ export default function ProductCreate() {
   const [skus, setSkus] = useState<CreateSku[]>([]);
 
   // 옵션 그룹 목록 조회
-  const { data: optionGroups = [], isLoading: isLoadingOptions, error: optionGroupsError } = useQuery({
+  const { data: optionGroups = [], isLoading: isLoadingOptions, error: optionGroupsError } = useQuery<OptionGroupResponse[]>({
     queryKey: ['optionGroups'],
     queryFn: getOptionGroups,
-    onError: (error) => {
-      console.error('옵션 그룹 조회 실패:', error);
-    },
   });
 
   // 카테고리 목록 조회
-  const { data: categories = [], isLoading: isLoadingCategories, error: categoriesError } = useQuery({
+  const { data: categories = [], isLoading: isLoadingCategories, error: categoriesError } = useQuery<CategoryResponse[]>({
     queryKey: ['categories'],
     queryFn: getCategories,
-    onError: (error) => {
-      console.error('카테고리 조회 실패:', error);
-    },
   });
 
   // 디버깅: 데이터 확인
   useEffect(() => {
+    if (optionGroupsError) {
+      console.error('옵션 그룹 조회 실패:', optionGroupsError);
+    }
+    if (categoriesError) {
+      console.error('카테고리 조회 실패:', categoriesError);
+    }
     console.log('카테고리 데이터:', categories);
     console.log('카테고리 로딩:', isLoadingCategories);
-    console.log('카테고리 에러:', categoriesError);
-  }, [categories, isLoadingCategories, categoriesError]);
+  }, [categories, isLoadingCategories, optionGroupsError, categoriesError]);
 
   // 선택된 옵션 그룹의 옵션 값들
   const currentOptionGroup = optionGroups.find(g => g.id === Number(selectedOptionGroupId));
@@ -612,7 +611,7 @@ export default function ProductCreate() {
                       {currentOptionValues.length === 0 ? (
                         <p className="text-sm text-[#5f8c80]">옵션 그룹을 선택해주세요.</p>
                       ) : (
-                        currentOptionValues.map(value => {
+                        currentOptionValues.map((value) => {
                           const groupId = Number(selectedOptionGroupId);
                           const isSelected = groupId ? selectedOptionValues.get(groupId)?.includes(value.id) || false : false;
                           return (
