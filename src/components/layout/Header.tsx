@@ -64,11 +64,20 @@ export default function Header() {
           {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
           <div className="flex items-center gap-2 sm:gap-4">
             {user ? (
-              // 로그인된 경우: 사용자 이름 + 로그아웃 버튼
+              // 로그인된 경우: 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
                 <span className="hidden sm:block text-primary-content dark:text-gray-300 text-sm font-medium">
                   {user.name}님
                 </span>
+                {user.role === 'ROLE_ADMIN' && (
+                  <Link
+                    to="/admin/dashboard"
+                    className="hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">dashboard</span>
+                    <span className="truncate">관리자</span>
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 text-primary dark:text-primary text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity border border-primary"
@@ -142,6 +151,16 @@ export default function Header() {
                     <div className="text-primary-content dark:text-gray-300 text-sm font-medium mb-2">
                       {user.name}님
                     </div>
+                    {user.role === 'ROLE_ADMIN' && (
+                      <Link
+                        to="/admin/dashboard"
+                        className="flex items-center gap-2 mb-2 text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">dashboard</span>
+                        <span>관리자 대시보드</span>
+                      </Link>
+                    )}
                     <button
                       onClick={() => {
                         handleLogout();
