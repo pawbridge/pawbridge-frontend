@@ -19,6 +19,18 @@ export default defineConfig({
         target: 'http://localhost:8085',
         changeOrigin: true,
       },
+      '/api/categories': {
+        target: 'http://localhost:8085',
+        changeOrigin: true,
+      },
+      '/api/option-groups': {
+        target: 'http://localhost:8085',
+        changeOrigin: true,
+      },
+      '/api/images': {
+        target: 'http://localhost:8085',
+        changeOrigin: true,
+      },
       // Payment Service (결제) - 8084
       '/api/payments': {
         target: 'http://localhost:8084',
