@@ -10,6 +10,8 @@ import AnimalDetail from './pages/AnimalDetail.tsx';
 import Products from './pages/Products.tsx';
 import ProductDetail from './pages/ProductDetail.tsx';
 import ProductCreate from './pages/ProductCreate.tsx';
+import ProductEdit from './pages/ProductEdit.tsx';
+import AdminProductList from './pages/AdminProductList.tsx';
 import AdminDashboard from './pages/AdminDashboard.tsx';
 import AdminCategoryManagement from './pages/AdminCategoryManagement.tsx';
 import AdminOptionGroupManagement from './pages/AdminOptionGroupManagement.tsx';
@@ -159,6 +161,26 @@ function App() {
           <ProtectedRoute>
             <AdminRoute>
               <ProductCreate />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminProductList />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/products/:productId/edit"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProductEdit />
             </AdminRoute>
           </ProtectedRoute>
         }
