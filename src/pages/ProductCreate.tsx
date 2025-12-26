@@ -730,18 +730,18 @@ export default function ProductCreate() {
             </p>
             <div className="flex gap-4 w-full md:w-auto justify-end">
               <button
-                onClick={() => navigate('/products')}
-                className="px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] text-[#111816] dark:text-gray-300 font-bold hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29] transition-colors w-full md:w-auto"
-              >
-                취소하기
-              </button>
-              <button
                 onClick={handleSubmit}
                 disabled={createProductMutation.isPending || uploadImageMutation.isPending}
                 className="px-8 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-[#111816] font-bold shadow-lg shadow-primary/25 transition-colors flex items-center justify-center gap-2 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="material-symbols-outlined text-[20px]">check</span>
                 {createProductMutation.isPending || uploadImageMutation.isPending ? '등록 중...' : '상품 등록하기'}
+              </button>
+              <button
+                onClick={() => navigate('/products')}
+                className="px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] text-[#111816] dark:text-gray-300 font-bold hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29] transition-colors w-full md:w-auto"
+              >
+                취소하기
               </button>
             </div>
           </div>

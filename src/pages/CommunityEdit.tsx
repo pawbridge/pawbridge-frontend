@@ -219,12 +219,6 @@ export default function CommunityEdit() {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <Link
-                  to={`/community/${postId}`}
-                  className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-100 dark:bg-gray-700 text-[#111816] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-base font-bold leading-normal"
-                >
-                  <span className="truncate">취소</span>
-                </Link>
                 <button
                   onClick={handleSubmit}
                   disabled={updatePostMutation.isPending}
@@ -232,6 +226,12 @@ export default function CommunityEdit() {
                 >
                   <span className="truncate">{updatePostMutation.isPending ? '수정 중...' : '수정완료'}</span>
                 </button>
+                <Link
+                  to={`/community/${postId}`}
+                  className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-100 dark:bg-gray-700 text-[#111816] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-base font-bold leading-normal"
+                >
+                  <span className="truncate">취소</span>
+                </Link>
               </div>
             </div>
           </div>

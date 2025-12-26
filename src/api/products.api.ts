@@ -12,6 +12,8 @@ import type {
   CreateProductRequest,
   OptionGroupResponse,
   CategoryResponse,
+  CreateCategoryRequest,
+  UpdateCategoryRequest,
   ImageUploadResponse
 } from '../types/api.types';
 
@@ -106,5 +108,22 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
     },
   });
   return response.data;
+};
+
+// 카테고리 생성
+export const createCategory = async (categoryData: CreateCategoryRequest): Promise<CategoryResponse> => {
+  const response = await apiClient.post<CategoryResponse>('/api/categories', categoryData);
+  return response.data;
+};
+
+// 카테고리 수정
+export const updateCategory = async (categoryId: number, categoryData: UpdateCategoryRequest): Promise<CategoryResponse> => {
+  const response = await apiClient.put<CategoryResponse>(`/api/categories/${categoryId}`, categoryData);
+  return response.data;
+};
+
+// 카테고리 삭제
+export const deleteCategory = async (categoryId: number): Promise<void> => {
+  await apiClient.delete(`/api/categories/${categoryId}`);
 };
 
