@@ -19,12 +19,15 @@ import type {
   UpdateOptionGroupRequest,
   CreateOptionValueRequest,
   UpdateOptionValueRequest,
-  OptionValue
+  OptionValue,
+  UpdateProductRequest
 } from '../types/api.types';
 
 // 상품 목록 검색
 export const getProducts = async (params?: ProductSearchParams): Promise<ProductSearchResponse> => {
   const response = await apiClient.get<ProductSearchResponse>('/api/products', { params });
+  console.log('getProducts API 응답:', response.data);
+  console.log('요청 파라미터:', params);
   return response.data;
 };
 
@@ -170,5 +173,16 @@ export const updateOptionValue = async (valueId: number, valueData: UpdateOption
 // 옵션 값 삭제
 export const deleteOptionValue = async (valueId: number): Promise<void> => {
   await apiClient.delete(`/api/option-groups/values/${valueId}`);
+};
+
+// 상품 수정
+export const updateProduct = async (productId: number, productData: UpdateProductRequest): Promise<Product> => {
+  const response = await apiClient.patch<Product>(`/api/products/${productId}`, productData);
+  return response.data;
+};
+
+// 상품 삭제 (소프트 삭제)
+export const deleteProduct = async (productId: number): Promise<void> => {
+  await apiClient.delete(`/api/products/${productId}`);
 };
 

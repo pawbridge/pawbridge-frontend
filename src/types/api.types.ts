@@ -176,7 +176,7 @@ export interface AnimalSearchParams {
 // ========== 상품(Store) 관련 타입 ==========
 
 // 상품 상태
-export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'SOLD_OUT';
+export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'SOLD_OUT' | 'HIDDEN' | 'DELETED';
 
 // 상품 카테고리
 export interface Category {
@@ -224,6 +224,7 @@ export interface ProductListItem {
   totalStock: number;
   imageUrl?: string;
   status?: ProductStatus;
+  createdAt?: string;          // 등록일
 }
 
 // 상품 검색 파라미터
@@ -324,6 +325,22 @@ export interface CreateProductRequest {
   imageUrl: string;
   categoryId: number;  // 카테고리 ID 필수
   skus: CreateSku[];
+}
+
+// 상품 수정 요청 (모든 필드 선택사항)
+export interface UpdateSku {
+  id?: number;  // 기존 SKU 수정 시 필수
+  price?: number;
+  stockQuantity?: number;
+}
+
+export interface UpdateProductRequest {
+  name?: string;
+  description?: string;
+  imageUrl?: string;
+  status?: ProductStatus;
+  categoryId?: number;
+  skus?: UpdateSku[];
 }
 
 // 장바구니 아이템
