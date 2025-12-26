@@ -12,6 +12,7 @@ import ProductDetail from './pages/ProductDetail.tsx';
 import ProductCreate from './pages/ProductCreate.tsx';
 import AdminDashboard from './pages/AdminDashboard.tsx';
 import AdminCategoryManagement from './pages/AdminCategoryManagement.tsx';
+import AdminOptionGroupManagement from './pages/AdminOptionGroupManagement.tsx';
 import Cart from './pages/Cart.tsx';
 import Checkout from './pages/Checkout.tsx';
 import OrderComplete from './pages/OrderComplete.tsx';
@@ -178,6 +179,16 @@ function App() {
           <ProtectedRoute>
             <AdminRoute>
               <AdminCategoryManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/option-groups"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminOptionGroupManagement />
             </AdminRoute>
           </ProtectedRoute>
         }

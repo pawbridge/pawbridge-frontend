@@ -14,7 +14,12 @@ import type {
   CategoryResponse,
   CreateCategoryRequest,
   UpdateCategoryRequest,
-  ImageUploadResponse
+  ImageUploadResponse,
+  CreateOptionGroupRequest,
+  UpdateOptionGroupRequest,
+  CreateOptionValueRequest,
+  UpdateOptionValueRequest,
+  OptionValue
 } from '../types/api.types';
 
 // 상품 목록 검색
@@ -125,5 +130,45 @@ export const updateCategory = async (categoryId: number, categoryData: UpdateCat
 // 카테고리 삭제
 export const deleteCategory = async (categoryId: number): Promise<void> => {
   await apiClient.delete(`/api/categories/${categoryId}`);
+};
+
+// 옵션 그룹 상세 조회
+export const getOptionGroupById = async (groupId: number): Promise<OptionGroupResponse> => {
+  const response = await apiClient.get<OptionGroupResponse>(`/api/option-groups/${groupId}`);
+  return response.data;
+};
+
+// 옵션 그룹 생성
+export const createOptionGroup = async (groupData: CreateOptionGroupRequest): Promise<OptionGroupResponse> => {
+  const response = await apiClient.post<OptionGroupResponse>('/api/option-groups', groupData);
+  return response.data;
+};
+
+// 옵션 그룹 수정
+export const updateOptionGroup = async (groupId: number, groupData: UpdateOptionGroupRequest): Promise<OptionGroupResponse> => {
+  const response = await apiClient.put<OptionGroupResponse>(`/api/option-groups/${groupId}`, groupData);
+  return response.data;
+};
+
+// 옵션 그룹 삭제
+export const deleteOptionGroup = async (groupId: number): Promise<void> => {
+  await apiClient.delete(`/api/option-groups/${groupId}`);
+};
+
+// 옵션 값 추가
+export const createOptionValue = async (groupId: number, valueData: CreateOptionValueRequest): Promise<OptionValue> => {
+  const response = await apiClient.post<OptionValue>(`/api/option-groups/${groupId}/values`, valueData);
+  return response.data;
+};
+
+// 옵션 값 수정
+export const updateOptionValue = async (valueId: number, valueData: UpdateOptionValueRequest): Promise<OptionValue> => {
+  const response = await apiClient.put<OptionValue>(`/api/option-groups/values/${valueId}`, valueData);
+  return response.data;
+};
+
+// 옵션 값 삭제
+export const deleteOptionValue = async (valueId: number): Promise<void> => {
+  await apiClient.delete(`/api/option-groups/values/${valueId}`);
 };
 
