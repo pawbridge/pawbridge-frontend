@@ -263,6 +263,27 @@ export interface OptionGroupResponse {
   values: OptionValue[];
 }
 
+// 옵션 그룹 생성 요청
+export interface CreateOptionGroupRequest {
+  name: string;
+  values?: string[]; // 옵션 값 이름 배열 (생성 시 함께 생성)
+}
+
+// 옵션 그룹 수정 요청
+export interface UpdateOptionGroupRequest {
+  name: string;
+}
+
+// 옵션 값 생성 요청
+export interface CreateOptionValueRequest {
+  name: string;
+}
+
+// 옵션 값 수정 요청
+export interface UpdateOptionValueRequest {
+  name: string;
+}
+
 // 카테고리 (API 응답)
 export interface CategoryResponse {
   id: number;

@@ -251,12 +251,12 @@ export default function AdminDashboard() {
             </button>
             {isOptionMenuOpen && (
               <div className="flex flex-col mt-1 gap-1">
-                <button className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm">
+                <Link
+                  to="/admin/option-groups"
+                  className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
+                >
                   옵션 그룹 관리
-                </button>
-                <button className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm">
-                  옵션 값 관리
-                </button>
+                </Link>
               </div>
             )}
           </div>
