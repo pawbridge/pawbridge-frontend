@@ -195,12 +195,15 @@ export default function AdminDashboard() {
             </span>
             <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">게시글 관리</span>
           </button>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary transition-colors group">
+          <Link
+            to="/admin/categories"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary transition-colors group"
+          >
             <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
               category
             </span>
             <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">카테고리 관리</span>
-          </button>
+          </Link>
           <div className="mt-2">
             <button
               onClick={() => setIsProductMenuOpen(!isProductMenuOpen)}

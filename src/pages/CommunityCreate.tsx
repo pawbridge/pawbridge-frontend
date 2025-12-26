@@ -284,12 +284,6 @@ export default function CommunityCreate() {
 
               {/* Action Buttons */}
               <div className="flex justify-end gap-4 pt-6">
-                <Link
-                  to="/community"
-                  className="flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-base font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <span>취소</span>
-                </Link>
                 <button
                   onClick={handleSubmit}
                   disabled={createPostMutation.isPending}
@@ -297,6 +291,12 @@ export default function CommunityCreate() {
                 >
                   <span>{createPostMutation.isPending ? '등록 중...' : '등록하기'}</span>
                 </button>
+                <Link
+                  to="/community"
+                  className="flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-base font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <span>취소</span>
+                </Link>
               </div>
             </div>
           </div>

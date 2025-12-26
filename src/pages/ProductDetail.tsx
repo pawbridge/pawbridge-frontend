@@ -221,6 +221,13 @@ export default function ProductDetail() {
 
             {/* 상품 정보 */}
             <div className="flex flex-col">
+              {product.categoryName && (
+                <div className="mb-2">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+                    {product.categoryName}
+                  </span>
+                </div>
+              )}
               <h1 className="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight">
                 {product.name}
               </h1>

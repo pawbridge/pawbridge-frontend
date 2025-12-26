@@ -267,8 +267,21 @@ export interface OptionGroupResponse {
 export interface CategoryResponse {
   id: number;
   name: string;
+  description?: string;
   parentId: number | null;
   children: CategoryResponse[];
+}
+
+export interface CreateCategoryRequest {
+  name: string;
+  description?: string;
+  parentId: number | null;
+}
+
+export interface UpdateCategoryRequest {
+  name: string;
+  description?: string;
+  parentId: number | null;
 }
 
 // 이미지 업로드 응답
