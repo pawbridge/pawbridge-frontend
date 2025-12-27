@@ -229,7 +229,6 @@ export default function AdminOrderDetail() {
 
 
   const statusBadge = getStatusBadge(order.status);
-  const deliveryStatusBadge = getDeliveryStatusBadge(order.deliveryStatus);
   const totalItemsPrice = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingFee = 0; // 배송비는 API에 포함되지 않을 수 있음
 
