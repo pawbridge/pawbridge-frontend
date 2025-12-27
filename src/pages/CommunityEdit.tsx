@@ -160,7 +160,7 @@ export default function CommunityEdit() {
                     기존 이미지 (수정 시 새 파일을 업로드하면 기존 파일은 삭제됩니다)
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    {post.imageUrls.map((url, index) => (
+                    {post.imageUrls.map((url: string, index: number) => (
                       <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
                         <img
                           alt={`기존 이미지 ${index + 1}`}

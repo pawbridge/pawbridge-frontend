@@ -17,7 +17,7 @@ export default function OrderComplete() {
   const internalOrderId = searchParams.get('internalOrderId');
   const paymentKey = searchParams.get('paymentKey');
   const amount = searchParams.get('amount');
-  const orderUuid = searchParams.get('orderId'); // 토스에서 전달하는 UUID
+  const orderNumber = searchParams.get('orderId'); // 토스에서 전달하는 UUID
 
   // 뒤로가기 방지 - 결제 완료 후 주문서 페이지로 돌아가지 않도록
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function OrderComplete() {
   const paymentMutation = useMutation({
     mutationFn: () => confirmPayment({
       paymentKey: paymentKey!,
-      orderId: orderUuid!,
+      orderId: orderNumber!,
       amount: Number(amount),
     }),
     onSuccess: () => {
@@ -93,7 +93,7 @@ export default function OrderComplete() {
       return;
     }
 
-    if (paymentKey && orderUuid && amount && !paymentConfirmed) {
+    if (paymentKey && orderNumber && amount && !paymentConfirmed) {
       // 토스페이먼츠에서 리다이렉트된 경우, 결제 승인 처리
       hasCalledConfirm.current = true; // 호출 플래그 설정
       paymentMutation.mutate();
@@ -102,7 +102,7 @@ export default function OrderComplete() {
       setPaymentConfirmed(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paymentKey, orderUuid, amount, internalOrderId, paymentConfirmed]);
+  }, [paymentKey, orderNumber, amount, internalOrderId, paymentConfirmed]);
 
   // 가격 포맷
   const formatPrice = (price: number) => {
@@ -303,7 +303,7 @@ export default function OrderComplete() {
                 <div className="col-span-2 grid grid-cols-subgrid border-t border-gray-200 dark:border-gray-700 py-4">
                   <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">주문번호</p>
                   <p className="text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                    {order.orderUuid || `ORDER-${order.orderId}`}
+                    {order.orderNumber || `ORDER-${order.orderId}`}
                   </p>
                 </div>
                 <div className="col-span-2 grid grid-cols-subgrid border-t border-gray-200 dark:border-gray-700 py-4">

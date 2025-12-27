@@ -195,7 +195,7 @@ export default function CommunityList() {
                       <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
                         {post.title}
                       </th>
-                      <td className="px-6 py-4 text-center">{post.authorNickname || `작성자 ${post.authorId}`}</td>
+                      <td className="px-6 py-4 text-center">{post.authorName || `작성자 ${post.authorId}`}</td>
                       <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
                     </tr>
                   ))}
@@ -223,7 +223,7 @@ export default function CommunityList() {
                         {post.title}
                       </p>
                       <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
-                        {post.authorNickname || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                        {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                       </p>
                     </div>
                   </Link>

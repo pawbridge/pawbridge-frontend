@@ -115,7 +115,7 @@ export default function AdoptionList() {
                   <div>
                     <p className="text-base font-medium leading-normal text-[#111816] dark:text-white">{post.title}</p>
                     <p className="text-sm font-normal leading-normal text-[#5f8c80] dark:text-gray-400">
-                      {post.authorNickname || `작성자 ${post.authorId}`} • {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                      {post.authorName || `작성자 ${post.authorId}`} • {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                     </p>
                   </div>
                 </Link>

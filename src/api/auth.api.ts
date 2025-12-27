@@ -5,7 +5,7 @@ import type {
   LoginResponse,
   SignupRequest,
   SignupResponse,
-  ResetPasswordRequestRequest,
+  SendResetCodeRequest,
   ResetPasswordRequest,
   SendVerificationCodeRequest,
   VerifyCodeRequest,
@@ -53,7 +53,7 @@ export const getMyInfo = async (): Promise<User> => {
 };
 
 // 비밀번호 재설정 - 1단계: 인증 코드 발송
-export const sendResetCode = async (data: ResetPasswordRequestRequest): Promise<void> => {
+export const sendResetCode = async (data: SendResetCodeRequest): Promise<void> => {
   await apiClient.post<{
     code: number;
     message: string;

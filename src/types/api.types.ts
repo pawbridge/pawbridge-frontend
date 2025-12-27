@@ -53,14 +53,38 @@ export interface SignupResponse {
   createdAt: string;
 }
 
+// 비밀번호 재설정 코드 발송 요청
+export interface SendResetCodeRequest {
+  email: string;
+}
+
 // 비밀번호 재설정 요청
 export interface ResetPasswordRequest {
   email: string;
+  code: string;
+  newPassword: string;
 }
 
 // 비밀번호 재설정 응답
 export interface ResetPasswordResponse {
   message: string;
+}
+
+// 이메일 인증 코드 발송 요청
+export interface SendVerificationCodeRequest {
+  email: string;
+}
+
+// 이메일 인증 코드 확인 요청
+export interface VerifyCodeRequest {
+  email: string;
+  code: string;
+}
+
+// 이메일 인증 완료 응답
+export interface EmailVerifiedResponse {
+  verified: boolean;
+  message?: string;
 }
 
 // ========== 동물(Animal) 관련 타입 ==========
@@ -76,13 +100,30 @@ export interface Animal {
   weight?: number;              // 체중 (kg)
   description?: string;         // 설명
   imageUrl?: string;            // 이미지 URL
-  status: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE';  // 상태
+  imageUrl2?: string;           // 추가 이미지 URL
+  status: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT' | 'ADOPTION_PENDING' | 'EUTHANIZED' | 'NATURAL_DEATH' | 'RETURNED' | 'DONATED' | 'RELEASED' | 'ESCAPED' | 'UNKNOWN';  // 상태
   shelterId: number;            // 보호소 ID
   shelterName?: string;         // 보호소 이름
+  shelter?: any;                // 보호소 정보 (임시)
   careRegNo?: string;           // 보호소 등록번호
   favoriteCount?: number;        // 찜 횟수
   createdAt?: string;            // 등록일
   updatedAt?: string;            // 수정일
+  // 추가 필드들
+  noticeNo?: string;            // 공고번호
+  apmsNoticeNo?: string;        // APMS 공고번호
+  noticeStartDate?: string;   // 공고 시작일
+  noticeEndDate?: string;       // 공고 종료일
+  color?: string;               // 색상
+  neutered?: boolean;           // 중성화 여부
+  neuterStatus?: string;        // 중성화 상태
+  region?: string;              // 지역
+  city?: string;                // 시/군/구
+  foundPlace?: string;          // 발견 장소
+  happenPlace?: string;         // 발생 장소
+  happenDate?: string;         // 발생 일자
+  birthYear?: number;           // 출생년도
+  specialMark?: string;         // 특이사항
 }
 
 // 동물 검색 파라미터
@@ -90,7 +131,7 @@ export interface AnimalSearchParams {
   keyword?: string;              // 검색어 (이름, 품종, 설명)
   species?: string;             // 종 필터
   gender?: 'MALE' | 'FEMALE' | 'NEUTERED';
-  status?: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE';
+  status?: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT';
   shelterId?: number;           // 보호소 ID
   careRegNo?: string;            // 보호소 등록번호
   minAge?: number;               // 최소 나이
@@ -99,6 +140,12 @@ export interface AnimalSearchParams {
   size?: number;                 // 페이지 크기 (기본 20)
   sortBy?: 'createdAt' | 'name' | 'age';  // 정렬 기준
   sortOrder?: 'asc' | 'desc';    // 정렬 순서
+  // 추가 필터
+  sort?: string;                 // 정렬 (임시)
+  breed?: string;                // 품종
+  neuterStatus?: string;        // 중성화 상태
+  region?: string;               // 지역
+  city?: string;                 // 시/군/구
 }
 
 // 동물 검색 응답
@@ -369,6 +416,59 @@ export interface DirectOrderRequest {
   receiverPhone: string;
   deliveryAddress: string;
   deliveryMessage?: string;
+}
+
+// ========== 커뮤니티(Community) 관련 타입 ==========
+
+// 게시판 타입
+export type BoardType = 'MISSING' | 'COMMUNICATION' | 'ADOPTION' | 'PROTECTION' | 'REPORT';
+
+// 게시글 생성 요청
+export interface CreatePostRequest {
+  title: string;
+  content: string;
+  boardType: BoardType;
+}
+
+// 게시글 수정 요청
+export interface UpdatePostRequest {
+  title: string;
+  content: string;
+}
+
+// 게시글 응답
+export interface PostResponse {
+  id: number;
+  title: string;
+  content: string;
+  boardType: BoardType;
+  authorId: number;
+  authorName: string;
+  imageUrls?: string[];
+  createdAt: string;
+  updatedAt?: string;
+  viewCount?: number;
+  likeCount?: number;
+}
+
+// 댓글 생성 요청
+export interface CreateCommentRequest {
+  content: string;
+}
+
+// 댓글 수정 요청
+export interface UpdateCommentRequest {
+  content: string;
+}
+
+// 댓글 응답
+export interface CommentResponse {
+  id: number;
+  content: string;
+  authorId: number;
+  authorName: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 // ========== 위시리스트(Wishlist) 관련 타입 ==========

@@ -314,6 +314,10 @@ export default function Checkout() {
         deliveryMessage: formData.deliveryMessage || undefined,
         orderItems: cartState.cartItems.map(item => ({
           skuId: item.skuId,
+          skuCode: item.skuCode,
+          productName: item.productName,
+          optionName: item.optionName,
+          price: item.price,
           quantity: item.quantity,
         })),
       });
