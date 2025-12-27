@@ -164,25 +164,6 @@ export default function AdminOrderDetail() {
     return statusMap[status] || statusMap.PENDING;
   };
 
-  // 배송 상태 배지
-  const getDeliveryStatusBadge = (status: DeliveryStatus) => {
-    const statusMap = {
-      READY: {
-        label: '배송 준비중',
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-      },
-      SHIPPING: {
-        label: '배송 중',
-        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      },
-      DELIVERED: {
-        label: '배송 완료',
-        className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      },
-    };
-    return statusMap[status] || statusMap.READY;
-  };
-
   const handleLogout = () => {
     logout();
     navigate('/login');
