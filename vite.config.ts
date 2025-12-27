@@ -31,6 +31,15 @@ export default defineConfig({
         target: 'http://localhost:8085',
         changeOrigin: true,
       },
+      '/api/v1/mypage': {
+        target: 'http://localhost:8085',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/v1\/mypage/, '/api/v1/mypage'),
+      },
+      '/api/wishlists': {
+        target: 'http://localhost:8085',
+        changeOrigin: true,
+      },
       // Payment Service (결제) - 8084
       '/api/payments': {
         target: 'http://localhost:8084',

@@ -60,7 +60,7 @@ export default function AdoptionEdit() {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['post', postId] });
       alert('입양후기가 수정되었습니다.');
-      navigate(`/adoption/${data.postId}`);
+      navigate(`/adoption/${data.postId || data.id}`);
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || '입양후기 수정에 실패했습니다.';
@@ -167,7 +167,7 @@ export default function AdoptionEdit() {
                     기존 이미지 (수정 시 새 파일을 업로드하면 기존 파일은 삭제됩니다)
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    {post.imageUrls.map((url, index) => (
+                    {post.imageUrls.map((url: string, index: number) => (
                       <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
                         <img
                           alt={`기존 이미지 ${index + 1}`}

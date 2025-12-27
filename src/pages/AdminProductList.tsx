@@ -91,7 +91,7 @@ export default function AdminProductList() {
         className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800',
       },
     };
-    return statusMap[status] || statusMap.INACTIVE;
+    return statusMap[status] || statusMap.HIDDEN;
   };
 
   const handleLogout = () => {
@@ -279,7 +279,7 @@ export default function AdminProductList() {
                     </thead>
                     <tbody className="divide-y divide-[#dbe6e3] dark:divide-[#2a3c38]">
                       {data.items.map((item, index) => {
-                        const statusBadge = getStatusBadge(item.status || 'INACTIVE');
+                        const statusBadge = getStatusBadge(item.status || 'HIDDEN');
                         return (
                           <tr key={item.id} className="group hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
                             <td className="py-4 px-6 text-sm text-text-sub dark:text-gray-400 font-medium">{index + 1}</td>

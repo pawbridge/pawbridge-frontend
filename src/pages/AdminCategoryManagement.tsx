@@ -260,7 +260,7 @@ export default function AdminCategoryManagement() {
       createMutation.mutate(formData);
     } else if (selectedCategory) {
       // 순환 참조 체크
-      const validation = canSetParent(selectedCategory.id, formData.parentId, categories);
+      const validation = canSetParent(selectedCategory.id, formData.parentId ?? null, categories);
       if (!validation.valid) {
         alert(validation.reason);
         return;

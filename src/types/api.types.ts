@@ -48,18 +48,26 @@ export interface SignupResponse {
   email: string;
   name: string;
   nickname: string;
+  role: 'ROLE_USER' | 'ROLE_SHELTER';
+  careRegNo?: string;
+  createdAt: string;
 }
 
-// 비밀번호 재설정 - 1단계 요청 (인증 코드 발송)
-export interface ResetPasswordRequestRequest {
+// 비밀번호 재설정 코드 발송 요청
+export interface SendResetCodeRequest {
   email: string;
 }
 
-// 비밀번호 재설정 - 2단계 요청 (인증 및 비밀번호 변경)
+// 비밀번호 재설정 요청
 export interface ResetPasswordRequest {
   email: string;
   code: string;
   newPassword: string;
+}
+
+// 비밀번호 재설정 응답
+export interface ResetPasswordResponse {
+  message: string;
 }
 
 // 이메일 인증 코드 발송 요청
@@ -67,136 +75,103 @@ export interface SendVerificationCodeRequest {
   email: string;
 }
 
-// 이메일 인증 코드 검증 요청
+// 이메일 인증 코드 확인 요청
 export interface VerifyCodeRequest {
   email: string;
-  code: string;  // 6자리 숫자
+  code: string;
 }
 
-// 이메일 인증 코드 검증 응답
+// 이메일 인증 완료 응답
 export interface EmailVerifiedResponse {
   verified: boolean;
+  message?: string;
 }
 
-// 동물 상태 타입
-export type AnimalStatus = 
-  | 'PROTECT'           // 보호중
-  | 'ADOPTION_PENDING'  // 입양대기중 (입양 절차 진행 중)
-  | 'ADOPTED'           // 종료(입양)
-  | 'EUTHANIZED'        // 종료(안락사)
-  | 'NATURAL_DEATH'     // 종료(자연사)
-  | 'RETURNED'          // 종료(반환) - 주인에게 반환
-  | 'DONATED'           // 종료(기증) - 다른 기관에 기증
-  | 'RELEASED'          // 종료(방사) - 야생 방사
-  | 'ESCAPED'           // 탈출
-  | 'UNKNOWN';          // 미상
+// ========== 동물(Animal) 관련 타입 ==========
 
 // 동물 정보
 export interface Animal {
   id: number;
   name: string;
-  species: 'DOG' | 'CAT' | 'ETC' | string;
-  breed: string;
-  age: number;
-  birthYear?: number;          // 출생 연도
-  gender: 'MALE' | 'FEMALE' | 'UNKNOWN';
-  imageUrl: string;
-  imageUrl2?: string;          // 추가 이미지
-  status: AnimalStatus;
-  // APMS 공공데이터 정보
-  noticeNo?: string;           // 공고번호 (프론트 호환용)
-  apmsNoticeNo?: string;       // 공고번호 (백엔드 실제 필드)
-  noticeStartDate?: string;    // 공고 시작일
-  noticeEndDate?: string;      // 공고 종료일
-  region?: string;             // 지역 (시/도)
-  city?: string;               // 시/군/구
-  foundPlace?: string;         // 발견 장소
-  happenPlace?: string;        // 발견 장소 (API 실제 필드)
-  happenDate?: string;         // 접수일
-  shelterName?: string;        // 보호소 이름
-  shelter?: {                  // 보호소 정보 (중첩)
-    id: number;
-    name: string;
-    phone?: string;            // 전화번호 (백엔드 제공 예정)
-    address?: string;          // 주소 (백엔드 제공 예정)
-    operatingHours?: string;   // 운영시간 (백엔드 제공 예정)
-  };
-  weight?: string;             // 체중
-  color?: string;              // 색상
-  neuterStatus?: 'YES' | 'NO' | 'UNKNOWN';  // 중성화 여부
-  neutered?: boolean;          // 중성화 여부 (호환성)
-  description?: string;        // 특징 및 설명
-  specialMark?: string;        // 특이사항
-  favoriteCount?: number;      // 찜 횟수
-  createdAt?: string;          // 등록일
-}
-
-// 페이지네이션 응답 (Spring Data JPA Page 형식)
-export interface PageResponse<T> {
-  content: T[];                // 데이터 목록
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-    sort: {
-      sorted: boolean;
-      unsorted: boolean;
-      empty: boolean;
-    };
-    offset: number;
-    paged: boolean;
-    unpaged: boolean;
-  };
-  totalPages: number;          // 전체 페이지 수
-  totalElements: number;       // 전체 결과 수
-  last: boolean;               // 마지막 페이지 여부
-  first: boolean;              // 첫 페이지 여부
-  numberOfElements: number;    // 현재 페이지의 결과 수
-  size: number;                // 페이지 크기
-  number: number;              // 현재 페이지 번호
-  empty: boolean;              // 결과가 비어있는지 여부
+  species: string;              // 종 (강아지, 고양이 등)
+  breed?: string;               // 품종
+  gender: 'MALE' | 'FEMALE' | 'NEUTERED';  // 성별
+  age?: number;                 // 나이 (개월)
+  weight?: number;              // 체중 (kg)
+  description?: string;         // 설명
+  imageUrl?: string;            // 이미지 URL
+  imageUrl2?: string;           // 추가 이미지 URL
+  status: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT' | 'ADOPTION_PENDING' | 'EUTHANIZED' | 'NATURAL_DEATH' | 'RETURNED' | 'DONATED' | 'RELEASED' | 'ESCAPED' | 'UNKNOWN';  // 상태
+  shelterId: number;            // 보호소 ID
+  shelterName?: string;         // 보호소 이름
+  shelter?: any;                // 보호소 정보 (임시)
+  careRegNo?: string;           // 보호소 등록번호
+  favoriteCount?: number;        // 찜 횟수
+  createdAt?: string;            // 등록일
+  updatedAt?: string;            // 수정일
+  // 추가 필드들
+  noticeNo?: string;            // 공고번호
+  apmsNoticeNo?: string;        // APMS 공고번호
+  noticeStartDate?: string;   // 공고 시작일
+  noticeEndDate?: string;       // 공고 종료일
+  color?: string;               // 색상
+  neutered?: boolean;           // 중성화 여부
+  neuterStatus?: string;        // 중성화 상태
+  region?: string;              // 지역
+  city?: string;                // 시/군/구
+  foundPlace?: string;          // 발견 장소
+  happenPlace?: string;         // 발생 장소
+  happenDate?: string;         // 발생 일자
+  birthYear?: number;           // 출생년도
+  specialMark?: string;         // 특이사항
 }
 
 // 동물 검색 파라미터
 export interface AnimalSearchParams {
-  page?: number;               // 페이지 번호 (0부터 시작)
-  size?: number;               // 페이지 크기 (기본 20)
-  sort?: string;               // 정렬 (예: "createdAt,desc")
-  species?: 'DOG' | 'CAT' | 'ETC';
-  breed?: string;
-  gender?: 'MALE' | 'FEMALE' | 'UNKNOWN';
-  neuterStatus?: 'YES' | 'NO' | 'UNKNOWN';
-  status?: AnimalStatus;  // 동물 상태 (전체 enum 값)
-  minAge?: number;
-  maxAge?: number;
-  region?: string;
-  city?: string;
-  keyword?: string;            // 통합 검색
+  keyword?: string;              // 검색어 (이름, 품종, 설명)
+  species?: string;             // 종 필터
+  gender?: 'MALE' | 'FEMALE' | 'NEUTERED';
+  status?: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT';
+  shelterId?: number;           // 보호소 ID
+  careRegNo?: string;            // 보호소 등록번호
+  minAge?: number;               // 최소 나이
+  maxAge?: number;               // 최대 나이
+  page?: number;                 // 페이지 번호 (기본 0)
+  size?: number;                 // 페이지 크기 (기본 20)
+  sortBy?: 'createdAt' | 'name' | 'age';  // 정렬 기준
+  sortOrder?: 'asc' | 'desc';    // 정렬 순서
+  // 추가 필터
+  sort?: string;                 // 정렬 (임시)
+  breed?: string;                // 품종
+  neuterStatus?: string;        // 중성화 상태
+  region?: string;               // 지역
+  city?: string;                 // 시/군/구
 }
 
-// ========== 상품(Store) 관련 타입 ==========
+// 동물 검색 응답
+export interface AnimalSearchResponse {
+  items: Animal[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  hasNext: boolean;
+}
+
+// ========== 상품(Product) 관련 타입 ==========
 
 // 상품 상태
-export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'SOLD_OUT' | 'HIDDEN' | 'DELETED';
+export type ProductStatus = 'ACTIVE' | 'HIDDEN' | 'SOLD_OUT' | 'DELETED';
 
-// 상품 카테고리
-export interface Category {
-  id: number;
-  name: string;
-  parentId?: number;
-}
-
-// SKU 옵션
-export interface SkuOption {
-  [key: string]: string;       // 예: { "Color": "Red", "Size": "L" }
-}
-
-// SKU (재고 관리 단위)
+// 상품 SKU
 export interface ProductSku {
-  skuId: number;
+  id: number;
+  skuId?: number;              // id와 동일 (호환성을 위해)
   skuCode: string;
   price: number;
   stockQuantity: number;
-  options: SkuOption;
+  optionValueIds: number[];     // 옵션 값 ID 배열
+  optionName?: string;          // 옵션 조합 이름 (예: "Color: Red, Size: L")
+  options?: Record<string, string>; // 옵션 정보 (Map 형태, 예: { "Color": "Red", "Size": "L" })
 }
 
 // 상품 정보 (상세)
@@ -238,6 +213,7 @@ export interface ProductSearchParams {
   sortOrder?: 'asc' | 'desc';  // 정렬 순서 (기본: desc)
   page?: number;               // 페이지 번호 (기본 0)
   size?: number;               // 페이지 크기 (기본 20)
+  status?: ProductStatus;       // 상품 상태 필터
 }
 
 // 상품 검색 응답
@@ -297,41 +273,35 @@ export interface CategoryResponse {
 export interface CreateCategoryRequest {
   name: string;
   description?: string;
-  parentId: number | null;
+  parentId?: number | null;
 }
 
 export interface UpdateCategoryRequest {
   name: string;
   description?: string;
-  parentId: number | null;
+  parentId?: number | null;
 }
 
-// 이미지 업로드 응답
-export interface ImageUploadResponse {
-  imageUrl: string;
-}
-
-// 상품 등록 요청 (새 API 스펙)
-export interface CreateSku {
-  skuCode: string;
-  price: number;
-  stockQuantity: number;
-  optionValueIds: number[];  // 옵션 값 ID 배열
-}
-
+// 상품 생성 요청
 export interface CreateProductRequest {
   name: string;
   description: string;
   imageUrl: string;
-  categoryId: number;  // 카테고리 ID 필수
-  skus: CreateSku[];
+  categoryId: number;
+  skus: {
+    skuCode: string;
+    price: number;
+    stockQuantity: number;
+    optionValueIds: number[];     // 옵션 값 ID 배열
+  }[];
 }
 
-// 상품 수정 요청 (모든 필드 선택사항)
+// 상품 수정 요청
 export interface UpdateSku {
-  id?: number;  // 기존 SKU 수정 시 필수
+  id: number; // SKU ID 필수
   price?: number;
   stockQuantity?: number;
+  // optionValueIds는 수정 불가
 }
 
 export interface UpdateProductRequest {
@@ -343,18 +313,53 @@ export interface UpdateProductRequest {
   skus?: UpdateSku[];
 }
 
-// 장바구니 아이템
-export interface CartItem {
-  skuId: number;
-  productId: number;
-  productName: string;
-  skuCode: string;
-  price: number;
-  quantity: number;
+// 이미지 업로드 응답
+export interface ImageUploadResponse {
   imageUrl: string;
 }
 
-// 장바구니 추가 요청
+// 페이지네이션 응답 (Spring Data JPA Page 형식)
+export interface PageResponse<T> {
+  content: T[];                // 데이터 목록
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  totalPages: number;          // 전체 페이지 수
+  totalElements: number;       // 전체 결과 수
+  last: boolean;               // 마지막 페이지 여부
+  first: boolean;              // 첫 페이지 여부
+  numberOfElements: number;    // 현재 페이지의 결과 수
+  size: number;                // 페이지 크기
+  number: number;              // 현재 페이지 번호
+  empty: boolean;              // 결과가 비어있는지 여부
+}
+
+// ========== 장바구니(Cart) 관련 타입 ==========
+
+// 장바구니 아이템
+export interface CartItem {
+  id: number;
+  skuId: number;
+  skuCode: string;
+  productId: number;
+  productName: string;
+  productImageUrl: string;
+  optionName?: string;         // 예: "Color: Red, Size: L"
+  price: number;
+  quantity: number;
+  stockQuantity: number;       // 현재 재고
+}
+
+// 장바구니에 상품 추가 요청
 export interface AddToCartRequest {
   skuId: number;
   quantity: number;
@@ -362,15 +367,45 @@ export interface AddToCartRequest {
 
 // ========== 주문(Order) 관련 타입 ==========
 
-// 주문 상태
-export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+// 주문 아이템
+export interface OrderItem {
+  skuId: number;
+  skuCode: string;
+  productName: string;
+  optionName?: string;
+  price: number;
+  quantity: number;
+}
 
-// 주문 생성 요청 (장바구니 기반)
+// 주문 생성 요청
 export interface CreateOrderRequest {
   receiverName: string;
   receiverPhone: string;
   deliveryAddress: string;
   deliveryMessage?: string;
+  orderItems: OrderItem[];
+}
+
+// 주문 생성 응답
+export interface CreateOrderResponse {
+  orderId: number;
+  orderNumber: string;
+  totalAmount: number;
+  orderedAt: string;
+}
+
+// 주문 상세 정보
+export interface OrderDetail {
+  orderId: number;
+  orderNumber: string;
+  status: 'PENDING' | 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
+  totalAmount: number;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+  orderedAt?: string;
+  orderItems: OrderItem[];
 }
 
 // 바로 주문 요청 (장바구니 생략)
@@ -386,16 +421,16 @@ export interface DirectOrderRequest {
 // ========== 커뮤니티(Community) 관련 타입 ==========
 
 // 게시판 타입
-export type BoardType = 'MISSING' | 'PROTECTION' | 'REPORT' | 'ADOPTION' | 'COMMUNICATION';
+export type BoardType = 'MISSING' | 'COMMUNICATION' | 'ADOPTION' | 'PROTECTION' | 'REPORT';
 
-// 게시글 생성 요청 (multipart/form-data로 전송)
+// 게시글 생성 요청
 export interface CreatePostRequest {
   title: string;
   content: string;
   boardType: BoardType;
 }
 
-// 게시글 수정 요청 (multipart/form-data로 전송)
+// 게시글 수정 요청
 export interface UpdatePostRequest {
   title: string;
   content: string;
@@ -403,15 +438,18 @@ export interface UpdatePostRequest {
 
 // 게시글 응답
 export interface PostResponse {
-  postId: number;
-  authorId: number;
-  authorNickname: string;
+  id: number;
+  postId?: number;              // id와 동일 (호환성을 위해)
   title: string;
   content: string;
   boardType: BoardType;
-  imageUrls: string[];
+  authorId: number;
+  authorName: string;
+  imageUrls?: string[];
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+  viewCount?: number;
+  likeCount?: number;
 }
 
 // 댓글 생성 요청
@@ -426,53 +464,39 @@ export interface UpdateCommentRequest {
 
 // 댓글 응답
 export interface CommentResponse {
-  commentId: number;
-  postId: number;
-  authorId: number;
-  authorNickname: string;
+  id: number;
+  commentId?: number;           // id와 동일 (호환성을 위해)
   content: string;
+  authorId: number;
+  authorName: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
-// 주문 생성 응답
-export interface CreateOrderResponse {
-  orderId: number;
-  orderUuid: string;
-  totalAmount: number;
-  status: OrderStatus;
-  orderedAt: string;
-  receiverName: string;
-}
+// ========== 위시리스트(Wishlist) 관련 타입 ==========
 
-// 주문 아이템
-export interface OrderItem {
-  productName: string;
-  skuCode: string;
-  price: number;
-  quantity: number;
-}
-
-// 주문 상세
-export interface OrderDetail {
-  orderId: number;
-  orderUuid?: string;
-  status: OrderStatus;
-  totalAmount: number;
-  deliveryAddress: string;
-  receiverName?: string;
-  receiverPhone?: string;
-  deliveryMessage?: string;
-  orderedAt?: string;
-  orderItems: OrderItem[];
-}
-
-// 바로 주문 요청 (장바구니 생략)
-export interface DirectOrderRequest {
+// 위시리스트 아이템
+export interface WishlistItem {
+  wishlistId: number;
   skuId: number;
-  quantity: number;
-  receiverName: string;
-  receiverPhone: string;
-  deliveryAddress: string;
-  deliveryMessage?: string;
+  skuCode: string;
+  productId: number;
+  productName: string;
+  productDescription?: string;
+  productImageUrl: string;
+  productStatus: ProductStatus;
+  price: number;
+  options: Record<string, string>; // Map 형태, 예: { "Color": "Red", "Size": "L" }
+  categoryId?: number;
+  categoryName?: string;
+  createdAt: string;
 }
+
+// 위시리스트 검색 파라미터
+export interface WishlistSearchParams {
+  page?: number;  // 페이지 번호 (기본 0)
+  size?: number;  // 페이지 크기 (기본 20)
+}
+
+// 위시리스트 검색 응답
+export interface WishlistSearchResponse extends PageResponse<WishlistItem> {}

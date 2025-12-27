@@ -187,15 +187,15 @@ export default function CommunityList() {
                 <tbody>
                   {filtered.map((post, idx) => (
                     <tr
-                      key={post.postId}
-                      onClick={() => (window.location.href = `/community/${post.postId}`)}
+                      key={post.postId || post.id}
+                      onClick={() => (window.location.href = `/community/${post.postId || post.id}`)}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                     >
                       <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{filtered.length - idx}</td>
                       <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
                         {post.title}
                       </th>
-                      <td className="px-6 py-4 text-center">{post.authorNickname || `작성자 ${post.authorId}`}</td>
+                      <td className="px-6 py-4 text-center">{post.authorName || `작성자 ${post.authorId}`}</td>
                       <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
                     </tr>
                   ))}
@@ -207,7 +207,7 @@ export default function CommunityList() {
               {filtered.map((post) => {
                 const imageUrl = resolveImage(post.imageUrls);
                 return (
-                  <Link key={post.postId} to={`/community/${post.postId}`} className="flex flex-col gap-3 group">
+                  <Link key={post.postId || post.id} to={`/community/${post.postId || post.id}`} className="flex flex-col gap-3 group">
                     {imageUrl ? (
                       <div
                         className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
@@ -223,7 +223,7 @@ export default function CommunityList() {
                         {post.title}
                       </p>
                       <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
-                        {post.authorNickname || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                        {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                       </p>
                     </div>
                   </Link>

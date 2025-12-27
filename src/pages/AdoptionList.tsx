@@ -94,8 +94,8 @@ export default function AdoptionList() {
               const imageUrl = resolveImage(post.imageUrls);
               return (
                 <Link
-                  key={post.postId}
-                  to={`/adoption/${post.postId}`}
+                  key={post.postId || post.id}
+                  to={`/adoption/${post.postId || post.id}`}
                   className="group flex flex-col gap-3 pb-3 cursor-pointer"
                 >
                   {imageUrl ? (
@@ -115,7 +115,7 @@ export default function AdoptionList() {
                   <div>
                     <p className="text-base font-medium leading-normal text-[#111816] dark:text-white">{post.title}</p>
                     <p className="text-sm font-normal leading-normal text-[#5f8c80] dark:text-gray-400">
-                      {post.authorNickname || `작성자 ${post.authorId}`} • {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                      {post.authorName || `작성자 ${post.authorId}`} • {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                     </p>
                   </div>
                 </Link>

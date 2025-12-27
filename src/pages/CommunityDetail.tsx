@@ -169,7 +169,7 @@ export default function CommunityDetail() {
                   {post.title}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {post.authorNickname || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                  {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                 </p>
               </div>
               {isAuthor && (
@@ -204,7 +204,7 @@ export default function CommunityDetail() {
                 />
                 {post.imageUrls.length > 1 && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {post.imageUrls.slice(1).map((url, idx) => (
+                    {post.imageUrls.slice(1).map((url: string, idx: number) => (
                       <img
                         key={idx}
                         src={url || placeholderImg}
@@ -264,13 +264,13 @@ export default function CommunityDetail() {
               ) : (
                 comments.map((comment) => (
                   <div
-                    key={comment.commentId}
+                    key={comment.commentId || comment.id}
                     className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <span className="font-semibold text-gray-900 dark:text-white">
-                          {comment.authorNickname || `작성자 ${comment.authorId}`}
+                          {comment.authorName || `작성자 ${comment.authorId}`}
                         </span>
                         <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                           {new Date(comment.createdAt).toLocaleDateString('ko-KR')}
@@ -278,7 +278,7 @@ export default function CommunityDetail() {
                       </div>
                       {user?.id === comment.authorId && (
                         <button
-                          onClick={() => handleDeleteComment(comment.commentId)}
+                          onClick={() => handleDeleteComment(comment.commentId || comment.id)}
                           disabled={deleteCommentMutation.isPending}
                           className="text-sm text-red-600 dark:text-red-400 hover:underline disabled:opacity-50"
                         >

@@ -64,8 +64,15 @@ export default function Header() {
           {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
           <div className="flex items-center gap-2 sm:gap-4">
             {user ? (
-              // 로그인된 경우: 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
+              // 로그인된 경우: 찜 아이콘 + 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
+                <Link
+                  to="/wishlist"
+                  className="relative flex h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  title="찜한 상품"
+                >
+                  <span className="material-symbols-outlined text-[20px]">favorite</span>
+                </Link>
                 <span className="hidden sm:block text-primary-content dark:text-gray-300 text-sm font-medium">
                   {user.name}님
                 </span>
@@ -148,6 +155,14 @@ export default function Header() {
               <div className="pt-2 border-t border-primary/20 sm:hidden">
                 {user ? (
                   <>
+                    <Link
+                      to="/wishlist"
+                      className="flex items-center gap-2 mb-2 text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">favorite</span>
+                      <span>찜한 상품</span>
+                    </Link>
                     <div className="text-primary-content dark:text-gray-300 text-sm font-medium mb-2">
                       {user.name}님
                     </div>

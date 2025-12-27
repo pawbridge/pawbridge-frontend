@@ -105,14 +105,14 @@ export default function AnimalCard({ animal, onFavorite }: AnimalCardProps) {
 
         {/* 주요 정보 */}
         <div className="space-y-2 mb-4">
-          <InfoRow icon="🐾" label="품종" value={animal.breed} />
-          <InfoRow icon="🎂" label="나이" value={`${animal.age}살`} />
+          <InfoRow icon="🐾" label="품종" value={animal.breed || '미상'} />
+          <InfoRow icon="🎂" label="나이" value={`${animal.age || 0}살`} />
           <InfoRow
             icon="⚧"
             label="성별"
             value={animal.gender === 'MALE' ? '수컷' : '암컷'}
           />
-          {animal.weight && <InfoRow icon="⚖️" label="체중" value={animal.weight} />}
+          {animal.weight && <InfoRow icon="⚖️" label="체중" value={`${animal.weight}kg`} />}
         </div>
 
         {/* 위치 정보 */}
