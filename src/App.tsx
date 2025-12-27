@@ -19,6 +19,10 @@ import Cart from './pages/Cart.tsx';
 import Checkout from './pages/Checkout.tsx';
 import OrderComplete from './pages/OrderComplete.tsx';
 import Wishlist from './pages/Wishlist.tsx';
+import Orders from './pages/Orders.tsx';
+import OrderDetail from './pages/OrderDetail.tsx';
+import AdminOrderList from './pages/AdminOrderList.tsx';
+import AdminOrderDetail from './pages/AdminOrderDetail.tsx';
 import NotFound from './pages/NotFound.tsx';
 import CommunityList from './pages/CommunityList.tsx';
 import CommunityDetail from './pages/CommunityDetail.tsx';
@@ -140,22 +144,8 @@ function App() {
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
-      <Route
-        path="/products"
-        element={
-          <ProtectedRoute>
-            <Products />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/products/:id"
-        element={
-          <ProtectedRoute>
-            <ProductDetail />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/products" element={<Products />} />
+      <Route path="/products/:id" element={<ProductDetail />} />
       <Route
         path="/products/new"
         element={
@@ -245,6 +235,44 @@ function App() {
         element={
           <ProtectedRoute>
             <Wishlist />
+          </ProtectedRoute>
+        }
+      />
+      {/* 주문 내역 (일반 사용자용) */}
+      <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders/:orderId"
+        element={
+          <ProtectedRoute>
+            <OrderDetail />
+          </ProtectedRoute>
+        }
+      />
+      {/* 주문 관리 (관리자용) */}
+      <Route
+        path="/admin/orders"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminOrderList />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/orders/:orderId"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminOrderDetail />
+            </AdminRoute>
           </ProtectedRoute>
         }
       />

@@ -367,14 +367,114 @@ export interface AddToCartRequest {
 
 // ========== 주문(Order) 관련 타입 ==========
 
+// 주문 상태
+export type OrderStatus = 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCELLED' | 'FAILED';
+
+// 배송 상태
+export type DeliveryStatus = 'READY' | 'SHIPPING' | 'DELIVERED';
+
 // 주문 아이템
 export interface OrderItem {
-  skuId: number;
-  skuCode: string;
   productName: string;
-  optionName?: string;
+  skuCode: string;
   price: number;
   quantity: number;
+  orderItemId?: number; // 주문 생성 응답에만 포함될 수 있음
+}
+
+// 주문 목록 항목 (일반 사용자용)
+export interface OrderListItem {
+  orderId: number;
+  orderUuid: string;
+  totalAmount: number;
+  status: OrderStatus;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+  createdAt: string;
+  items: OrderItem[];
+}
+
+// 주문 목록 항목 (관리자용)
+export interface AdminOrderListItem {
+  orderId: number;
+  orderUuid: string;
+  userId: number;
+  totalAmount: number;
+  status: OrderStatus;
+  deliveryStatus: DeliveryStatus;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+  createdAt: string;
+  items: OrderItem[];
+}
+
+// 주문 상세 정보 (일반 사용자용)
+export interface OrderDetail {
+  orderId: number;
+  orderUuid: string;
+  totalAmount: number;
+  status: OrderStatus;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+  createdAt: string;
+  items: OrderItem[];
+}
+
+// 주문 상세 정보 (관리자용)
+export interface AdminOrderDetail {
+  orderId: number;
+  orderUuid: string;
+  userId: number;
+  totalAmount: number;
+  status: OrderStatus;
+  deliveryStatus: DeliveryStatus;
+  receiverName: string;
+  receiverPhone: string;
+  deliveryAddress: string;
+  deliveryMessage?: string;
+  createdAt: string;
+  items: OrderItem[];
+}
+
+// 주문 목록 조회 파라미터 (일반 사용자용)
+export interface OrderListParams {
+  status?: OrderStatus;
+  page?: number;
+  size?: number;
+}
+
+// 주문 목록 조회 파라미터 (관리자용)
+export interface AdminOrderListParams {
+  status?: OrderStatus;
+  deliveryStatus?: DeliveryStatus;
+  userId?: number;
+  keyword?: string;
+  sortBy?: 'createdAt' | 'totalAmount' | 'status';
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  size?: number;
+}
+
+// 주문 목록 응답 (일반 사용자용)
+export interface OrderListResponse extends PageResponse<OrderListItem> {}
+
+// 주문 목록 응답 (관리자용)
+export interface AdminOrderListResponse extends PageResponse<AdminOrderListItem> {}
+
+// 주문 상태 변경 요청
+export interface UpdateOrderStatusRequest {
+  status: OrderStatus;
+}
+
+// 배송 상태 변경 요청
+export interface UpdateDeliveryStatusRequest {
+  deliveryStatus: DeliveryStatus;
 }
 
 // 주문 생성 요청
@@ -389,23 +489,15 @@ export interface CreateOrderRequest {
 // 주문 생성 응답
 export interface CreateOrderResponse {
   orderId: number;
-  orderNumber: string;
+  orderUuid: string;
   totalAmount: number;
-  orderedAt: string;
-}
-
-// 주문 상세 정보
-export interface OrderDetail {
-  orderId: number;
-  orderNumber: string;
-  status: 'PENDING' | 'PAID' | 'SHIPPING' | 'DELIVERED' | 'CANCELLED';
-  totalAmount: number;
+  status: OrderStatus;
   receiverName: string;
   receiverPhone: string;
   deliveryAddress: string;
   deliveryMessage?: string;
-  orderedAt?: string;
-  orderItems: OrderItem[];
+  createdAt: string;
+  items: OrderItem[];
 }
 
 // 바로 주문 요청 (장바구니 생략)
