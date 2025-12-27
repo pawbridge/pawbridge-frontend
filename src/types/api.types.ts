@@ -10,6 +10,7 @@ export interface User {
   id: number;
   email: string;
   name: string;
+  nickname?: string;           // 닉네임 (선택적)
   role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드 JWT에 포함되는 역할
   careRegNo?: string;          // 보호소 직원일 때만 존재
   createdAt: string;
@@ -524,8 +525,8 @@ export interface CreatePostRequest {
 
 // 게시글 수정 요청
 export interface UpdatePostRequest {
-  title: string;
-  content: string;
+  title?: string;  // 제목 (1-200자, 선택적)
+  content?: string;  // 내용 (1자 이상, 선택적)
 }
 
 // 게시글 응답
@@ -537,6 +538,7 @@ export interface PostResponse {
   boardType: BoardType;
   authorId: number;
   authorName: string;
+  authorNickname?: string;      // 관리자 페이지용
   imageUrls?: string[];
   createdAt: string;
   updatedAt?: string;
@@ -592,3 +594,73 @@ export interface WishlistSearchParams {
 
 // 위시리스트 검색 응답
 export interface WishlistSearchResponse extends PageResponse<WishlistItem> {}
+
+// ========== 회원 관리(Admin User) 관련 타입 ==========
+
+// 관리자용 회원 목록 항목
+export interface AdminUserListItem {
+  userId: number;
+  email: string;
+  name: string;
+  nickname?: string;
+  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';
+  provider?: string;
+  careRegNo?: string;
+  createdAt: string;
+}
+
+// 관리자용 회원 목록 조회 파라미터
+export interface AdminUserListParams {
+  keyword?: string;              // 검색어 (이메일 또는 닉네임)
+  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';  // 역할 필터
+  page?: number;                 // 페이지 번호 (기본 0)
+  size?: number;                 // 페이지 크기 (기본 20)
+  sortBy?: 'createdAt' | 'email' | 'name';  // 정렬 기준
+  sortOrder?: 'asc' | 'desc';    // 정렬 순서
+}
+
+// 관리자용 회원 목록 응답
+export interface AdminUserListResponse extends PageResponse<AdminUserListItem> {}
+
+// 회원 수정 요청 (관리자용)
+export interface UpdateUserRequest {
+  nickname?: string;  // 닉네임 (2~10자)
+  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';  // 역할
+  careRegNo?: string;  // 보호소 등록번호 (ROLE_SHELTER인 경우)
+}
+
+// ========== 관리자 통계 관련 타입 ==========
+
+// 일별 가입자 수 통계
+export interface DailySignupStatsResponse {
+  date: string;  // LocalDate
+  count: number;
+}
+
+// 기간별 가입자 수 통계
+export interface SignupPeriodsResponse {
+  today: DailySignupStatsResponse[];
+  last7Days: DailySignupStatsResponse[];
+  last30Days: DailySignupStatsResponse[];
+  thisMonth: DailySignupStatsResponse[];
+}
+
+// 일별 동물 등록 건수 통계
+export interface DailyAnimalStatsResponse {
+  date: string;  // LocalDate
+  count: number;
+}
+
+// ========== 게시글 관리 관련 타입 ==========
+
+// 관리자용 게시글 목록 조회 파라미터
+export interface AdminPostListParams {
+  boardType?: BoardType;  // 게시판 타입 필터
+  keyword?: string;  // 검색어 (제목 또는 내용)
+  page?: number;  // 페이지 번호 (기본 0)
+  size?: number;  // 페이지 크기 (기본 20)
+  sort?: string;  // 정렬 (예: 'createdAt,desc')
+}
+
+// 관리자용 게시글 목록 응답
+export interface AdminPostListResponse extends PageResponse<PostResponse> {}

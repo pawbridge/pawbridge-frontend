@@ -23,6 +23,11 @@ import Orders from './pages/Orders.tsx';
 import OrderDetail from './pages/OrderDetail.tsx';
 import AdminOrderList from './pages/AdminOrderList.tsx';
 import AdminOrderDetail from './pages/AdminOrderDetail.tsx';
+import AdminUserManagement from './pages/AdminUserManagement.tsx';
+import AdminUserDetail from './pages/AdminUserDetail.tsx';
+import AdminPostManagement from './pages/AdminPostManagement.tsx';
+import AdminPostDetail from './pages/AdminPostDetail.tsx';
+import AdminStatistics from './pages/AdminStatistics.tsx';
 import NotFound from './pages/NotFound.tsx';
 import CommunityList from './pages/CommunityList.tsx';
 import CommunityDetail from './pages/CommunityDetail.tsx';
@@ -202,6 +207,56 @@ function App() {
           <ProtectedRoute>
             <AdminRoute>
               <AdminOptionGroupManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminUserManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users/:userId"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminUserDetail />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/posts"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminPostManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/posts/:postId"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminPostDetail />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/statistics"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminStatistics />
             </AdminRoute>
           </ProtectedRoute>
         }

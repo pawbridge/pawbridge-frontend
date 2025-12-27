@@ -1,6 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
+import AdminSidebar from '../components/layout/AdminSidebar';
+import { getTotalUserCount, getDailySignupStats, getDailyAnimalStats, getTodayPostCount } from '../api/stats.api';
 
 interface StatCardProps {
   title: string;
@@ -144,137 +145,49 @@ const mockActivities: RecentActivity[] = [
 ];
 
 export default function AdminDashboard() {
-  const navigate = useNavigate();
-  const { logout, user } = useAuthStore();
-  const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
-  const [isOptionMenuOpen, setIsOptionMenuOpen] = useState(false);
+  const { user } = useAuthStore();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  // 오늘 날짜 (YYYY-MM-DD 형식, 로컬 시간 기준)
+  const today = (() => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  })();
+
+  // 전체 회원 수
+  const { data: totalUsers } = useQuery({
+    queryKey: ['admin-stats', 'total-users'],
+    queryFn: getTotalUserCount,
+  });
+
+  // 오늘 가입자 수
+  const { data: todaySignupsData } = useQuery({
+    queryKey: ['admin-stats', 'daily-signups', today],
+    queryFn: () => getDailySignupStats(today, today),
+  });
+
+  // 오늘 등록된 동물 수
+  const { data: todayAnimals } = useQuery({
+    queryKey: ['admin-stats', 'daily-animals', today],
+    queryFn: () => getDailyAnimalStats(today, today),
+  });
+
+  // 오늘 작성된 게시글 수
+  const { data: todayPosts } = useQuery({
+    queryKey: ['admin-stats', 'today-posts'],
+    queryFn: getTodayPostCount,
+  });
+
+  // 통계 값 계산
+  const todaySignups = todaySignupsData?.[0]?.count ?? 0;
+  const todayAnimalCount = todayAnimals?.[0]?.count ?? 0;
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
       {/* 사이드바 */}
-      <aside className="w-64 h-full flex flex-col bg-surface-light dark:bg-surface-dark border-r border-[#e5e7eb] dark:border-gray-700 flex-shrink-0 z-20">
-        <div className="p-6 flex items-center gap-3">
-          <div className="size-10 rounded-full bg-primary flex items-center justify-center text-text-main">
-            <span className="material-symbols-outlined text-[24px]">pets</span>
-          </div>
-          <div className="flex flex-col">
-            <h1 className="text-text-main dark:text-white text-lg font-bold leading-tight">PawBridge</h1>
-            <p className="text-text-secondary text-xs font-medium">관리자 콘솔</p>
-          </div>
-        </div>
-        <nav className="flex-1 px-4 flex flex-col gap-1 overflow-y-auto">
-          <Link
-            to="/admin/dashboard"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/20 text-text-main dark:text-white group transition-colors"
-          >
-            <span className="material-symbols-outlined text-text-main dark:text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
-              dashboard
-            </span>
-            <span className="text-sm font-semibold">대시보드</span>
-          </Link>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary transition-colors group">
-            <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
-              bar_chart
-            </span>
-            <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">통계</span>
-          </button>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary transition-colors group">
-            <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
-              group
-            </span>
-            <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">회원 관리</span>
-          </button>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary transition-colors group">
-            <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
-              description
-            </span>
-            <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">게시글 관리</span>
-          </button>
-          <Link
-            to="/admin/categories"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary transition-colors group"
-          >
-            <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
-              category
-            </span>
-            <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">카테고리 관리</span>
-          </Link>
-          <div className="mt-2">
-            <button
-              onClick={() => setIsProductMenuOpen(!isProductMenuOpen)}
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary cursor-pointer transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
-                  inventory_2
-                </span>
-                <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">상품 관리</span>
-              </div>
-              <span className={`material-symbols-outlined text-sm transition-transform ${isProductMenuOpen ? 'rotate-180' : ''}`}>
-                expand_more
-              </span>
-            </button>
-            {isProductMenuOpen && (
-              <div className="flex flex-col mt-1 gap-1">
-                <Link
-                  to="/admin/products"
-                  className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
-                  onClick={() => setIsProductMenuOpen(false)}
-                >
-                  상품 목록
-                </Link>
-                <Link
-                  to="/products/new"
-                  className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
-                  onClick={() => setIsProductMenuOpen(false)}
-                >
-                  상품 등록
-                </Link>
-              </div>
-            )}
-          </div>
-          <div className="mt-2 mb-4">
-            <button
-              onClick={() => setIsOptionMenuOpen(!isOptionMenuOpen)}
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary cursor-pointer transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
-                  tune
-                </span>
-                <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">옵션 관리</span>
-              </div>
-              <span className={`material-symbols-outlined text-sm transition-transform ${isOptionMenuOpen ? 'rotate-180' : ''}`}>
-                expand_more
-              </span>
-            </button>
-            {isOptionMenuOpen && (
-              <div className="flex flex-col mt-1 gap-1">
-                <Link
-                  to="/admin/option-groups"
-                  className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
-                >
-                  옵션 그룹 관리
-                </Link>
-              </div>
-            )}
-          </div>
-        </nav>
-        <div className="p-4 border-t border-[#e5e7eb] dark:border-gray-700">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary hover:bg-primary-dark transition-colors text-text-main font-bold text-sm tracking-wide shadow-sm"
-          >
-            <span className="material-symbols-outlined text-[18px]">logout</span>
-            로그아웃
-          </button>
-        </div>
-      </aside>
+      <AdminSidebar />
 
       {/* 메인 콘텐츠 */}
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
@@ -321,32 +234,29 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
               <StatCard
                 title="전체 회원 수"
-                value="1,234명"
+                value={totalUsers !== undefined ? `${totalUsers.toLocaleString()}명` : '...'}
                 icon="group"
-                trend={{ value: '+5%', label: '지난달 대비' }}
               />
               <StatCard
                 title="오늘 가입자 수"
-                value="25명"
+                value={`${todaySignups.toLocaleString()}명`}
                 icon="person_add"
                 iconBgColor="bg-blue-100 dark:bg-blue-900/30"
                 iconColor="text-blue-600 dark:text-blue-400"
-                trend={{ value: '+12%', label: '어제 대비' }}
               />
               <StatCard
                 title="오늘 등록된 동물 수"
-                value="10마리"
+                value={`${todayAnimalCount.toLocaleString()}마리`}
                 icon="pets"
                 iconBgColor="bg-orange-100 dark:bg-orange-900/30"
                 iconColor="text-orange-600 dark:text-orange-400"
               />
               <StatCard
                 title="오늘 작성된 게시글 수"
-                value="50개"
+                value={todayPosts !== undefined ? `${todayPosts.toLocaleString()}개` : '...'}
                 icon="post_add"
                 iconBgColor="bg-purple-100 dark:bg-purple-900/30"
                 iconColor="text-purple-600 dark:text-purple-400"
-                trend={{ value: '+8%', label: '참여도 상승' }}
               />
             </div>
 

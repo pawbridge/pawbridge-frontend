@@ -52,8 +52,8 @@ export const updatePost = async (
   files?: File[]
 ): Promise<PostResponse> => {
   const formData = new FormData();
-  formData.append('title', data.title);
-  formData.append('content', data.content);
+  if (data.title) formData.append('title', data.title);
+  if (data.content) formData.append('content', data.content);
 
   if (files && files.length > 0) {
     files.forEach((file) => {
