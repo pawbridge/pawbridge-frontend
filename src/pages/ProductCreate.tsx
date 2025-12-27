@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createProduct, getOptionGroups, getCategories, uploadImage } from '../api/products.api';
-import type { OptionGroupResponse, CreateSku, CategoryResponse } from '../types/api.types';
+import type { OptionGroupResponse, CategoryResponse } from '../types/api.types';
+
+// SKU 생성용 타입
+interface CreateSku {
+  skuCode: string;
+  price: number;
+  stockQuantity: number;
+  optionValueIds: number[];
+}
 import { useAuthStore } from '../store/authStore';
 import CustomSelect from '../components/common/CustomSelect';
 
@@ -146,7 +154,7 @@ export default function ProductCreate() {
         // 기존 SKU가 같은 optionValueIds를 가지고 있으면 유지
         const existing = prevSkus.find(sku => 
           sku.optionValueIds.length === optionValueIds.length &&
-          sku.optionValueIds.every(id => optionValueIds.includes(id))
+          sku.optionValueIds.every((id: number) => optionValueIds.includes(id))
         );
         
         return existing || {

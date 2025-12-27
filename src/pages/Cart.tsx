@@ -171,9 +171,9 @@ export default function Cart() {
                       <div className="md:col-span-2 flex items-center gap-4">
                         <div
                           className="w-20 h-20 rounded-md bg-cover bg-center flex-shrink-0 bg-gray-100"
-                          style={{ backgroundImage: item.imageUrl ? `url('${item.imageUrl}')` : undefined }}
+                          style={{ backgroundImage: item.productImageUrl ? `url('${item.productImageUrl}')` : undefined }}
                         >
-                          {!item.imageUrl && (
+                          {!item.productImageUrl && (
                             <div className="w-full h-full flex items-center justify-center">
                               <span className="material-symbols-outlined text-2xl text-gray-400">image</span>
                             </div>

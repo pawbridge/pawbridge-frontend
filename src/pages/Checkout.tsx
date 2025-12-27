@@ -129,7 +129,7 @@ export default function Checkout() {
   const createOrderMutation = useMutation({
     mutationFn: (orderData: CreateOrderRequest) => createOrder(orderData),
     onSuccess: (data) => {
-      requestTossPayment(data.orderId, data.orderUuid, data.totalAmount);
+      requestTossPayment(data.orderId, data.orderNumber, data.totalAmount);
     },
     onError: (error) => {
       console.error('Order creation failed:', error);
@@ -141,7 +141,7 @@ export default function Checkout() {
   const createDirectOrderMutation = useMutation({
     mutationFn: (orderData: DirectOrderRequest) => createDirectOrder(orderData),
     onSuccess: (data) => {
-      requestTossPayment(data.orderId, data.orderUuid, data.totalAmount);
+      requestTossPayment(data.orderId, data.orderNumber, data.totalAmount);
     },
     onError: (error) => {
       console.error('Direct order creation failed:', error);
@@ -150,7 +150,7 @@ export default function Checkout() {
   });
 
   // 토스페이먼츠 결제 요청
-  const requestTossPayment = async (orderId: number, orderUuid: string, amount: number) => {
+  const requestTossPayment = async (orderId: number, orderNumber: string, amount: number) => {
     const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
     
     // 디버깅: 환경 변수 확인
@@ -180,7 +180,7 @@ export default function Checkout() {
 
       await tossPayments.requestPayment('카드', {
         amount,
-        orderId: orderUuid,
+        orderId: orderNumber,
         orderName,
         customerName: formData.receiverName,
         successUrl: `${window.location.origin}/order-complete?internalOrderId=${orderId}`,
@@ -306,11 +306,16 @@ export default function Checkout() {
       });
     } else {
       // 장바구니 구매
+      const cartState = state as CartCheckoutState;
       createOrderMutation.mutate({
         receiverName: formData.receiverName,
         receiverPhone: formData.receiverPhone.replace(/-/g, ''),
         deliveryAddress: fullAddress,
         deliveryMessage: formData.deliveryMessage || undefined,
+        orderItems: cartState.cartItems.map(item => ({
+          skuId: item.skuId,
+          quantity: item.quantity,
+        })),
       });
     }
   };
@@ -413,9 +418,9 @@ export default function Checkout() {
                         <div className="flex items-center gap-4">
                           <div
                             className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100"
-                            style={{ backgroundImage: item.imageUrl ? `url('${item.imageUrl}')` : undefined }}
+                            style={{ backgroundImage: item.productImageUrl ? `url('${item.productImageUrl}')` : undefined }}
                           >
-                            {!item.imageUrl && (
+                            {!item.productImageUrl && (
                               <div className="w-full h-full flex items-center justify-center">
                                 <span className="material-symbols-outlined text-xl text-gray-400">image</span>
                               </div>

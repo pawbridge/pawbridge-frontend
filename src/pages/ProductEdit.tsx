@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getProductById, updateProduct, deleteProduct, getCategories, uploadImage } from '../api/products.api';
-import type { Product, UpdateProductRequest, UpdateSku, CategoryResponse } from '../types/api.types';
+import type { Product, UpdateProductRequest, UpdateSku, CategoryResponse, ProductStatus } from '../types/api.types';
 import CustomSelect from '../components/common/CustomSelect';
 
 export default function ProductEdit() {
@@ -26,7 +26,7 @@ export default function ProductEdit() {
   // 폼 상태
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState<'ACTIVE' | 'INACTIVE' | 'SOLD_OUT'>('ACTIVE');
+  const [status, setStatus] = useState<ProductStatus>('ACTIVE');
   const [categoryId, setCategoryId] = useState<number | ''>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -37,19 +37,19 @@ export default function ProductEdit() {
     if (product) {
       setName(product.name);
       setDescription(product.description);
-      setStatus(product.status as 'ACTIVE' | 'INACTIVE' | 'SOLD_OUT');
+      setStatus(product.status);
       setCategoryId(product.categoryId || '');
       setImagePreview(product.imageUrl);
       
       // SKU 정보 설정
       if (product.skus) {
         setSkus(product.skus.map(sku => ({
-          id: sku.skuId,
-          skuId: sku.skuId,
+          id: sku.id,
+          skuId: sku.id,
           skuCode: sku.skuCode,
           price: sku.price,
           stockQuantity: sku.stockQuantity,
-          options: sku.options,
+          options: sku.options || {},
         })));
       }
     }
@@ -338,19 +338,19 @@ export default function ProductEdit() {
                           <span className="text-sm font-medium">활성</span>
                         </label>
                         <label className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 cursor-pointer transition-colors ${
-                          status === 'INACTIVE' 
+                          status === 'HIDDEN' 
                             ? 'border-primary bg-primary/5 text-primary-dark' 
                             : 'border-[#e0e8e5] dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
                         }`}>
                           <input
                             type="radio"
                             name="product_status"
-                            value="INACTIVE"
-                            checked={status === 'INACTIVE'}
-                            onChange={() => setStatus('INACTIVE')}
+                            value="HIDDEN"
+                            checked={status === 'HIDDEN'}
+                            onChange={() => setStatus('HIDDEN')}
                             className="form-radio text-primary focus:ring-primary"
                           />
-                          <span className="text-sm font-medium">비활성</span>
+                          <span className="text-sm font-medium">숨김</span>
                         </label>
                         <label className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 cursor-pointer transition-colors ${
                           status === 'SOLD_OUT' 

@@ -28,13 +28,13 @@ export default function ProductDetail() {
     if (product?.skus && product.skus.length > 0 && !selectedSku) {
       const firstSku = product.skus[0];
       setSelectedSku(firstSku);
-      setSelectedOptions(firstSku.options);
+      setSelectedOptions(firstSku.options || {});
       setMainImage(product.imageUrl);
     }
   }, [product]);
 
   const addToCartMutation = useMutation({
-    mutationFn: () => addToCart({ skuId: selectedSku!.skuId, quantity }),
+    mutationFn: () => addToCart({ skuId: selectedSku!.id, quantity }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       const goToCart = window.confirm('장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?');
@@ -53,6 +53,7 @@ export default function ProductDetail() {
     
     const groups: Record<string, Set<string>> = {};
     product.skus.forEach(sku => {
+      if (!sku.options) return;
       Object.entries(sku.options).forEach(([key, value]) => {
         if (!groups[key]) groups[key] = new Set();
         groups[key].add(value);
@@ -71,7 +72,7 @@ export default function ProductDetail() {
     
     // 해당 옵션 조합에 맞는 SKU 찾기
     const matchingSku = product?.skus?.find(sku => 
-      Object.entries(newOptions).every(([key, val]) => sku.options[key] === val)
+      sku.options && Object.entries(newOptions).every(([key, val]) => sku.options![key] === val)
     );
     
     if (matchingSku) {
@@ -114,7 +115,7 @@ export default function ProductDetail() {
     navigate('/checkout', {
       state: {
         directOrder: {
-          skuId: selectedSku.skuId,
+          skuId: selectedSku.id,
           quantity,
           product: {
             productId: product?.productId,
@@ -244,7 +245,7 @@ export default function ProductDetail() {
                       {values.map((value) => {
                         // 해당 옵션의 재고 확인
                         const skuWithOption = product.skus?.find(
-                          sku => sku.options[optionName] === value
+                          sku => sku.options && sku.options[optionName] === value
                         );
                         const isOutOfStock = skuWithOption?.stockQuantity === 0;
                         const isSelected = selectedOptions[optionName] === value;

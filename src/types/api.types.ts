@@ -118,11 +118,13 @@ export type ProductStatus = 'ACTIVE' | 'HIDDEN' | 'SOLD_OUT' | 'DELETED';
 // 상품 SKU
 export interface ProductSku {
   id: number;
+  skuId?: number;              // id와 동일 (호환성을 위해)
   skuCode: string;
   price: number;
   stockQuantity: number;
   optionValueIds: number[];     // 옵션 값 ID 배열
   optionName?: string;          // 옵션 조합 이름 (예: "Color: Red, Size: L")
+  options?: Record<string, string>; // 옵션 정보 (Map 형태, 예: { "Color": "Red", "Size": "L" })
 }
 
 // 상품 정보 (상세)
@@ -239,10 +241,11 @@ export interface CreateProductRequest {
   description: string;
   imageUrl: string;
   categoryId: number;
-  optionValueIds: number[];     // 선택한 옵션 값 ID 배열
   skus: {
+    skuCode: string;
     price: number;
     stockQuantity: number;
+    optionValueIds: number[];     // 옵션 값 ID 배열
   }[];
 }
 
