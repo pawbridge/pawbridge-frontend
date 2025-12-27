@@ -439,6 +439,7 @@ export interface UpdatePostRequest {
 // 게시글 응답
 export interface PostResponse {
   id: number;
+  postId?: number;              // id와 동일 (호환성을 위해)
   title: string;
   content: string;
   boardType: BoardType;
@@ -464,6 +465,7 @@ export interface UpdateCommentRequest {
 // 댓글 응답
 export interface CommentResponse {
   id: number;
+  commentId?: number;           // id와 동일 (호환성을 위해)
   content: string;
   authorId: number;
   authorName: string;

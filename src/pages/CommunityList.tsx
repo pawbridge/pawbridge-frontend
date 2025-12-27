@@ -187,8 +187,8 @@ export default function CommunityList() {
                 <tbody>
                   {filtered.map((post, idx) => (
                     <tr
-                      key={post.postId}
-                      onClick={() => (window.location.href = `/community/${post.postId}`)}
+                      key={post.postId || post.id}
+                      onClick={() => (window.location.href = `/community/${post.postId || post.id}`)}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                     >
                       <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{filtered.length - idx}</td>
@@ -207,7 +207,7 @@ export default function CommunityList() {
               {filtered.map((post) => {
                 const imageUrl = resolveImage(post.imageUrls);
                 return (
-                  <Link key={post.postId} to={`/community/${post.postId}`} className="flex flex-col gap-3 group">
+                  <Link key={post.postId || post.id} to={`/community/${post.postId || post.id}`} className="flex flex-col gap-3 group">
                     {imageUrl ? (
                       <div
                         className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"

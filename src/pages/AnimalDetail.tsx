@@ -218,7 +218,7 @@ export default function AnimalDetail() {
                 {animal.weight && (
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-secondary dark:text-gray-400">scale</span>
-                    <span className="text-text-light dark:text-text-dark">체중: {animal.weight.replace('(Kg)', 'kg')}</span>
+                    <span className="text-text-light dark:text-text-dark">체중: {animal.weight}kg</span>
                   </div>
                 )}
                 {animal.color && (

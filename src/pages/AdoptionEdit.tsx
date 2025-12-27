@@ -60,7 +60,7 @@ export default function AdoptionEdit() {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['post', postId] });
       alert('입양후기가 수정되었습니다.');
-      navigate(`/adoption/${data.postId}`);
+      navigate(`/adoption/${data.postId || data.id}`);
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || '입양후기 수정에 실패했습니다.';

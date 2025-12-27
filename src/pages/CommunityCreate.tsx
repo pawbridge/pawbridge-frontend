@@ -31,7 +31,7 @@ export default function CommunityCreate() {
       // 게시글 목록 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       alert('게시글이 작성되었습니다.');
-      navigate(`/community/${data.postId}`);
+      navigate(`/community/${data.postId || data.id}`);
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || '게시글 작성에 실패했습니다.';

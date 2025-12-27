@@ -94,8 +94,8 @@ export default function AdoptionList() {
               const imageUrl = resolveImage(post.imageUrls);
               return (
                 <Link
-                  key={post.postId}
-                  to={`/adoption/${post.postId}`}
+                  key={post.postId || post.id}
+                  to={`/adoption/${post.postId || post.id}`}
                   className="group flex flex-col gap-3 pb-3 cursor-pointer"
                 >
                   {imageUrl ? (

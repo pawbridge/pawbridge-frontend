@@ -256,7 +256,7 @@ export default function AdoptionDetail() {
               ) : (
                 comments.map((comment) => (
                   <div
-                    key={comment.commentId}
+                    key={comment.commentId || comment.id}
                     className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                   >
                     <div className="flex justify-between items-start mb-2">
@@ -270,7 +270,7 @@ export default function AdoptionDetail() {
                       </div>
                       {user?.id === comment.authorId && (
                         <button
-                          onClick={() => handleDeleteComment(comment.commentId)}
+                          onClick={() => handleDeleteComment(comment.commentId || comment.id)}
                           disabled={deleteCommentMutation.isPending}
                           className="text-sm text-red-600 dark:text-red-400 hover:underline disabled:opacity-50"
                         >

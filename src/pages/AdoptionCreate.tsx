@@ -25,7 +25,7 @@ export default function AdoptionCreate() {
       // 게시글 목록 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       alert('입양후기가 작성되었습니다.');
-      navigate(`/adoption/${data.postId}`);
+      navigate(`/adoption/${data.postId || data.id}`);
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || '입양후기 작성에 실패했습니다.';
