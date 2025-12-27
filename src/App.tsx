@@ -18,6 +18,7 @@ import AdminOptionGroupManagement from './pages/AdminOptionGroupManagement.tsx';
 import Cart from './pages/Cart.tsx';
 import Checkout from './pages/Checkout.tsx';
 import OrderComplete from './pages/OrderComplete.tsx';
+import Wishlist from './pages/Wishlist.tsx';
 import NotFound from './pages/NotFound.tsx';
 import CommunityList from './pages/CommunityList.tsx';
 import CommunityDetail from './pages/CommunityDetail.tsx';
@@ -236,6 +237,14 @@ function App() {
         element={
           <ProtectedRoute>
             <OrderComplete />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/wishlist"
+        element={
+          <ProtectedRoute>
+            <Wishlist />
           </ProtectedRoute>
         }
       />
