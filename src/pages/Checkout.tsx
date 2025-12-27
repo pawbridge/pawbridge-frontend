@@ -129,7 +129,7 @@ export default function Checkout() {
   const createOrderMutation = useMutation({
     mutationFn: (orderData: CreateOrderRequest) => createOrder(orderData),
     onSuccess: (data) => {
-      requestTossPayment(data.orderId, data.orderNumber, data.totalAmount);
+      requestTossPayment(data.orderId, data.orderUuid, data.totalAmount);
     },
     onError: (error) => {
       console.error('Order creation failed:', error);
@@ -141,7 +141,7 @@ export default function Checkout() {
   const createDirectOrderMutation = useMutation({
     mutationFn: (orderData: DirectOrderRequest) => createDirectOrder(orderData),
     onSuccess: (data) => {
-      requestTossPayment(data.orderId, data.orderNumber, data.totalAmount);
+      requestTossPayment(data.orderId, data.orderUuid, data.totalAmount);
     },
     onError: (error) => {
       console.error('Direct order creation failed:', error);

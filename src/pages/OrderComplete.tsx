@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getOrderById, confirmPayment } from '../api/products.api';
+import type { OrderItem } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
@@ -303,7 +304,7 @@ export default function OrderComplete() {
                 <div className="col-span-2 grid grid-cols-subgrid border-t border-gray-200 dark:border-gray-700 py-4">
                   <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">주문번호</p>
                   <p className="text-text-light dark:text-text-dark text-sm font-normal leading-normal">
-                    {order.orderNumber || `ORDER-${order.orderId}`}
+                    {order.orderUuid || `ORDER-${order.orderId}`}
                   </p>
                 </div>
                 <div className="col-span-2 grid grid-cols-subgrid border-t border-gray-200 dark:border-gray-700 py-4">
@@ -334,7 +335,7 @@ export default function OrderComplete() {
               <h3 className="text-lg font-bold text-text-light dark:text-text-dark mb-4">주문 상품 목록</h3>
               <div className="flow-root">
                 <ul className="-my-6 divide-y divide-gray-200 dark:divide-gray-700" role="list">
-                  {order.orderItems?.map((item, index) => (
+                  {order.items?.map((item: OrderItem, index: number) => (
                     <li key={index} className="flex py-6">
                       <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
                         <span className="material-symbols-outlined text-3xl text-gray-400">inventory_2</span>

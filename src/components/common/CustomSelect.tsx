@@ -76,18 +76,19 @@ export default function CustomSelect({
         disabled={disabled}
         className={`
           w-full appearance-none rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] 
-          bg-white dark:bg-[#0f231e] px-4 py-3 pr-10 text-left
+          bg-white dark:bg-[#0f231e] px-4 py-3 pr-10 text-left relative
           text-[#111816] dark:text-white 
           focus:border-primary focus:ring-1 focus:ring-primary 
           outline-none transition-all
           disabled:opacity-50 disabled:cursor-not-allowed
           ${isOpen ? 'border-primary ring-1 ring-primary' : ''}
         `}
+        style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
       >
         <span className={selectedOption ? '' : 'text-[#5f8c80]'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#5f8c80] pointer-events-none transition-transform">
+        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#5f8c80] dark:text-gray-400 pointer-events-none transition-transform z-10">
           {isOpen ? 'expand_less' : 'expand_more'}
         </span>
       </button>
