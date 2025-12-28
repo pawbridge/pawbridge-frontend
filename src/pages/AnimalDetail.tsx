@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getAnimalById } from '../api/animals.api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getAnimalById, checkFavorite, addFavorite, removeFavorite } from '../api/animals.api';
+import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { useState } from 'react';
@@ -8,6 +9,8 @@ import { useState } from 'react';
 export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
   const { data: animal, isLoading, error } = useQuery({
@@ -15,6 +18,54 @@ export default function AnimalDetail() {
     queryFn: () => getAnimalById(Number(id)),
     enabled: !!id,
   });
+
+  // 찜 여부 확인
+  const { data: isFavorited } = useQuery({
+    queryKey: ['favorite', id],
+    queryFn: () => checkFavorite(Number(id)),
+    enabled: !!id && !!user,
+  });
+
+  // 찜 추가 mutation
+  const addFavoriteMutation = useMutation({
+    mutationFn: () => addFavorite(Number(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorite', id] });
+      queryClient.invalidateQueries({ queryKey: ['animal', id] });
+      queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || '찜 추가에 실패했습니다.');
+    },
+  });
+
+  // 찜 제거 mutation
+  const removeFavoriteMutation = useMutation({
+    mutationFn: () => removeFavorite(Number(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['favorite', id] });
+      queryClient.invalidateQueries({ queryKey: ['animal', id] });
+      queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || '찜 제거에 실패했습니다.');
+    },
+  });
+
+  // 찜 토글 핸들러
+  const handleFavoriteToggle = () => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    if (isFavorited) {
+      removeFavoriteMutation.mutate();
+    } else {
+      addFavoriteMutation.mutate();
+    }
+  };
 
   // 로딩 상태
   if (isLoading) {
@@ -167,13 +218,32 @@ export default function AnimalDetail() {
             {/* Basic Info Card */}
             <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
               <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
-                <div>
-                  <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light dark:text-text-dark">
-                    [{speciesLabel}] {animal.breed}
-                  </p>
-                  <p className="text-sm text-secondary dark:text-gray-400 mt-1">
-                    공고번호: {animal.apmsNoticeNo || animal.noticeNo || 'N/A'}
-                  </p>
+                <div className="flex-1">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1">
+                      <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light dark:text-text-dark">
+                        [{speciesLabel}] {animal.breed}
+                      </p>
+                      <p className="text-sm text-secondary dark:text-gray-400 mt-1">
+                        공고번호: {animal.apmsNoticeNo || animal.noticeNo || 'N/A'}
+                      </p>
+                    </div>
+                    {/* 찜 버튼 */}
+                    <button
+                      onClick={handleFavoriteToggle}
+                      disabled={addFavoriteMutation.isPending || removeFavoriteMutation.isPending}
+                      className={`flex items-center justify-center w-12 h-12 rounded-full transition-all ${
+                        isFavorited
+                          ? 'bg-red-500 hover:bg-red-600 text-white'
+                          : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      title={isFavorited ? '찜 해제' : '찜하기'}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}>
+                        favorite
+                      </span>
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/30 px-4">

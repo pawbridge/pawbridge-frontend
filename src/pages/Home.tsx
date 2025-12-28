@@ -70,7 +70,7 @@ export default function Home() {
                 title="입양 후기"
                 description="행복한 가족들의 이야기"
                 imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuCZnmMwj1sQujLNMU2G9XTgHtwKL24XL0yOL1elKhCSDohRG5Aeey-Sthw9ItD9V6ShHn57PJkOLNM0w6ka2ctc9DtNvBVi5z_NMejd2zxTXQ_P4mpzljjD_2_y0nMBQkR95DaK8yGcdW99YdZip_xgecv6zzfodFtHTQGqBwQSneO32hCic39HHnbQEeu7Jn7V0q5pSQihfPzI7jAGmiuJ1eSh7NdVG8raGk38b6ZVxPHjXAe_JH_Uk2rTBmAWwejIgzq8t2KjYPk"
-                linkTo="/reviews"
+                linkTo="/adoption"
               />
               <QuickNavCard
                 title="커뮤니티"
@@ -82,7 +82,7 @@ export default function Home() {
                 title="상점"
                 description="반려동물을 위한 상품"
                 imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuBdBJ6x-ervqeL_a8y7L6tn1vBA4JV7fJsMi6eCQrQ-iA3rlKTiDf9AGlKdxSSWuq9-a2nsr2sB7UKiPnPpyj--ShW2aJ7x7ocg4gXNKxXLsnqdVhUNNHQvP6YAreAp8d-VwagvNVDZZDyBxLd1lGsWE8Dhk7CPkke0PZ2A_ZOWmbKhwhqj1WdtatVBJy9HLVot03wDa3Oq_cwtEXOpISRog4YjV6jnhTWiFLfSr9fRTGfZ4wUJH3mfWQ7i21QN-U7i6jxB_6FhSY8"
-                linkTo="/shop"
+                linkTo="/products"
               />
             </div>
           </section>
@@ -141,7 +141,7 @@ export default function Home() {
               <h2 className="text-primary-content dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">
                 행복한 입양 후기
               </h2>
-              <Link to="/reviews" className="text-primary text-sm font-bold hover:underline">
+              <Link to="/adoption" className="text-primary text-sm font-bold hover:underline">
                 더보기
               </Link>
             </div>

@@ -664,3 +664,52 @@ export interface AdminPostListParams {
 
 // 관리자용 게시글 목록 응답
 export interface AdminPostListResponse extends PageResponse<PostResponse> {}
+
+// ========== 마이페이지 관련 타입 ==========
+
+// 사용자 정보 응답
+export interface UserInfoResponse {
+  userId: number;
+  email: string;
+  name: string;
+  nickname: string | null;
+  provider: string | null;  // 'EMAIL' | 'GOOGLE' | 'KAKAO' | null
+  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';
+  createdAt: string;
+}
+
+// 닉네임 변경 요청
+export interface UpdateNicknameRequest {
+  nickname: string;
+}
+
+// 비밀번호 변경 요청
+export interface PasswordUpdateRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+// 찜한 동물 정보
+export interface FavoriteWithAnimalDto {
+  // Favorite 정보
+  favoriteId: number;
+  userId: number;
+  animalId: number;
+  createdAt: string;
+
+  // Animal 정보
+  breed: string | null;
+  species: string | null;
+  gender: string | null;
+  age: number | null;
+  imageUrl: string | null;
+  shelterName: string | null;
+  status: string | null;
+}
+
+// 찜한 동물 목록 응답
+export interface FavoriteListResponse {
+  userId: number;
+  totalCount: number;
+  favorites: FavoriteWithAnimalDto[];
+}

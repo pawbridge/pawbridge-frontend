@@ -30,11 +30,22 @@ export const getAnimalById = async (id: number): Promise<Animal> => {
 };
 
 // 동물 찜하기
-export const favoriteAnimal = async (id: number): Promise<void> => {
-  await apiClient.post(`/api/animals/${id}/favorite`);
+export const addFavorite = async (animalId: number): Promise<{ favoriteId: number }> => {
+  const response = await apiClient.post<{ code: number; data: { favoriteId: number }; message: string }>(
+    `/api/favorites/${animalId}`
+  );
+  return response.data.data;
 };
 
-// 동물 찜 해제
-export const unfavoriteAnimal = async (id: number): Promise<void> => {
-  await apiClient.delete(`/api/animals/${id}/favorite`);
+// 동물 찜 제거
+export const removeFavorite = async (animalId: number): Promise<void> => {
+  await apiClient.delete<{ code: number; data: null; message: string }>(`/api/favorites/${animalId}`);
+};
+
+// 찜 여부 확인
+export const checkFavorite = async (animalId: number): Promise<boolean> => {
+  const response = await apiClient.get<{ code: number; data: boolean; message: string }>(
+    `/api/favorites/${animalId}/check`
+  );
+  return response.data.data;
 };

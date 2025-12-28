@@ -4,6 +4,12 @@ import type {
   AdminUserListResponse,
   AdminUserListItem,
   UpdateUserRequest,
+  UserInfoResponse,
+  UpdateNicknameRequest,
+  PasswordUpdateRequest,
+  FavoriteListResponse,
+  PageResponse,
+  Animal,
 } from '../types/api.types';
 
 // 관리자용 회원 목록 조회
@@ -37,3 +43,34 @@ export const deleteUser = async (userId: number): Promise<void> => {
   await apiClient.delete(`/api/admin/users/${userId}`);
 };
 
+// ========== 마이페이지 관련 API ==========
+
+// 내 정보 조회
+export const getMyInfo = async (): Promise<UserInfoResponse> => {
+  const response = await apiClient.get<{ code: number; data: UserInfoResponse; message: string }>('/api/users/me');
+  return response.data.data;
+};
+
+// 닉네임 변경
+export const updateNickname = async (data: UpdateNicknameRequest): Promise<void> => {
+  await apiClient.put<{ code: number; data: null; message: string }>('/api/users/me/nickname', data);
+};
+
+// 비밀번호 변경
+export const updatePassword = async (data: PasswordUpdateRequest): Promise<void> => {
+  await apiClient.put<{ code: number; data: null; message: string }>('/api/users/me/password', data);
+};
+
+// 내가 찜한 동물 목록 조회
+export const getFavoriteAnimals = async (): Promise<FavoriteListResponse> => {
+  const response = await apiClient.get<{ code: number; data: FavoriteListResponse; message: string }>('/api/users/me/favorite-animals');
+  return response.data.data;
+};
+
+// 내 보호소가 등록한 동물 목록 조회 (페이징)
+export const getRegisteredAnimals = async (page: number = 0, size: number = 20): Promise<PageResponse<Animal>> => {
+  const response = await apiClient.get<{ code: number; data: PageResponse<Animal>; message: string }>('/api/users/me/registered-animals', {
+    params: { page, size, sort: 'createdAt,desc' },
+  });
+  return response.data.data;
+};
