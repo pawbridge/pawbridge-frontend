@@ -688,3 +688,28 @@ export interface PasswordUpdateRequest {
   currentPassword: string;
   newPassword: string;
 }
+
+// 찜한 동물 정보
+export interface FavoriteWithAnimalDto {
+  // Favorite 정보
+  favoriteId: number;
+  userId: number;
+  animalId: number;
+  createdAt: string;
+
+  // Animal 정보
+  breed: string | null;
+  species: string | null;
+  gender: string | null;
+  age: number | null;
+  imageUrl: string | null;
+  shelterName: string | null;
+  status: string | null;
+}
+
+// 찜한 동물 목록 응답
+export interface FavoriteListResponse {
+  userId: number;
+  totalCount: number;
+  favorites: FavoriteWithAnimalDto[];
+}

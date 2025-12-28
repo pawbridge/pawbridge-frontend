@@ -13,14 +13,14 @@ export default defineConfig({
   server: {
     proxy: {
       // Store Service (상점) - 8085
-      '/api/products': {
-        target: 'http://localhost:8085',
-        changeOrigin: true,
-      },
-      '/api/carts': {
-        target: 'http://localhost:8085',
-        changeOrigin: true,
-      },
+      // '/api/products': {
+      //   target: 'http://localhost:8085',
+      //   changeOrigin: true,
+      // },
+      // '/api/carts': {
+      //   target: 'http://localhost:8085',
+      //   changeOrigin: true,
+      // },
       // 주문 관련 API (관리자용) - API Gateway를 통해 요청
       '/api/admin/orders': {
         target: 'http://localhost:8080', // API Gateway

@@ -99,7 +99,7 @@ export default function MyPage() {
   // 가입 경로 한글 변환
   const getProviderLabel = (provider: string | null) => {
     switch (provider) {
-      case 'EMAIL':
+      case 'LOCAL':
         return '이메일 가입';
       case 'GOOGLE':
         return '구글 가입';
@@ -184,6 +184,24 @@ export default function MyPage() {
                     프로필 정보
                   </p>
                 </button>
+
+                <Link
+                  to="/favorite-animals"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 group"
+                >
+                  <span className="material-symbols-outlined text-gray-500 dark:text-gray-400">pets</span>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal">내가 찜한 동물</p>
+                </Link>
+
+                {userInfo.role === 'ROLE_SHELTER' && (
+                  <Link
+                    to="/registered-animals"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 group"
+                  >
+                    <span className="material-symbols-outlined text-gray-500 dark:text-gray-400">home</span>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal">내 보호소가 등록한 동물</p>
+                  </Link>
+                )}
 
                 <Link
                   to="/wishlist"
@@ -384,7 +402,7 @@ export default function MyPage() {
                     비밀번호 변경
                   </h2>
 
-                  {userInfo.provider !== 'EMAIL' && userInfo.provider !== null ? (
+                  {userInfo.provider !== 'LOCAL' && userInfo.provider !== null ? (
                     <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg text-center">
                       <p className="text-gray-600 dark:text-gray-400">
                         {getProviderLabel(userInfo.provider)} 계정은 비밀번호를 변경할 수 없습니다.
