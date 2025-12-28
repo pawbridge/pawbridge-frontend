@@ -60,7 +60,10 @@ export const sendResetCode = async (data: SendResetCodeRequest): Promise<void> =
     data: null;
   }>(
     '/api/auth/password/reset-request',
-    data
+      data,
+      {
+        timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
+      }
   );
 };
 
@@ -84,7 +87,10 @@ export const sendEmailVerificationCode = async (data: SendVerificationCodeReques
     data: null;
   }>(
     '/api/email/send',
-    data
+      data,
+      {
+        timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
+      }
   );
 };
 
