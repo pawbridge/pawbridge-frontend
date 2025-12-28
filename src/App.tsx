@@ -28,6 +28,7 @@ import AdminUserDetail from './pages/AdminUserDetail.tsx';
 import AdminPostManagement from './pages/AdminPostManagement.tsx';
 import AdminPostDetail from './pages/AdminPostDetail.tsx';
 import AdminStatistics from './pages/AdminStatistics.tsx';
+import MyPage from './pages/MyPage.tsx';
 import NotFound from './pages/NotFound.tsx';
 import CommunityList from './pages/CommunityList.tsx';
 import CommunityDetail from './pages/CommunityDetail.tsx';
@@ -258,6 +259,14 @@ function App() {
             <AdminRoute>
               <AdminStatistics />
             </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mypage"
+        element={
+          <ProtectedRoute>
+            <MyPage />
           </ProtectedRoute>
         }
       />
