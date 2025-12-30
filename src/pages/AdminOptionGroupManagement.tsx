@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getOptionGroups,
@@ -18,6 +17,7 @@ import type {
   UpdateOptionValueRequest,
 } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
+import AdminSidebar from '../components/layout/AdminSidebar';
 
 export default function AdminOptionGroupManagement() {
   const { user } = useAuthStore();
@@ -276,112 +276,49 @@ export default function AdminOptionGroupManagement() {
   );
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-text-main font-sans min-h-screen flex overflow-hidden">
+    <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
       {/* 사이드바 */}
-      <aside className="w-64 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-r border-[#dbe6e3] dark:border-[#2a3c38] flex flex-col h-screen z-20">
-        <div className="h-16 flex items-center px-6 border-b border-[#f0f5f3] dark:border-[#2a3c38]">
-          <div className="flex items-center gap-3">
-            <div className="size-8 text-primary flex items-center justify-center bg-background-dark rounded-lg">
-              <span className="material-symbols-outlined text-[24px]">pets</span>
-            </div>
-            <h1 className="text-text-main dark:text-white text-lg font-extrabold tracking-tight">PawBridge</h1>
-          </div>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-1 no-scrollbar">
-          <Link
-            to="/admin/dashboard"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-background-dark/50 hover:text-text-main dark:hover:text-white transition-colors group"
-          >
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            <span className="text-sm font-medium">대시보드</span>
-          </Link>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-background-dark/50 hover:text-text-main dark:hover:text-white transition-colors group">
-            <span className="material-symbols-outlined text-[20px]">bar_chart</span>
-            <span className="text-sm font-medium">통계</span>
-          </button>
-          <div className="my-2 border-t border-[#f0f5f3] dark:border-[#2a3c38]"></div>
-          <div className="px-3 pb-2 pt-1 text-xs font-bold text-text-sub/70 dark:text-gray-500 uppercase tracking-wider">
-            운영 관리
-          </div>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-background-dark/50 hover:text-text-main dark:hover:text-white transition-colors group">
-            <span className="material-symbols-outlined text-[20px]">group</span>
-            <span className="text-sm font-medium">회원 관리</span>
-          </button>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-background-dark/50 hover:text-text-main dark:hover:text-white transition-colors group">
-            <span className="material-symbols-outlined text-[20px]">article</span>
-            <span className="text-sm font-medium">게시글 관리</span>
-          </button>
-          <Link
-            to="/admin/categories"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-background-dark/50 hover:text-text-main dark:hover:text-white transition-colors group"
-          >
-            <span className="material-symbols-outlined text-[20px]">category</span>
-            <span className="text-sm font-medium">카테고리 관리</span>
-          </Link>
-          <div className="my-2 border-t border-[#f0f5f3] dark:border-[#2a3c38]"></div>
-          <div className="px-3 pb-2 pt-1 text-xs font-bold text-text-sub/70 dark:text-gray-500 uppercase tracking-wider">
-            쇼핑몰 관리
-          </div>
-          <div className="flex flex-col gap-1">
-            <button className="flex items-center justify-between px-3 py-2.5 rounded-lg text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-background-dark/50 hover:text-text-main dark:hover:text-white transition-colors group">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[20px]">inventory_2</span>
-                <span className="text-sm font-medium">상품 관리</span>
-              </div>
-              <span className="material-symbols-outlined text-[18px]">expand_more</span>
-            </button>
-          </div>
-          <div className="my-2 border-t border-[#f0f5f3] dark:border-[#2a3c38]"></div>
-          <div className="px-3 pb-2 pt-1 text-xs font-bold text-text-sub/70 dark:text-gray-500 uppercase tracking-wider">
-            설정
-          </div>
-          <div className="flex flex-col gap-1">
-            <button className="flex items-center justify-between px-3 py-2.5 rounded-lg text-primary bg-primary/10 transition-colors">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[20px]">tune</span>
-                <span className="text-sm font-bold">옵션 관리</span>
-              </div>
-              <span className="material-symbols-outlined text-[18px]">expand_less</span>
-            </button>
-            <div className="pl-10 flex flex-col gap-1 mt-1">
-              <Link
-                to="/admin/option-groups"
-                className="block px-3 py-2 rounded-lg text-sm font-bold text-primary relative before:absolute before:left-[-14px] before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-1 before:rounded-full before:bg-primary"
-              >
-                옵션 그룹 관리
-              </Link>
-            </div>
-          </div>
-        </nav>
-        <div className="p-4 border-t border-[#f0f5f3] dark:border-[#2a3c38]">
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-colors">
-            <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-primary/50"></div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold text-text-main dark:text-white truncate">관리자</span>
-              <span className="text-xs text-text-sub dark:text-gray-400 truncate">{user?.email || 'admin@pawbridge.com'}</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <AdminSidebar />
 
-      <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+      {/* 메인 콘텐츠 */}
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
         {/* 헤더 */}
-        <header className="h-16 flex items-center justify-between px-6 bg-surface-light dark:bg-surface-dark border-b border-[#f0f5f3] dark:border-[#2a3c38] flex-shrink-0 z-10">
-          <nav className="hidden lg:flex items-center gap-2 text-sm text-text-sub">
-            <span className="hover:text-primary cursor-pointer transition-colors">옵션 관리</span>
-            <span className="material-symbols-outlined text-xs">chevron_right</span>
-            <span className="font-bold text-primary">옵션 그룹 관리</span>
-          </nav>
-          <div className="flex items-center gap-4 ml-auto">
-            <button className="p-2 text-text-sub dark:text-gray-400 hover:text-primary transition-colors relative">
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-surface-dark"></span>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
+        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-bold text-text-main dark:text-white">옵션 그룹 관리</h2>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+              <span className="material-symbols-outlined text-text-secondary">search</span>
+              <input
+                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
+                placeholder="검색..."
+                type="text"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
+                <span className="material-symbols-outlined">notifications</span>
+                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
+              </button>
+              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                >
+                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
+                    {user?.name?.charAt(0) || '관'}
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
+                  {user?.name || '관리자'}님
+                </span>
+              </button>
+            </div>
           </div>
         </header>
 
-        {/* 메인 콘텐츠 영역 */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-background-light dark:bg-background-dark">
+        {/* 콘텐츠 영역 */}
+        <div className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
           <div className="max-w-[1280px] mx-auto">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
               <div>
@@ -698,8 +635,8 @@ export default function AdminOptionGroupManagement() {
               </section>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

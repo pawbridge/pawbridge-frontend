@@ -179,14 +179,15 @@ export default function AdminUserManagement() {
       <AdminSidebar />
 
       {/* 메인 콘텐츠 */}
-      <main className="flex-1 flex flex-col h-full relative overflow-hidden bg-background-light dark:bg-background-dark">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
         {/* 헤더 */}
-        <header className="h-20 flex-shrink-0 bg-surface-light dark:bg-surface-dark border-b border-[#dbe6e3] dark:border-gray-800 px-8 flex items-center justify-between z-10 sticky top-0">
-          <div className="flex-1 max-w-lg">
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-text-sub dark:text-gray-400 group-focus-within:text-primary transition-colors">search</span>
-              </div>
+        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-bold text-text-main dark:text-white">회원 관리</h2>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+              <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 type="text"
                 value={searchKeyword}
@@ -194,35 +195,33 @@ export default function AdminUserManagement() {
                   setSearchKeyword(e.target.value);
                   setCurrentPage(0);
                 }}
-                placeholder="이메일 또는 닉네임으로 검색하세요..."
-                className="block w-full pl-10 pr-3 py-2.5 border-none bg-background-light/50 dark:bg-background-dark/50 rounded-lg text-text-main dark:text-white placeholder:text-text-sub dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary/50 focus:bg-white dark:focus:bg-black/20 transition-all text-sm"
+                placeholder="이메일 또는 닉네임으로 검색..."
+                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
               />
             </div>
-          </div>
-          <div className="flex items-center gap-4 pl-8">
-            <button className="relative p-2 text-text-sub dark:text-gray-400 hover:text-primary hover:bg-[#f0f5f3] dark:hover:bg-gray-800 rounded-lg transition-colors">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 0" }}>notifications</span>
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-surface-light dark:border-surface-dark"></span>
-            </button>
-            <div className="h-8 w-px bg-[#dbe6e3] dark:bg-gray-700 mx-1"></div>
-            <div className="flex items-center gap-3 pl-1">
-              <div className="flex flex-col text-right hidden md:block">
-                <span className="text-sm font-bold text-text-main dark:text-white leading-none">{user?.name || '관리자'}</span>
-                <span className="text-xs text-text-sub dark:text-gray-400 mt-1">Super Admin</span>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden ring-2 ring-white dark:ring-gray-800 shadow-sm flex items-center justify-center">
-                {user?.name ? (
-                  <span className="text-text-main dark:text-white font-bold text-xs">{user.name.charAt(0)}</span>
-                ) : (
-                  <span className="material-symbols-outlined text-text-sub">person</span>
-                )}
-              </div>
+            <div className="flex items-center gap-3">
+              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
+                <span className="material-symbols-outlined">notifications</span>
+                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
+              </button>
+              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                >
+                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
+                    {user?.name?.charAt(0) || '관'}
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
+                  {user?.name || '관리자'}님
+                </span>
+              </button>
             </div>
           </div>
         </header>
 
         {/* 콘텐츠 영역 */}
-        <div className="flex-1 overflow-auto p-8 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
           <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
             {/* 페이지 헤더 */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

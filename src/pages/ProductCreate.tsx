@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createProduct, getOptionGroups, getCategories, uploadImage } from '../api/products.api';
 import type { OptionGroupResponse, CategoryResponse } from '../types/api.types';
+import AdminSidebar from '../components/layout/AdminSidebar';
+import { useAuthStore } from '../store/authStore';
 
 // SKU 생성용 타입
 interface CreateSku {
@@ -11,7 +13,6 @@ interface CreateSku {
   stockQuantity: number;
   optionValueIds: number[];
 }
-import { useAuthStore } from '../store/authStore';
 import CustomSelect from '../components/common/CustomSelect';
 
 // 선택된 옵션 값으로부터 SKU 조합 생성
@@ -258,7 +259,7 @@ export default function ProductCreate() {
     mutationFn: createProduct,
     onSuccess: () => {
       alert('상품이 등록되었습니다.');
-      navigate('/products');
+      navigate('/admin/products');
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || '상품 등록에 실패했습니다.';
@@ -347,148 +348,60 @@ export default function ProductCreate() {
     return parts.join(', ');
   };
 
-  const user = useAuthStore((state) => state.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
-
-  const handleLogout = () => {
-    clearAuth();
-    navigate('/login');
-  };
+  const { user } = useAuthStore();
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-[#111816] dark:text-gray-100 font-body h-screen flex overflow-hidden">
+    <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
       {/* 사이드바 */}
-      <aside className="w-64 bg-surface-light dark:bg-surface-dark border-r border-[#e0e8e5] dark:border-[#1f3530] flex flex-col flex-shrink-0 z-50">
-        {/* 로고 */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-[#e0e8e5] dark:border-[#1f3530]">
-          <div className="size-8 text-primary">
-            <svg className="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <g clipPath="url(#clip0_6_330)">
-                <path clipRule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fillRule="evenodd"></path>
-              </g>
-              <defs>
-                <clipPath id="clip0_6_330"><rect fill="white" height="48" width="48"></rect></clipPath>
-              </defs>
-            </svg>
-          </div>
-          <h1 className="text-xl font-display font-bold tracking-tight text-[#111816] dark:text-white">PawBridge</h1>
-        </div>
-        
-        {/* 네비게이션 */}
-        <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-hide">
-          <Link to="/admin/dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[22px]">dashboard</span>
-            <span className="text-sm font-medium">대시보드</span>
-          </Link>
-          <Link to="/admin/stats" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[22px]">bar_chart</span>
-            <span className="text-sm font-medium">통계</span>
-          </Link>
-          <div className="my-2 h-px bg-[#e0e8e5] dark:bg-[#1f3530] mx-3"></div>
-          <Link to="/admin/users" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[22px]">group</span>
-            <span className="text-sm font-medium">회원 관리</span>
-          </Link>
-          <Link to="/admin/posts" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[22px]">article</span>
-            <span className="text-sm font-medium">게시글 관리</span>
-          </Link>
-          <Link to="/admin/categories" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[22px]">category</span>
-            <span className="text-sm font-medium">카테고리 관리</span>
-          </Link>
-          <div className="flex flex-col gap-1 mt-1">
-            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#111816] dark:text-white bg-[#f0f5f3] dark:bg-[#1f3530] font-bold">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[22px] text-primary">inventory_2</span>
-                <span className="text-sm">상품 관리</span>
-              </div>
-              <span className="material-symbols-outlined text-[18px]">expand_less</span>
-            </div>
-            <div className="flex flex-col pl-11 gap-1">
-              <Link to="/products" className="block px-3 py-2 rounded-lg text-sm text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:text-white dark:hover:bg-[#1f3530] transition-colors">
-                상품 목록
-              </Link>
-              <Link to="/products/new" className="block px-3 py-2 rounded-lg text-sm font-bold text-primary bg-primary/10 transition-colors">
-                상품 등록
-              </Link>
-            </div>
-          </div>
-          <div className="flex flex-col gap-1 mt-1">
-            <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors group">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[22px] group-hover:text-primary transition-colors">tune</span>
-                <span className="text-sm font-medium">옵션 관리</span>
-              </div>
-              <span className="material-symbols-outlined text-[18px]">expand_more</span>
-            </button>
-          </div>
-        </nav>
-        
-        {/* 하단 고객지원 */}
-        <div className="p-4 border-t border-[#e0e8e5] dark:border-[#1f3530]">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-[#5f8c80] hover:text-[#111816] dark:hover:text-white bg-transparent hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] rounded-lg transition-colors">
-            <span className="material-symbols-outlined text-[18px]">help</span>
-            고객지원
-          </button>
-        </div>
-      </aside>
+      <AdminSidebar />
 
-      {/* 메인 컨텐츠 영역 */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-        {/* 상단 헤더 */}
-        <header className="flex items-center justify-end h-16 px-8 border-b border-[#e0e8e5] dark:border-[#1f3530] bg-surface-light dark:bg-surface-dark flex-shrink-0">
+      {/* 메인 콘텐츠 */}
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+        {/* 헤더 */}
+        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-bold text-text-main dark:text-white">상품 등록</h2>
+          </div>
           <div className="flex items-center gap-6">
-            <button className="relative flex items-center gap-2 text-[#5f8c80] hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-[24px]">notifications</span>
-              <span className="absolute top-0 right-0 size-2.5 bg-red-500 rounded-full border-2 border-surface-light dark:border-surface-dark"></span>
-            </button>
-            <div className="h-6 w-px bg-[#e0e8e5] dark:border-[#1f3530]"></div>
-            <div className="flex items-center gap-3">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-primary/20 bg-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary">person</span>
-              </div>
-              <div className="hidden md:flex flex-col text-right">
-                <span className="text-sm font-bold leading-none text-[#111816] dark:text-white">{user?.name || '관리자'}</span>
-                <span className="text-xs text-[#5f8c80]">{user?.role === 'ROLE_ADMIN' ? 'Admin' : 'User'}</span>
-              </div>
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+              <span className="material-symbols-outlined text-text-secondary">search</span>
+              <input
+                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
+                placeholder="검색..."
+                type="text"
+              />
             </div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center justify-center size-9 rounded-lg hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] text-[#5f8c80] hover:text-red-500 transition-colors ml-2"
-            >
-              <span className="material-symbols-outlined text-[20px]">logout</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
+                <span className="material-symbols-outlined">notifications</span>
+                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
+              </button>
+              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                >
+                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
+                    {user?.name?.charAt(0) || '관'}
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
+                  {user?.name || '관리자'}님
+                </span>
+              </button>
+            </div>
           </div>
         </header>
 
-        {/* 메인 컨텐츠 */}
-        <main className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6 md:p-10 pb-24">
-        <div className="max-w-5xl mx-auto flex flex-col gap-6">
-          {/* 브레드크럼 */}
-          <nav className="flex flex-wrap gap-2 text-sm font-medium">
-            <a className="text-[#5f8c80] hover:text-primary transition-colors" href="/">
-              홈
-            </a>
-            <span className="text-[#5f8c80] material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-            <a className="text-[#5f8c80] hover:text-primary transition-colors" href="/products">
-              상품 관리
-            </a>
-            <span className="text-[#5f8c80] material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-            <span className="text-[#111816] dark:text-white font-bold">상품 등록</span>
-          </nav>
+        {/* 콘텐츠 영역 */}
+        <div className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
+          <div className="max-w-5xl mx-auto flex flex-col gap-6">
+            <div className="mb-4">
+              <p className="text-text-secondary dark:text-gray-400 text-sm">
+                새로운 유기동물 후원 굿즈 상품을 등록하고 재고를 관리하세요.
+              </p>
+            </div>
 
-          {/* 페이지 제목 */}
-          <div className="flex flex-col gap-2 pb-2">
-            <h1 className="text-[#111816] dark:text-white text-3xl font-display font-black leading-tight tracking-tight">
-              상품 등록
-            </h1>
-            <p className="text-[#5f8c80] text-base font-normal">
-              새로운 유기동물 후원 굿즈 상품을 등록하고 재고를 관리하세요.
-            </p>
-          </div>
-
-          {/* 기본 정보 섹션 */}
+            {/* 기본 정보 섹션 */}
           <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-hidden">
             <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
               <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">1</div>
@@ -726,35 +639,35 @@ export default function ProductCreate() {
               </table>
             </div>
           </section>
+
+          {/* 하단 고정 버튼 */}
+          <footer className="sticky bottom-0 bg-white dark:bg-[#0f231e] border-t border-[#e0e8e5] dark:border-[#1f3530] px-6 md:px-10 py-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 -mx-8 -mb-8 mt-8">
+            <div className="max-w-5xl mx-auto flex justify-between items-center">
+              <p className="text-sm text-[#5f8c80] hidden md:flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">info</span>
+                <span><span className="font-bold">Tip:</span> 필수 항목(*)을 모두 입력해야 상품 등록이 가능합니다.</span>
+              </p>
+              <div className="flex gap-4 w-full md:w-auto justify-end">
+                <button
+                  onClick={handleSubmit}
+                  disabled={createProductMutation.isPending || uploadImageMutation.isPending}
+                  className="px-8 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-[#111816] font-bold shadow-lg shadow-primary/25 transition-colors flex items-center justify-center gap-2 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="material-symbols-outlined text-[20px]">check</span>
+                  {createProductMutation.isPending || uploadImageMutation.isPending ? '등록 중...' : '상품 등록하기'}
+                </button>
+                <button
+                  onClick={() => navigate('/admin/products')}
+                  className="px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] text-[#111816] dark:text-gray-300 font-bold hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29] transition-colors w-full md:w-auto"
+                >
+                  취소하기
+                </button>
+              </div>
+            </div>
+          </footer>
+          </div>
         </div>
       </main>
-
-      {/* 하단 고정 버튼 */}
-        <footer className="absolute bottom-0 left-0 w-full bg-white dark:bg-[#0f231e] border-t border-[#e0e8e5] dark:border-[#1f3530] px-6 md:px-10 py-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
-          <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <p className="text-sm text-[#5f8c80] hidden md:flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">info</span>
-              <span><span className="font-bold">Tip:</span> 필수 항목(*)을 모두 입력해야 상품 등록이 가능합니다.</span>
-            </p>
-            <div className="flex gap-4 w-full md:w-auto justify-end">
-              <button
-                onClick={handleSubmit}
-                disabled={createProductMutation.isPending || uploadImageMutation.isPending}
-                className="px-8 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-[#111816] font-bold shadow-lg shadow-primary/25 transition-colors flex items-center justify-center gap-2 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="material-symbols-outlined text-[20px]">check</span>
-                {createProductMutation.isPending || uploadImageMutation.isPending ? '등록 중...' : '상품 등록하기'}
-              </button>
-              <button
-                onClick={() => navigate('/products')}
-                className="px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] text-[#111816] dark:text-gray-300 font-bold hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29] transition-colors w-full md:w-auto"
-              >
-                취소하기
-              </button>
-            </div>
-          </div>
-        </footer>
-      </div>
     </div>
   );
 }

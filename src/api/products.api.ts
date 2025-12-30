@@ -104,8 +104,28 @@ export const getOptionGroups = async (): Promise<OptionGroupResponse[]> => {
 
 // 카테고리 목록 조회
 export const getCategories = async (): Promise<CategoryResponse[]> => {
-  const response = await apiClient.get<CategoryResponse[]>('/api/categories');
-  return response.data;
+  const response = await apiClient.get<{ code: number; data: CategoryResponse[]; message: string } | CategoryResponse[]>('/api/categories');
+  console.log('getCategories 전체 응답:', response);
+  console.log('getCategories response.data:', response.data);
+  
+  // 응답 구조 확인: { code, data, message } 형식이거나 직접 배열 형식일 수 있음
+  const responseData = response.data;
+  
+  // { code, data, message } 형식인 경우
+  if (responseData && typeof responseData === 'object' && 'code' in responseData && 'data' in responseData && Array.isArray(responseData.data)) {
+    console.log('응답 형식: { code, data, message }');
+    return responseData.data;
+  }
+  
+  // 직접 배열인 경우
+  if (Array.isArray(responseData)) {
+    console.log('응답 형식: 직접 배열');
+    return responseData;
+  }
+  
+  // 예상치 못한 형식
+  console.error('예상치 못한 응답 형식:', responseData);
+  throw new Error('예상치 못한 API 응답 형식입니다.');
 };
 
 // 이미지 업로드

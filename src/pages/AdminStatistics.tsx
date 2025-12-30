@@ -116,24 +116,38 @@ export default function AdminStatistics() {
     <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
       <AdminSidebar />
 
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
         {/* 헤더 */}
-        <header className="h-16 flex items-center justify-between px-8 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 shrink-0 z-10">
-          <div className="flex-1"></div>
+        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
           <div className="flex items-center gap-4">
-            <button className="p-2 text-text-sub dark:text-gray-400 hover:text-text-main hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors relative">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-800"></span>
-            </button>
-            <div className="w-px h-8 bg-gray-200 dark:bg-gray-700"></div>
+            <h2 className="text-xl font-bold text-text-main dark:text-white">통계</h2>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+              <span className="material-symbols-outlined text-text-secondary">search</span>
+              <input
+                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
+                placeholder="검색..."
+                type="text"
+              />
+            </div>
             <div className="flex items-center gap-3">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-text-main dark:text-white">{user?.name || '관리자'}</p>
-                <p className="text-xs text-text-sub dark:text-gray-400">Super Admin</p>
-              </div>
-              <div className="h-9 w-9 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                <span className="material-symbols-outlined text-primary text-[20px]">person</span>
-              </div>
+              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
+                <span className="material-symbols-outlined">notifications</span>
+                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
+              </button>
+              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                >
+                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
+                    {user?.name?.charAt(0) || '관'}
+                  </div>
+                </div>
+                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
+                  {user?.name || '관리자'}님
+                </span>
+              </button>
             </div>
           </div>
         </header>

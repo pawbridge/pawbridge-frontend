@@ -31,12 +31,13 @@ export default defineConfig({
         target: 'http://localhost:8080', // API Gateway
         changeOrigin: true,
       },
+      // 카테고리 API는 API Gateway를 통해 요청
       '/api/categories': {
-        target: 'http://localhost:8085',
+        target: 'http://localhost:8080', // API Gateway
         changeOrigin: true,
       },
       '/api/option-groups': {
-        target: 'http://localhost:8085',
+        target: 'http://localhost:8080', // API Gateway로 변경
         changeOrigin: true,
       },
       '/api/images': {

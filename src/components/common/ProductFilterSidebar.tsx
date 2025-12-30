@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import type { ProductSearchParams } from '../../types/api.types';
+import { useQuery } from '@tanstack/react-query';
+import { getCategories } from '../../api/products.api';
+import type { ProductSearchParams, CategoryResponse } from '../../types/api.types';
 
 interface ProductFilterSidebarProps {
   filters: ProductSearchParams;
@@ -7,20 +9,35 @@ interface ProductFilterSidebarProps {
   onReset: () => void;
 }
 
-// 카테고리 정의 (디자인 HTML 아이콘과 일치)
-const categories = [
-  { id: 1, name: '사료 및 간식', icon: 'skeleton' },
-  { id: 2, name: '장난감', icon: 'stadia_controller' },
-  { id: 3, name: '위생/미용 용품', icon: 'spark' },
-  { id: 4, name: '의류/액세서리', icon: 'checkroom' },
-  { id: 5, name: '굿즈', icon: 'storefront' },
-];
+// 카테고리 아이콘 매핑 (카테고리 이름 기반)
+const getCategoryIcon = (categoryName: string): string => {
+  const iconMap: Record<string, string> = {
+    '사료 및 간식': 'skeleton',
+    '장난감': 'stadia_controller',
+    '위생/미용 용품': 'spark',
+    '의류/액세서리': 'checkroom',
+    '굿즈': 'storefront',
+  };
+  return iconMap[categoryName] || 'category';
+};
 
 export default function ProductFilterSidebar({
   filters,
   onFilterChange,
   onReset,
 }: ProductFilterSidebarProps) {
+  // 카테고리 목록 조회
+  const { data: allCategories = [], isLoading: isLoadingCategories } = useQuery<CategoryResponse[]>({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+
+  // 최상위 카테고리만 필터링 (parentId가 null인 것만)
+  // 최대 10개까지만 표시 (너무 많으면 사이드바가 길어짐)
+  const topLevelCategories = allCategories
+    .filter(category => category.parentId === null)
+    .slice(0, 10);
+
   // 로컬 상태 (입력 중인 값 저장 - 엔터/버튼 클릭 전까지 검색 안 함)
   const [localKeyword, setLocalKeyword] = useState(filters.keyword || '');
   const [localMinPrice, setLocalMinPrice] = useState<string>(filters.minPrice?.toString() || '');
@@ -116,22 +133,35 @@ export default function ProductFilterSidebar({
               </p>
             </button>
             
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryClick(category.id)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
-                  filters.categoryId === category.id
-                    ? 'bg-primary/20 text-primary'
-                    : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
-                }`}
-              >
-                <span className="material-symbols-outlined">{category.icon}</span>
-                <p className={`text-sm ${filters.categoryId === category.id ? 'font-bold' : 'font-medium'}`}>
-                  {category.name}
-                </p>
-              </button>
-            ))}
+            {isLoadingCategories ? (
+              <div className="px-3 py-2 text-sm text-gray-500">카테고리 불러오는 중...</div>
+            ) : topLevelCategories.length === 0 ? (
+              <div className="px-3 py-2 text-sm text-gray-500">등록된 카테고리가 없습니다</div>
+            ) : (
+              <>
+                {topLevelCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.id)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
+                      filters.categoryId === category.id
+                        ? 'bg-primary/20 text-primary'
+                        : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined">{getCategoryIcon(category.name)}</span>
+                    <p className={`text-sm ${filters.categoryId === category.id ? 'font-bold' : 'font-medium'}`}>
+                      {category.name}
+                    </p>
+                  </button>
+                ))}
+                {topLevelCategories.length >= 10 && allCategories.filter(c => c.parentId === null).length > 10 && (
+                  <div className="px-3 py-2 text-xs text-gray-400 italic">
+                    (최상위 카테고리 {allCategories.filter(c => c.parentId === null).length}개 중 10개 표시)
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
 

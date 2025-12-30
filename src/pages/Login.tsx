@@ -3,12 +3,21 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../api/auth.api';
 import { useAuthStore } from '../store/authStore';
+import Toast from '../components/common/Toast';
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; isVisible: boolean }>({
+    message: '',
+    type: 'success',
+    isVisible: false,
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const setAuth = useAuthStore((state) => state.setAuth);
 
@@ -24,16 +33,56 @@ export default function Login() {
         createdAt: new Date().toISOString(),
       };
       setAuth(user, data.accessToken, data.refreshToken);
-      alert('로그인 성공!');
+      // 로그인 성공 시 알림 없이 바로 이동
       navigate('/');
     },
     onError: (error: any) => {
-      alert(error.response?.data?.message || '로그인에 실패했습니다');
+      const message = error.response?.data?.message || '이메일 또는 비밀번호가 일치하지 않습니다.';
+      setErrorMessage(message);
+      setToast({
+        message,
+        type: 'error',
+        isVisible: true,
+      });
     },
   });
 
+  const validateEmail = (emailValue: string): boolean => {
+    if (!emailValue.trim()) {
+      setEmailError('이메일을 입력해주세요.');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue)) {
+      setEmailError('올바른 이메일 형식을 입력해주세요.');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  const validatePassword = (passwordValue: string): boolean => {
+    if (!passwordValue.trim()) {
+      setPasswordError('비밀번호를 입력해주세요.');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
+    setEmailError('');
+    setPasswordError('');
+    
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+    
     loginMutation.mutate({ email, password });
   };
 
@@ -45,7 +94,21 @@ export default function Login() {
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center p-4 bg-background-light dark:bg-background-dark">
-      <div className="flex h-full w-full max-w-5xl overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full max-w-5xl flex flex-col gap-6">
+        {/* 로고 - 카드 바로 위 */}
+        <div className="flex justify-center">
+          <Link to="/" className="flex items-center gap-4 text-primary-content dark:text-white hover:opacity-80 transition-opacity">
+            <div className="text-primary text-2xl">
+              <span className="material-symbols-outlined">pets</span>
+            </div>
+            <h2 className="text-primary-content dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
+              포우 브릿지
+            </h2>
+          </Link>
+        </div>
+
+        {/* 로그인 폼 카드 */}
+        <div className="flex h-full w-full overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700">
         {/* Left Side - Image & Welcome Message */}
         <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-emerald-200/50 dark:bg-gray-800 p-12">
           <div className="flex flex-col items-center text-center gap-6">
@@ -78,14 +141,30 @@ export default function Login() {
                     이메일
                   </p>
                   <input
-                    type="email"
+                    type="text"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="form-input w-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 text-sm font-normal leading-normal"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      // 입력 중일 때는 에러 메시지만 숨김 (입력값은 유지)
+                      if (emailError) {
+                        setEmailError('');
+                      }
+                      if (errorMessage) {
+                        setErrorMessage('');
+                      }
+                    }}
+                    className={`form-input w-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border ${
+                      emailError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    } bg-white dark:bg-gray-700 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 text-sm font-normal leading-normal`}
                     placeholder="이메일 주소를 입력하세요"
-                    required
                     disabled={loginMutation.isPending}
                   />
+                  {emailError && (
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-base">error</span>
+                      {emailError}
+                    </p>
+                  )}
                 </label>
 
                 {/* Password Input */}
@@ -97,10 +176,20 @@ export default function Login() {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="form-input w-full h-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 pr-10 text-sm font-normal leading-normal"
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        // 입력 중일 때는 에러 메시지만 숨김 (입력값은 유지)
+                        if (passwordError) {
+                          setPasswordError('');
+                        }
+                        if (errorMessage) {
+                          setErrorMessage('');
+                        }
+                      }}
+                      className={`form-input w-full h-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border ${
+                        passwordError || errorMessage ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                      } bg-white dark:bg-gray-700 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 pr-10 text-sm font-normal leading-normal`}
                       placeholder="비밀번호를 입력하세요"
-                      required
                       disabled={loginMutation.isPending}
                     />
                     <button
@@ -114,6 +203,12 @@ export default function Login() {
                       </span>
                     </button>
                   </div>
+                  {(passwordError || errorMessage) && (
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-base">error</span>
+                      {errorMessage || passwordError}
+                    </p>
+                  )}
                 </label>
               </div>
 
@@ -179,7 +274,17 @@ export default function Login() {
             </form>
           </div>
         </div>
+        </div>
       </div>
+
+      {/* Toast 알림 */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast({ ...toast, isVisible: false })}
+        duration={4000}
+      />
     </div>
   );
 }

@@ -114,6 +114,17 @@ export default function Animals() {
   const totalElements = data?.totalElements || 0;
   const totalPages = data?.totalPages || 0;
   const currentPage = data?.number || 0;
+  
+  // 실제로 표시되는 동물 중 "기다리고 있는" 동물만 카운트
+  // PROTECT(보호중), ADOPTION_PENDING(입양대기중) 상태만 카운트
+  const waitingAnimals = animals.filter(animal => 
+    animal.status === 'PROTECT' || animal.status === 'ADOPTION_PENDING'
+  );
+  
+  // 디버깅: totalElements 확인
+  console.log('Animals 페이지 - totalElements:', totalElements);
+  console.log('Animals 페이지 - 실제 표시되는 동물 수:', animals.length);
+  console.log('Animals 페이지 - 기다리는 동물 수:', waitingAnimals.length);
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
@@ -141,7 +152,13 @@ export default function Animals() {
             {/* 상단 바 (결과 수 + 뷰 토글 + 정렬) */}
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
               <p className="text-base text-gray-600 dark:text-gray-400">
-                총 {totalElements.toLocaleString()} 마리의 친구들이 기다리고 있어요
+                {animals.length > 0 ? (
+                  <>
+                    총 <span className="font-bold text-primary">{waitingAnimals.length.toLocaleString()}</span> 마리의 친구들이 기다리고 있어요
+                  </>
+                ) : (
+                  '동물 정보를 불러오는 중...'
+                )}
               </p>
 
               <div className="flex items-center gap-4">
