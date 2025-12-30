@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
@@ -6,8 +6,6 @@ export default function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuthStore();
-  const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
-  const [isOptionMenuOpen, setIsOptionMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -15,10 +13,24 @@ export default function AdminSidebar() {
   };
 
   const isActive = (path: string) => location.pathname === path;
+  
+  // 상품관리 드롭다운이 열려있어야 하는 경우
+  const shouldProductMenuBeOpen = isActive('/admin/products') || isActive('/products/new') || isActive('/admin/products/:productId/edit');
+  const shouldOptionMenuBeOpen = isActive('/admin/option-groups');
+  
+  // 초기 상태 설정
+  const [isProductMenuOpen, setIsProductMenuOpen] = useState(shouldProductMenuBeOpen);
+  const [isOptionMenuOpen, setIsOptionMenuOpen] = useState(shouldOptionMenuBeOpen);
+  
+  // 경로 변경 시 드롭다운 상태 업데이트
+  useEffect(() => {
+    setIsProductMenuOpen(shouldProductMenuBeOpen);
+    setIsOptionMenuOpen(shouldOptionMenuBeOpen);
+  }, [location.pathname]);
 
   return (
     <aside className="w-64 h-full flex flex-col bg-surface-light dark:bg-surface-dark border-r border-[#e5e7eb] dark:border-gray-700 flex-shrink-0 z-20">
-      <div className="p-6 flex items-center gap-3">
+      <Link to="/" className="p-6 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
         <div className="size-10 rounded-full bg-primary flex items-center justify-center text-text-main">
           <span className="material-symbols-outlined text-[24px]">pets</span>
         </div>
@@ -26,7 +38,7 @@ export default function AdminSidebar() {
           <h1 className="text-text-main dark:text-white text-lg font-bold leading-tight">PawBridge</h1>
           <p className="text-text-secondary text-xs font-medium">관리자 콘솔</p>
         </div>
-      </div>
+      </Link>
       <nav className="flex-1 px-4 flex flex-col gap-1 overflow-y-auto">
         <Link
           to="/admin/dashboard"
@@ -131,13 +143,24 @@ export default function AdminSidebar() {
         <div className="mt-2">
           <button
             onClick={() => setIsProductMenuOpen(!isProductMenuOpen)}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary cursor-pointer transition-colors group"
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
+              shouldProductMenuBeOpen
+                ? 'bg-primary/20 text-text-main dark:text-white'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
+            }`}
           >
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
+              <span
+                className={`material-symbols-outlined ${
+                  shouldProductMenuBeOpen ? 'text-text-main dark:text-white' : 'group-hover:text-text-main dark:group-hover:text-white transition-colors'
+                }`}
+                style={{ fontVariationSettings: shouldProductMenuBeOpen ? "'FILL' 1" : "'FILL' 0" }}
+              >
                 inventory_2
               </span>
-              <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">상품 관리</span>
+              <span className={`text-sm ${shouldProductMenuBeOpen ? 'font-semibold' : 'font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors'}`}>
+                상품 관리
+              </span>
             </div>
             <span className={`material-symbols-outlined text-sm transition-transform ${isProductMenuOpen ? 'rotate-180' : ''}`}>
               expand_more
@@ -147,15 +170,21 @@ export default function AdminSidebar() {
             <div className="flex flex-col mt-1 gap-1">
               <Link
                 to="/admin/products"
-                className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
-                onClick={() => setIsProductMenuOpen(false)}
+                className={`pl-11 flex items-center gap-3 py-2 rounded-lg transition-colors text-sm ${
+                  isActive('/admin/products')
+                    ? 'bg-primary/10 text-primary dark:text-primary font-bold'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white'
+                }`}
               >
                 상품 목록
               </Link>
               <Link
                 to="/products/new"
-                className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
-                onClick={() => setIsProductMenuOpen(false)}
+                className={`pl-11 flex items-center gap-3 py-2 rounded-lg transition-colors text-sm ${
+                  isActive('/products/new')
+                    ? 'bg-primary/10 text-primary dark:text-primary font-bold'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white'
+                }`}
               >
                 상품 등록
               </Link>
@@ -165,13 +194,24 @@ export default function AdminSidebar() {
         <div className="mt-2 mb-4">
           <button
             onClick={() => setIsOptionMenuOpen(!isOptionMenuOpen)}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary cursor-pointer transition-colors group"
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
+              shouldOptionMenuBeOpen
+                ? 'bg-primary/20 text-text-main dark:text-white'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
+            }`}
           >
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined group-hover:text-text-main dark:group-hover:text-white transition-colors">
+              <span
+                className={`material-symbols-outlined ${
+                  shouldOptionMenuBeOpen ? 'text-text-main dark:text-white' : 'group-hover:text-text-main dark:group-hover:text-white transition-colors'
+                }`}
+                style={{ fontVariationSettings: shouldOptionMenuBeOpen ? "'FILL' 1" : "'FILL' 0" }}
+              >
                 tune
               </span>
-              <span className="text-sm font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors">옵션 관리</span>
+              <span className={`text-sm ${shouldOptionMenuBeOpen ? 'font-semibold' : 'font-medium group-hover:text-text-main dark:group-hover:text-white transition-colors'}`}>
+                옵션 관리
+              </span>
             </div>
             <span className={`material-symbols-outlined text-sm transition-transform ${isOptionMenuOpen ? 'rotate-180' : ''}`}>
               expand_more
@@ -181,7 +221,11 @@ export default function AdminSidebar() {
             <div className="flex flex-col mt-1 gap-1">
               <Link
                 to="/admin/option-groups"
-                className="pl-11 flex items-center gap-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white transition-colors text-sm"
+                className={`pl-11 flex items-center gap-3 py-2 rounded-lg transition-colors text-sm ${
+                  isActive('/admin/option-groups')
+                    ? 'bg-primary/10 text-primary dark:text-primary font-bold'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white'
+                }`}
               >
                 옵션 그룹 관리
               </Link>

@@ -68,6 +68,10 @@ export const getFavoriteAnimals = async (): Promise<FavoriteListResponse> => {
 };
 
 // 내 보호소가 등록한 동물 목록 조회 (페이징)
+// 명세서 4.2: GET /api/users/me/registered-animals
+// 명세서에는 page, size만 지원 (apiSource 파라미터 없음)
+// 서버가 이미 MANUAL만 반환하는지 확인 필요
+// 만약 서버가 모든 동물을 반환한다면 프론트엔드에서 필터링 필요
 export const getRegisteredAnimals = async (page: number = 0, size: number = 20): Promise<PageResponse<Animal>> => {
   const response = await apiClient.get<{ code: number; data: PageResponse<Animal>; message: string }>('/api/users/me/registered-animals', {
     params: { page, size, sort: 'createdAt,desc' },

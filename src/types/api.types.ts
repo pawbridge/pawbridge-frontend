@@ -125,6 +125,7 @@ export interface Animal {
   happenDate?: string;         // 발생 일자
   birthYear?: number;           // 출생년도
   specialMark?: string;         // 특이사항
+  apiSource?: 'APMS_ANIMAL' | 'MANUAL'; // 데이터 출처 (APMS 배치 또는 수동 등록)
 }
 
 // 동물 검색 파라미터
@@ -675,6 +676,7 @@ export interface UserInfoResponse {
   nickname: string | null;
   provider: string | null;  // 'EMAIL' | 'GOOGLE' | 'KAKAO' | null
   role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';
+  careRegNo?: string; // 보호소 등록번호 (ROLE_SHELTER인 경우)
   createdAt: string;
 }
 

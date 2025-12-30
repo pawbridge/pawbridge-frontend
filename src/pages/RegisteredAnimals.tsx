@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRegisteredAnimals } from '../api/user.api';
@@ -15,6 +15,18 @@ export default function RegisteredAnimals() {
     queryFn: () => getRegisteredAnimals(currentPage, pageSize),
   });
 
+  // 디버깅: 등록한 동물 목록 확인
+  useEffect(() => {
+    if (data) {
+      console.log('=== RegisteredAnimals 페이지 응답 ===');
+      console.log('전체 응답:', data);
+      console.log('전체 개수:', data.content?.length || 0);
+      console.log('각 동물의 apiSource:', data.content?.map((a) => ({ id: a.id, apiSource: a.apiSource, breed: a.breed })));
+      const manualAnimals = data.content?.filter((animal) => animal.apiSource === 'MANUAL') || [];
+      console.log('MANUAL 필터링 후 개수:', manualAnimals.length);
+    }
+  }, [data]);
+
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -28,9 +40,38 @@ export default function RegisteredAnimals() {
     );
   }
 
-  const totalPages = data?.totalPages || 0;
-  const totalElements = data?.totalElements || 0;
-  const animals = data?.content || [];
+  // 서버가 MANUAL만 반환하는지 확인 필요
+  // 현재는 프론트엔드에서 필터링 (서버가 모든 동물을 반환하는 경우 대비)
+  const allAnimals = data?.content || [];
+  // apiSource 필드가 없을 경우 apmsNoticeNo로 판단
+  // MAN-으로 시작하면 수동 등록, 그 외는 APMS 동기화
+  const animals = allAnimals.filter((animal) => {
+    // apiSource가 있으면 그것을 우선 사용
+    if (animal.apiSource) {
+      return animal.apiSource === 'MANUAL';
+    }
+    // apiSource가 없으면 apmsNoticeNo로 판단
+    return animal.apmsNoticeNo && animal.apmsNoticeNo.startsWith('MAN-');
+  });
+  const manualCount = animals.length;
+  
+  console.log('RegisteredAnimals - 필터링 전:', allAnimals.length, '개');
+  console.log('RegisteredAnimals - 필터링 후:', animals.length, '개');
+  console.log('RegisteredAnimals - 각 동물 정보:', allAnimals.map((a) => ({ 
+    id: a.id, 
+    apiSource: a.apiSource, 
+    apmsNoticeNo: a.apmsNoticeNo,
+    isManual: a.apiSource === 'MANUAL' || (a.apmsNoticeNo && a.apmsNoticeNo.startsWith('MAN-'))
+  })));
+  
+  // 필터링된 결과를 기준으로 페이지네이션 계산
+  // 실제 표시되는 동물 수를 기준으로 페이지 수 계산
+  const actualTotalPages = Math.ceil(manualCount / pageSize);
+  
+  // 디버깅
+  console.log('RegisteredAnimals - 필터링 후 동물 수:', manualCount);
+  console.log('RegisteredAnimals - 계산된 totalPages:', actualTotalPages);
+  console.log('RegisteredAnimals - 서버 totalPages:', data?.totalPages);
 
   return (
     <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark">
@@ -42,7 +83,7 @@ export default function RegisteredAnimals() {
             내 보호소가 등록한 동물
           </h1>
           <p className="text-subtext-light dark:text-gray-400 text-base">
-            총 {totalElements}마리의 동물을 등록했습니다
+            총 {manualCount}마리의 동물을 등록했습니다
           </p>
         </div>
 
@@ -63,9 +104,9 @@ export default function RegisteredAnimals() {
                         alt={animal.breed || '동물'}
                         className="w-full h-full object-cover"
                       />
-                      {/* 상태 뱃지 */}
-                      {animal.status && (
-                        <div className="absolute top-3 right-3">
+                      {/* 상태 + 성별 + 중성화 배지 */}
+                      <div className="absolute top-3 right-3 flex items-center gap-2 flex-wrap justify-end">
+                        {animal.status && (
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-bold ${
                               animal.status === 'AVAILABLE' || animal.status === 'PROTECT'
@@ -85,8 +126,38 @@ export default function RegisteredAnimals() {
                               ? '입양대기'
                               : animal.status}
                           </span>
-                        </div>
-                      )}
+                        )}
+                        {animal.gender === 'MALE' && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                            수컷
+                          </span>
+                        )}
+                        {animal.gender === 'FEMALE' && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400">
+                            암컷
+                          </span>
+                        )}
+                        {(!animal.gender || (animal.gender as string) === 'UNKNOWN') && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            미상
+                          </span>
+                        )}
+                        {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                            중성화 완료
+                          </span>
+                        )}
+                        {(animal.neuterStatus === 'NO' || animal.neutered === false) && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            중성화 미완료
+                          </span>
+                        )}
+                        {animal.neuterStatus === 'UNKNOWN' && (
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            중성화 미상
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
@@ -157,7 +228,7 @@ export default function RegisteredAnimals() {
             </div>
 
             {/* 페이지네이션 */}
-            {totalPages > 1 && (
+            {actualTotalPages > 1 && (
               <div className="mt-8 flex justify-center items-center gap-2">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -168,7 +239,7 @@ export default function RegisteredAnimals() {
                 </button>
 
                 <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => {
+                  {Array.from({ length: Math.min(actualTotalPages, 10) }, (_, i) => {
                     const pageNum = i;
                     return (
                       <button
@@ -188,7 +259,7 @@ export default function RegisteredAnimals() {
 
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage >= totalPages - 1}
+                  disabled={currentPage >= actualTotalPages - 1}
                   className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-text-main dark:text-white border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   <span className="material-symbols-outlined">chevron_right</span>

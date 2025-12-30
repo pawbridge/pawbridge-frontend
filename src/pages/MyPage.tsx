@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getMyInfo, updateNickname, updatePassword, getFavoriteAnimals, getRegisteredAnimals } from '../api/user.api';
 import { getWishlists, deleteWishlist, addToCart, getCart, clearCart } from '../api/products.api';
 import { getOrders } from '../api/orders.api';
@@ -14,11 +14,43 @@ type TabType = 'profile' | 'password' | 'favoriteAnimals' | 'registeredAnimals' 
 
 export default function MyPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { logout } = useAuthStore();
   const user = useAuthStore((state) => state.user);
 
-  const [activeTab, setActiveTab] = useState<TabType>('profile');
+  // location.state에서 탭 정보 가져오기 (뒤로가기 시)
+  // sessionStorage도 확인하여 뒤로가기 시에도 탭 유지
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    // 1. location.state에서 우선 확인
+    if (location.state?.tab) {
+      return location.state.tab as TabType;
+    }
+    // 2. sessionStorage에서 확인 (뒤로가기 시)
+    const savedTab = sessionStorage.getItem('mypageActiveTab');
+    if (savedTab && ['profile', 'password', 'favoriteAnimals', 'registeredAnimals', 'wishlist', 'cart', 'orders'].includes(savedTab)) {
+      return savedTab as TabType;
+    }
+    // 3. 기본값
+    return 'profile';
+  });
+
+  // location.state가 변경되면 탭 업데이트
+  useEffect(() => {
+    if (location.state?.tab) {
+      const tab = location.state.tab as TabType;
+      setActiveTab(tab);
+      // sessionStorage에 저장 (뒤로가기 대비)
+      sessionStorage.setItem('mypageActiveTab', tab);
+      // state 초기화 (뒤로가기 시 중복 적용 방지)
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
+
+  // activeTab이 변경되면 sessionStorage에 저장
+  useEffect(() => {
+    sessionStorage.setItem('mypageActiveTab', activeTab);
+  }, [activeTab]);
   const [nicknameInput, setNicknameInput] = useState('');
   const [passwordData, setPasswordData] = useState<PasswordUpdateRequest>({
     currentPassword: '',
@@ -60,6 +92,18 @@ export default function MyPage() {
     queryFn: () => getRegisteredAnimals(registeredPage, 20),
     enabled: activeTab === 'registeredAnimals' && userInfo?.role === 'ROLE_SHELTER',
   });
+
+  // 디버깅: 등록한 동물 목록 확인
+  useEffect(() => {
+    if (registeredAnimals) {
+      console.log('=== 등록한 동물 목록 응답 ===');
+      console.log('전체 응답:', registeredAnimals);
+      console.log('전체 개수:', registeredAnimals.content?.length || 0);
+      console.log('각 동물의 apiSource:', registeredAnimals.content?.map((a) => ({ id: a.id, apiSource: a.apiSource, breed: a.breed })));
+      const manualAnimals = registeredAnimals.content?.filter((animal) => animal.apiSource === 'MANUAL') || [];
+      console.log('MANUAL 필터링 후 개수:', manualAnimals.length);
+    }
+  }, [registeredAnimals]);
 
   // 위시리스트 조회
   const { data: wishlists } = useQuery({
@@ -893,81 +937,161 @@ export default function MyPage() {
 
               {activeTab === 'registeredAnimals' && (
                 <>
-                  <h2 className="text-text-main dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-6 border-b border-gray-200 dark:border-gray-700">
-                    내 보호소가 등록한 동물
-                  </h2>
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-text-main dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">
+                      내 보호소가 등록한 동물
+                    </h2>
+                    <Link
+                      to="/animals/new"
+                      className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-bold text-sm"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">add</span>
+                      새 동물 등록
+                    </Link>
+                  </div>
 
-                  {registeredAnimals && registeredAnimals.content.length > 0 ? (
-                    <div className="mt-8">
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                        총 {registeredAnimals.totalElements}마리의 동물을 등록했습니다
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {registeredAnimals.content.map((animal) => (
-                          <Link
-                            key={animal.id}
-                            to={`/animals/${animal.id}`}
-                            className="block bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700"
-                          >
-                            {animal.imageUrl ? (
-                              <img src={animal.imageUrl} alt={animal.breed || '동물'} className="w-full h-48 object-cover" />
-                            ) : (
-                              <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-5xl text-gray-400">pets</span>
-                              </div>
-                            )}
-                            <div className="p-4">
-                              <h3 className="font-bold text-text-main dark:text-white mb-2">{animal.breed || '품종 정보 없음'}</h3>
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {animal.species || '종 정보 없음'} • {animal.gender || '성별 정보 없음'} • {animal.age ? `${animal.age}세` : '나이 정보 없음'}
-                              </p>
-                              {animal.status && (
-                                <span className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
-                                  animal.status === 'PROTECT' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                                }`}>
-                                  {animal.status === 'PROTECT' ? '보호중' : animal.status}
-                                </span>
-                              )}
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-
-                      {/* 페이지네이션 */}
-                      {registeredAnimals && registeredAnimals.totalPages > 1 && (
-                        <div className="flex items-center justify-center gap-2 mt-8">
-                          <button
-                            onClick={() => setRegisteredPage((prev) => Math.max(0, prev - 1))}
-                            disabled={registeredPage === 0}
-                            className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                          >
-                            이전
-                          </button>
-                          <div className="flex items-center gap-1">
-                            {Array.from({ length: registeredAnimals.totalPages }, (_, i) => i).map((page) => (
-                              <button
-                                key={page}
-                                onClick={() => setRegisteredPage(page)}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                  registeredPage === page
-                                    ? 'bg-primary text-white'
-                                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                                }`}
+                  {registeredAnimals && registeredAnimals.content && registeredAnimals.content.length > 0 ? (
+                    (() => {
+                      // apiSource 필드가 없을 경우 apmsNoticeNo로 판단
+                      // MAN-으로 시작하면 수동 등록, 그 외는 APMS 동기화
+                      const manualAnimals = registeredAnimals.content.filter((animal) => {
+                        // apiSource가 있으면 그것을 우선 사용
+                        if (animal.apiSource) {
+                          return animal.apiSource === 'MANUAL';
+                        }
+                        // apiSource가 없으면 apmsNoticeNo로 판단
+                        return animal.apmsNoticeNo && animal.apmsNoticeNo.startsWith('MAN-');
+                      });
+                      console.log('MyPage - 필터링 전:', registeredAnimals.content.length, '개');
+                      console.log('MyPage - 필터링 후:', manualAnimals.length, '개');
+                      return manualAnimals.length > 0 ? (
+                        <div className="mt-8">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                            총 {manualAnimals.length}마리의 동물을 등록했습니다
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {manualAnimals.map((animal) => (
+                              <Link
+                                key={animal.id}
+                                to={`/animals/${animal.id}`}
+                                state={{ from: 'mypage', tab: 'registeredAnimals' }}
+                                className="block bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700"
                               >
-                                {page + 1}
-                              </button>
+                                {animal.imageUrl ? (
+                                  <img src={animal.imageUrl} alt={animal.breed || '동물'} className="w-full h-48 object-cover" />
+                                ) : (
+                                  <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-5xl text-gray-400">pets</span>
+                                  </div>
+                                )}
+                                <div className="p-4">
+                                  {/* 상태 + 성별 + 중성화 배지 */}
+                                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                    {animal.status && (
+                                      <span className={`text-xs font-bold rounded-full px-2 py-1 ${
+                                        animal.status === 'PROTECT' 
+                                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                                          : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+                                      }`}>
+                                        {animal.status === 'PROTECT' ? '보호중' : animal.status}
+                                      </span>
+                                    )}
+                                    {animal.gender === 'MALE' && (
+                                      <span className="text-xs font-bold rounded-full px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                        수컷
+                                      </span>
+                                    )}
+                                    {animal.gender === 'FEMALE' && (
+                                      <span className="text-xs font-bold rounded-full px-2 py-1 bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400">
+                                        암컷
+                                      </span>
+                                    )}
+                                    {(!animal.gender || (animal.gender as string) === 'UNKNOWN') && (
+                                      <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                                        미상
+                                      </span>
+                                    )}
+                                    {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
+                                      <span className="text-xs font-bold rounded-full px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                                        중성화 완료
+                                      </span>
+                                    )}
+                                    {(animal.neuterStatus === 'NO' || animal.neutered === false) && (
+                                      <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                                        중성화 미완료
+                                      </span>
+                                    )}
+                                    {animal.neuterStatus === 'UNKNOWN' && (
+                                      <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                                        중성화 미상
+                                      </span>
+                                    )}
+                                  </div>
+                                  
+                                  <h3 className="font-bold text-text-main dark:text-white mb-2">{animal.breed || '품종 정보 없음'}</h3>
+                                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    {animal.species || '종 정보 없음'} • {animal.age ? `${animal.age}세` : '나이 정보 없음'}
+                                  </p>
+                                </div>
+                              </Link>
                             ))}
                           </div>
-                          <button
-                            onClick={() => setRegisteredPage((prev) => Math.min(registeredAnimals.totalPages - 1, prev + 1))}
-                            disabled={registeredPage >= registeredAnimals.totalPages - 1}
-                            className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                          >
-                            다음
-                          </button>
+
+                          {/* 페이지네이션 */}
+                          {(() => {
+                            // 필터링 후 실제 동물 수를 기준으로 페이지 수 계산
+                            const pageSize = 20;
+                            const actualTotalPages = Math.ceil(manualAnimals.length / pageSize);
+                            
+                            return actualTotalPages > 1 ? (
+                              <div className="flex items-center justify-center gap-2 mt-8">
+                                <button
+                                  onClick={() => setRegisteredPage((prev) => Math.max(0, prev - 1))}
+                                  disabled={registeredPage === 0}
+                                  className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  이전
+                                </button>
+                                <div className="flex items-center gap-1">
+                                  {Array.from({ length: actualTotalPages }, (_, i) => i).map((page) => (
+                                    <button
+                                      key={page}
+                                      onClick={() => setRegisteredPage(page)}
+                                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                        registeredPage === page
+                                          ? 'bg-primary text-white'
+                                          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                      }`}
+                                    >
+                                      {page + 1}
+                                    </button>
+                                  ))}
+                                </div>
+                                <button
+                                  onClick={() => setRegisteredPage((prev) => Math.min(actualTotalPages - 1, prev + 1))}
+                                  disabled={registeredPage >= actualTotalPages - 1}
+                                  className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                  다음
+                                </button>
+                              </div>
+                            ) : null;
+                          })()}
                         </div>
-                      )}
-                    </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mt-8">
+                          <span className="material-symbols-outlined text-7xl text-gray-300 dark:text-gray-600 mb-4">
+                            pets
+                          </span>
+                          <h3 className="text-xl font-bold text-text-main dark:text-white mb-2">
+                            아직 등록한 동물이 없습니다
+                          </h3>
+                          <p className="text-gray-500 dark:text-gray-400 mb-6">
+                            보호소 계정으로 동물을 등록해보세요
+                          </p>
+                        </div>
+                      );
+                    })()
                   ) : (
                     <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
                       <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">pets</span>

@@ -33,26 +33,41 @@ export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
     }
   };
 
-  const getGenderIcon = () => {
+  const getGenderLabel = () => {
     if (animal.gender === 'MALE') {
-      return { icon: 'male', className: 'text-blue-500', title: '수컷' };
+      return { text: '수컷', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' };
     } else if (animal.gender === 'FEMALE') {
-      return { icon: 'female', className: 'text-pink-500', title: '암컷' };
+      return { text: '암컷', className: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400' };
+    } else if (!animal.gender || (animal.gender as string) === 'UNKNOWN') {
+      return { text: '미상', className: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' };
     }
     return null;
   };
 
-  const getNeuterIcon = () => {
-    const neutered = animal.neuterStatus === 'YES' || animal.neutered === true;
-    if (neutered) {
-      return { icon: 'pets', className: 'text-primary', title: '중성화 완료' };
+  const getNeuterLabel = () => {
+    // neuterStatus 우선 확인
+    if (animal.neuterStatus === 'YES') {
+      return { text: '중성화 완료', className: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' };
+    } else if (animal.neuterStatus === 'NO') {
+      return { text: '중성화 미완료', className: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' };
+    } else if (animal.neuterStatus === 'UNKNOWN') {
+      return { text: '중성화 미상', className: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' };
     }
+    
+    // neuterStatus가 없으면 neutered (boolean) 필드 확인
+    if (animal.neutered === true) {
+      return { text: '중성화 완료', className: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' };
+    } else if (animal.neutered === false) {
+      return { text: '중성화 미완료', className: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' };
+    }
+    
+    // 둘 다 없으면 null 반환 (배지 표시 안 함)
     return null;
   };
 
   const status = getStatusLabel();
-  const genderIcon = getGenderIcon();
-  const neuterIcon = getNeuterIcon();
+  const gender = getGenderLabel();
+  const neuter = getNeuterLabel();
 
   // 종 + 품종 표시
   const speciesLabel = animal.species === 'DOG' ? '개' : animal.species === 'CAT' ? '고양이' : '기타';
@@ -96,23 +111,26 @@ export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
 
       {/* 정보 */}
       <div className="p-4 flex flex-col flex-grow">
-        {/* 상태 + 아이콘 */}
-        <div className="flex justify-between items-start mb-2">
+        {/* 상태 + 성별 + 중성화 배지 */}
+        <div className="flex items-center gap-2 mb-2 flex-wrap">
+          {/* 상태 배지 */}
           <span className={`text-xs font-bold rounded-full px-3 py-1 ${status.className}`}>
             {status.text}
           </span>
-          <div className="flex gap-2 text-gray-500 dark:text-gray-400">
-            {genderIcon && (
-              <span className={`material-symbols-outlined ${genderIcon.className}`} title={genderIcon.title}>
-                {genderIcon.icon}
-              </span>
-            )}
-            {neuterIcon && (
-              <span className={`material-symbols-outlined ${neuterIcon.className}`} title={neuterIcon.title}>
-                {neuterIcon.icon}
-              </span>
-            )}
-          </div>
+          
+          {/* 성별 배지 */}
+          {gender && (
+            <span className={`text-xs font-bold rounded-full px-3 py-1 ${gender.className}`}>
+              {gender.text}
+            </span>
+          )}
+          
+          {/* 중성화 배지 */}
+          {neuter && (
+            <span className={`text-xs font-bold rounded-full px-3 py-1 ${neuter.className}`}>
+              {neuter.text}
+            </span>
+          )}
         </div>
 
         {/* 제목 */}

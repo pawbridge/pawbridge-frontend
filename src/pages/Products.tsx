@@ -1,20 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getProducts, addToCart } from '../api/products.api';
-import type { ProductSearchParams } from '../types/api.types';
+import { getProducts, addToCart, getCategories } from '../api/products.api';
+import type { ProductSearchParams, CategoryResponse } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import ProductFilterSidebar from '../components/common/ProductFilterSidebar';
 import ProductCard from '../components/common/ProductCard';
-
-// 카테고리 이름 매핑
-const categoryNames: Record<number, string> = {
-  1: '사료 및 간식',
-  2: '장난감',
-  3: '위생/미용 용품',
-  4: '의류/액세서리',
-  5: '굿즈',
-};
 
 export default function Products() {
   const queryClient = useQueryClient();
@@ -25,6 +16,12 @@ export default function Products() {
     size: 12,
     sortBy: 'createdAt',
     sortOrder: 'desc',
+  });
+
+  // 카테고리 목록 조회
+  const { data: categories = [] } = useQuery<CategoryResponse[]>({
+    queryKey: ['categories'],
+    queryFn: getCategories,
   });
 
   // 상품 목록 조회
@@ -82,9 +79,8 @@ export default function Products() {
   };
 
   // 현재 카테고리 이름
-  const currentCategoryName = filters.categoryId 
-    ? categoryNames[filters.categoryId] 
-    : '전체 상품';
+  const currentCategory = categories.find(cat => cat.id === filters.categoryId);
+  const currentCategoryName = currentCategory?.name || '전체 상품';
 
   // 로딩 상태
   if (isLoading) {

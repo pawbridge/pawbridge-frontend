@@ -1,23 +1,97 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAnimalById, checkFavorite, addFavorite, removeFavorite } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const [selectedImage, setSelectedImage] = useState<string>('');
+
+  // 이전 페이지 정보 확인 (마이페이지에서 온 경우)
+  const fromMyPage = location.state?.from === 'mypage';
+  const previousTab = location.state?.tab || sessionStorage.getItem('mypageActiveTab') || 'registeredAnimals';
+  
+  // 마이페이지에서 온 경우 sessionStorage에 탭 정보 저장
+  useEffect(() => {
+    if (fromMyPage && previousTab) {
+      sessionStorage.setItem('mypageActiveTab', previousTab);
+    }
+  }, [fromMyPage, previousTab]);
+
+  // 브라우저 뒤로가기 감지 및 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      // 뒤로가기 시 sessionStorage의 탭 정보를 유지
+      if (fromMyPage && previousTab) {
+        sessionStorage.setItem('mypageActiveTab', previousTab);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [fromMyPage, previousTab]);
 
   const { data: animal, isLoading, error } = useQuery({
     queryKey: ['animal', id],
     queryFn: () => getAnimalById(Number(id)),
     enabled: !!id,
   });
+
+  // 본인이 등록한 동물인지 확인 (보호소가 직접 등록한 동물만 수정 가능)
+  // apiSource가 MANUAL이거나 apmsNoticeNo가 MAN-으로 시작하고 careRegNo가 일치하는 경우만
+  const isManualAnimal = animal && (
+    animal.apiSource === 'MANUAL' || 
+    (animal.apmsNoticeNo && animal.apmsNoticeNo.startsWith('MAN-'))
+  );
+  
+  // careRegNo는 로그인할 때 주어지므로 무조건 비교해야 함 (등록한 것만 수정 가능)
+  // 하지만 API 응답에 careRegNo가 없을 수 있으므로, shelterId로도 비교
+  const isMyShelter = user?.role === 'ROLE_SHELTER' && (
+    (user?.careRegNo && animal?.careRegNo && user.careRegNo === animal.careRegNo) ||
+    (user?.id && animal?.shelterId && Number(user.id) === Number(animal.shelterId))
+  );
+  
+  const isMyAnimal = animal && 
+    isMyShelter &&
+    isManualAnimal;
+
+  // 디버깅: 수정 버튼 표시 조건 확인
+  useEffect(() => {
+    if (animal && user) {
+      console.log('=== 수정 버튼 표시 조건 확인 ===');
+      console.log('전체 animal 객체:', animal);
+      console.log('전체 user 객체:', user);
+      console.log('user.role:', user.role);
+      console.log('animal.apiSource:', animal.apiSource);
+      console.log('animal.apmsNoticeNo:', animal.apmsNoticeNo);
+      console.log('isManualAnimal:', isManualAnimal);
+      console.log('user.careRegNo:', user.careRegNo);
+      console.log('animal.careRegNo:', animal.careRegNo);
+      console.log('user.id:', user.id);
+      console.log('animal.shelterId:', animal.shelterId);
+      console.log('careRegNo 비교:', user.careRegNo, '===', animal.careRegNo, '?', user.careRegNo === animal.careRegNo);
+      console.log('shelterId 비교:', Number(user.id), '===', Number(animal.shelterId), '?', Number(user.id) === Number(animal.shelterId));
+      console.log('isMyShelter:', isMyShelter);
+      console.log('isMyAnimal:', isMyAnimal);
+      console.log('조건 체크:', {
+        hasAnimal: !!animal,
+        isShelter: user?.role === 'ROLE_SHELTER',
+        isManual: isManualAnimal,
+        hasUserCareRegNo: !!user?.careRegNo,
+        hasAnimalCareRegNo: !!animal.careRegNo,
+        careRegNoMatch: user?.careRegNo === animal.careRegNo,
+      });
+    }
+  }, [animal, user, isManualAnimal, isMyShelter, isMyAnimal]);
 
   // 찜 여부 확인
   const { data: isFavorited } = useQuery({
@@ -170,9 +244,27 @@ export default function AnimalDetail() {
               홈
             </button>
             <span className="text-secondary dark:text-primary">/</span>
-            <button onClick={() => navigate('/animals')} className="text-secondary dark:text-primary hover:underline">
-              보호동물 찾기
-            </button>
+            {fromMyPage ? (
+              <>
+                <button 
+                  onClick={() => navigate('/mypage', { state: { tab: previousTab } })}
+                  className="text-secondary dark:text-primary hover:underline"
+                >
+                  마이페이지
+                </button>
+                <span className="text-secondary dark:text-primary">/</span>
+                <button 
+                  onClick={() => navigate('/mypage', { state: { tab: previousTab } })}
+                  className="text-secondary dark:text-primary hover:underline"
+                >
+                  내 보호소가 등록한 동물
+                </button>
+              </>
+            ) : (
+              <button onClick={() => navigate('/animals')} className="text-secondary dark:text-primary hover:underline">
+                보호동물 찾기
+              </button>
+            )}
             <span className="text-secondary dark:text-primary">/</span>
             <span className="font-medium text-text-light dark:text-text-dark">[{speciesLabel}] {animal.breed}</span>
           </div>
@@ -217,34 +309,18 @@ export default function AnimalDetail() {
           <div className="lg:col-span-2 flex flex-col gap-6">
             {/* Basic Info Card */}
             <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
-              <div className="flex flex-wrap justify-between items-start gap-3 mb-4">
-                <div className="flex-1">
-                  <div className="flex items-start gap-3">
-                    <div className="flex-1">
-                      <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light dark:text-text-dark">
-                        [{speciesLabel}] {animal.breed}
-                      </p>
-                      <p className="text-sm text-secondary dark:text-gray-400 mt-1">
-                        공고번호: {animal.apmsNoticeNo || animal.noticeNo || 'N/A'}
-                      </p>
-                    </div>
-                    {/* 찜 버튼 */}
-                    <button
-                      onClick={handleFavoriteToggle}
-                      disabled={addFavoriteMutation.isPending || removeFavoriteMutation.isPending}
-                      className={`flex items-center justify-center w-12 h-12 rounded-full transition-all ${
-                        isFavorited
-                          ? 'bg-red-500 hover:bg-red-600 text-white'
-                          : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
-                      } disabled:opacity-50 disabled:cursor-not-allowed`}
-                      title={isFavorited ? '찜 해제' : '찜하기'}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}>
-                        favorite
-                      </span>
-                    </button>
-                  </div>
-                </div>
+              {/* 이름과 공고번호 영역 */}
+              <div className="mb-4">
+                <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light dark:text-text-dark">
+                  [{speciesLabel}] {animal.breed}
+                </p>
+                <p className="text-sm text-secondary dark:text-gray-400 mt-1">
+                  공고번호: {animal.apmsNoticeNo || animal.noticeNo || 'N/A'}
+                </p>
+              </div>
+
+              {/* 상태 태그, 찜 버튼, 수정 버튼 영역 */}
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2">
                   <div className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/30 px-4">
                     <p className="text-primary dark:text-primary text-sm font-bold">
@@ -261,6 +337,34 @@ export default function AnimalDetail() {
                         D-{dDay}
                       </p>
                     </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* 찜 버튼 */}
+                  <button
+                    onClick={handleFavoriteToggle}
+                    disabled={addFavoriteMutation.isPending || removeFavoriteMutation.isPending}
+                    className={`flex items-center justify-center w-12 h-12 rounded-full transition-all ${
+                      isFavorited
+                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={isFavorited ? '찜 해제' : '찜하기'}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}>
+                      favorite
+                    </span>
+                  </button>
+                  {/* 수정 버튼 (본인이 등록한 동물인 경우만) */}
+                  {isMyAnimal && (
+                    <Link
+                      to={`/animals/${id}/edit`}
+                      state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }}
+                      className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-bold text-sm"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">edit</span>
+                      수정하기
+                    </Link>
                   )}
                 </div>
               </div>

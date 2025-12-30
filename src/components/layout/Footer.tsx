@@ -27,11 +27,6 @@ export default function Footer() {
                   동물 검색
                 </Link>
               </li>
-              <li>
-                <Link to="/shelters" className="hover:text-primary transition-colors">
-                  보호소 찾기
-                </Link>
-              </li>
             </ul>
           </div>
 

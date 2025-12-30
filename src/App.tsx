@@ -7,6 +7,8 @@ import Signup from './pages/Signup.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
 import Animals from './pages/Animals.tsx';
 import AnimalDetail from './pages/AnimalDetail.tsx';
+import AnimalCreate from './pages/AnimalCreate.tsx';
+import AnimalEdit from './pages/AnimalEdit.tsx';
 import Products from './pages/Products.tsx';
 import ProductDetail from './pages/ProductDetail.tsx';
 import ProductCreate from './pages/ProductCreate.tsx';
@@ -152,6 +154,22 @@ function App() {
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
+      <Route
+        path="/animals/new"
+        element={
+          <ProtectedRoute>
+            <AnimalCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/animals/:id/edit"
+        element={
+          <ProtectedRoute>
+            <AnimalEdit />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/products" element={<Products />} />
       <Route path="/products/:id" element={<ProductDetail />} />
       <Route
