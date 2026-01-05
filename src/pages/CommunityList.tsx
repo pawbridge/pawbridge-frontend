@@ -5,6 +5,7 @@ import Header from '../components/layout/Header';
 import { getAllPosts, searchPosts } from '../api/community.api';
 import type { BoardType } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
+import Pagination from '../components/common/Pagination';
 
 const boardTabs: { key: BoardType; label: string }[] = [
   { key: 'MISSING', label: '실종 동물' },
@@ -19,6 +20,8 @@ export default function CommunityList() {
   const [activeTab, setActiveTab] = useState<BoardType>('MISSING');
   const [inputValue, setInputValue] = useState(''); // 입력 필드 값
   const [searchKeyword, setSearchKeyword] = useState(''); // 실제 검색 키워드
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 12; // 페이지당 게시글 수
 
   // 게시글 목록 조회 (검색어가 있으면 검색, 없으면 전체 조회)
   const { data: posts = [], isLoading, error } = useQuery({
@@ -31,11 +34,29 @@ export default function CommunityList() {
     },
   });
 
-  // 탭에 따라 필터링된 게시글
-  const filtered = useMemo(
+  // 탭에 따라 필터링된 게시글 (전체)
+  const allFiltered = useMemo(
     () => posts.filter((p) => p.boardType === activeTab),
     [posts, activeTab],
   );
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(allFiltered.length / pageSize);
+  const startIndex = currentPage * pageSize;
+  const endIndex = startIndex + pageSize;
+  const filtered = allFiltered.slice(startIndex, endIndex);
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 탭 변경 시 첫 페이지로 이동
+  const handleTabChange = (tab: BoardType) => {
+    setActiveTab(tab);
+    setCurrentPage(0);
+  };
 
   // 검색 실행
   const handleSearchSubmit = () => {
@@ -116,7 +137,7 @@ export default function CommunityList() {
                   <button
                     key={tab.key}
                     type="button"
-                    onClick={() => setActiveTab(tab.key)}
+                    onClick={() => handleTabChange(tab.key)}
                     className={`flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 transition-colors ${
                       active
                         ? 'border-primary text-[#111816] dark:text-white'
@@ -233,25 +254,12 @@ export default function CommunityList() {
           )}
 
           {/* Pagination */}
-          <div className="flex justify-center mt-12">
-            <nav className="flex items-center gap-2">
-              <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
-                <span className="material-symbols-outlined text-xl">chevron_left</span>
-              </button>
-              <button className="flex items-center justify-center h-9 w-9 rounded-lg bg-primary text-gray-900 text-sm font-bold">
-                1
-              </button>
-              <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-600 dark:text-gray-300">
-                2
-              </button>
-              <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-gray-600 dark:text-gray-300">
-                3
-              </button>
-              <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
-                <span className="material-symbols-outlined text-xl">chevron_right</span>
-              </button>
-            </nav>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            showPagination={filtered.length > 0}
+          />
         </div>
       </main>
     </div>
