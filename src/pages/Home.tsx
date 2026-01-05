@@ -5,16 +5,18 @@ import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
+import QuickNavCard from '../components/common/QuickNavCard';
+import AdoptionStory from '../components/common/AdoptionStory';
 
 export default function Home() {
   // 동물 데이터 가져오기 (실제 백엔드 API)
   const { data } = useQuery({
     queryKey: ['featured-animals'],
-    queryFn: () => getAnimals({ page: 0, size: 4, sort: 'createdAt,desc', status: 'PROTECT' }),
+    queryFn: () => getAnimals({ page: 0, size: 10, sort: 'createdAt,desc', status: 'PROTECT' }),
   });
 
-  // 최근 등록 동물 (4마리만)
-  const featuredAnimals = data?.content?.slice(0, 4) || [];
+  // 최근 등록 동물 (10마리)
+  const featuredAnimals = data?.content?.slice(0, 10) || [];
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
@@ -97,14 +99,13 @@ export default function Home() {
                 전체보기
               </Link>
             </div>
-            <div className="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 sm:-mx-6 lg:-mx-8">
+            <div className="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 sm:-mx-6 lg:-mx-8 snap-x snap-mandatory">
               <div className="flex items-stretch p-4 sm:p-6 lg:p-8 gap-6">
                 {featuredAnimals.length > 0 ? (
                   featuredAnimals.map((animal: Animal) => (
-                    <AnimalCardSimple
-                      key={animal.id}
-                      animal={animal}
-                    />
+                    <div key={animal.id} className="min-w-[320px] max-w-[320px] flex-shrink-0 snap-start">
+                      <AnimalCardSimple animal={animal} />
+                    </div>
                   ))
                 ) : (
                   <div className="text-center text-gray-500 py-8">
@@ -164,66 +165,6 @@ export default function Home() {
       </main>
 
       <Footer />
-    </div>
-  );
-}
-
-// Quick Navigation Card 컴포넌트
-interface QuickNavCardProps {
-  title: string;
-  description: string;
-  imageUrl: string;
-  linkTo: string;
-}
-
-function QuickNavCard({ title, description, imageUrl, linkTo }: QuickNavCardProps) {
-  return (
-    <Link
-      to={linkTo}
-      className="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-background-dark dark:border dark:border-primary/20 shadow-sm hover:shadow-lg transition-shadow"
-    >
-      <div
-        className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg"
-        style={{ backgroundImage: `url("${imageUrl}")` }}
-      />
-      <div>
-        <p className="text-primary-content dark:text-white text-lg font-bold leading-normal">
-          {title}
-        </p>
-        <p className="text-secondary-content dark:text-gray-400 text-sm font-normal leading-normal">
-          {description}
-        </p>
-      </div>
-    </Link>
-  );
-}
-
-// Adoption Story 컴포넌트
-interface AdoptionStoryProps {
-  tag: string;
-  title: string;
-  excerpt: string;
-  imageUrl: string;
-}
-
-function AdoptionStory({ tag, title, excerpt, imageUrl }: AdoptionStoryProps) {
-  return (
-    <div className="flex flex-col sm:flex-row items-center gap-6 group cursor-pointer">
-      <div className="w-full sm:w-1/3 flex-shrink-0">
-        <div
-          className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl"
-          style={{ backgroundImage: `url("${imageUrl}")` }}
-        />
-      </div>
-      <div className="text-center sm:text-left">
-        <p className="text-secondary-content dark:text-gray-400 text-sm">{tag}</p>
-        <h4 className="text-primary-content dark:text-white text-lg font-bold mt-1 group-hover:text-primary transition-colors">
-          {title}
-        </h4>
-        <p className="text-secondary-content dark:text-gray-400 text-sm mt-2 line-clamp-2">
-          {excerpt}
-        </p>
-      </div>
     </div>
   );
 }
