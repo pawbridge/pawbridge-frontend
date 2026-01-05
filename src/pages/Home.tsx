@@ -22,28 +22,48 @@ export default function Home() {
   // 마우스 드래그 스크롤을 위한 ref와 state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [justDragged, setJustDragged] = useState(false); // 드래그 후 클릭 방지용 (리렌더링 필요)
   const startXRef = useRef(0);
-  const scrollLeftRef = useRef(0);
+  const startScrollLeftRef = useRef(0); // 드래그 시작 시점의 스크롤 위치
   const lastXRef = useRef(0);
   const lastTimeRef = useRef(0);
   const dragDistanceRef = useRef(0); // 드래그 거리 추적 (클릭 vs 드래그 구분용)
+  const prevXRef = useRef(0); // 이전 마우스 위치 (속도 계산용)
+  const prevTimeRef = useRef(0); // 이전 시간 (속도 계산용)
 
   // 관성 스크롤 애니메이션
   const animateInertialScroll = (velocity: number) => {
     if (!scrollContainerRef.current) return;
     
     let currentVelocity = velocity;
-    const friction = 0.95; // 감속 계수
+    const friction = 0.97; // 감속 계수 (더 천천히 감속하여 오래 지속)
+    const minVelocity = 0.05; // 최소 속도 (더 오래 지속되도록 낮춤)
     
     const animate = () => {
       if (!scrollContainerRef.current) return;
       
-      if (Math.abs(currentVelocity) < 0.5) {
-        // 속도가 충분히 느려지면 멈춤
+      const container = scrollContainerRef.current;
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      const currentScrollLeft = container.scrollLeft;
+      
+      // 속도가 충분히 느려지거나 스크롤 범위를 벗어나면 멈춤
+      if (Math.abs(currentVelocity) < minVelocity) {
         return;
       }
       
-      scrollContainerRef.current.scrollLeft += currentVelocity;
+      // 스크롤 범위 체크
+      const newScrollLeft = currentScrollLeft + currentVelocity;
+      if (newScrollLeft <= 0) {
+        container.scrollLeft = 0;
+        return;
+      }
+      if (newScrollLeft >= maxScrollLeft) {
+        container.scrollLeft = maxScrollLeft;
+        return;
+      }
+      
+      // 스크롤 업데이트
+      container.scrollLeft = newScrollLeft;
       currentVelocity *= friction; // 점진적 감속
       requestAnimationFrame(animate);
     };
@@ -56,18 +76,28 @@ export default function Home() {
     if (!scrollContainerRef.current) return;
     e.preventDefault();
     
-    const rect = scrollContainerRef.current.getBoundingClientRect();
-    const x = e.pageX - rect.left;
+    const container = scrollContainerRef.current;
+    const rect = container.getBoundingClientRect();
+    // clientX를 사용하여 정확한 마우스 위치 계산
+    const x = e.clientX - rect.left;
+    
+    // 현재 스크롤 위치를 정확히 저장 (관성 스크롤 중일 수 있으므로)
+    const currentScrollLeft = container.scrollLeft;
     
     setIsDragging(true);
     startXRef.current = x;
     lastXRef.current = x;
-    scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
+    prevXRef.current = x;
+    startScrollLeftRef.current = currentScrollLeft; // 정확한 현재 위치 저장
     lastTimeRef.current = Date.now();
+    prevTimeRef.current = Date.now();
     dragDistanceRef.current = 0;
     
-    scrollContainerRef.current.style.cursor = 'grabbing';
-    scrollContainerRef.current.style.userSelect = 'none';
+    // 드래그 중 스냅 비활성화 및 스크롤 동작 변경
+    container.style.cursor = 'grabbing';
+    container.style.userSelect = 'none';
+    container.style.scrollSnapType = 'none';
+    container.style.scrollBehavior = 'auto';
   };
 
   // 전역 마우스 이벤트 리스너
@@ -76,41 +106,105 @@ export default function Home() {
       if (!isDragging || !scrollContainerRef.current) return;
       
       e.preventDefault();
-      const rect = scrollContainerRef.current.getBoundingClientRect();
-      const x = e.pageX - rect.left;
+      const container = scrollContainerRef.current;
+      const rect = container.getBoundingClientRect();
+      // clientX를 사용하여 정확한 마우스 위치 계산 (컨테이너 영역을 벗어나도 정확함)
+      const x = e.clientX - rect.left;
       const currentTime = Date.now();
       
       // 드래그 거리 계산
       const distance = Math.abs(x - startXRef.current);
       dragDistanceRef.current = distance;
       
-      // 실시간 스크롤 (초기 scrollLeft 기준으로 상대적 이동)
-      const walk = (x - startXRef.current) * 2; // 스크롤 속도 조절
-      const newScrollLeft = scrollLeftRef.current - walk;
-      scrollContainerRef.current.scrollLeft = newScrollLeft;
+      // 실시간 스크롤 (드래그 시작 시점의 scrollLeft 기준으로 상대적 이동)
+      // 마우스 이동 거리만큼 직접 스크롤 (1:1 비율로 부드럽게)
+      const walk = x - startXRef.current;
+      let newScrollLeft = startScrollLeftRef.current - walk;
       
+      // 스크롤 범위 제한 (무한 루프 방지)
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      // 범위를 벗어나도 드래그는 계속 반영되도록 하되, 최종 위치만 제한
+      newScrollLeft = Math.max(0, Math.min(newScrollLeft, maxScrollLeft));
+      
+      // 즉시 스크롤 업데이트 (requestAnimationFrame 없이 직접)
+      container.scrollLeft = newScrollLeft;
+      
+      // 이전 위치와 시간 업데이트 (속도 계산용)
+      prevXRef.current = lastXRef.current;
+      prevTimeRef.current = lastTimeRef.current;
       // 마지막 위치와 시간 업데이트 (속도 계산용)
       lastXRef.current = x;
       lastTimeRef.current = currentTime;
     };
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (e?: MouseEvent) => {
       if (!scrollContainerRef.current) return;
       
       const finalDragDistance = dragDistanceRef.current;
       
-      // 드래그 거리가 5px 이상이면 드래그로 판단
-      if (finalDragDistance >= 5) {
+      // 스냅 및 스크롤 동작 복원
+      scrollContainerRef.current.style.scrollSnapType = '';
+      scrollContainerRef.current.style.scrollBehavior = '';
+      
+      // 드래그 거리가 3px 이상이면 드래그로 판단 (임계값 낮춤)
+      if (finalDragDistance >= 3) {
+        // 드래그가 발생했으면 클릭 이벤트 차단
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        
+        // 드래그가 발생했음을 표시 (클릭 방지용)
+        setJustDragged(true);
+        
         // 관성 스크롤 계산
         const currentTime = Date.now();
         const timeDiff = currentTime - lastTimeRef.current;
         
-        if (timeDiff > 0 && scrollContainerRef.current) {
-          const currentX = lastXRef.current;
-          const distance = currentX - startXRef.current;
-          const velocity = (distance * 2) / (timeDiff / 16); // 프레임 단위로 변환
-          animateInertialScroll(velocity);
+        if (scrollContainerRef.current) {
+          // 최근 이동 속도 계산 (더 정확한 관성 스크롤을 위해)
+          // 마지막 두 프레임의 평균 속도 사용
+          const recentMoveDistance = lastXRef.current - prevXRef.current;
+          const recentTimeDiff = lastTimeRef.current - prevTimeRef.current;
+          
+          let velocity = 0;
+          
+          // 최근 이동 속도가 있으면 우선 사용
+          if (recentTimeDiff > 0 && Math.abs(recentMoveDistance) > 0.1) {
+            // 최근 이동 속도 (픽셀/밀리초)
+            // 마우스를 왼쪽으로 드래그하면 (x 감소) → 스크롤은 오른쪽으로 (양수)
+            // 마우스를 오른쪽으로 드래그하면 (x 증가) → 스크롤은 왼쪽으로 (음수)
+            // 따라서 마우스 이동 방향과 반대로 스크롤해야 하므로 음수 부호 적용
+            const recentVelocity = -recentMoveDistance / recentTimeDiff;
+            // 픽셀/프레임 단위로 변환 (60fps 기준) 및 관성 조정
+            velocity = recentVelocity * 16 * 0.4; // 0.4배로 더 줄여서 초기 속도 감소
+          } 
+          // 전체 드래그 속도 사용 (fallback)
+          else if (timeDiff > 0) {
+            const totalMoveDistance = lastXRef.current - startXRef.current;
+            // 마우스 이동 방향과 반대로 스크롤해야 하므로 음수 부호 적용
+            velocity = (-totalMoveDistance / timeDiff) * 16 * 0.4;
+          }
+          // 드래그 시간이 너무 짧으면 최소 속도 보장
+          else if (timeDiff === 0 && finalDragDistance > 0) {
+            const totalMoveDistance = lastXRef.current - startXRef.current;
+            // 최소 속도 보장 (드래그 방향에 따라)
+            velocity = totalMoveDistance > 0 ? -10 : 10; // 기본 관성 속도 더 감소
+          }
+          
+          // 속도가 충분히 크면 관성 스크롤 실행
+          if (Math.abs(velocity) > 0.1) {
+            animateInertialScroll(velocity);
+          }
         }
+        
+        // 일정 시간 후 클릭 허용 (300ms)
+        setTimeout(() => {
+          setJustDragged(false);
+        }, 300);
+      } else {
+        // 드래그가 아니면 즉시 클릭 허용
+        setJustDragged(false);
       }
       
       setIsDragging(false);
@@ -221,7 +315,7 @@ export default function Home() {
             </div>
             <div
               ref={scrollContainerRef}
-              className="flex flex-row overflow-x-hidden -mx-4 sm:-mx-6 lg:-mx-8 snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none"
+              className="flex flex-row overflow-x-hidden -mx-4 sm:-mx-6 lg:-mx-8 cursor-grab active:cursor-grabbing select-none"
               onMouseDown={handleMouseDown}
               onMouseLeave={handleMouseLeave}
               onWheel={(e) => e.preventDefault()} // 마우스 휠 스크롤 방지
@@ -231,12 +325,23 @@ export default function Home() {
                   featuredAnimals.map((animal: Animal) => (
                     <div 
                       key={animal.id} 
-                      className="min-w-[320px] max-w-[320px] flex-shrink-0 snap-start"
-                      onClick={(e) => {
-                        // 드래그 중이거나 드래그 거리가 5px 이상이면 클릭 방지
-                        if (isDragging || dragDistanceRef.current >= 5) {
+                      className="min-w-[320px] max-w-[320px] flex-shrink-0"
+                      style={{
+                        pointerEvents: (isDragging || justDragged) ? 'none' : 'auto'
+                      }}
+                      onMouseUp={(e) => {
+                        // 드래그 중이거나 드래그 거리가 5px 이상이거나 방금 드래그했으면 클릭 방지
+                        if (isDragging || dragDistanceRef.current >= 5 || justDragged) {
                           e.preventDefault();
                           e.stopPropagation();
+                        }
+                      }}
+                      onClick={(e) => {
+                        // 드래그 중이거나 드래그 거리가 5px 이상이거나 방금 드래그했으면 클릭 방지
+                        if (isDragging || dragDistanceRef.current >= 5 || justDragged) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          return false;
                         }
                       }}
                     >
