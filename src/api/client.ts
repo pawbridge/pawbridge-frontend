@@ -52,10 +52,21 @@ apiClient.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          console.error('인증 실패: 로그인이 필요합니다');
-          // ✅ Zustand에서 인증 정보 삭제
-          useAuthStore.getState().clearAuth();
-          window.location.href = '/login';
+          // 공개 API는 401 에러 발생 시에도 로그인 리다이렉트하지 않음
+          const requestUrl = error.config?.url || '';
+          
+          // 공개 API 경로 패턴: /api/animals 또는 /api/animals/{id}
+          const isPublicAnimalApi = /^\/api\/animals(\/\d+)?(\?.*)?$/.test(requestUrl);
+          
+          if (isPublicAnimalApi) {
+            // 공개 API는 에러만 로그하고 리다이렉트하지 않음
+            console.warn('공개 API 인증 실패 (리다이렉트 제외):', requestUrl);
+          } else {
+            // 인증이 필요한 API는 로그인 페이지로 리다이렉트
+            console.error('인증 실패: 로그인이 필요합니다');
+            useAuthStore.getState().clearAuth();
+            window.location.href = '/login';
+          }
           break;
         case 403:
           console.error('권한 없음');
