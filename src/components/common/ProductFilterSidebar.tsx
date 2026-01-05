@@ -193,7 +193,7 @@ export default function ProductFilterSidebar({
               value={localMinPrice}
               onChange={(e) => setLocalMinPrice(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-secondary-dark text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-secondary-dark text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
             <span className="self-center text-gray-400">~</span>
             <input
@@ -202,7 +202,7 @@ export default function ProductFilterSidebar({
               value={localMaxPrice}
               onChange={(e) => setLocalMaxPrice(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-secondary-dark text-sm"
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-secondary-dark text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
           </div>
           <p className="text-xs text-gray-400 px-3 mt-1">엔터 또는 검색 버튼으로 적용</p>
