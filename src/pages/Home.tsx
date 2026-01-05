@@ -22,8 +22,8 @@ export default function Home() {
   // 마우스 드래그 스크롤을 위한 ref와 state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
   const lastXRef = useRef(0);
   const lastTimeRef = useRef(0);
   const dragDistanceRef = useRef(0); // 드래그 거리 추적 (클릭 vs 드래그 구분용)
@@ -60,9 +60,9 @@ export default function Home() {
     const x = e.pageX - rect.left;
     
     setIsDragging(true);
-    setStartX(x);
+    startXRef.current = x;
     lastXRef.current = x;
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
+    scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
     lastTimeRef.current = Date.now();
     dragDistanceRef.current = 0;
     
@@ -81,12 +81,12 @@ export default function Home() {
       const currentTime = Date.now();
       
       // 드래그 거리 계산
-      const distance = Math.abs(x - startX);
+      const distance = Math.abs(x - startXRef.current);
       dragDistanceRef.current = distance;
       
       // 실시간 스크롤 (초기 scrollLeft 기준으로 상대적 이동)
-      const walk = (x - startX) * 2; // 스크롤 속도 조절
-      const newScrollLeft = scrollLeft - walk;
+      const walk = (x - startXRef.current) * 2; // 스크롤 속도 조절
+      const newScrollLeft = scrollLeftRef.current - walk;
       scrollContainerRef.current.scrollLeft = newScrollLeft;
       
       // 마지막 위치와 시간 업데이트 (속도 계산용)
@@ -107,7 +107,7 @@ export default function Home() {
         
         if (timeDiff > 0 && scrollContainerRef.current) {
           const currentX = lastXRef.current;
-          const distance = currentX - startX;
+          const distance = currentX - startXRef.current;
           const velocity = (distance * 2) / (timeDiff / 16); // 프레임 단위로 변환
           animateInertialScroll(velocity);
         }
@@ -127,7 +127,7 @@ export default function Home() {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, startX, scrollLeft]);
+  }, [isDragging]);
 
   // 마우스가 영역을 벗어났을 때
   const handleMouseLeave = () => {
