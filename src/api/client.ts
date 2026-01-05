@@ -51,7 +51,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response) {
       switch (error.response.status) {
-        case 401:
+        case 401: {
           // 공개 API는 401 에러 발생 시에도 로그인 리다이렉트하지 않음
           const requestUrl = error.config?.url || '';
           
@@ -68,6 +68,7 @@ apiClient.interceptors.response.use(
             window.location.href = '/login';
           }
           break;
+        }
         case 403:
           console.error('권한 없음');
           break;

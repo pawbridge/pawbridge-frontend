@@ -16,7 +16,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
     const pages: number[] = [];
     const maxPages = Math.min(5, totalPages);
     let startPage = Math.max(0, currentPage - 2);
-    let endPage = Math.min(totalPages - 1, startPage + maxPages - 1);
+    const endPage = Math.min(totalPages - 1, startPage + maxPages - 1);
     
     // 끝에서 시작점 조정
     if (endPage - startPage < maxPages - 1) {

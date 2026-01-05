@@ -21,6 +21,8 @@ export default function AnimalCreate() {
 
   // authStore에서도 user 정보 가져오기 (로그인 시 저장된 careRegNo 사용)
   const authUser = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   // 기본 정보
   const [species, setSpecies] = useState<'DOG' | 'CAT' | 'ETC'>('DOG');
@@ -210,9 +212,6 @@ export default function AnimalCreate() {
       </div>
     );
   }
-
-  const user = useAuthStore((state) => state.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const handleLogout = () => {
     clearAuth();
