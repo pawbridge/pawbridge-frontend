@@ -41,21 +41,24 @@ export default function AdminStatistics() {
       case 'today':
         start = end;
         break;
-      case '7days':
+      case '7days': {
         const sevenDaysAgo = new Date(today);
         sevenDaysAgo.setDate(today.getDate() - 6);
         start = getKSTDate(sevenDaysAgo);
         break;
-      case '30days':
+      }
+      case '30days': {
         const thirtyDaysAgo = new Date(today);
         thirtyDaysAgo.setDate(today.getDate() - 29);
         start = getKSTDate(thirtyDaysAgo);
         break;
-      case 'month':
+      }
+      case 'month': {
         const kstToday = getKSTDate(today);
         const [year, month] = kstToday.split('-');
         start = `${year}-${month}-01`;
         break;
+      }
     }
 
     return { start, end };

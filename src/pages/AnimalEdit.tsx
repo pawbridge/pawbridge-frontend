@@ -25,6 +25,8 @@ export default function AnimalEdit() {
   });
 
   const authUser = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   // 폼 상태
   const [species, setSpecies] = useState<'DOG' | 'CAT' | 'ETC'>('DOG');
@@ -233,9 +235,6 @@ export default function AnimalEdit() {
       </div>
     );
   }
-
-  const user = useAuthStore((state) => state.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const handleLogout = () => {
     clearAuth();
