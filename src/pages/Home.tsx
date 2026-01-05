@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
 import { getAnimals } from '../api/animals.api';
 import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
@@ -17,6 +18,47 @@ export default function Home() {
 
   // 최근 등록 동물 (10마리)
   const featuredAnimals = data?.content?.slice(0, 10) || [];
+
+  // 마우스 드래그 스크롤을 위한 ref와 state
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // 마우스 드래그 시작
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+    scrollContainerRef.current.style.cursor = 'grabbing';
+    scrollContainerRef.current.style.userSelect = 'none';
+  };
+
+  // 마우스 드래그 중
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // 스크롤 속도 조절
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  // 마우스 드래그 종료
+  const handleMouseUp = () => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(false);
+    scrollContainerRef.current.style.cursor = 'grab';
+    scrollContainerRef.current.style.userSelect = 'auto';
+  };
+
+  // 마우스가 영역을 벗어났을 때
+  const handleMouseLeave = () => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(false);
+    scrollContainerRef.current.style.cursor = 'grab';
+    scrollContainerRef.current.style.userSelect = 'auto';
+  };
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
@@ -99,8 +141,16 @@ export default function Home() {
                 전체보기
               </Link>
             </div>
-            <div className="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 sm:-mx-6 lg:-mx-8 snap-x snap-mandatory">
-              <div className="flex items-stretch p-4 sm:p-6 lg:p-8 gap-6">
+            <div
+              ref={scrollContainerRef}
+              className="flex flex-row overflow-x-hidden -mx-4 sm:-mx-6 lg:-mx-8 snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onWheel={(e) => e.preventDefault()} // 마우스 휠 스크롤 방지
+            >
+              <div className="flex flex-row items-stretch p-4 sm:p-6 lg:p-8 gap-6">
                 {featuredAnimals.length > 0 ? (
                   featuredAnimals.map((animal: Animal) => (
                     <div key={animal.id} className="min-w-[320px] max-w-[320px] flex-shrink-0 snap-start">
