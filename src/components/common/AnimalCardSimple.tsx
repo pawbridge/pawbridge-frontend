@@ -91,7 +91,7 @@ export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
       className="flex flex-col bg-card-light dark:bg-card-dark rounded-xl overflow-hidden shadow-sm border border-border-light dark:border-border-dark transition-transform hover:-translate-y-1"
     >
       {/* 이미지 */}
-      <div className="aspect-square w-full bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
+      <div className="w-full h-64 bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
         {imageUrl ? (
           <img
             src={imageUrl}
