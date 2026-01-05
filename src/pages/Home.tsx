@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { getAnimals } from '../api/animals.api';
 import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
@@ -13,51 +13,129 @@ export default function Home() {
   // 동물 데이터 가져오기 (실제 백엔드 API)
   const { data } = useQuery({
     queryKey: ['featured-animals'],
-    queryFn: () => getAnimals({ page: 0, size: 10, sort: 'createdAt,desc', status: 'PROTECT' }),
+    queryFn: () => getAnimals({ page: 0, size: 20, sort: 'createdAt,desc', status: 'PROTECT' }),
   });
 
-  // 최근 등록 동물 (10마리)
-  const featuredAnimals = data?.content?.slice(0, 10) || [];
+  // 최근 등록 동물 (20마리)
+  const featuredAnimals = data?.content?.slice(0, 20) || [];
 
   // 마우스 드래그 스크롤을 위한 ref와 state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const lastXRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const dragDistanceRef = useRef(0); // 드래그 거리 추적 (클릭 vs 드래그 구분용)
+
+  // 관성 스크롤 애니메이션
+  const animateInertialScroll = (velocity: number) => {
+    if (!scrollContainerRef.current) return;
+    
+    let currentVelocity = velocity;
+    const friction = 0.95; // 감속 계수
+    
+    const animate = () => {
+      if (!scrollContainerRef.current) return;
+      
+      if (Math.abs(currentVelocity) < 0.5) {
+        // 속도가 충분히 느려지면 멈춤
+        return;
+      }
+      
+      scrollContainerRef.current.scrollLeft += currentVelocity;
+      currentVelocity *= friction; // 점진적 감속
+      requestAnimationFrame(animate);
+    };
+    
+    requestAnimationFrame(animate);
+  };
 
   // 마우스 드래그 시작
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
+    e.preventDefault();
+    
+    const rect = scrollContainerRef.current.getBoundingClientRect();
+    const x = e.pageX - rect.left;
+    
     setIsDragging(true);
-    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setStartX(x);
+    lastXRef.current = x;
     setScrollLeft(scrollContainerRef.current.scrollLeft);
+    lastTimeRef.current = Date.now();
+    dragDistanceRef.current = 0;
+    
     scrollContainerRef.current.style.cursor = 'grabbing';
     scrollContainerRef.current.style.userSelect = 'none';
   };
 
-  // 마우스 드래그 중
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // 스크롤 속도 조절
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
+  // 전역 마우스 이벤트 리스너
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !scrollContainerRef.current) return;
+      
+      e.preventDefault();
+      const rect = scrollContainerRef.current.getBoundingClientRect();
+      const x = e.pageX - rect.left;
+      const currentTime = Date.now();
+      
+      // 드래그 거리 계산
+      const distance = Math.abs(x - startX);
+      dragDistanceRef.current = distance;
+      
+      // 실시간 스크롤 (초기 scrollLeft 기준으로 상대적 이동)
+      const walk = (x - startX) * 2; // 스크롤 속도 조절
+      const newScrollLeft = scrollLeft - walk;
+      scrollContainerRef.current.scrollLeft = newScrollLeft;
+      
+      // 마지막 위치와 시간 업데이트 (속도 계산용)
+      lastXRef.current = x;
+      lastTimeRef.current = currentTime;
+    };
 
-  // 마우스 드래그 종료
-  const handleMouseUp = () => {
-    if (!scrollContainerRef.current) return;
-    setIsDragging(false);
-    scrollContainerRef.current.style.cursor = 'grab';
-    scrollContainerRef.current.style.userSelect = 'auto';
-  };
+    const handleMouseUp = () => {
+      if (!scrollContainerRef.current) return;
+      
+      const finalDragDistance = dragDistanceRef.current;
+      
+      // 드래그 거리가 5px 이상이면 드래그로 판단
+      if (finalDragDistance >= 5) {
+        // 관성 스크롤 계산
+        const currentTime = Date.now();
+        const timeDiff = currentTime - lastTimeRef.current;
+        
+        if (timeDiff > 0 && scrollContainerRef.current) {
+          const currentX = lastXRef.current;
+          const distance = currentX - startX;
+          const velocity = (distance * 2) / (timeDiff / 16); // 프레임 단위로 변환
+          animateInertialScroll(velocity);
+        }
+      }
+      
+      setIsDragging(false);
+      scrollContainerRef.current.style.cursor = 'grab';
+      scrollContainerRef.current.style.userSelect = 'auto';
+      dragDistanceRef.current = 0;
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, startX, scrollLeft]);
 
   // 마우스가 영역을 벗어났을 때
   const handleMouseLeave = () => {
-    if (!scrollContainerRef.current) return;
-    setIsDragging(false);
-    scrollContainerRef.current.style.cursor = 'grab';
-    scrollContainerRef.current.style.userSelect = 'auto';
+    // 드래그 중이면 계속 유지 (전역 이벤트로 처리)
+    if (!isDragging && scrollContainerRef.current) {
+      scrollContainerRef.current.style.cursor = 'grab';
+      scrollContainerRef.current.style.userSelect = 'auto';
+    }
   };
 
   return (
@@ -145,15 +223,23 @@ export default function Home() {
               ref={scrollContainerRef}
               className="flex flex-row overflow-x-hidden -mx-4 sm:-mx-6 lg:-mx-8 snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none"
               onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseLeave}
               onWheel={(e) => e.preventDefault()} // 마우스 휠 스크롤 방지
             >
               <div className="flex flex-row items-stretch p-4 sm:p-6 lg:p-8 gap-6">
                 {featuredAnimals.length > 0 ? (
                   featuredAnimals.map((animal: Animal) => (
-                    <div key={animal.id} className="min-w-[320px] max-w-[320px] flex-shrink-0 snap-start">
+                    <div 
+                      key={animal.id} 
+                      className="min-w-[320px] max-w-[320px] flex-shrink-0 snap-start"
+                      onClick={(e) => {
+                        // 드래그 중이거나 드래그 거리가 5px 이상이면 클릭 방지
+                        if (isDragging || dragDistanceRef.current >= 5) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }
+                      }}
+                    >
                       <AnimalCardSimple animal={animal} />
                     </div>
                   ))
