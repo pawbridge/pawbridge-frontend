@@ -6,6 +6,7 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AnimalFilterSidebar from '../components/common/AnimalFilterSidebar';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
+import Pagination from '../components/common/Pagination';
 
 export default function Animals() {
   // 필터 상태
@@ -228,66 +229,12 @@ export default function Animals() {
             )}
 
             {/* 페이지네이션 */}
-            {totalPages > 1 && (
-              <nav className="flex items-center justify-center pt-10 mt-10 border-t border-border-light dark:border-border-dark">
-                <ul className="flex items-center -space-x-px h-10 text-base">
-                  {/* 이전 버튼 */}
-                  <li>
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 0}
-                      className="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span className="material-symbols-outlined text-base">chevron_left</span>
-                    </button>
-                  </li>
-
-                  {/* 페이지 번호 */}
-                  {(() => {
-                    // 현재 페이지 기준으로 앞뒤 2페이지씩 표시
-                    const pages = [];
-                    const maxPages = Math.min(5, totalPages);
-                    let startPage = Math.max(0, currentPage - 2);
-                    let endPage = Math.min(totalPages - 1, startPage + maxPages - 1);
-                    
-                    // 끝에서 시작점 조정
-                    if (endPage - startPage < maxPages - 1) {
-                      startPage = Math.max(0, endPage - maxPages + 1);
-                    }
-
-                    for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
-                      const isActive = pageNum === currentPage;
-                      pages.push(
-                        <li key={`page-${pageNum}`}>
-                          <button
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`flex items-center justify-center px-4 h-10 leading-tight ${
-                              isActive
-                                ? 'text-primary bg-primary/20 border border-primary dark:border-primary'
-                                : 'text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white'
-                            }`}
-                          >
-                            {pageNum + 1}
-                          </button>
-                        </li>
-                      );
-                    }
-                    return pages;
-                  })()}
-
-                  {/* 다음 버튼 */}
-                  <li>
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage >= totalPages - 1}
-                      className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span className="material-symbols-outlined text-base">chevron_right</span>
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            )}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              showPagination={animals.length > 0}
+            />
           </div>
         </div>
       </main>

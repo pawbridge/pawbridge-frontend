@@ -1,13 +1,17 @@
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { getAllPosts } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
+import Pagination from '../components/common/Pagination';
 
 export default function AdoptionList() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 12; // 페이지당 게시글 수
 
   // 입양후기 게시글 조회 (ADOPTION 타입만)
   const { data: posts = [], isLoading, error } = useQuery({
@@ -16,7 +20,19 @@ export default function AdoptionList() {
   });
 
   // ADOPTION 타입만 필터링
-  const adoptionPosts = posts.filter((p) => p.boardType === 'ADOPTION');
+  const allAdoptionPosts = useMemo(() => posts.filter((p) => p.boardType === 'ADOPTION'), [posts]);
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(allAdoptionPosts.length / pageSize);
+  const startIndex = currentPage * pageSize;
+  const endIndex = startIndex + pageSize;
+  const adoptionPosts = allAdoptionPosts.slice(startIndex, endIndex);
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const resolveImage = (urls?: string[]) => {
     if (!urls || urls.length === 0) return null;
@@ -125,29 +141,12 @@ export default function AdoptionList() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-center p-4 mt-8 sm:mt-12">
-          <button className="flex size-10 items-center justify-center text-[#5f8c80] dark:text-gray-400 hover:text-[#111816] dark:hover:text-white">
-            <span className="material-symbols-outlined text-2xl">chevron_left</span>
-          </button>
-          <button className="text-sm font-bold leading-normal tracking-[0.015em] flex size-10 items-center justify-center text-[#111816] dark:text-white rounded-full bg-primary/30">
-            1
-          </button>
-          <button className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-[#5f8c80] dark:text-gray-400 hover:text-[#111816] dark:hover:text-white rounded-full">
-            2
-          </button>
-          <button className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-[#5f8c80] dark:text-gray-400 hover:text-[#111816] dark:hover:text-white rounded-full">
-            3
-          </button>
-          <button className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-[#5f8c80] dark:text-gray-400 hover:text-[#111816] dark:hover:text-white rounded-full">
-            4
-          </button>
-          <button className="text-sm font-normal leading-normal flex size-10 items-center justify-center text-[#5f8c80] dark:text-gray-400 hover:text-[#111816] dark:hover:text-white rounded-full">
-            5
-          </button>
-          <button className="flex size-10 items-center justify-center text-[#5f8c80] dark:text-gray-400 hover:text-[#111816] dark:hover:text-white">
-            <span className="material-symbols-outlined text-2xl">chevron_right</span>
-          </button>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          showPagination={adoptionPosts.length > 0}
+        />
       </main>
       <Footer />
     </div>
