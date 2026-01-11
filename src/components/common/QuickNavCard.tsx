@@ -29,3 +29,4 @@ export default function QuickNavCard({ title, description, imageUrl, linkTo }: Q
   );
 }
 
+
