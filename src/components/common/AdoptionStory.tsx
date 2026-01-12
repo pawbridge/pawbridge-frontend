@@ -27,3 +27,4 @@ export default function AdoptionStory({ tag, title, excerpt, imageUrl }: Adoptio
   );
 }
 
+

@@ -3,9 +3,10 @@ import type { Animal } from '../../types/api.types';
 
 interface AnimalCardSimpleProps {
   animal: Animal;
+  onCardClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
-export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
+export default function AnimalCardSimple({ animal, onCardClick }: AnimalCardSimpleProps) {
   const getStatusLabel = () => {
     switch (animal.status) {
       case 'PROTECT':
@@ -89,6 +90,7 @@ export default function AnimalCardSimple({ animal }: AnimalCardSimpleProps) {
     <Link
       to={`/animals/${animal.id}`}
       className="flex flex-col bg-card-light dark:bg-card-dark rounded-xl overflow-hidden shadow-sm border border-border-light dark:border-border-dark transition-transform hover:-translate-y-1"
+      onClick={onCardClick}
     >
       {/* 이미지 */}
       <div className="w-full h-64 bg-gray-100 dark:bg-gray-800 overflow-hidden relative">

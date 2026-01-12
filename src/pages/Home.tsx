@@ -22,14 +22,16 @@ export default function Home() {
   // 마우스 드래그 스크롤을 위한 ref와 state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [justDragged, setJustDragged] = useState(false); // 드래그 후 클릭 방지용 (리렌더링 필요)
+  const [_justDragged, setJustDragged] = useState(false); // 드래그 후 클릭 방지용 (리렌더링 필요, 현재 미사용)
   const startXRef = useRef(0);
   const startScrollLeftRef = useRef(0); // 드래그 시작 시점의 스크롤 위치
   const lastXRef = useRef(0);
   const lastTimeRef = useRef(0);
   const dragDistanceRef = useRef(0); // 드래그 거리 추적 (클릭 vs 드래그 구분용)
+  const finalDragDistanceRef = useRef(0); // 최종 드래그 거리 저장 (클릭 이벤트에서 사용)
   const prevXRef = useRef(0); // 이전 마우스 위치 (속도 계산용)
   const prevTimeRef = useRef(0); // 이전 시간 (속도 계산용)
+  const timeoutRef = useRef<{ justDragged?: number; reset?: number }>({}); // setTimeout ID 저장
 
   // 관성 스크롤 애니메이션
   const animateInertialScroll = (velocity: number) => {
@@ -74,6 +76,19 @@ export default function Home() {
   // 마우스 드래그 시작
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
+    
+    // 클릭 타겟이 Link(a 태그)인 경우 드래그 로직을 시작하지 않음
+    const target = e.target as HTMLElement;
+    const isLink = target.closest('a') !== null;
+    
+    // Link를 클릭한 경우 드래그 로직을 시작하지 않고 즉시 리턴
+    // 이전 드래그 거리도 초기화하여 클릭이 정상 작동하도록 보장
+    if (isLink) {
+      finalDragDistanceRef.current = 0;
+      return;
+    }
+    
+    // Link가 아닌 경우에만 preventDefault 호출 및 드래그 로직 시작
     e.preventDefault();
     
     const container = scrollContainerRef.current;
@@ -141,13 +156,15 @@ export default function Home() {
       if (!scrollContainerRef.current) return;
       
       const finalDragDistance = dragDistanceRef.current;
+      // 최종 드래그 거리를 저장 (클릭 이벤트에서 사용)
+      finalDragDistanceRef.current = finalDragDistance;
       
       // 스냅 및 스크롤 동작 복원
       scrollContainerRef.current.style.scrollSnapType = '';
       scrollContainerRef.current.style.scrollBehavior = '';
       
-      // 드래그 거리가 3px 이상이면 드래그로 판단 (임계값 낮춤)
-      if (finalDragDistance >= 3) {
+      // 드래그 거리가 10px 이상이면 드래그로 판단 (클릭과 드래그 구분 개선)
+      if (finalDragDistance >= 10) {
         // 드래그가 발생했으면 클릭 이벤트 차단
         if (e) {
           e.preventDefault();
@@ -198,19 +215,39 @@ export default function Home() {
           }
         }
         
-        // 일정 시간 후 클릭 허용 (300ms)
-        setTimeout(() => {
+        // 일정 시간 후 클릭 허용 (150ms로 단축)
+        // 이전 timeout이 있으면 정리
+        if (timeoutRef.current.justDragged) {
+          clearTimeout(timeoutRef.current.justDragged);
+        }
+        timeoutRef.current.justDragged = setTimeout(() => {
           setJustDragged(false);
-        }, 300);
+          timeoutRef.current.justDragged = undefined;
+        }, 150);
       } else {
         // 드래그가 아니면 즉시 클릭 허용
         setJustDragged(false);
+        
+        // 작은 이동(5px 미만)이었고 Link를 클릭한 경우를 대비하여
+        // finalDragDistanceRef를 0으로 설정하여 클릭이 정상 작동하도록 보장
+        // (handleMouseDown에서 이미 0으로 설정되었을 수 있지만, 안전을 위해 다시 설정)
+        finalDragDistanceRef.current = 0;
       }
       
       setIsDragging(false);
       scrollContainerRef.current.style.cursor = 'grab';
       scrollContainerRef.current.style.userSelect = 'auto';
-      dragDistanceRef.current = 0;
+      
+      // 다음 클릭을 위해 일정 시간 후 드래그 거리 리셋
+      // 이전 timeout이 있으면 정리
+      if (timeoutRef.current.reset) {
+        clearTimeout(timeoutRef.current.reset);
+      }
+      timeoutRef.current.reset = setTimeout(() => {
+        dragDistanceRef.current = 0;
+        finalDragDistanceRef.current = 0;
+        timeoutRef.current.reset = undefined;
+      }, 100);
     };
 
     if (isDragging) {
@@ -219,6 +256,15 @@ export default function Home() {
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        // timeout 정리
+        if (timeoutRef.current.justDragged) {
+          clearTimeout(timeoutRef.current.justDragged);
+          timeoutRef.current.justDragged = undefined;
+        }
+        if (timeoutRef.current.reset) {
+          clearTimeout(timeoutRef.current.reset);
+          timeoutRef.current.reset = undefined;
+        }
       };
     }
   }, [isDragging]);
@@ -326,26 +372,26 @@ export default function Home() {
                     <div 
                       key={animal.id} 
                       className="min-w-[320px] max-w-[320px] flex-shrink-0"
-                      style={{
-                        pointerEvents: (isDragging || justDragged) ? 'none' : 'auto'
-                      }}
-                      onMouseUp={(e) => {
-                        // 드래그 중이거나 드래그 거리가 5px 이상이거나 방금 드래그했으면 클릭 방지
-                        if (isDragging || dragDistanceRef.current >= 5 || justDragged) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }
-                      }}
-                      onClick={(e) => {
-                        // 드래그 중이거나 드래그 거리가 5px 이상이거나 방금 드래그했으면 클릭 방지
-                        if (isDragging || dragDistanceRef.current >= 5 || justDragged) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          return false;
-                        }
-                      }}
                     >
-                      <AnimalCardSimple animal={animal} />
+                      <AnimalCardSimple 
+                        animal={animal} 
+                        onCardClick={(e) => {
+                          // 최종 드래그 거리가 10px 이상이면 클릭 방지 (드래그로 판단)
+                          // finalDragDistanceRef는 handleMouseUp에서 설정되므로 정확한 값 보장
+                          // 단, handleMouseDown에서 Link 클릭 시 0으로 리셋되므로 안전
+                          const dragDistance = finalDragDistanceRef.current;
+                          
+                          // 드래그 거리가 10px 이상이면 드래그로 판단하여 클릭 차단
+                          if (dragDistance >= 10) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                          }
+                          
+                          // 클릭 허용 (dragDistance < 10 또는 0)
+                          // finalDragDistanceRef는 다음 클릭을 위해 100ms 후 리셋됨
+                        }}
+                      />
                     </div>
                   ))
                 ) : (
