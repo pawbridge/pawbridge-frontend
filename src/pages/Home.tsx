@@ -9,7 +9,43 @@ import AnimalCardSimple from '../components/common/AnimalCardSimple';
 import QuickNavCard from '../components/common/QuickNavCard';
 import AdoptionStory from '../components/common/AdoptionStory';
 
+const POPUP_STORAGE_KEY = 'pawbridge_popup_hidden_until';
+
 export default function Home() {
+  // 팝업 모달 상태
+  const [showPopup, setShowPopup] = useState(false);
+
+  // 팝업 표시 여부 확인
+  useEffect(() => {
+    const hiddenUntil = localStorage.getItem(POPUP_STORAGE_KEY);
+    if (hiddenUntil) {
+      const hiddenDate = new Date(hiddenUntil);
+      if (hiddenDate > new Date()) {
+        return;
+      }
+      localStorage.removeItem(POPUP_STORAGE_KEY);
+    }
+    
+    const hasSeenPopup = sessionStorage.getItem('pawbridge_popup_seen');
+    if (!hasSeenPopup) {
+      setShowPopup(true);
+      sessionStorage.setItem('pawbridge_popup_seen', 'true');
+    }
+  }, []);
+
+  // 팝업 닫기
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
+  // 오늘 하루 보지 않기
+  const hidePopupForToday = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    localStorage.setItem(POPUP_STORAGE_KEY, tomorrow.toISOString());
+    setShowPopup(false);
+  };
   // 동물 데이터 가져오기 (실제 백엔드 API)
   const { data } = useQuery({
     queryKey: ['featured-animals'],
@@ -280,6 +316,69 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+      {/* 메인 페이지 팝업 모달 */}
+      {showPopup && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={closePopup}
+        >
+          <div
+            className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 닫기 버튼 */}
+            <button
+              onClick={closePopup}
+              className="absolute top-3 right-3 z-10 size-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors"
+            >
+              <span className="material-symbols-outlined text-xl">close</span>
+            </button>
+
+            {/* 팝업 아이콘 영역 */}
+            <div className="w-full py-8 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 flex items-center justify-center">
+              <div className="size-20 rounded-full bg-orange-500/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-5xl text-orange-500">construction</span>
+              </div>
+            </div>
+
+            {/* 팝업 내용 */}
+            <div className="p-6 text-center">
+              <div className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full text-xs font-bold mb-3">
+                <span className="material-symbols-outlined text-sm">warning</span>
+                서버 점검 안내
+              </div>
+              <h3 className="text-xl font-bold text-text-light dark:text-text-dark mb-2">
+                서비스 일시 중단 안내
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                백엔드 서버를 운영하는 호스트 PC의<br />
+                <strong className="text-orange-600 dark:text-orange-400">파워 고장</strong>으로 인해 현재 서비스 이용이 어렵습니다.<br /><br />
+                <span className="text-primary font-semibold">금요일에 복구 예정</span>이오니<br />
+                이용에 불편을 드려 죄송합니다.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={closePopup}
+                  className="w-full inline-flex items-center justify-center rounded-lg h-11 bg-primary text-white text-sm font-bold hover:opacity-90 transition-opacity"
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+
+            {/* 오늘 하루 보지 않기 */}
+            <div className="px-6 pb-4 pt-0">
+              <button
+                onClick={hidePopupForToday}
+                className="w-full text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
+              >
+                오늘 하루 보지 않기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Header />
 
       <main className="flex flex-col items-center w-full">

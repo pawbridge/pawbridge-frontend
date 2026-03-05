@@ -379,15 +379,41 @@ function App() {
       {/* 커뮤니티 (실종/보호/제보) */}
       <Route path="/community" element={<CommunityList />} />
       <Route path="/community/:id" element={<CommunityDetail />} />
-      {/* TODO: 임시로 ProtectedRoute 제거 - 페이지 확인용 */}
-      <Route path="/community/new" element={<CommunityCreate />} />
-      <Route path="/community/:id/edit" element={<CommunityEdit />} />
+      <Route
+        path="/community/new"
+        element={
+          <ProtectedRoute>
+            <CommunityCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/community/:id/edit"
+        element={
+          <ProtectedRoute>
+            <CommunityEdit />
+          </ProtectedRoute>
+        }
+      />
       {/* 입양 후기 */}
       <Route path="/adoption" element={<AdoptionList />} />
       <Route path="/adoption/:id" element={<AdoptionDetail />} />
-      {/* TODO: 임시로 ProtectedRoute 제거 - 페이지 확인용 */}
-      <Route path="/adoption/new" element={<AdoptionCreate />} />
-      <Route path="/adoption/:id/edit" element={<AdoptionEdit />} />
+      <Route
+        path="/adoption/new"
+        element={
+          <ProtectedRoute>
+            <AdoptionCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/adoption/:id/edit"
+        element={
+          <ProtectedRoute>
+            <AdoptionEdit />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
