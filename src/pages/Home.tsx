@@ -77,18 +77,6 @@ export default function Home() {
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollContainerRef.current) return;
     
-    // 클릭 타겟이 Link(a 태그)인 경우 드래그 로직을 시작하지 않음
-    const target = e.target as HTMLElement;
-    const isLink = target.closest('a') !== null;
-    
-    // Link를 클릭한 경우 드래그 로직을 시작하지 않고 즉시 리턴
-    // 이전 드래그 거리도 초기화하여 클릭이 정상 작동하도록 보장
-    if (isLink) {
-      finalDragDistanceRef.current = 0;
-      return;
-    }
-    
-    // Link가 아닌 경우에만 preventDefault 호출 및 드래그 로직 시작
     e.preventDefault();
     
     const container = scrollContainerRef.current;
