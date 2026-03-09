@@ -59,7 +59,7 @@ export default function AnimalStats() {
   };
 
   const { start: calcStart, end: calcEnd } = getDateRange();
-  const isCustomReady = period === 'custom' && customStart && customEnd;
+  const isCustomReady = period === 'custom' && !!customStart && !!customEnd;
   const startDate = isCustomReady ? customStart : calcStart;
   const endDate = isCustomReady ? customEnd : calcEnd;
   const shouldFetch = period !== 'custom' || isCustomReady;
