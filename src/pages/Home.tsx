@@ -363,56 +363,38 @@ export default function Home() {
           {/* Today's Animal Stats */}
           <section className="w-full mt-16 md:mt-24">
             <div className="rounded-2xl bg-white dark:bg-gray-900 border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-3 border-b border-border-light dark:border-border-dark bg-gray-50/50 dark:bg-gray-800/50">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg text-primary">bar_chart</span>
-                  <span className="text-sm font-bold text-text-light dark:text-text-dark">
-                    {todayStats?.date
-                      ? `${todayStats.date.replace(/-/g, '.')} 유기동물 통계`
-                      : '유기동물 통계'}
-                  </span>
-                </div>
-                <Link to="/animals/stats" className="text-primary text-xs font-bold hover:underline flex items-center gap-0.5">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border-light dark:border-border-dark">
+                <span className="text-sm font-bold text-text-light dark:text-text-dark">
+                  {todayStats?.date
+                    ? `${todayStats.date.replace(/-/g, '.')} 유기동물 통계`
+                    : '유기동물 통계'}
+                </span>
+                <Link to="/animals/stats" className="text-gray-400 dark:text-gray-500 text-xs font-semibold hover:text-text-light dark:hover:text-text-dark transition-colors flex items-center gap-0.5">
                   자세히 보기
                   <span className="material-symbols-outlined text-sm">chevron_right</span>
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border-light dark:divide-border-dark">
-                <div className="flex items-center gap-4 px-5 py-5">
-                  <div className="size-11 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-xl text-blue-500 dark:text-blue-400">pets</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">구조</p>
-                    <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
-                      {todayStats?.rescuedToday ?? '—'}
-                      <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 ml-1">마리</span>
-                    </p>
-                  </div>
+                <div className="px-5 py-5 text-center">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">구조</p>
+                  <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
+                    {todayStats?.rescuedToday ?? '—'}
+                    <span className="text-sm font-medium text-gray-400 ml-1">마리</span>
+                  </p>
                 </div>
-                <div className="flex items-center gap-4 px-5 py-5">
-                  <div className="size-11 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-xl text-green-500 dark:text-green-400">favorite</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">입양률</p>
-                    <p className="text-2xl font-black text-green-600 dark:text-green-400 tracking-tight">
-                      {statsRates?.adoptionRate ?? '—'}
-                      <span className="text-sm font-semibold ml-0.5">%</span>
-                    </p>
-                  </div>
+                <div className="px-5 py-5 text-center">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">입양률</p>
+                  <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
+                    {statsRates?.adoptionRate ?? '—'}
+                    <span className="text-sm font-medium text-gray-400 ml-0.5">%</span>
+                  </p>
                 </div>
-                <div className="flex items-center gap-4 px-5 py-5">
-                  <div className="size-11 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-xl text-red-500 dark:text-red-400">warning</span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">안락사율</p>
-                    <p className="text-2xl font-black text-red-600 dark:text-red-400 tracking-tight">
-                      {statsRates?.euthanasiaRate ?? '—'}
-                      <span className="text-sm font-semibold ml-0.5">%</span>
-                    </p>
-                  </div>
+                <div className="px-5 py-5 text-center">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">안락사율</p>
+                  <p className="text-2xl font-black text-red-600 dark:text-red-400 tracking-tight">
+                    {statsRates?.euthanasiaRate ?? '—'}
+                    <span className="text-sm font-medium text-gray-400 ml-0.5">%</span>
+                  </p>
                 </div>
               </div>
             </div>
