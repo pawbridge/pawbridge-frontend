@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState, useEffect } from 'react';
 import { getAnimals } from '../api/animals.api';
+import { getTodayAnimalStats, getAnimalStatusStats } from '../api/animalStats.api';
 import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -10,6 +11,28 @@ import QuickNavCard from '../components/common/QuickNavCard';
 import AdoptionStory from '../components/common/AdoptionStory';
 
 export default function Home() {
+  const { data: todayStats } = useQuery({
+    queryKey: ['today-animal-stats'],
+    queryFn: getTodayAnimalStats,
+  });
+
+  const { data: statusStats } = useQuery({
+    queryKey: ['animal-status-stats'],
+    queryFn: () => getAnimalStatusStats(),
+  });
+
+  const statsRates = (() => {
+    if (!statusStats?.length) return null;
+    const total = statusStats.reduce((sum, s) => sum + s.count, 0);
+    if (total === 0) return null;
+    const adopted = statusStats.find((s) => s.status === 'ADOPTED')?.count ?? 0;
+    const euthanized = statusStats.find((s) => s.status === 'EUTHANIZED')?.count ?? 0;
+    return {
+      adoptionRate: ((adopted / total) * 100).toFixed(1),
+      euthanasiaRate: ((euthanized / total) * 100).toFixed(1),
+    };
+  })();
+
   // 동물 데이터 가져오기 (실제 백엔드 API)
   const { data } = useQuery({
     queryKey: ['featured-animals'],
@@ -334,6 +357,64 @@ export default function Home() {
                 imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuBdBJ6x-ervqeL_a8y7L6tn1vBA4JV7fJsMi6eCQrQ-iA3rlKTiDf9AGlKdxSSWuq9-a2nsr2sB7UKiPnPpyj--ShW2aJ7x7ocg4gXNKxXLsnqdVhUNNHQvP6YAreAp8d-VwagvNVDZZDyBxLd1lGsWE8Dhk7CPkke0PZ2A_ZOWmbKhwhqj1WdtatVBJy9HLVot03wDa3Oq_cwtEXOpISRog4YjV6jnhTWiFLfSr9fRTGfZ4wUJH3mfWQ7i21QN-U7i6jxB_6FhSY8"
                 linkTo="/products"
               />
+            </div>
+          </section>
+
+          {/* Today's Animal Stats */}
+          <section className="w-full mt-16 md:mt-24">
+            <div className="rounded-2xl bg-white dark:bg-gray-900 border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border-light dark:border-border-dark bg-gray-50/50 dark:bg-gray-800/50">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-lg text-primary">bar_chart</span>
+                  <span className="text-sm font-bold text-text-light dark:text-text-dark">
+                    {todayStats?.date
+                      ? `${todayStats.date.replace(/-/g, '.')} 유기동물 통계`
+                      : '유기동물 통계'}
+                  </span>
+                </div>
+                <Link to="/animals/stats" className="text-primary text-xs font-bold hover:underline flex items-center gap-0.5">
+                  자세히 보기
+                  <span className="material-symbols-outlined text-sm">chevron_right</span>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border-light dark:divide-border-dark">
+                <div className="flex items-center gap-4 px-5 py-5">
+                  <div className="size-11 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-xl text-blue-500 dark:text-blue-400">pets</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">구조</p>
+                    <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
+                      {todayStats?.rescuedToday ?? '—'}
+                      <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 ml-1">마리</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 px-5 py-5">
+                  <div className="size-11 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-xl text-green-500 dark:text-green-400">favorite</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">입양률</p>
+                    <p className="text-2xl font-black text-green-600 dark:text-green-400 tracking-tight">
+                      {statsRates?.adoptionRate ?? '—'}
+                      <span className="text-sm font-semibold ml-0.5">%</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 px-5 py-5">
+                  <div className="size-11 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-xl text-red-500 dark:text-red-400">warning</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">안락사율</p>
+                    <p className="text-2xl font-black text-red-600 dark:text-red-400 tracking-tight">
+                      {statsRates?.euthanasiaRate ?? '—'}
+                      <span className="text-sm font-semibold ml-0.5">%</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 

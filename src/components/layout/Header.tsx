@@ -42,6 +42,12 @@ export default function Header() {
               동물 검색
             </Link>
             <Link
+              to="/animals/stats"
+              className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
+            >
+              유기동물 현황
+            </Link>
+            <Link
               to="/adoption"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
@@ -138,6 +144,13 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 동물 검색
+              </Link>
+              <Link
+                to="/animals/stats"
+                className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                유기동물 현황
               </Link>
               <Link
                 to="/adoption"

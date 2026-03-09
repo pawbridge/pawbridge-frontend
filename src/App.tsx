@@ -43,6 +43,7 @@ import AdoptionDetail from './pages/AdoptionDetail.tsx';
 import AdoptionCreate from './pages/AdoptionCreate.tsx';
 import AdoptionEdit from './pages/AdoptionEdit.tsx';
 import OAuthCallback from './pages/OAuthCallback.tsx';
+import AnimalStats from './pages/AnimalStats.tsx';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -153,6 +154,7 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
+      <Route path="/animals/stats" element={<AnimalStats />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
       <Route
         path="/animals/new"
