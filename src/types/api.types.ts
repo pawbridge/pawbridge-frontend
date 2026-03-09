@@ -715,3 +715,21 @@ export interface FavoriteListResponse {
   totalCount: number;
   favorites: FavoriteWithAnimalDto[];
 }
+
+// 공개 유기동물 통계
+export interface TodayAnimalStats {
+  date: string;
+  rescuedToday: number;
+  adoptedToday: number;
+}
+
+export interface AnimalStatusStats {
+  status: string;
+  label: string;
+  count: number;
+}
+
+export interface RegionalAnimalStats {
+  region: string;
+  count: number;
+}
