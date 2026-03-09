@@ -22,7 +22,7 @@ function getKSTDate(date: Date): string {
 }
 
 export default function AnimalStats() {
-  const [period, setPeriod] = useState<PeriodType>('7days');
+  const [period, setPeriod] = useState<PeriodType>('1day');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
 
@@ -64,10 +64,19 @@ export default function AnimalStats() {
   const endDate = isCustomReady ? customEnd : calcEnd;
   const shouldFetch = period !== 'custom' || isCustomReady;
 
+  const todayDate = getKSTDate(new Date());
+
   const { data: todayStats } = useQuery({
     queryKey: ['today-animal-stats'],
     queryFn: getTodayAnimalStats,
   });
+
+  const { data: todayStatusStats = [] } = useQuery({
+    queryKey: ['animal-status-stats-today', todayDate],
+    queryFn: () => getAnimalStatusStats(todayDate, todayDate),
+  });
+
+  const todayEuthanized = todayStatusStats.find((s) => s.status === 'EUTHANIZED')?.count ?? 0;
 
   const { data: statusStats = [], isLoading: isStatusLoading } = useQuery({
     queryKey: ['animal-status-stats', startDate, endDate],
@@ -84,11 +93,6 @@ export default function AnimalStats() {
   const statusTotal = statusStats.reduce((sum, s) => sum + s.count, 0);
   const statusMax = statusStats.length > 0 ? Math.max(...statusStats.map((s) => s.count)) : 1;
   const regionalMax = regionalStats.length > 0 ? Math.max(...regionalStats.map((r) => r.count)) : 1;
-
-  const todayEuthanized = (() => {
-    if (!statusStats.length || period !== '1day') return null;
-    return statusStats.find((s) => s.status === 'EUTHANIZED')?.count ?? 0;
-  })();
 
   const periodButtons: { key: PeriodType; label: string }[] = [
     { key: '1day', label: '1일' },
@@ -139,8 +143,8 @@ export default function AnimalStats() {
                 </div>
                 <div className="px-6 py-5 text-center">
                   <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">오늘 안락사</p>
-                  <p className="text-3xl font-black text-red-600 dark:text-red-400 tracking-tight">
-                    {todayEuthanized !== null ? todayEuthanized : '—'}
+                  <p className="text-3xl font-black text-text-light dark:text-text-dark tracking-tight">
+                    {todayEuthanized}
                     <span className="text-sm font-medium text-gray-400 ml-1">마리</span>
                   </p>
                 </div>
@@ -267,10 +271,13 @@ export default function AnimalStats() {
                   <div className="divide-y divide-border-light dark:divide-border-dark">
                     {regionalStats.map((region, idx) => {
                       const barWidth = regionalMax > 0 ? (region.count / regionalMax) * 100 : 0;
+                      const rank = idx === 0 || region.count !== regionalStats[idx - 1].count
+                        ? idx + 1
+                        : regionalStats.findIndex((r) => r.count === region.count) + 1;
                       return (
                         <div key={region.region} className="flex items-center gap-4 px-5 py-3.5">
                           <span className="text-sm font-bold text-gray-400 dark:text-gray-500 w-6 text-right flex-shrink-0">
-                            {idx + 1}
+                            {rank}
                           </span>
                           <span className="text-sm font-semibold text-text-light dark:text-text-dark w-28 flex-shrink-0">
                             {region.region}

@@ -391,7 +391,7 @@ export default function Home() {
                 </div>
                 <div className="px-5 py-5 text-center">
                   <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">안락사율</p>
-                  <p className="text-2xl font-black text-red-600 dark:text-red-400 tracking-tight">
+                  <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
                     {statsRates?.euthanasiaRate ?? '—'}
                     <span className="text-sm font-medium text-gray-400 ml-0.5">%</span>
                   </p>
