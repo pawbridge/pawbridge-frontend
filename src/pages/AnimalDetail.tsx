@@ -262,7 +262,7 @@ export default function AnimalDetail() {
               </>
             ) : (
               <button onClick={() => navigate('/animals')} className="text-secondary dark:text-primary hover:underline">
-                보호동물 찾기
+                동물 검색
               </button>
             )}
             <span className="text-secondary dark:text-primary">/</span>
