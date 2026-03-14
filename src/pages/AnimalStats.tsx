@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import {
   getTodayAnimalStats,
   getAnimalStatusStats,
@@ -8,6 +9,13 @@ import {
 } from '../api/animalStats.api';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+
+const TOPO_URL = '/korea-provinces-topo.json';
+
+const NAME_MAP: Record<string, string> = {
+  '강원도': '강원특별자치도',
+  '전라북도': '전북특별자치도',
+};
 
 type PeriodType = '1day' | '3days' | '7days' | '30days' | 'custom';
 
@@ -93,6 +101,26 @@ export default function AnimalStats() {
   const statusTotal = statusStats.reduce((sum, s) => sum + s.count, 0);
   const statusMax = statusStats.length > 0 ? Math.max(...statusStats.map((s) => s.count)) : 1;
   const regionalMax = regionalStats.length > 0 ? Math.max(...regionalStats.map((r) => r.count)) : 1;
+
+  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+
+  const regionCountMap = useMemo(() => {
+    const map = new Map<string, number>();
+    regionalStats.forEach((r) => map.set(r.region, r.count));
+    return map;
+  }, [regionalStats]);
+
+  const getRegionColor = (topoName: string) => {
+    const currentName = NAME_MAP[topoName] ?? topoName;
+    const count = regionCountMap.get(currentName) ?? 0;
+    if (count === 0) return '#f3f4f6';
+    const ratio = regionalMax > 0 ? count / regionalMax : 0;
+    const lightness = Math.round(85 - ratio * 55);
+    return `hsl(0, 0%, ${lightness}%)`;
+  };
+
+  const getDisplayName = (topoName: string) => NAME_MAP[topoName] ?? topoName;
 
   const periodButtons: { key: PeriodType; label: string }[] = [
     { key: '1day', label: '1일' },
@@ -267,35 +295,148 @@ export default function AnimalStats() {
               ) : regionalStats.length === 0 ? (
                 <div className="text-center py-16 text-gray-400">데이터가 없습니다.</div>
               ) : (
-                <div className="bg-white dark:bg-gray-900 rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
-                  <div className="divide-y divide-border-light dark:divide-border-dark">
-                    {regionalStats.map((region, idx) => {
-                      const barWidth = regionalMax > 0 ? (region.count / regionalMax) * 100 : 0;
-                      const rank = idx === 0 || region.count !== regionalStats[idx - 1].count
-                        ? idx + 1
-                        : regionalStats.findIndex((r) => r.count === region.count) + 1;
-                      return (
-                        <div key={region.region} className="flex items-center gap-4 px-5 py-3.5">
-                          <span className="text-sm font-bold text-gray-400 dark:text-gray-500 w-6 text-right flex-shrink-0">
-                            {rank}
-                          </span>
-                          <span className="text-sm font-semibold text-text-light dark:text-text-dark w-28 flex-shrink-0">
-                            {region.region}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="w-full h-5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                              <div
-                                className="h-full rounded-full bg-gray-800 dark:bg-gray-300 transition-all duration-500"
-                                style={{ width: `${barWidth}%` }}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* 지도 */}
+                  <div className="relative bg-white dark:bg-gray-900 rounded-xl border border-border-light dark:border-border-dark shadow-sm p-4">
+                    {hoveredRegion && (
+                      <div
+                        className="pointer-events-none absolute z-10 rounded-lg bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-2 text-xs font-semibold shadow-lg"
+                        style={{ left: tooltipPos.x, top: tooltipPos.y, transform: 'translate(-50%, -120%)' }}
+                      >
+                        {hoveredRegion} · {regionCountMap.get(hoveredRegion)?.toLocaleString() ?? 0}건
+                      </div>
+                    )}
+                    <ComposableMap
+                      projection="geoMercator"
+                      projectionConfig={{ center: [127.8, 36.0], scale: 4800 }}
+                      width={500}
+                      height={600}
+                      style={{ width: '100%', height: 'auto' }}
+                    >
+                      <Geographies geography={TOPO_URL} parseGeographies={(geos) =>
+                        geos.filter((g) => g.properties.code !== '39')
+                      }>
+                        {({ geographies }) =>
+                          geographies.map((geo) => {
+                            const topoName = geo.properties.name as string;
+                            return (
+                              <Geography
+                                key={geo.rsmKey}
+                                geography={geo}
+                                fill={getRegionColor(topoName)}
+                                stroke="#d1d5db"
+                                strokeWidth={0.8}
+                                onMouseEnter={(e) => {
+                                  const container = (e.target as SVGElement).closest('svg')!.parentElement!;
+                                  const rect = container.getBoundingClientRect();
+                                  setHoveredRegion(getDisplayName(topoName));
+                                  setTooltipPos({
+                                    x: e.clientX - rect.left,
+                                    y: e.clientY - rect.top,
+                                  });
+                                }}
+                                onMouseMove={(e) => {
+                                  const container = (e.target as SVGElement).closest('svg')!.parentElement!;
+                                  const rect = container.getBoundingClientRect();
+                                  setTooltipPos({
+                                    x: e.clientX - rect.left,
+                                    y: e.clientY - rect.top,
+                                  });
+                                }}
+                                onMouseLeave={() => setHoveredRegion(null)}
+                                style={{
+                                  default: { outline: 'none', cursor: 'pointer' },
+                                  hover: { outline: 'none', fill: '#6b7280', cursor: 'pointer' },
+                                  pressed: { outline: 'none' },
+                                }}
                               />
+                            );
+                          })
+                        }
+                      </Geographies>
+                      <Geographies geography={TOPO_URL} parseGeographies={(geos) =>
+                        geos.filter((g) => g.properties.code === '39')
+                      }>
+                        {({ geographies }) =>
+                          geographies.map((geo) => {
+                            const topoName = geo.properties.name as string;
+                            return (
+                              <Geography
+                                key={geo.rsmKey}
+                                geography={geo}
+                                fill={getRegionColor(topoName)}
+                                stroke="#d1d5db"
+                                strokeWidth={0.8}
+                                onMouseEnter={(e) => {
+                                  const container = (e.target as SVGElement).closest('svg')!.parentElement!;
+                                  const rect = container.getBoundingClientRect();
+                                  setHoveredRegion(getDisplayName(topoName));
+                                  setTooltipPos({
+                                    x: e.clientX - rect.left,
+                                    y: e.clientY - rect.top,
+                                  });
+                                }}
+                                onMouseMove={(e) => {
+                                  const container = (e.target as SVGElement).closest('svg')!.parentElement!;
+                                  const rect = container.getBoundingClientRect();
+                                  setTooltipPos({
+                                    x: e.clientX - rect.left,
+                                    y: e.clientY - rect.top,
+                                  });
+                                }}
+                                onMouseLeave={() => setHoveredRegion(null)}
+                                style={{
+                                  default: { outline: 'none', cursor: 'pointer' },
+                                  hover: { outline: 'none', fill: '#6b7280', cursor: 'pointer' },
+                                  pressed: { outline: 'none' },
+                                }}
+                              />
+                            );
+                          })
+                        }
+                      </Geographies>
+                    </ComposableMap>
+                    <div className="flex items-center justify-center gap-2 mt-2 text-xs text-gray-400">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-sm" style={{ background: '#f3f4f6' }} />
+                        <span>0</span>
+                      </div>
+                      <div className="w-16 h-3 rounded-sm" style={{ background: 'linear-gradient(to right, #d4d4d4, #333333)' }} />
+                      <span>{regionalMax.toLocaleString()}건</span>
+                    </div>
+                  </div>
+
+                  {/* 막대 그래프 */}
+                  <div className="bg-white dark:bg-gray-900 rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden">
+                    <div className="divide-y divide-border-light dark:divide-border-dark">
+                      {regionalStats.map((region, idx) => {
+                        const barWidth = regionalMax > 0 ? (region.count / regionalMax) * 100 : 0;
+                        const rank = idx === 0 || region.count !== regionalStats[idx - 1].count
+                          ? idx + 1
+                          : regionalStats.findIndex((r) => r.count === region.count) + 1;
+                        return (
+                          <div key={region.region} className="flex items-center gap-4 px-5 py-3.5">
+                            <span className="text-sm font-bold text-gray-400 dark:text-gray-500 w-6 text-right flex-shrink-0">
+                              {rank}
+                            </span>
+                            <span className="text-sm font-semibold text-text-light dark:text-text-dark w-28 flex-shrink-0">
+                              {region.region}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="w-full h-5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full bg-gray-800 dark:bg-gray-300 transition-all duration-500"
+                                  style={{ width: `${barWidth}%` }}
+                                />
+                              </div>
                             </div>
+                            <span className="text-sm font-bold text-text-light dark:text-text-dark flex-shrink-0 w-20 text-right">
+                              {region.count.toLocaleString()}건
+                            </span>
                           </div>
-                          <span className="text-sm font-bold text-text-light dark:text-text-dark flex-shrink-0 w-20 text-right">
-                            {region.count.toLocaleString()}건
-                          </span>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}

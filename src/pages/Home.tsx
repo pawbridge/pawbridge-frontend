@@ -29,7 +29,7 @@ export default function Home() {
     queryFn: () => getAnimalStatusStats(stats30dRange.start, stats30dRange.end),
   });
 
-  const statsRates = (() => {
+  const statsRates: { adoptionRate: string; euthanasiaRate: string } | null = (() => {
     if (!statusStats?.length) return null;
     const total = statusStats.reduce((sum, s) => sum + s.count, 0);
     if (total === 0) return null;
