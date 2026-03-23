@@ -460,26 +460,6 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Campaign Banner */}
-          <section className="w-full mt-16 md:mt-24">
-            <div className="w-full bg-primary/20 dark:bg-primary/30 rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="text-center md:text-left">
-                <h3 className="text-primary-content dark:text-white text-2xl font-bold">
-                  겨울맞이 후원 캠페인
-                </h3>
-                <p className="text-secondary-content dark:text-gray-300 mt-2">
-                  추운 겨울, 아이들이 따뜻하게 지낼 수 있도록 마음을 모아주세요.
-                </p>
-              </div>
-              <Link
-                to="/donate"
-                className="flex-shrink-0 flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-6 bg-primary text-primary-content text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
-              >
-                <span className="truncate">자세히 보기</span>
-              </Link>
-            </div>
-          </section>
-
           {/* Adoption Stories */}
           <section className="w-full mt-16 md:mt-24">
             <div className="flex justify-between items-center mb-6">
