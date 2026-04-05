@@ -10,22 +10,7 @@ import AnimalCardSimple from '../components/common/AnimalCardSimple';
 import QuickNavCard from '../components/common/QuickNavCard';
 import AdoptionStory from '../components/common/AdoptionStory';
 
-const POPUP_KEY = 'data-update-notice-hidden';
-
 export default function Home() {
-  const [showNotice, setShowNotice] = useState(false);
-
-  useEffect(() => {
-    const hidden = localStorage.getItem(POPUP_KEY);
-    if (!hidden) setShowNotice(true);
-  }, []);
-
-  const closeNotice = () => setShowNotice(false);
-  const hideNoticeForToday = () => {
-    localStorage.setItem(POPUP_KEY, new Date().toDateString());
-    setShowNotice(false);
-  };
-
   const { data: todayStats } = useQuery({
     queryKey: ['today-animal-stats'],
     queryFn: getTodayAnimalStats,
@@ -504,36 +489,6 @@ export default function Home() {
       </main>
 
       <Footer />
-
-      {showNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="mx-4 w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-            <div className="flex items-center justify-center">
-              <span className="material-symbols-outlined text-4xl text-yellow-500">warning</span>
-            </div>
-            <p className="text-xl font-bold text-text-light dark:text-text-dark">데이터 갱신 안내</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              공공데이터 API 오류로 인하여<br />
-              데이터 갱신이 불가능합니다.<br /><br />
-              다음 주 내로 정상적으로 데이터 갱신 예정입니다.
-            </p>
-            <div className="flex flex-col gap-2 mt-2">
-              <button
-                onClick={closeNotice}
-                className="w-full rounded-lg h-11 bg-primary text-primary-content text-sm font-bold hover:opacity-90 transition-opacity"
-              >
-                확인
-              </button>
-              <button
-                onClick={hideNoticeForToday}
-                className="w-full text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2"
-              >
-                오늘 하루 보지 않기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
