@@ -1,9 +1,10 @@
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAnimalById, checkFavorite, addFavorite, removeFavorite } from '../api/animals.api';
+import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAnimals } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import AnimalCardSimple from '../components/common/AnimalCardSimple';
 import { useState, useEffect } from 'react';
 
 export default function AnimalDetail() {
@@ -13,6 +14,12 @@ export default function AnimalDetail() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const [selectedImage, setSelectedImage] = useState<string>('');
+
+  // 상세 페이지 전환 시 스크롤 초기화 및 이미지 선택 리셋
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setSelectedImage('');
+  }, [id]);
 
   // 이전 페이지 정보 확인 (마이페이지에서 온 경우)
   const fromMyPage = location.state?.from === 'mypage';
@@ -92,6 +99,13 @@ export default function AnimalDetail() {
       });
     }
   }, [animal, user, isManualAnimal, isMyShelter, isMyAnimal]);
+
+  // 유사 동물 목록 조회
+  const { data: similarAnimals } = useQuery({
+    queryKey: ['similarAnimals', id],
+    queryFn: () => getSimilarAnimals(Number(id)),
+    enabled: !!id,
+  });
 
   // 찜 여부 확인
   const { data: isFavorited } = useQuery({
@@ -623,6 +637,23 @@ export default function AnimalDetail() {
             </div>
           </div>
         </div>
+
+        {/* 유사 동물 추천 */}
+        {similarAnimals && similarAnimals.length > 0 && (
+          <section className="mt-12">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="material-symbols-outlined text-2xl text-primary">pets</span>
+              <h2 className="text-2xl font-bold text-text-light dark:text-text-dark">
+                이 동물과 비슷한 친구들
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {similarAnimals.slice(0, 6).map((similarAnimal) => (
+                <AnimalCardSimple key={similarAnimal.id} animal={similarAnimal} />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />

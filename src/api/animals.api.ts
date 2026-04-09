@@ -177,6 +177,22 @@ export const uploadAnimalImages = async (files: File[]): Promise<AnimalImagesUpl
   return response.data;
 };
 
+// 유사 동물 목록 조회
+export const getSimilarAnimals = async (id: number): Promise<Animal[]> => {
+  const response = await apiClient.get<Animal[] | { code: number; data: Animal[]; message: string }>(
+    `/api/animals/${id}/similar`
+  );
+  const data = response.data;
+
+  if (Array.isArray(data)) {
+    return data;
+  }
+  if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+    return data.data;
+  }
+  return [];
+};
+
 // 이미지 삭제
 export const deleteAnimalImage = async (imageUrl: string): Promise<void> => {
   await apiClient.delete('/api/animals/images', {
