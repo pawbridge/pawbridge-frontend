@@ -139,14 +139,14 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
         <section className="mb-3 flex h-[560px] max-h-[calc(100vh-7rem)] w-full flex-col overflow-hidden rounded-2xl border border-border-light bg-white shadow-2xl dark:border-border-dark dark:bg-card-dark">
           <div className="flex items-start justify-between gap-3 bg-primary px-5 py-4 text-text-light">
             <div>
-              <p className="text-sm font-bold">입양 상담 챗봇</p>
+              <p className="text-sm font-bold">AI 입양 준비 도우미</p>
               <p className="mt-1 text-xs font-medium text-text-light/80">{animalName}에 대해 물어보세요</p>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="rounded-full p-1 text-text-light hover:bg-white/20"
-              aria-label="챗봇 닫기"
+              aria-label="AI 입양 준비 도우미 닫기"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -240,10 +240,10 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
         onClick={() => setIsOpen((prev) => !prev)}
         className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-5 font-bold text-text-light shadow-xl transition-transform hover:scale-[1.02] hover:bg-primary/90"
         aria-expanded={isOpen}
-        aria-label={isOpen ? '입양 상담 챗봇 닫기' : '입양 상담 챗봇 열기'}
+        aria-label={isOpen ? 'AI 입양 준비 도우미 닫기' : 'AI 입양 준비 도우미 열기'}
       >
         <span className="material-symbols-outlined">chat</span>
-        <span className="text-sm">입양 상담</span>
+        <span className="text-sm">AI 입양 준비</span>
       </button>
     </div>
   );
