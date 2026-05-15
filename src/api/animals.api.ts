@@ -1,6 +1,39 @@
 import apiClient from './client';
 import type { Animal, PageResponse, AnimalSearchParams } from '../types/api.types';
 
+export interface ChatbotMessageRequest {
+  sessionId?: string;
+  question: string;
+}
+
+export interface ChatbotMessageResponse {
+  sessionId: string;
+  answer: string;
+  safetyNotice: string;
+  provider: string;
+}
+
+type AnimalDetailResponse = Animal | WrappedResponse<Animal>;
+
+type WrappedResponse<T> = {
+  code?: number;
+  data: T;
+  message?: string;
+};
+
+const unwrapResponse = <T>(responseData: T | WrappedResponse<T>): T => {
+  if (
+    responseData &&
+    typeof responseData === 'object' &&
+    'data' in responseData &&
+    responseData.data !== undefined
+  ) {
+    return responseData.data as T;
+  }
+
+  return responseData as T;
+};
+
 // 동물 목록 조회 (페이지네이션, 필터링, 정렬)
 export const getAnimals = async (params?: AnimalSearchParams): Promise<PageResponse<Animal>> => {
   const response = await apiClient.get<PageResponse<Animal>>('/api/animals', {
@@ -26,7 +59,7 @@ export const getAnimals = async (params?: AnimalSearchParams): Promise<PageRespo
 
 // 동물 상세 조회
 export const getAnimalById = async (id: number): Promise<Animal> => {
-  const response = await apiClient.get<any>(`/api/animals/${id}`);
+  const response = await apiClient.get<AnimalDetailResponse>(`/api/animals/${id}`);
   console.log('getAnimalById 전체 응답:', response);
   console.log('getAnimalById response.data:', response.data);
   
@@ -191,6 +224,22 @@ export const getSimilarAnimals = async (id: number): Promise<Animal[]> => {
     return data.data;
   }
   return [];
+};
+
+// 챗봇 메시지 전송
+export const sendAnimalChatbotMessage = async (
+  animalId: number,
+  request: ChatbotMessageRequest
+): Promise<ChatbotMessageResponse> => {
+  const response = await apiClient.post<ChatbotMessageResponse | WrappedResponse<ChatbotMessageResponse>>(
+    `/api/animals/${animalId}/chat/messages`,
+    request,
+    {
+      withCredentials: true,
+    }
+  );
+
+  return unwrapResponse(response.data);
 };
 
 // 이미지 삭제
