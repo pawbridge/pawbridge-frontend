@@ -52,8 +52,12 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
   const [errorMessage, setErrorMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const animalIdRef = useRef(animalId);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
+    animalIdRef.current = animalId;
+    requestIdRef.current += 1;
     setIsOpen(false);
     setSessionId(undefined);
     setMessages([]);
@@ -92,12 +96,18 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
     setQuestion('');
     setErrorMessage('');
     setIsSending(true);
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
 
     try {
       const response = await sendAnimalChatbotMessage(animalId, {
         sessionId,
         question: trimmedQuestion,
       });
+
+      if (requestId !== requestIdRef.current || animalId !== animalIdRef.current) {
+        return;
+      }
 
       setSessionId(response.sessionId);
       setSafetyNotice(response.safetyNotice);
@@ -111,9 +121,15 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
         },
       ]);
     } catch (error) {
+      if (requestId !== requestIdRef.current || animalId !== animalIdRef.current) {
+        return;
+      }
+
       setErrorMessage(getErrorMessage(error));
     } finally {
-      setIsSending(false);
+      if (requestId === requestIdRef.current && animalId === animalIdRef.current) {
+        setIsSending(false);
+      }
     }
   };
 
@@ -224,7 +240,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
         onClick={() => setIsOpen((prev) => !prev)}
         className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-5 font-bold text-text-light shadow-xl transition-transform hover:scale-[1.02] hover:bg-primary/90"
         aria-expanded={isOpen}
-        aria-label="입양 상담 챗봇 열기"
+        aria-label={isOpen ? '입양 상담 챗봇 닫기' : '입양 상담 챗봇 열기'}
       >
         <span className="material-symbols-outlined">chat</span>
         <span className="text-sm">입양 상담</span>
