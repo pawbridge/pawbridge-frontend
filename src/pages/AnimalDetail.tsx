@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAnimals } from '../api/animals.api';
@@ -5,7 +6,16 @@ import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
+import AnimalChatbot from '../components/common/AnimalChatbot';
 import { useState, useEffect } from 'react';
+
+const getErrorMessage = (error: unknown, fallbackMessage: string) => {
+  if (axios.isAxiosError<{ message?: string }>(error)) {
+    return error.response?.data?.message || fallbackMessage;
+  }
+
+  return fallbackMessage;
+};
 
 export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
@@ -122,8 +132,8 @@ export default function AnimalDetail() {
       queryClient.invalidateQueries({ queryKey: ['animal', id] });
       queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '찜 추가에 실패했습니다.');
+    onError: (error: unknown) => {
+      alert(getErrorMessage(error, '찜 추가에 실패했습니다.'));
     },
   });
 
@@ -135,8 +145,8 @@ export default function AnimalDetail() {
       queryClient.invalidateQueries({ queryKey: ['animal', id] });
       queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '찜 제거에 실패했습니다.');
+    onError: (error: unknown) => {
+      alert(getErrorMessage(error, '찜 제거에 실패했습니다.'));
     },
   });
 
@@ -655,6 +665,8 @@ export default function AnimalDetail() {
           </section>
         )}
       </main>
+
+      <AnimalChatbot animalId={animal.id} animalName={animal.name || animal.breed || '보호동물'} />
 
       <Footer />
     </div>

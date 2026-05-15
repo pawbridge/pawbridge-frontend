@@ -56,7 +56,7 @@ apiClient.interceptors.response.use(
           const requestUrl = error.config?.url || '';
           
           // 공개 API 경로 패턴: /api/animals 또는 /api/animals/{id}
-          const isPublicAnimalApi = /^\/api\/animals(\/\d+(\/similar)?)?(\?.*)?$/.test(requestUrl);
+          const isPublicAnimalApi = /^\/api\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
           
           if (isPublicAnimalApi) {
             // 공개 API는 에러만 로그하고 리다이렉트하지 않음
