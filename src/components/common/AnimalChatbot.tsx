@@ -175,11 +175,6 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{message.text}</p>
-                  {message.provider && (
-                    <p className="mt-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
-                      provider: {message.provider}
-                    </p>
-                  )}
                 </div>
               </div>
             ))}
