@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import { getAnimals } from '../api/animals.api';
 import { getTodayAnimalStats, getAnimalStatusStats } from '../api/animalStats.api';
+import { getAllPosts } from '../api/community.api';
 import type { Animal } from '../types/api.types';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -49,6 +50,28 @@ export default function Home() {
 
   // 최근 등록 동물 (20마리)
   const featuredAnimals = data?.content?.slice(0, 20) || [];
+
+  const { data: posts = [], isLoading: isAdoptionPostsLoading } = useQuery({
+    queryKey: ['posts'],
+    queryFn: getAllPosts,
+  });
+
+  const latestAdoptionPosts = useMemo(
+    () => posts.filter((p) => p.boardType === 'ADOPTION').slice(0, 2),
+    [posts],
+  );
+
+  const resolvePostImage = (urls?: string[]) => {
+    if (!urls?.length) return null;
+    const first = urls[0];
+    return first || null;
+  };
+
+  const toExcerpt = (content: string, maxLength = 120) => {
+    const plain = content.replace(/\s+/g, ' ').trim();
+    if (plain.length <= maxLength) return plain;
+    return `${plain.slice(0, maxLength)}...`;
+  };
 
   // 마우스 드래그 스크롤을 위한 ref와 state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -470,20 +493,32 @@ export default function Home() {
                 더보기
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdoptionStory
-                tag="입양 1주년"
-                title="우리 집에 온 작은 천사, 뽀삐"
-                excerpt="뽀삐가 가족이 된 후로 저희 집에는 웃음꽃이 떠나질 않아요. 처음에는 낯을 많이 가렸지만..."
-                imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuCfhMqa7lyzEriR5tR0Dne9U5bpdmulNK7_eSGZ2MLZBCvl4bjhTENwUToOfPUe2YUeY5AVAmSnLzNb_Gv4hgjMgiitAa8sh_c_0oPaTAyFWrSLX5gdHfU-Ag-RMlYO4F9bVqQ8xcHk5tZIVu95ADLci19G_ryX3DrZLkK7Eb2wdu1rUFSsD6uZnXdRZqBtWC9lGN9aMxy0fmU2ALXuZnLeIAvpTZR680HHG0k1kI9LixavviwlaJZnBriwdchHshkib_LPZNE-j3U"
-              />
-              <AdoptionStory
-                tag="최신 후기"
-                title="소심했던 고양이, 이제는 애교쟁이!"
-                excerpt="보호소에서 유독 조용했던 나비. 집에 온 첫날에는 숨기만 했는데, 이제는 제 무릎에서..."
-                imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuC3MSPHepbUpXu_0jONMbZPFUuHuDz6-knINiiO51kU93h2vn-_GAPeoT1X7WKh9b7lyGOfn_Y8fFy5dBqxREj3VLLk1k65XFpIh28MhK0yqJMPA_p_HB7DPibTlPDG8Aouw0utlzghlCP_x6Iq8FNFBVF0BSj1b50YisKQ3KKzNpnocPr92kQjlSA8ItV5DTJfjABPGaRq_qpvmV52EJ2S6ntmIbc24T1mmA6F_IF6kYVkHvyvMHjeyP2sIV26bj8rzgE4OLzLznw"
-              />
-            </div>
+            {isAdoptionPostsLoading ? (
+              <p className="text-center text-gray-500 dark:text-gray-400 py-8">입양 후기를 불러오는 중...</p>
+            ) : latestAdoptionPosts.length === 0 ? (
+              <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+                아직 입양 후기가 없습니다.{' '}
+                <Link to="/adoption" className="text-primary font-bold hover:underline">
+                  후기 보러 가기
+                </Link>
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {latestAdoptionPosts.map((post) => {
+                  const postId = post.postId ?? post.id;
+                  return (
+                    <AdoptionStory
+                      key={postId}
+                      postId={postId}
+                      tag={new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                      title={post.title}
+                      excerpt={toExcerpt(post.content)}
+                      imageUrl={resolvePostImage(post.imageUrls)}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </section>
         </div>
       </main>
