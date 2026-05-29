@@ -441,7 +441,7 @@ export default function Home() {
             </div>
             <div
               ref={scrollContainerRef}
-              className="flex flex-row overflow-x-hidden -mx-4 sm:-mx-6 lg:-mx-8 cursor-grab active:cursor-grabbing select-none"
+              className="flex flex-row overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8 cursor-grab active:cursor-grabbing select-none"
               onMouseDown={handleMouseDown}
               onMouseLeave={handleMouseLeave}
               onWheel={(e) => e.preventDefault()} // 마우스 휠 스크롤 방지
