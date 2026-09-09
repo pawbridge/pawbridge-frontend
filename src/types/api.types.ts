@@ -166,8 +166,7 @@ export type ProductStatus = 'ACTIVE' | 'HIDDEN' | 'SOLD_OUT' | 'DELETED';
 
 // 상품 SKU
 export interface ProductSku {
-  id: number;
-  skuId?: number;              // id와 동일 (호환성을 위해)
+  skuId: number;
   skuCode: string;
   price: number;
   stockQuantity: number;

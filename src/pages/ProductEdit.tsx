@@ -44,8 +44,8 @@ export default function ProductEdit() {
       // SKU 정보 설정
       if (product.skus) {
         setSkus(product.skus.map(sku => ({
-          id: sku.id,
-          skuId: sku.id,
+          id: sku.skuId,
+          skuId: sku.skuId,
           skuCode: sku.skuCode,
           price: sku.price,
           stockQuantity: sku.stockQuantity,
