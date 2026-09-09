@@ -34,7 +34,7 @@ export default function ProductDetail() {
   }, [product]);
 
   const addToCartMutation = useMutation({
-    mutationFn: () => addToCart({ skuId: selectedSku!.id, quantity }),
+    mutationFn: () => addToCart({ skuId: selectedSku!.skuId, quantity }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       const goToCart = window.confirm('장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?');
@@ -115,7 +115,7 @@ export default function ProductDetail() {
     navigate('/checkout', {
       state: {
         directOrder: {
-          skuId: selectedSku.id,
+          skuId: selectedSku.skuId,
           quantity,
           product: {
             productId: product?.productId,
