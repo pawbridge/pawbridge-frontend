@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+# PawBridge Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PawBridge는 유기동물 입양 플랫폼의 프론트엔드 애플리케이션입니다. 유기동물 보호소와 입양 희망자를 연결하고, 입양 후기와 커뮤니티 기능을 제공하며, 반려동물 용품 쇼핑까지 가능한 통합 플랫폼입니다.
 
-Currently, two official plugins are available:
+## 기술 스택
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 18+** - UI 라이브러리
+- **TypeScript** - 타입 안정성을 위한 정적 타입 언어
+- **Vite** - 빠른 개발 환경 및 빌드 도구
+- **React Router v6** - 클라이언트 사이드 라우팅
+- **TanStack Query (React Query v5)** - 서버 상태 관리
+- **Zustand** - 클라이언트 상태 관리
+- **Axios** - HTTP 클라이언트
+- **Tailwind CSS** - 유틸리티 기반 CSS 프레임워크
 
-## React Compiler
+## 주요 구현 내용
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **커스텀 드래그 스크롤**: 메인 페이지 동물 카드 영역에 마우스 드래그로 수평 스크롤 및 관성 스크롤 구현
+- **서버 상태 관리**: TanStack Query를 활용한 API 데이터 캐싱, 자동 재조회, 로딩/에러 상태 관리
+- **클라이언트 상태 관리**: Zustand를 활용한 인증 상태 및 사용자 정보 전역 관리
+- **타입 안정성**: TypeScript로 모든 컴포넌트와 API 응답 타입 정의
+- **반응형 디자인**: Tailwind CSS를 활용한 모바일 퍼스트 반응형 레이아웃
+- **API 통합**: Axios 인터셉터를 활용한 인증 토큰 자동 주입 및 에러 처리
+- **결제 연동**: 토스페이먼츠 SDK를 활용한 결제 기능 구현
 
-## Expanding the ESLint configuration
+## 주요 기능
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **동물 검색 및 조회**: 유기동물 검색, 상세 정보 조회
+- **입양 신청**: 동물 입양 신청 및 관리
+- **커뮤니티**: 입양 후기 및 소통 게시판
+- **펫 마켓**: 반려동물 용품 쇼핑
+- **마이페이지**: 주문 내역, 찜 목록, 등록한 동물 관리
+- **관리자 페이지**: 사용자 관리, 주문 관리, 상품 관리, 통계 대시보드
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 배포
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **배포 URL**: https://www.pawbridge.kr/
+- **운영 시간**: 매일 11:00 ~ 21:00 (MSA 구조로 인한 비용 절감을 위한 운영 시간 제한)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 시작하기
+
+### 필수 요구사항
+
+- Node.js 18 이상
+- npm 또는 yarn
+
+### 설치
+
+```bash
+# 의존성 설치
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 환경 변수 설정
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+프로젝트 루트에 `.env` 파일을 생성하고 필요한 환경 변수를 설정하세요.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+개발 서버가 실행되면 브라우저에서 `http://localhost:5173`으로 접속할 수 있습니다.
+
+## 프로젝트 구조
+
+```
+src/
+├── api/              # API 호출 함수
+├── components/       # 재사용 가능한 UI 컴포넌트
+│   ├── common/      # 공통 컴포넌트 (Button, Input 등)
+│   └── layout/      # 레이아웃 컴포넌트 (Header, Footer, Sidebar)
+├── pages/           # 페이지 컴포넌트 (라우트별)
+├── hooks/           # 커스텀 훅
+├── store/           # Zustand 스토어
+├── types/           # TypeScript 타입 정의
+├── utils/           # 유틸리티 함수
+├── constants/       # 상수 정의
+└── assets/          # 이미지, 폰트 등 정적 파일
 ```

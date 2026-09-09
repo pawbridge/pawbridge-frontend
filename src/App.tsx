@@ -1,83 +1,423 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import type { ReactElement } from 'react';
 import { useAuthStore } from './store/authStore.ts';
 import Home from './pages/Home.tsx';
 import Login from './pages/Login.tsx';
+import Signup from './pages/Signup.tsx';
+import ResetPassword from './pages/ResetPassword.tsx';
 import Animals from './pages/Animals.tsx';
+import AnimalDetail from './pages/AnimalDetail.tsx';
+import AnimalCreate from './pages/AnimalCreate.tsx';
+import AnimalEdit from './pages/AnimalEdit.tsx';
+import Products from './pages/Products.tsx';
+import ProductDetail from './pages/ProductDetail.tsx';
+import ProductCreate from './pages/ProductCreate.tsx';
+import ProductEdit from './pages/ProductEdit.tsx';
+import AdminProductList from './pages/AdminProductList.tsx';
+import AdminDashboard from './pages/AdminDashboard.tsx';
+import AdminCategoryManagement from './pages/AdminCategoryManagement.tsx';
+import AdminOptionGroupManagement from './pages/AdminOptionGroupManagement.tsx';
+import Cart from './pages/Cart.tsx';
+import Checkout from './pages/Checkout.tsx';
+import OrderComplete from './pages/OrderComplete.tsx';
+import Wishlist from './pages/Wishlist.tsx';
+import Orders from './pages/Orders.tsx';
+import OrderDetail from './pages/OrderDetail.tsx';
+import AdminOrderList from './pages/AdminOrderList.tsx';
+import AdminOrderDetail from './pages/AdminOrderDetail.tsx';
+import AdminUserManagement from './pages/AdminUserManagement.tsx';
+import AdminUserDetail from './pages/AdminUserDetail.tsx';
+import AdminPostManagement from './pages/AdminPostManagement.tsx';
+import AdminPostDetail from './pages/AdminPostDetail.tsx';
+import AdminStatistics from './pages/AdminStatistics.tsx';
+import MyPage from './pages/MyPage.tsx';
+import FavoriteAnimals from './pages/FavoriteAnimals.tsx';
+import RegisteredAnimals from './pages/RegisteredAnimals.tsx';
 import NotFound from './pages/NotFound.tsx';
+import CommunityList from './pages/CommunityList.tsx';
+import CommunityDetail from './pages/CommunityDetail.tsx';
+import CommunityCreate from './pages/CommunityCreate.tsx';
+import CommunityEdit from './pages/CommunityEdit.tsx';
+import AdoptionList from './pages/AdoptionList.tsx';
+import AdoptionDetail from './pages/AdoptionDetail.tsx';
+import AdoptionCreate from './pages/AdoptionCreate.tsx';
+import AdoptionEdit from './pages/AdoptionEdit.tsx';
+import OAuthCallback from './pages/OAuthCallback.tsx';
+import AnimalStats from './pages/AnimalStats.tsx';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
   (window as any).useAuthStore = useAuthStore;
 }
 
-function App() {
-  const { user, clearAuth } = useAuthStore();
+function ProtectedRoute({ children }: { children: ReactElement }) {
+  const location = useLocation();
+  const token = useAuthStore((state) => state.accessToken);
 
-  const handleLogout = () => {
-    clearAuth();
-    alert('로그아웃되었습니다');
-  };
-
-  return (
-    <div>
-      {/* 네비게이션 바 */}
-      <nav className="bg-white shadow-md">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* 로고 */}
-            <Link to="/" className="text-2xl font-bold text-blue-600">
-              🐾 Pawbridge
+  if (!token) {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+        <div className="fixed inset-0 bg-black/40" />
+        <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
+          <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            펫마켓은 회원만 이용 가능합니다. 로그인 후 다시 이용해 주세요.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/login"
+              state={{ from: location.pathname }}
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+            >
+              로그인
             </Link>
-
-            {/* 메뉴 */}
-            <div className="flex items-center gap-6">
-              <Link 
-                to="/" 
-                className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
-              >
-                홈
-              </Link>
-              <Link 
-                to="/animals" 
-                className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
-              >
-                동물 목록
-              </Link>
-              
-              {/* 로그인 상태에 따라 다른 메뉴 */}
-              {user ? (
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-600">
-                    {user.name}님
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-                  >
-                    로그아웃
-                  </button>
-                </div>
-              ) : (
-                <Link 
-                  to="/login" 
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                >
-                  로그인
-                </Link>
-              )}
-            </div>
+            <Link
+              to="/"
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              홈으로
+            </Link>
           </div>
         </div>
-      </nav>
+      </div>
+    );
+  }
 
-      {/* 라우트 */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/animals" element={<Animals />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
+  return children;
+}
+
+function AdminRoute({ children }: { children: ReactElement }) {
+  const location = useLocation();
+  const token = useAuthStore((state) => state.accessToken);
+  const user = useAuthStore((state) => state.user);
+
+  if (!token) {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+        <div className="fixed inset-0 bg-black/40" />
+        <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
+          <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            관리자 페이지는 로그인이 필요합니다.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/login"
+              state={{ from: location.pathname }}
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+            >
+              로그인
+            </Link>
+            <Link
+              to="/"
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              홈으로
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (user?.role !== 'ROLE_ADMIN') {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+        <div className="fixed inset-0 bg-black/40" />
+        <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
+          <p className="text-xl font-bold text-text-light dark:text-text-dark">접근 권한이 없습니다</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            이 페이지는 관리자만 접근할 수 있습니다.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/"
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+            >
+              홈으로
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return children;
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/oauth/callback" element={<OAuthCallback />} />
+      <Route path="/animals" element={<Animals />} />
+      <Route path="/animals/stats" element={<AnimalStats />} />
+      <Route path="/animals/:id" element={<AnimalDetail />} />
+      <Route
+        path="/animals/new"
+        element={
+          <ProtectedRoute>
+            <AnimalCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/animals/:id/edit"
+        element={
+          <ProtectedRoute>
+            <AnimalEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/products" element={<Products />} />
+      <Route path="/products/:id" element={<ProductDetail />} />
+      <Route
+        path="/products/new"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProductCreate />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminProductList />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/products/:productId/edit"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ProductEdit />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/categories"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminCategoryManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/option-groups"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminOptionGroupManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminUserManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users/:userId"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminUserDetail />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/posts"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminPostManagement />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/posts/:postId"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminPostDetail />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/statistics"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminStatistics />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mypage"
+        element={
+          <ProtectedRoute>
+            <MyPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/favorite-animals"
+        element={
+          <ProtectedRoute>
+            <FavoriteAnimals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/registered-animals"
+        element={
+          <ProtectedRoute>
+            <RegisteredAnimals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order-complete"
+        element={
+          <ProtectedRoute>
+            <OrderComplete />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/wishlist"
+        element={
+          <ProtectedRoute>
+            <Wishlist />
+          </ProtectedRoute>
+        }
+      />
+      {/* 주문 내역 (일반 사용자용) */}
+      <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders/:orderId"
+        element={
+          <ProtectedRoute>
+            <OrderDetail />
+          </ProtectedRoute>
+        }
+      />
+      {/* 주문 관리 (관리자용) */}
+      <Route
+        path="/admin/orders"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminOrderList />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/orders/:orderId"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminOrderDetail />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      {/* 커뮤니티 (실종/보호/제보) */}
+      <Route path="/community" element={<CommunityList />} />
+      <Route path="/community/:id" element={<CommunityDetail />} />
+      <Route
+        path="/community/new"
+        element={
+          <ProtectedRoute>
+            <CommunityCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/community/:id/edit"
+        element={
+          <ProtectedRoute>
+            <CommunityEdit />
+          </ProtectedRoute>
+        }
+      />
+      {/* 입양 후기 */}
+      <Route path="/adoption" element={<AdoptionList />} />
+      <Route path="/adoption/:id" element={<AdoptionDetail />} />
+      <Route
+        path="/adoption/new"
+        element={
+          <ProtectedRoute>
+            <AdoptionCreate />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/adoption/:id/edit"
+        element={
+          <ProtectedRoute>
+            <AdoptionEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 

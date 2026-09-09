@@ -12,6 +12,7 @@ interface AuthState {
   // 액션
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   clearAuth: () => void;
+  logout: () => void;
   updateUser: (user: Partial<User>) => void;
 }
 
@@ -30,6 +31,10 @@ export const useAuthStore = create<AuthState>()(
 
       // 로그아웃 (인증 정보 삭제)
       clearAuth: () => 
+        set({ user: null, accessToken: null, refreshToken: null }),
+      
+      // 로그아웃 (clearAuth의 별칭)
+      logout: () => 
         set({ user: null, accessToken: null, refreshToken: null }),
 
       // 사용자 정보 업데이트
