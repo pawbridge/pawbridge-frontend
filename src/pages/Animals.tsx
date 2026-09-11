@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { defaultAnimalSearch, readAnimalSearch, writeAnimalSearch } from '../utils/animalSearch';
 import { useQuery } from '@tanstack/react-query';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
@@ -9,12 +11,11 @@ import AnimalCardSimple from '../components/common/AnimalCardSimple';
 import Pagination from '../components/common/Pagination';
 
 export default function Animals() {
-  // 필터 상태
-  const [filters, setFilters] = useState<AnimalSearchParams>({
-    page: 0,
-    size: 21,
-    sort: 'createdAt,desc',
-  });
+  // Applied search conditions live in the URL so history and reload can restore them.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filters = useMemo(() => readAnimalSearch(searchParams), [searchParams]);
+  const setFilters = (next: AnimalSearchParams) => setSearchParams(writeAnimalSearch(next));
+  const searchReturnTo = `/animals${searchParams.size ? `?${searchParams.toString()}` : ''}`;
 
   // 뷰 모드 (그리드/리스트)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -33,11 +34,7 @@ export default function Animals() {
 
   // 필터 초기화
   const handleReset = () => {
-    setFilters({
-      page: 0,
-      size: 21,
-      sort: 'createdAt,desc',
-    });
+    setFilters(defaultAnimalSearch);
   };
 
   // 정렬 변경
@@ -213,7 +210,7 @@ export default function Animals() {
             ) : (
               <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-6`}>
                 {animals.map((animal) => (
-                  <AnimalCardSimple key={animal.id} animal={animal} />
+                  <AnimalCardSimple key={animal.id} animal={animal} searchReturnTo={searchReturnTo} />
                 ))}
               </div>
             )}
