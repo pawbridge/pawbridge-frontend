@@ -37,9 +37,16 @@ export function buildRegionRows(data: RegionalAnimalStats[]) {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'ko'));
 }
 
-// Area, rather than diameter, encodes count. Zero counts have no bubble.
-export function bubbleRadius(count: number, maximum: number, maxRadius = 38) {
-  return count > 0 && maximum > 0 ? Math.sqrt(count / maximum) * maxRadius : 0;
+// Five shared bins: zero, then four increasing count ranges. Recompute for each period.
+export const terrainColors = ['#e8edf2', '#dcefe9', '#6ee7b7', '#047857', '#1f5b4b'] as const;
+
+export function terrainStep(maximum: number) {
+  const magnitude = 10 ** Math.floor(Math.log10(Math.max(1, maximum / 4)));
+  return Math.max(10, Math.ceil(maximum / 4 / magnitude) * magnitude);
+}
+
+export function terrainBand(count: number, step: number) {
+  return count <= 0 ? 0 : Math.min(4, Math.floor(count / step) + 1);
 }
 
 export function kstToday(now = new Date()) {

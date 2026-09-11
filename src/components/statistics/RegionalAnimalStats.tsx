@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import type { RegionalAnimalStats as RegionalStats } from '../../types/api.types';
-import { bubbleRadius, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
+import { terrainBand, terrainColors, terrainStep, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
 import StatsDialog from './StatsDialog';
 
 const mapCenter: [number, number] = [127.7, 35.95];
-const buttonClass = 'min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-40 dark:border-border-dark';
+const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-40 dark:border-border-dark';
 
 export default function RegionalAnimalStats({ data }: { data: RegionalStats[] }) {
   const rows = useMemo(() => buildRegionRows(data), [data]);
@@ -15,8 +15,9 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   const [expanded, setExpanded] = useState(false);
   const [position, setPosition] = useState({ coordinates: mapCenter, zoom: 1 });
   const selectedRow = rows.find(row => row.name === selected);
-  const mappedRows = rows.map(row => ({ ...row, province: provinces.find(p => p.name === row.name) }));
-  const legendValues = maximum > 0 ? [...new Set([Math.max(1, Math.round(maximum / 10)), Math.max(1, Math.round(maximum / 2)), maximum])] : [];
+  const step = terrainStep(maximum);
+  const filterId = useId().replace(/:/g, '');
+  const ranges = ['0건', `1–${step - 1}`, `${step}–${step * 2 - 1}`, `${step * 2}–${step * 3 - 1}`, `${step * 3}+`];
 
   const details = (
     <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-primary/40 bg-primary/10 p-4 sm:p-5">
@@ -26,7 +27,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           {selectedRow.count === 0 && <p className="mt-1 text-sm">선택 기간에 등록된 공고가 없습니다.</p>}
         </div>
         <button type="button" onClick={() => setSelected(null)} className={buttonClass}>선택 해제</button>
-      </div> : <><h3 className="font-bold">관심 지역을 선택해 주세요</h3><p className="mt-1 text-sm">지도 또는 아래 목록에서 지역별 공고 수를 확인할 수 있어요.</p></>}
+      </div> : <><h3 className="font-bold">관심 지역을 선택해 주세요</h3><p className="mt-1 text-sm">지도 또는 지역별 비교 목록에서 지역별 공고 수를 확인할 수 있어요.</p></>}
     </div>
   );
 
@@ -35,61 +36,71 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       <Geographies geography="/korea-provinces-topo.json">
         {({ geographies }) => geographies.map(geo => {
           const name = normalizeRegion(geo.properties.name as string);
+          const count = rows.find(row => row.name === name)?.count ?? 0;
+          const active = selected === name;
           return <Geography key={geo.rsmKey} geography={geo} tabIndex={-1}
-            onClick={() => setSelected(name)}
-            className={`cursor-pointer stroke-emerald-700/40 transition-colors hover:fill-primary/40 dark:stroke-primary/50 ${selected === name ? 'fill-primary/40' : 'fill-primary/10'}`}
-            strokeWidth={selected === name ? 1.8 : 0.6} />;
+            data-region={name} data-selected={active} data-band={terrainBand(count, step)}
+            onClick={() => setSelected(name)} fill={terrainColors[terrainBand(count, step)]}
+            stroke={active ? '#052e16' : '#ffffff'} strokeWidth={active ? 2 : 1}
+            style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: '#052e16', strokeWidth: 2 }, pressed: { outline: 'none' } }}
+            className="cursor-pointer" filter={`url(#${filterId}-${zoomed ? 'expanded' : 'main'})`}>
+            <title>{name} · {count.toLocaleString()}건{active ? ' · 선택됨' : ''}</title>
+          </Geography>;
         })}
       </Geographies>
-      {/* Render smaller bubbles last so nearby cities remain selectable. */}
-      {mappedRows.filter(row => row.province && row.count > 0).map(row => (
-        <Marker key={row.name} coordinates={[...row.province!.coordinates]} onClick={() => setSelected(row.name)}>
-          <circle r={bubbleRadius(row.count, maximum)} className="cursor-pointer fill-primary stroke-emerald-800 dark:stroke-emerald-100"
-            strokeWidth={selected === row.name ? 2.5 : 1} opacity={selected && selected !== row.name ? 0.4 : 0.9}>
-            <title>{row.name} · {row.count.toLocaleString()}건</title>
-          </circle>
-        </Marker>
-      ))}
-      {provinces.filter(p => ['강원', '경북', '전남', '제주'].includes(p.short)).map(p => (
-        <Marker key={p.short} coordinates={[...p.coordinates]}>
-          <text textAnchor="middle" y={p.short === '강원' ? -47 : 48} className="pointer-events-none fill-text-light text-[13px] font-semibold dark:fill-text-dark">{p.short}</text>
-        </Marker>
-      ))}
+      {provinces.filter(p => ['경기', '강원', '충남', '충북', '전북', '전남', '경북', '경남', '제주'].includes(p.short)).map(p => {
+        const count = rows.find(row => row.name === p.name)?.count ?? 0;
+        const label = `${p.short} ${count.toLocaleString()}`;
+        const width = Math.max(60, label.length * 8 + 12);
+        return <Marker key={p.short} coordinates={[...p.coordinates]} className="pointer-events-none">
+          <rect x={-width / 2} y={-14} width={width} height={28} rx={5} fill={selected === p.name ? '#052e16' : '#ffffff'} fillOpacity={0.94} />
+          <text textAnchor="middle" y={5} fontSize={14} fontWeight={500} fill={selected === p.name ? '#ffffff' : '#052e16'}>{label}</text>
+        </Marker>;
+      })}
     </>;
     return <ComposableMap projection="geoMercator" projectionConfig={{ center: mapCenter, scale: 4800 }} width={500} height={620}
-      role="img" aria-label="17개 시·도 공고 분포. 원 면적은 공고 수에 비례하며, 정확한 값은 지역 목록에서 확인할 수 있습니다."
-      className={`mx-auto h-auto w-full ${zoomed ? 'max-w-[580px] touch-none' : 'max-w-[680px]'}`}>
+      role="img" aria-label="17개 시·도 입체 지형 지도. 색이 진할수록 공고가 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다."
+      className={`mx-auto h-auto w-full ${zoomed ? 'max-w-[580px] touch-none' : 'max-w-[520px]'}`}>
+      <defs><filter id={`${filterId}-${zoomed ? 'expanded' : 'main'}`} x="-30%" y="-30%" width="160%" height="180%">
+        <feDropShadow dx="0" dy="3" stdDeviation="1.2" floodColor="#164e3e" floodOpacity="0.22" />
+      </filter></defs>
       {zoomed ? <ZoomableGroup center={position.coordinates} zoom={position.zoom} minZoom={1} maxZoom={3}
         onMoveEnd={p => setPosition({ coordinates: p.coordinates, zoom: p.zoom })}>{layers}</ZoomableGroup> : layers}
     </ComposableMap>;
   };
 
   return <div className="space-y-5 text-text-light dark:text-text-dark">
-    <button type="button" onClick={() => { setPosition({ coordinates: mapCenter, zoom: 1 }); setExpanded(true); }} className={`${buttonClass} w-full sm:w-auto`}>지도 크게 보기</button>
-    <div className="rounded-xl border border-border-light bg-card-light p-4 sm:p-6 dark:border-border-dark dark:bg-card-dark">
-      <h3 className="text-xl font-bold">지역별 공고 분포</h3>
-      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">지역을 누르거나 아래 목록에서 선택하세요.</p>
-      {drawMap(false)}
-      {legendValues.length > 0 && <svg viewBox="0 0 500 115" role="img" aria-label="원 면적 범례" className="mx-auto w-full max-w-[680px]">
-        {legendValues.map((value, index) => <g key={value} transform={`translate(${500 / (legendValues.length + 1) * (index + 1)},0)`}>
-          <circle cy={80 - bubbleRadius(value, maximum)} r={bubbleRadius(value, maximum)} className="fill-primary stroke-emerald-800 dark:stroke-emerald-100" />
-          <text y={105} textAnchor="middle" className="fill-text-light text-[14px] dark:fill-text-dark">{value.toLocaleString()}건</text>
-        </g>)}
-      </svg>}
-      <p className="mt-5 text-sm">원 면적 = 공고 건수 · 0건 지역도 아래 목록에서 선택할 수 있어요.</p>
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,560fr)_minmax(0,536fr)]">
+    <div className="min-w-0 space-y-5" data-map-column>
+      <div className="rounded-3xl bg-emerald-50 p-4 sm:p-5 dark:bg-emerald-950/40">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div><h3 className="text-xl font-bold">지역을 더 가까이</h3>
+            <p className="mt-2 text-sm">전국 공고 분포{selected ? ` · ${selected} 선택` : ''}</p></div>
+          <button type="button" onClick={() => { setPosition({ coordinates: mapCenter, zoom: 1 }); setExpanded(true); }} className={`${buttonClass} bg-white/80 dark:bg-card-dark`}>지도 크게 보기</button>
+        </div>
+        {drawMap(false)}
+        <div className="grid grid-cols-5 gap-3" aria-label="공고 건수 색상 범례">
+          {ranges.map((label, index) => <div key={label} className="min-w-0">
+            <div className="mb-2 h-2 rounded-full" style={{ backgroundColor: terrainColors[index] }} />
+            <span className="block break-words text-xs tabular-nums">{label}</span>
+          </div>)}
+        </div>
+        <p className="mt-5 text-sm">색이 진할수록 공고가 많습니다. 입체 효과는 건수를 뜻하지 않습니다.</p>
+      </div>
+      {details}
     </div>
-    {details}
-    <div className="rounded-xl border border-border-light bg-card-light p-4 sm:p-6 dark:border-border-dark dark:bg-card-dark">
+    <div data-comparison-column className="min-w-0 rounded-3xl border border-border-light bg-card-light p-4 sm:p-5 dark:border-border-dark dark:bg-card-dark">
       <div className="mb-4 flex items-baseline justify-between gap-3"><h3 className="text-lg font-bold">지역별 비교</h3><span className="text-sm text-gray-600 dark:text-gray-300">많은 순 · {rows.length}개 지역</span></div>
       <ul className="space-y-2">
         {rows.map(row => <li key={row.name}>
           <button type="button" aria-pressed={selected === row.name} onClick={() => setSelected(row.name)}
-            className={`min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected === row.name ? 'bg-primary/15 ring-1 ring-primary' : 'hover:bg-primary/10'}`}>
+            className={`text-text-light dark:text-text-dark min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected === row.name ? 'bg-primary/15 ring-1 ring-primary' : 'hover:bg-primary/10'}`}>
             <span className="mb-2 flex items-baseline justify-between gap-3 text-sm"><span className="font-medium">{row.name}</span><strong className="shrink-0 tabular-nums">{row.count.toLocaleString()}건</strong></span>
             <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"><span className="block h-full rounded-full bg-primary" style={{ width: `${maximum ? row.count / maximum * 100 : 0}%` }} /></span>
           </button>
         </li>)}
       </ul>
+    </div>
     </div>
     {expanded && <StatsDialog title="전국 지도 확대" onClose={() => setExpanded(false)}>
       <div className="flex flex-wrap items-center gap-2">
