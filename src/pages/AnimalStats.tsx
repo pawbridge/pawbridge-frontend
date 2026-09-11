@@ -39,7 +39,7 @@ export default function AnimalStats() {
 
   return <div className="flex min-h-screen flex-col bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark">
     <Header />
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 md:py-12">
+    <main className="container mx-auto flex-1 px-4 py-8 md:py-12">
       <nav aria-label="현재 위치" className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Link to="/" className="py-2 hover:underline">홈</Link><span aria-hidden="true">/</span><span aria-current="page">유기동물 현황</span></nav>
       <h1 className="text-3xl font-black tracking-tight md:text-4xl">유기동물 현황</h1>
       <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">지역별 현황을 살펴보고, 우리 지역의 동물들에게 관심을 보내주세요.</p>
