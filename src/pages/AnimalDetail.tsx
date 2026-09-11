@@ -1,3 +1,4 @@
+import { animalSearchReturnTo } from '../utils/animalSearch';
 import axios from 'axios';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -21,6 +22,7 @@ export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const searchReturnTo = animalSearchReturnTo(location.state?.searchReturnTo);
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -199,7 +201,7 @@ export default function AnimalDetail() {
                 존재하지 않거나 삭제된 동물입니다
               </p>
               <button
-                onClick={() => navigate('/animals')}
+                onClick={() => navigate(searchReturnTo)}
                 className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
               >
                 목록으로 돌아가기
@@ -285,7 +287,7 @@ export default function AnimalDetail() {
                 </button>
               </>
             ) : (
-              <button onClick={() => navigate('/animals')} className="text-secondary dark:text-primary hover:underline">
+              <button onClick={() => navigate(searchReturnTo)} className="text-secondary dark:text-primary hover:underline">
                 동물 검색
               </button>
             )}
@@ -659,7 +661,7 @@ export default function AnimalDetail() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {similarAnimals.slice(0, 6).map((similarAnimal) => (
-                <AnimalCardSimple key={similarAnimal.id} animal={similarAnimal} />
+                <AnimalCardSimple key={similarAnimal.id} animal={similarAnimal} searchReturnTo={searchReturnTo} />
               ))}
             </div>
           </section>
