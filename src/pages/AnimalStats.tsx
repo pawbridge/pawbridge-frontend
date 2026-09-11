@@ -61,20 +61,20 @@ export default function AnimalStats() {
         <p className="mt-3 text-sm text-gray-600 dark:text-gray-300" aria-live="polite">{startDate} ~ {endDate}</p>
       </section>
 
-      <section aria-labelledby="regional-heading">
-        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3"><div><h2 id="regional-heading" className="text-2xl font-bold">지역별 공고 현황</h2><p className="mt-2 text-sm text-gray-600 dark:text-gray-300">보호소 소재지 · 공고 시작일 기준</p></div>{regionalQuery.isSuccess && <p className="text-sm">전국 <strong className="text-xl">{regionalTotal?.toLocaleString()}</strong>건</p>}</div>
-        {regionalQuery.isPending ? <p role="status" className="rounded-xl bg-primary/5 p-8 text-center">지역별 현황을 불러오는 중입니다.</p> : regionalQuery.isError ? <QueryError retry={() => { void regionalQuery.refetch(); }} /> : <>
-          {regionalTotal === 0 && <p role="status" className="mb-4 rounded-lg bg-primary/10 p-4 text-sm">선택한 기간에 등록된 공고가 없습니다.</p>}
-          <RegionalAnimalStats key={`${startDate}:${endDate}`} data={regionalQuery.data} />
-        </>}
-      </section>
-
-      <section aria-labelledby="status-heading" className="mt-10">
+      <section aria-labelledby="status-heading">
         <h2 id="status-heading" className="text-2xl font-bold">전국 상태별 현황</h2>
         <p className="mb-5 mt-2 text-sm text-gray-600 dark:text-gray-300">선택 기간에 정보가 갱신된 동물의 현재 상태입니다. 지역별 공고 수와 집계 기준이 다릅니다.</p>
         {statusQuery.isPending ? <p role="status">전국 상태별 현황을 불러오는 중입니다.</p> : statusQuery.isError ? <QueryError retry={() => { void statusQuery.refetch(); }} /> : <div className="space-y-5 rounded-xl border border-border-light p-5 dark:border-border-dark">
           {statusStats.length === 0 ? <p>선택 기간에 갱신된 정보가 없습니다.</p> : statusStats.map(item => <div key={item.status}><div className="mb-2 flex justify-between gap-3 text-sm"><span>{item.label}</span><strong>{item.count.toLocaleString()}마리</strong></div><div aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"><div className="h-full rounded-full bg-primary" style={{ width: `${item.count / statusMax * 100}%` }} /></div></div>)}
         </div>}
+      </section>
+
+      <section aria-labelledby="regional-heading" className="mt-10">
+        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3"><div><h2 id="regional-heading" className="text-2xl font-bold">지역별 공고 현황</h2><p className="mt-2 text-sm text-gray-600 dark:text-gray-300">보호소 소재지 · 공고 시작일 기준</p></div>{regionalQuery.isSuccess && <p className="text-sm">전국 <strong className="text-xl">{regionalTotal?.toLocaleString()}</strong>건</p>}</div>
+        {regionalQuery.isPending ? <p role="status" className="rounded-xl bg-primary/5 p-8 text-center">지역별 현황을 불러오는 중입니다.</p> : regionalQuery.isError ? <QueryError retry={() => { void regionalQuery.refetch(); }} /> : <>
+          {regionalTotal === 0 && <p role="status" className="mb-4 rounded-lg bg-primary/10 p-4 text-sm">선택한 기간에 등록된 공고가 없습니다.</p>}
+          <RegionalAnimalStats key={`${startDate}:${endDate}`} data={regionalQuery.data} />
+        </>}
       </section>
     </main>
     <Footer />
