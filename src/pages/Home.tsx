@@ -325,7 +325,7 @@ export default function Home() {
       <Header />
 
       <main className="flex flex-col items-center w-full">
-        <div className="flex flex-col max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+        <div className="container mx-auto flex flex-col px-4 py-10 md:py-16">
           
           {/* Hero Section */}
           <section className="w-full">
