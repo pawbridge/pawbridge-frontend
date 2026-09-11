@@ -37,16 +37,56 @@ export function buildRegionRows(data: RegionalAnimalStats[]) {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'ko'));
 }
 
-// Five shared bins: zero, then four increasing count ranges. Recompute for each period.
 export const terrainColors = ['#e8edf2', '#dcefe9', '#6ee7b7', '#047857', '#1f5b4b'] as const;
 
-export function terrainStep(maximum: number) {
-  const magnitude = 10 ** Math.floor(Math.log10(Math.max(1, maximum / 4)));
-  return Math.max(10, Math.ceil(maximum / 4 / magnitude) * magnitude);
+// Exact 1-D natural breaks: minimize within-group squared deviation for up to
+// four positive-count groups. Zero is separate; equal values are never split.
+export function terrainBreaks(counts: number[]): number[] {
+  const values = counts.filter(count => count > 0).sort((a, b) => a - b);
+  const n = values.length;
+  const groups = Math.min(4, new Set(values).size);
+  if (!groups) return [];
+  const sums = [0];
+  const squares = [0];
+  for (const value of values) {
+    sums.push(sums[sums.length - 1] + value);
+    squares.push(squares[squares.length - 1] + value * value);
+  }
+  const costs = Array.from({ length: groups + 1 }, () => Array<number>(n + 1).fill(Infinity));
+  const starts = Array.from({ length: groups + 1 }, () => Array<number>(n + 1).fill(0));
+  costs[0][0] = 0;
+  for (let group = 1; group <= groups; group++) {
+    for (let end = 1; end <= n; end++) {
+      for (let start = 0; start < end; start++) {
+        if (start > 0 && values[start - 1] === values[start]) continue;
+        const sum = sums[end] - sums[start];
+        const variance = Math.max(0, squares[end] - squares[start] - sum * sum / (end - start));
+        const cost = costs[group - 1][start] + variance;
+        if (cost < costs[group][end]) {
+          costs[group][end] = cost;
+          starts[group][end] = start;
+        }
+      }
+    }
+  }
+  const breaks: number[] = [];
+  let end = n;
+  for (let group = groups; group > 0; group--) {
+    breaks.unshift(values[end - 1]);
+    end = starts[group][end];
+  }
+  return breaks;
 }
 
-export function terrainBand(count: number, step: number) {
-  return count <= 0 ? 0 : Math.min(4, Math.floor(count / step) + 1);
+export function terrainBand(count: number, breaks: number[]) {
+  if (count <= 0 || breaks.length === 0) return 0;
+  const index = breaks.findIndex(upper => count <= upper);
+  return index < 0 ? breaks.length : index + 1;
+}
+
+export function terrainColor(count: number, breaks: number[]) {
+  const band = terrainBand(count, breaks);
+  return terrainColors[band === 0 ? 0 : Math.ceil(band * 4 / breaks.length)];
 }
 
 export function kstToday(now = new Date()) {
