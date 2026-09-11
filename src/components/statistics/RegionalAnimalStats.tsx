@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import type { RegionalAnimalStats as RegionalStats } from '../../types/api.types';
 import { terrainBand, terrainColor, terrainBreaks, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
@@ -14,6 +14,25 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   const [selected, setSelected] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [position, setPosition] = useState({ coordinates: mapCenter, zoom: 1 });
+  const [hovered, setHovered] = useState<{ name: string; count: number; x: number; y: number; zoomed: boolean } | null>(null);
+  const tooltipVisible = hovered !== null;
+  useEffect(() => {
+    if (!tooltipVisible) return;
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        setHovered(null);
+      }
+    };
+    const clear = () => setHovered(null);
+    window.addEventListener('keydown', dismiss, true);
+    window.addEventListener('scroll', clear, true);
+    return () => {
+      window.removeEventListener('keydown', dismiss, true);
+      window.removeEventListener('scroll', clear, true);
+    };
+  }, [tooltipVisible]);
   const selectedRow = rows.find(row => row.name === selected);
   const breaks = useMemo(() => terrainBreaks(rows.filter(row => provinces.some(p => p.name === row.name)).map(row => row.count)), [rows]);
   const filterId = useId().replace(/:/g, '');
@@ -42,12 +61,11 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           const count = rows.find(row => row.name === name)?.count ?? 0;
           const active = selected === name;
           return <Geography key={geo.rsmKey} geography={geo} tabIndex={-1}
-            data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
+            aria-label={`${name} · ${count.toLocaleString()}건`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
             onClick={() => setSelected(name)} fill={terrainColor(count, breaks)}
             stroke={active ? '#052e16' : '#ffffff'} strokeWidth={active ? 2 : 1}
             style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: '#052e16', strokeWidth: 2 }, pressed: { outline: 'none' } }}
             className="cursor-pointer" filter={`url(#${filterId}-${zoomed ? 'expanded' : 'main'})`}>
-            <title>{name} · {count.toLocaleString()}건{active ? ' · 선택됨' : ''}</title>
           </Geography>;
         })}
       </Geographies>
@@ -61,7 +79,20 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
         </Marker>;
       })}
     </>;
-    return <ComposableMap projection="geoMercator" projectionConfig={{ center: mapCenter, scale: 4800 }} width={500} height={620}
+    return <div className="relative" data-map-surface={zoomed ? 'expanded' : 'main'}
+      onPointerDown={() => setHovered(null)} onPointerLeave={() => setHovered(null)}
+      onPointerMove={event => {
+        if (event.pointerType !== 'mouse' || event.buttons !== 0) { setHovered(null); return; }
+        const target = event.target as Element;
+        if (target.closest('[role="tooltip"]')) return;
+        const name = target.closest('[data-region]')?.getAttribute('data-region');
+        if (!name) { setHovered(null); return; }
+        const rect = event.currentTarget.getBoundingClientRect();
+        setHovered({ name, count: rows.find(row => row.name === name)?.count ?? 0, zoomed,
+          x: Math.max(8, Math.min(event.clientX - rect.left + 12, rect.width - 208)),
+          y: Math.max(8, Math.min(event.clientY - rect.top + 16, rect.height - 52)) });
+      }}>
+      <ComposableMap projection="geoMercator" projectionConfig={{ center: mapCenter, scale: 4800 }} width={500} height={620}
       role="img" aria-label="17개 시·도 입체 지형 지도. 색이 진할수록 공고가 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다."
       className={`mx-auto h-auto w-full ${zoomed ? 'max-w-[580px] touch-none' : 'max-w-[520px]'}`}>
       <defs><filter id={`${filterId}-${zoomed ? 'expanded' : 'main'}`} x="-30%" y="-30%" width="160%" height="180%">
@@ -69,7 +100,13 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       </filter></defs>
       {zoomed ? <ZoomableGroup center={position.coordinates} zoom={position.zoom} minZoom={1} maxZoom={3}
         onMoveEnd={p => setPosition({ coordinates: p.coordinates, zoom: p.zoom })}>{layers}</ZoomableGroup> : layers}
-    </ComposableMap>;
+      </ComposableMap>
+      {hovered?.zoomed === zoomed && <div role="tooltip"
+        className="absolute z-10 w-[200px] max-w-[calc(100%-16px)] rounded-lg border border-emerald-900/10 bg-white px-3 py-2 text-sm text-emerald-950 shadow-lg dark:border-emerald-200/20 dark:bg-gray-900 dark:text-emerald-50"
+        style={{ left: hovered.x, top: hovered.y }}>
+        <span className="font-semibold">{hovered.name}</span><span className="ml-2 tabular-nums">{hovered.count.toLocaleString()}건</span>
+      </div>}
+    </div>;
   };
 
   return <div className="space-y-5 text-text-light dark:text-text-dark">
