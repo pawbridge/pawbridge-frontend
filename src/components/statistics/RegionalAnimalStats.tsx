@@ -1,7 +1,7 @@
 import { useId, useMemo, useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import type { RegionalAnimalStats as RegionalStats } from '../../types/api.types';
-import { terrainBand, terrainColors, terrainStep, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
+import { terrainBand, terrainColor, terrainBreaks, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
 import StatsDialog from './StatsDialog';
 
 const mapCenter: [number, number] = [127.7, 35.95];
@@ -15,9 +15,12 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   const [expanded, setExpanded] = useState(false);
   const [position, setPosition] = useState({ coordinates: mapCenter, zoom: 1 });
   const selectedRow = rows.find(row => row.name === selected);
-  const step = terrainStep(maximum);
+  const breaks = useMemo(() => terrainBreaks(rows.filter(row => provinces.some(p => p.name === row.name)).map(row => row.count)), [rows]);
   const filterId = useId().replace(/:/g, '');
-  const ranges = ['0건', `1–${step - 1}`, `${step}–${step * 2 - 1}`, `${step * 2}–${step * 3 - 1}`, `${step * 3}+`];
+  const ranges = [{ upper: 0, label: '0건' }, ...breaks.map((upper, index) => {
+    const lower = index === 0 ? 1 : breaks[index - 1] + 1;
+    return { upper, label: lower === upper ? `${upper.toLocaleString()}건` : `${lower.toLocaleString()}–${upper.toLocaleString()}` };
+  })];
 
   const details = (
     <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-primary/40 bg-primary/10 p-4 sm:p-5">
@@ -39,8 +42,8 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           const count = rows.find(row => row.name === name)?.count ?? 0;
           const active = selected === name;
           return <Geography key={geo.rsmKey} geography={geo} tabIndex={-1}
-            data-region={name} data-selected={active} data-band={terrainBand(count, step)}
-            onClick={() => setSelected(name)} fill={terrainColors[terrainBand(count, step)]}
+            data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
+            onClick={() => setSelected(name)} fill={terrainColor(count, breaks)}
             stroke={active ? '#052e16' : '#ffffff'} strokeWidth={active ? 2 : 1}
             style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: '#052e16', strokeWidth: 2 }, pressed: { outline: 'none' } }}
             className="cursor-pointer" filter={`url(#${filterId}-${zoomed ? 'expanded' : 'main'})`}>
@@ -79,13 +82,13 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           <button type="button" onClick={() => { setPosition({ coordinates: mapCenter, zoom: 1 }); setExpanded(true); }} className={`${buttonClass} bg-white/80 dark:bg-card-dark`}>지도 크게 보기</button>
         </div>
         {drawMap(false)}
-        <div className="grid grid-cols-5 gap-3" aria-label="공고 건수 색상 범례">
-          {ranges.map((label, index) => <div key={label} className="min-w-0">
-            <div className="mb-2 h-2 rounded-full" style={{ backgroundColor: terrainColors[index] }} />
+        <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${ranges.length}, minmax(0, 1fr))` }} aria-label="공고 건수 색상 범례">
+          {ranges.map(({ label, upper }) => <div key={upper} className="min-w-0">
+            <div className="mb-2 h-2 rounded-full" style={{ backgroundColor: terrainColor(upper, breaks) }} />
             <span className="block break-words text-xs tabular-nums">{label}</span>
           </div>)}
         </div>
-        <p className="mt-5 text-sm">색이 진할수록 공고가 많습니다. 입체 효과는 건수를 뜻하지 않습니다.</p>
+        <p className="mt-5 text-sm">선택 기간의 지역별 분포에 따라 색상 구간이 달라집니다. 진할수록 공고가 많으며, 입체 효과는 건수를 뜻하지 않습니다.</p>
       </div>
       {details}
     </div>
