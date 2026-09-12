@@ -35,7 +35,7 @@ export default function Footer() {
             <h3 className="font-bold text-primary-content dark:text-white">참여</h3>
             <ul className="mt-4 space-y-2 text-secondary-content dark:text-gray-400">
               <li>
-                <Link to="/reviews" className="hover:text-primary transition-colors">
+                <Link to="/adoption" className="hover:text-primary transition-colors">
                   입양 후기
                 </Link>
               </li>
