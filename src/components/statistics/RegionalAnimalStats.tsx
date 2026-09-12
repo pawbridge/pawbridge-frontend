@@ -36,20 +36,20 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   const selectedRow = rows.find(row => row.name === selected);
   const breaks = useMemo(() => terrainBreaks(rows.filter(row => provinces.some(p => p.name === row.name)).map(row => row.count)), [rows]);
   const filterId = useId().replace(/:/g, '');
-  const ranges = [{ upper: 0, label: '0건' }, ...breaks.map((upper, index) => {
+  const ranges = [{ upper: 0, label: '0마리' }, ...breaks.map((upper, index) => {
     const lower = index === 0 ? 1 : breaks[index - 1] + 1;
-    return { upper, label: lower === upper ? `${upper.toLocaleString()}건` : `${lower.toLocaleString()}–${upper.toLocaleString()}` };
+    return { upper, label: lower === upper ? `${upper.toLocaleString()}마리` : `${lower.toLocaleString()}–${upper.toLocaleString()}` };
   })];
 
   const details = (
     <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-primary/40 bg-primary/10 p-4 sm:p-5">
       {selectedRow ? <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h3 className="text-lg font-bold">{selectedRow.name}</h3>
-          <p className="mt-1"><strong className="text-2xl">{selectedRow.count.toLocaleString()}건</strong><span className="ml-3 text-sm">전국 공고의 {total ? (selectedRow.count / total * 100).toFixed(1) : '0'}%</span></p>
-          {selectedRow.count === 0 && <p className="mt-1 text-sm">선택 기간에 등록된 공고가 없습니다.</p>}
+          <p className="mt-1"><strong className="text-2xl">{selectedRow.count.toLocaleString()}마리</strong><span className="ml-3 text-sm">지역 집계 전체의 {total ? (selectedRow.count / total * 100).toFixed(1) : '0'}%</span></p>
+          {selectedRow.count === 0 && <p className="mt-1 text-sm">선택 기간에 집계된 구조 동물이 없습니다.</p>}
         </div>
         <button type="button" onClick={() => setSelected(null)} className={buttonClass}>선택 해제</button>
-      </div> : <><h3 className="font-bold">관심 지역을 선택해 주세요</h3><p className="mt-1 text-sm">지도 또는 지역별 비교 목록에서 지역별 공고 수를 확인할 수 있어요.</p></>}
+      </div> : <><h3 className="font-bold">관심 지역을 선택해 주세요</h3><p className="mt-1 text-sm">지도 또는 지역별 비교 목록에서 지역별 구조 동물 수를 확인할 수 있어요.</p></>}
     </div>
   );
 
@@ -61,7 +61,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           const count = rows.find(row => row.name === name)?.count ?? 0;
           const active = selected === name;
           return <Geography key={geo.rsmKey} geography={geo} tabIndex={-1}
-            aria-label={`${name} · ${count.toLocaleString()}건`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
+            aria-label={`${name} · ${count.toLocaleString()}마리`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
             onClick={() => setSelected(name)} fill={terrainColor(count, breaks)}
             stroke={active ? '#052e16' : '#ffffff'} strokeWidth={active ? 2 : 1}
             style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: '#052e16', strokeWidth: 2 }, pressed: { outline: 'none' } }}
@@ -93,7 +93,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           y: Math.max(8, Math.min(event.clientY - rect.top + 16, rect.height - 52)) });
       }}>
       <ComposableMap projection="geoMercator" projectionConfig={{ center: mapCenter, scale: 4800 }} width={500} height={620}
-      role="img" aria-label="17개 시·도 입체 지형 지도. 색이 진할수록 공고가 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다."
+      role="img" aria-label="17개 시·도 입체 지형 지도. 색이 진할수록 구조 동물이 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다."
       className={`mx-auto h-auto w-full ${zoomed ? 'max-w-[580px] touch-none' : 'max-w-[520px]'}`}>
       <defs><filter id={`${filterId}-${zoomed ? 'expanded' : 'main'}`} x="-30%" y="-30%" width="160%" height="180%">
         <feDropShadow dx="0" dy="3" stdDeviation="1.2" floodColor="#164e3e" floodOpacity="0.22" />
@@ -104,7 +104,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       {hovered?.zoomed === zoomed && <div role="tooltip"
         className="absolute z-10 w-[200px] max-w-[calc(100%-16px)] rounded-lg border border-emerald-900/10 bg-white px-3 py-2 text-sm text-emerald-950 shadow-lg dark:border-emerald-200/20 dark:bg-gray-900 dark:text-emerald-50"
         style={{ left: hovered.x, top: hovered.y }}>
-        <span className="font-semibold">{hovered.name}</span><span className="ml-2 tabular-nums">{hovered.count.toLocaleString()}건</span>
+        <span className="font-semibold">{hovered.name}</span><span className="ml-2 tabular-nums">{hovered.count.toLocaleString()}마리</span>
       </div>}
     </div>;
   };
@@ -115,17 +115,17 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       <div className="rounded-3xl bg-emerald-50 p-4 sm:p-5 dark:bg-emerald-950/40">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div><h3 className="text-xl font-bold">지역을 더 가까이</h3>
-            <p className="mt-2 text-sm">전국 공고 분포{selected ? ` · ${selected} 선택` : ''}</p></div>
+            <p className="mt-2 text-sm">전국 구조 동물 분포{selected ? ` · ${selected} 선택` : ''}</p></div>
           <button type="button" onClick={() => { setPosition({ coordinates: mapCenter, zoom: 1 }); setExpanded(true); }} className={`${buttonClass} bg-white/80 dark:bg-card-dark`}>지도 크게 보기</button>
         </div>
         {drawMap(false)}
-        <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${ranges.length}, minmax(0, 1fr))` }} aria-label="공고 건수 색상 범례">
+        <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${ranges.length}, minmax(0, 1fr))` }} aria-label="구조 마릿수 색상 범례">
           {ranges.map(({ label, upper }) => <div key={upper} className="min-w-0">
             <div className="mb-2 h-2 rounded-full" style={{ backgroundColor: terrainColor(upper, breaks) }} />
             <span className="block break-words text-xs tabular-nums">{label}</span>
           </div>)}
         </div>
-        <p className="mt-5 text-sm">선택 기간의 지역별 분포에 따라 색상 구간이 달라집니다. 진할수록 공고가 많으며, 입체 효과는 건수를 뜻하지 않습니다.</p>
+        <p className="mt-5 text-sm">선택 기간의 지역별 분포에 따라 색상 구간이 달라집니다. 진할수록 구조 동물이 많으며, 입체 효과는 마릿수를 뜻하지 않습니다.</p>
       </div>
       {details}
     </div>
@@ -135,7 +135,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
         {rows.map(row => <li key={row.name}>
           <button type="button" aria-pressed={selected === row.name} onClick={() => setSelected(row.name)}
             className={`text-text-light dark:text-text-dark min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected === row.name ? 'bg-primary/15 ring-1 ring-primary' : 'hover:bg-primary/10'}`}>
-            <span className="mb-2 flex items-baseline justify-between gap-3 text-sm"><span className="font-medium">{row.name}</span><strong className="shrink-0 tabular-nums">{row.count.toLocaleString()}건</strong></span>
+            <span className="mb-2 flex items-baseline justify-between gap-3 text-sm"><span className="font-medium">{row.name}</span><strong className="shrink-0 tabular-nums">{row.count.toLocaleString()}마리</strong></span>
             <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"><span className="block h-full rounded-full bg-primary" style={{ width: `${maximum ? row.count / maximum * 100 : 0}%` }} /></span>
           </button>
         </li>)}

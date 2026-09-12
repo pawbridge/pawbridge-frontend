@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState, useEffect, useMemo } from 'react';
+import { kstToday, periodStart } from '../components/statistics/regionalStats';
+import { outcomeRates } from '../utils/animalStatistics';
 import { getAnimals } from '../api/animals.api';
 import { getTodayAnimalStats, getAnimalStatusStats } from '../api/animalStats.api';
 import { getAllPosts } from '../api/community.api';
@@ -12,35 +14,20 @@ import QuickNavCard from '../components/common/QuickNavCard';
 import AdoptionStory from '../components/common/AdoptionStory';
 
 export default function Home() {
+  const today = kstToday();
   const { data: todayStats } = useQuery({
-    queryKey: ['today-animal-stats'],
+    queryKey: ['today-animal-stats', today],
     queryFn: getTodayAnimalStats,
   });
 
-  const stats30dRange = (() => {
-    const today = new Date();
-    const end = today.toISOString().slice(0, 10);
-    const start = new Date(today);
-    start.setDate(today.getDate() - 29);
-    return { start: start.toISOString().slice(0, 10), end };
-  })();
+  const stats30dRange = { start: periodStart(today, 30), end: today };
 
   const { data: statusStats } = useQuery({
     queryKey: ['animal-status-stats', stats30dRange.start, stats30dRange.end],
     queryFn: () => getAnimalStatusStats(stats30dRange.start, stats30dRange.end),
   });
 
-  const statsRates: { adoptionRate: string; euthanasiaRate: string } | null = (() => {
-    if (!statusStats?.length) return null;
-    const total = statusStats.reduce((sum, s) => sum + s.count, 0);
-    if (total === 0) return null;
-    const adopted = statusStats.find((s) => s.status === 'ADOPTED')?.count ?? 0;
-    const euthanized = statusStats.find((s) => s.status === 'EUTHANIZED')?.count ?? 0;
-    return {
-      adoptionRate: ((adopted / total) * 100).toFixed(1),
-      euthanasiaRate: ((euthanized / total) * 100).toFixed(1),
-    };
-  })();
+  const statsRates = outcomeRates(statusStats);
 
   // 동물 데이터 가져오기 (실제 백엔드 API)
   const { data } = useQuery({
@@ -403,6 +390,7 @@ export default function Home() {
                   <span className="material-symbols-outlined text-sm">chevron_right</span>
                 </Link>
               </div>
+              <p className="px-5 py-3 text-xs text-gray-600 dark:text-gray-300">한국 시간 기준 · 최근 30일({stats30dRange.start} ~ {stats30dRange.end}) 구조 동물 전체 중 현재 입양·안락사 상태의 비율입니다. 보호 중인 동물도 분모에 포함하며, 이후 상태 변경에 따라 달라집니다.</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border-light dark:divide-border-dark">
                 <div className="px-5 py-5 text-center">
                   <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">오늘 구조</p>
@@ -412,14 +400,14 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="px-5 py-5 text-center">
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">입양률 (최근 30일)</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">입양률 (최근 30일 구조)</p>
                   <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
                     {statsRates?.adoptionRate ?? '—'}
                     <span className="text-sm font-medium text-gray-400 ml-0.5">%</span>
                   </p>
                 </div>
                 <div className="px-5 py-5 text-center">
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">안락사율 (최근 30일)</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">안락사율 (최근 30일 구조)</p>
                   <p className="text-2xl font-black text-text-light dark:text-text-dark tracking-tight">
                     {statsRates?.euthanasiaRate ?? '—'}
                     <span className="text-sm font-medium text-gray-400 ml-0.5">%</span>
