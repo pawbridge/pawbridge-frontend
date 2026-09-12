@@ -29,7 +29,7 @@ export default function Header() {
               <span className="material-symbols-outlined">pets</span>
             </div>
             <h2 className="text-primary-content dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-              포우 브릿지
+              PawBridge
             </h2>
           </Link>
 
