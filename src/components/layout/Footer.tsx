@@ -71,7 +71,14 @@ export default function Footer() {
         </div>
 
         {/* 하단 */}
-        <div className="border-t border-primary/20 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-secondary-content dark:text-gray-500">
+        <div className="border-t border-primary/20 mt-8 pt-6 text-sm leading-6 text-secondary-content dark:text-gray-400">
+          <p>
+            반려동물 동반여행 정보는{' '}
+            <a href="https://api.visitkorea.or.kr/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-primary transition-colors">한국관광공사 TourAPI</a>를 활용합니다.
+          </p>
+          <a href="https://api.visitkorea.or.kr/#/useServiceGuide/2" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center underline underline-offset-2 hover:text-primary transition-colors">저작권 정책</a>
+        </div>
+        <div className="mt-4 flex flex-col sm:flex-row justify-between items-center text-xs text-secondary-content dark:text-gray-500">
           <p>© 2025 포우 브릿지. All Rights Reserved.</p>
           <div className="flex gap-4 mt-4 sm:mt-0">
             <Link to="/terms" className="hover:text-primary transition-colors">
@@ -86,4 +93,3 @@ export default function Footer() {
     </footer>
   );
 }
-

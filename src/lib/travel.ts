@@ -37,12 +37,3 @@ export function travelImageUrl(value: string | null): string | null {
 export function travelText(value: string | null): string {
   return (value ?? '').replace(/<br\s*\/?\s*>/gi, '\n').trim();
 }
-
-export function travelFetchTime(value: string | null): string | null {
-  if (!value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
-  return new Intl.DateTimeFormat('ko-KR', {
-    dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Seoul',
-  }).format(date);
-}

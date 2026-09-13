@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isTravelRegionCode, isTravelContentId, isPublicTravelRequest, travelListPath, travelImageUrl, travelText, travelFetchTime, travelConditionsNotice } from '../src/lib/travel.ts';
+import { isTravelRegionCode, isTravelContentId, isPublicTravelRequest, travelListPath, travelImageUrl, travelText, travelConditionsNotice } from '../src/lib/travel.ts';
 
 test('condition notices distinguish uncollected, failed, stale and successfully empty data', () => {
   assert.match(travelConditionsNotice('PREPARING', false) ?? '', /확인 중/);
@@ -39,12 +39,4 @@ test('text preserves conditions and leaves HTML inert for React text rendering',
   assert.equal(travelText(' 개만 가능<br />목줄 필수 '), '개만 가능\n목줄 필수');
   assert.equal(travelText('<script>alert(1)</script>'), '<script>alert(1)</script>');
   assert.equal(travelText(null), '');
-});
-test('collection times handle missing or invalid values', () => {
-  assert.equal(travelFetchTime(null), null);
-  assert.equal(travelFetchTime('not-a-date'), null);
-  assert.match(travelFetchTime('2026-09-11T01:00:00Z') ?? '', /2026/);
-  const collected = travelFetchTime('2026-09-12T18:37:36.411868Z') ?? '';
-  assert.match(collected, /2026\. 9\. 13\./);
-  assert.match(collected, /오전 3:37/);
 });

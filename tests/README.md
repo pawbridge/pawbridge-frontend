@@ -79,7 +79,7 @@ playwright-cli -s=pawbridge-db-e2e run-code --filename=tests/travel-db.browser.j
 
 이 두 POST 경로와 실패 표시 경로는 localhost 테스트 서버에만 존재한다. 공개 Gateway로 수집을 실행하지 않는다. 미수집 지역 fixture는 마지막 목록 순회 이후에 추가한다. 테스트가 수집 상태를 변경하므로 재실행 전 서버를 종료하고 전용 fixture DB를 새로 준비한다.
 
-사진 표시만 회귀 검사할 때는 별도 세션에서 `tests/travel-images.browser.js`를 실행한다. 이 검사의 API·이미지 응답은 모의 데이터이며 12개 검사로 출처·원본 비율·실패 대체 표시를 확인한다.
+사진과 공통 푸터를 회귀 검사할 때는 별도 세션에서 `tests/travel-images.browser.js`를 실행한다. API·이미지 응답은 모의 데이터다. 24개 검사로 홈·여행 목록·상세의 푸터 전용 API 안내, 수집 시각 미표시, 원본 사진 비율, 이미지 실패 대체 표시와 375px 가로 넘침을 확인한다. 실제 관광공사 API 호출이나 운영 배포를 검증하는 테스트는 아니다.
 
 조건 상태만 회귀 검사할 때는 `tests/travel-list-first.browser.js`를 실행한다. 모의 API 응답을 사용하는 26개 검사이며 위 DB 연결 검사와 구분한다.
 
