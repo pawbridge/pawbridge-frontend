@@ -6,7 +6,6 @@ import { getTravelDetail, getTravelRegions } from '../api/travel.api';
 import TravelLayout from '../components/travel/TravelLayout';
 import TravelFeedback from '../components/travel/TravelFeedback';
 import TravelImage from '../components/travel/TravelImage';
-import TravelSource from '../components/travel/TravelSource';
 import { isTravelContentId, travelListPath, travelText, travelConditionsNotice } from '../lib/travel';
 import type { TravelConditions } from '../types/travel.types';
 
@@ -88,7 +87,6 @@ export default function TravelDetail() {
             <h2 className="text-sm font-bold">방문 전 확인해 주세요</h2>
             <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-400">장소가 목록에 있거나 안내가 비어 있어도 모든 반려동물이 입장할 수 있다는 뜻은 아닙니다. 동물의 종류·크기, 출입 구역과 준비물을 운영처에 확인해 주세요. 안내견 허용은 일반 반려동물 허용과 다를 수 있습니다.</p>
           </aside>
-          <TravelSource fetchedAt={data.fetchedAt} petFetchedAt={data.petInformationFetchedAt} source={data.source} />
         </article>
       )}
     </TravelLayout>
