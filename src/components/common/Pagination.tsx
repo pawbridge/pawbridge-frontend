@@ -3,9 +3,10 @@ interface PaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   showPagination?: boolean; // 데이터가 있을 때만 표시할지 여부
+  separated?: boolean;
 }
 
-export default function Pagination({ currentPage, totalPages, onPageChange, showPagination = true }: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, onPageChange, showPagination = true, separated = false }: PaginationProps) {
   // 데이터가 없거나 페이지가 1개 이하면 표시하지 않음
   if (!showPagination || totalPages <= 1) {
     return null;
@@ -32,16 +33,18 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
   const pageNumbers = getPageNumbers();
   const isFirstPage = currentPage === 0;
   const isLastPage = currentPage >= totalPages - 1;
+  const mobileStart = Math.max(0, Math.min(pageNumbers.indexOf(currentPage) - 1, pageNumbers.length - 3));
+  const separatedButton = 'flex h-11 min-w-11 items-center justify-center rounded-lg border border-border-light bg-card-light text-gray-600 transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-border-dark dark:bg-card-dark dark:text-gray-300 dark:hover:bg-gray-700';
 
   return (
-    <nav className="flex items-center justify-center pt-10 mt-10 border-t border-border-light dark:border-border-dark">
-      <ul className="flex items-center -space-x-px h-10 text-base">
+    <nav aria-label="페이지 이동" className="flex items-center justify-center pt-10 mt-10 border-t border-border-light dark:border-border-dark">
+      <ul className={separated ? 'flex items-center gap-1 text-base' : 'flex items-center -space-x-px h-10 text-base'}>
         {/* 이전 버튼 */}
         <li>
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={isFirstPage}
-            className="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className={separated ? separatedButton : 'flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors'}
             aria-label="이전 페이지"
           >
             <span className="material-symbols-outlined text-base">chevron_left</span>
@@ -49,13 +52,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
         </li>
 
         {/* 페이지 번호 */}
-        {pageNumbers.map((pageNum) => {
+        {pageNumbers.map((pageNum, index) => {
           const isActive = pageNum === currentPage;
           return (
-            <li key={`page-${pageNum}`}>
+            <li key={`page-${pageNum}`} className={separated && (index < mobileStart || index >= mobileStart + 3) ? 'hidden sm:list-item' : undefined}>
               <button
                 onClick={() => onPageChange(pageNum)}
-                className={`flex items-center justify-center px-4 h-10 leading-tight transition-colors ${
+                className={separated ? `${separatedButton} ${isActive ? '!border-primary !bg-primary !text-primary-content font-bold' : ''}` : `flex items-center justify-center px-4 h-10 leading-tight transition-colors ${
                   isActive
                     ? 'text-primary bg-primary/20 border border-primary dark:border-primary font-bold'
                     : 'text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white'
@@ -74,7 +77,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={isLastPage}
-            className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className={separated ? separatedButton : 'flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors'}
             aria-label="다음 페이지"
           >
             <span className="material-symbols-outlined text-base">chevron_right</span>
@@ -84,4 +87,3 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
     </nav>
   );
 }
-
