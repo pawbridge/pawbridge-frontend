@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 import type { TravelPlace, TravelRegion } from '../../types/travel.types';
 import TravelImage from './TravelImage';
 
-export default function TravelPlaceCard({ place, region }: { place: TravelPlace; region: TravelRegion }) {
+export default function TravelPlaceCard({ place, region, page = 0 }: { place: TravelPlace; region: TravelRegion; page?: number }) {
   return (
     <li className="min-w-0">
-      <Link to={`/travel/${place.contentId}?areaCode=${region.code}`}
+      <Link to={`/travel/${place.contentId}?areaCode=${region.code}${page > 0 ? `&page=${page + 1}` : ''}`}
         className="group flex h-full flex-col overflow-hidden rounded-xl border border-border-light bg-card-light shadow-sm transition-colors hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700 dark:border-border-dark dark:bg-card-dark">
         <TravelImage url={place.imageUrl} title={place.title} />
         <div className="flex flex-1 flex-col items-start gap-2 p-4">

@@ -6,7 +6,7 @@ import { getTravelDetail, getTravelRegions } from '../api/travel.api';
 import TravelLayout from '../components/travel/TravelLayout';
 import TravelFeedback from '../components/travel/TravelFeedback';
 import TravelImage from '../components/travel/TravelImage';
-import { isTravelContentId, travelListPath, travelText, travelConditionsNotice } from '../lib/travel';
+import { isTravelContentId, travelListPath, travelText, travelConditionsNotice, travelPage } from '../lib/travel';
 import type { TravelConditions } from '../types/travel.types';
 
 const coreFields = [
@@ -40,7 +40,7 @@ export default function TravelDetail() {
 
   return (
     <TravelLayout>
-      <Link to={travelListPath(areaCode)} className="mb-6 inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700">
+      <Link to={travelListPath(areaCode, travelPage(params.getAll('page')) ?? 0)} className="mb-6 inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700">
         <span aria-hidden="true">←</span> {region ? `${region.name} 목록으로` : '장소 목록으로'}
       </Link>
       {!validId ? (

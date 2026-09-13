@@ -16,8 +16,18 @@ export function isPublicTravelRequest(url: string, method?: string): boolean {
     && /^\/api\/places(?:\/regions|\/[0-9]{1,20})?(?:\?[^#]*)?$/.test(url);
 }
 
-export function travelListPath(areaCode: string): string {
-  return isTravelRegionCode(areaCode) ? `/travel?areaCode=${areaCode}` : '/travel';
+// URLs are one-based for people; the API and Pagination component are zero-based.
+export function travelPage(values: string[]): number | null {
+  if (!values.length) return 0;
+  if (values.length !== 1 || !/^[1-9][0-9]{0,9}$/.test(values[0])) return null;
+  const value = Number(values[0]);
+  return value <= 2147483647 ? value - 1 : null;
+}
+
+export function travelListPath(areaCode: string, page = 0): string {
+  if (!isTravelRegionCode(areaCode)) return '/travel';
+  const suffix = Number.isInteger(page) && page > 0 && page < 2147483647 ? `&page=${page + 1}` : '';
+  return `/travel?areaCode=${areaCode}${suffix}`;
 }
 
 export function travelImageUrl(value: string | null): string | null {

@@ -21,6 +21,10 @@ export interface TravelPlaces {
   areaCode: string;
   items: TravelPlace[];
   previewOnly: boolean;
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
   fetchedAt: string | null;
   availability: 'PREPARING' | 'FAILED' | 'READY' | 'STALE' | 'PARTIAL';
 }

@@ -1,24 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getTravelPlaces, getTravelRegions } from '../api/travel.api';
 import TravelLayout from '../components/travel/TravelLayout';
 import TravelFeedback from '../components/travel/TravelFeedback';
 import TravelPlaceCard from '../components/travel/TravelPlaceCard';
-import { isTravelRegionCode } from '../lib/travel';
+import Pagination from '../components/common/Pagination';
+import { isTravelRegionCode, travelPage, travelListPath } from '../lib/travel';
 
 export default function Travel() {
   const [params, setParams] = useSearchParams();
   const areaCodes = params.getAll('areaCode');
   const areaCode = areaCodes.length === 1 ? areaCodes[0] : '';
+  const page = travelPage(params.getAll('page'));
   const regions = useQuery({
     queryKey: ['travel', 'regions'], queryFn: ({ signal }) => getTravelRegions(signal), retry: false,
   });
   const region = isTravelRegionCode(areaCode)
     ? regions.data?.items.find((item) => item.code === areaCode) : undefined;
   const places = useQuery({
-    queryKey: ['travel', 'places', areaCode],
-    queryFn: ({ signal }) => getTravelPlaces(areaCode, signal),
-    enabled: !!region, retry: false,
+    queryKey: ['travel', 'places', areaCode, page],
+    queryFn: ({ signal }) => getTravelPlaces(areaCode, page ?? 0, signal),
+    enabled: !!region && page !== null, retry: false,
   });
 
   return (
@@ -50,11 +52,16 @@ export default function Travel() {
       ) : !region ? (
         <TravelFeedback title={areaCodes.length ? '지역을 다시 선택해 주세요' : '어느 지역을 살펴볼까요?'}
           description={areaCodes.length ? '이 주소의 지역은 조회할 수 없습니다. 위에서 지역을 선택해 주세요.' : '지역을 선택하면 동반여행 장소와 방문 전 확인할 조건을 볼 수 있어요.'} />
+      ) : page === null ? (
+        <div className="space-y-4">
+          <TravelFeedback error title="페이지 주소를 확인해 주세요" description="올바른 페이지 번호가 아닙니다. 첫 페이지에서 다시 살펴보세요." />
+          <Link className="inline-flex min-h-11 items-center font-semibold underline" to={travelListPath(areaCode)}>첫 페이지로</Link>
+        </div>
       ) : (
         <section aria-labelledby="travel-results-title" className="space-y-6">
           <div>
-            <h2 id="travel-results-title" className="text-xl font-bold leading-tight tracking-[-0.015em] sm:text-2xl sm:leading-tight">{region.name}의 동반여행 장소</h2>
-            {places.data?.previewOnly && <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">지역별 일부 장소를 최대 10곳까지 보여드려요. 전체 목록은 아닙니다.</p>}
+            <h2 id="travel-results-title" tabIndex={-1} className="scroll-mt-24 text-xl font-bold leading-tight tracking-[-0.015em] sm:text-2xl sm:leading-tight">{region.name}의 동반여행 장소</h2>
+            {typeof places.data?.totalElements === 'number' && <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">현재 등록된 장소 {places.data.totalElements.toLocaleString()}곳</p>}
           </div>
           {places.data?.availability === 'PREPARING' && (
             <p role="status" className="rounded-lg bg-gray-50 p-4 text-sm leading-6 text-gray-600 dark:bg-card-dark dark:text-gray-400">
@@ -70,14 +77,28 @@ export default function Travel() {
             <TravelFeedback title="장소를 불러오고 있어요" description="선택한 지역의 장소 정보를 확인하고 있습니다." />
           ) : places.isError ? (
             <TravelFeedback error title="장소를 불러오지 못했어요" description="연결 상태를 확인하거나 잠시 후 다시 시도해 주세요." onRetry={() => void places.refetch()} />
+          ) : page > 0 && (places.data.page !== page || !places.data.items.length) ? (
+            <div className="space-y-4">
+              <TravelFeedback title="이 페이지를 표시할 수 없어요" description="목록이 변경되었거나 해당 페이지를 제공하지 못하고 있습니다. 첫 페이지에서 다시 살펴보세요." />
+              <Link className="inline-flex min-h-11 items-center font-semibold underline" to={travelListPath(areaCode)}>첫 페이지로</Link>
+            </div>
           ) : !places.data.items.length && (places.data.availability === 'PREPARING' || places.data.availability === 'FAILED') ? (
             <TravelFeedback title="장소 정보를 준비 중이에요" description="아직 수집을 마치지 못했습니다. 이 지역에 장소가 없다는 뜻은 아니에요." />
           ) : !places.data.items.length ? (
             <TravelFeedback title="현재 표시할 장소가 없어요" description="이 지역에 동반 가능한 장소가 없다는 뜻은 아닙니다. 다른 지역을 살펴보세요." />
           ) : (
             <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {places.data.items.map((place) => <TravelPlaceCard key={place.contentId} place={place} region={region} />)}
+              {places.data.items.map((place) => <TravelPlaceCard key={place.contentId} place={place} region={region} page={page} />)}
             </ul>
+          )}
+          {places.isSuccess && places.data.page === page && places.data.items.length > 0 && (
+            <Pagination currentPage={page} totalPages={places.data.totalPages} separated
+              onPageChange={(next) => {
+                setParams(next > 0 ? { areaCode, page: String(next + 1) } : { areaCode });
+                const heading = document.getElementById('travel-results-title');
+                heading?.focus({ preventScroll: true });
+                heading?.scrollIntoView({ block: 'start' });
+              }} />
           )}
           {places.data?.availability === 'PARTIAL' && <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">현재 수집된 장소부터 보여드리고 있어요. 이 지역의 전체 목록은 확인 중입니다.</p>}
           <p className="rounded-lg bg-gray-50 p-4 text-sm leading-6 text-gray-600 dark:bg-card-dark dark:text-gray-400">동반 가능 범위와 준비물은 장소마다 다릅니다. 상세 안내를 확인하고, 방문 전 운영처에 최신 조건을 확인해 주세요.</p>

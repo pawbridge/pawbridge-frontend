@@ -1,6 +1,19 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { isTravelRegionCode, isTravelContentId, isPublicTravelRequest, travelListPath, travelImageUrl, travelText, travelConditionsNotice } from '../src/lib/travel.ts';
+import { isTravelRegionCode, isTravelContentId, isPublicTravelRequest, travelListPath, travelImageUrl, travelText, travelConditionsNotice, travelPage } from '../src/lib/travel.ts';
+
+test('page URLs are one-based and reject malformed or duplicated values', () => {
+  assert.equal(travelPage([]), 0);
+  assert.equal(travelPage(['1']), 0);
+  assert.equal(travelPage(['3']), 2);
+  for (const values of [['0'], ['-1'], ['01'], ['1.5'], ['1', '2'], ['2147483648'], [' 2'], ['2\n'], ['']]) assert.equal(travelPage(values), null);
+});
+test('back links preserve region and page without route injection', () => {
+  assert.equal(travelListPath('11', 2), '/travel?areaCode=11&page=3');
+  assert.equal(travelListPath('11', -1), '/travel?areaCode=11');
+  assert.equal(travelListPath('evil', 2), '/travel');
+  assert.equal(isPublicTravelRequest('/api/places?areaCode=11&page=2', 'get'), true);
+});
 
 test('condition notices distinguish uncollected, failed, stale and successfully empty data', () => {
   assert.match(travelConditionsNotice('PREPARING', false) ?? '', /확인 중/);
