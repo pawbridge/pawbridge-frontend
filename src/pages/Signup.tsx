@@ -4,14 +4,12 @@ import { useMutation } from '@tanstack/react-query';
 import { signup, sendEmailVerificationCode, verifyEmailCode } from '../api/auth.api';
 import type { SignupRequest } from '../types/api.types';
 
-// UI용 폼 데이터 타입 (userType 사용)
+// 회원가입 입력
 interface SignupFormData {
   email: string;
   name: string;
   password: string;
   rePassword: string;
-  userType: 'GENERAL' | 'SHELTER';
-  careRegNo: string;  // 보호소 등록번호
 }
 
 export default function Signup() {
@@ -21,8 +19,6 @@ export default function Signup() {
     name: '',
     password: '',
     rePassword: '',
-    userType: 'GENERAL',
-    careRegNo: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormData, string>>>({});
 
@@ -112,15 +108,6 @@ export default function Signup() {
       newErrors.rePassword = '비밀번호가 일치하지 않습니다';
     }
 
-    // 보호소 등록번호 검증 (SHELTER 회원인 경우 필수)
-    if (formData.userType === 'SHELTER') {
-      if (!formData.careRegNo) {
-        newErrors.careRegNo = '보호소 등록번호를 입력하세요';
-      } else if (formData.careRegNo.length > 50) {
-        newErrors.careRegNo = '보호소 등록번호는 최대 50자까지 입력 가능합니다';
-      }
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -190,14 +177,13 @@ export default function Signup() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // UI의 userType을 백엔드 role 형식으로 변환
+      // 담당자 권한은 별도 신청 승인으로 부여한다.
       const signupRequest: SignupRequest = {
         email: formData.email,
         name: formData.name,
         password: formData.password,
         rePassword: formData.rePassword,
-        role: formData.userType === 'SHELTER' ? 'ROLE_SHELTER' : 'ROLE_USER',
-        careRegNo: formData.userType === 'SHELTER' ? formData.careRegNo : undefined,
+        role: 'ROLE_USER',
       };
 
       signupMutation.mutate(signupRequest);
@@ -217,36 +203,8 @@ export default function Signup() {
         {/* Form Container */}
         <div className="rounded-xl border border-gray-200/50 bg-white/50 p-6 shadow-sm dark:border-gray-700/50 dark:bg-gray-900/50 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* User Type Selection */}
-            <div>
-              <p className="mb-3 text-base font-medium text-gray-900 dark:text-gray-100">
-                회원 유형
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <label className="flex cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white p-4 text-center text-gray-700 has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:text-primary dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:has-[:checked]:border-primary dark:has-[:checked]:bg-primary/20 dark:has-[:checked]:text-primary">
-                  <input
-                    type="radio"
-                    name="userType"
-                    value="GENERAL"
-                    checked={formData.userType === 'GENERAL'}
-                    onChange={(e) => handleChange('userType', e.target.value)}
-                    className="sr-only"
-                  />
-                  <span>일반 회원</span>
-                </label>
-                <label className="flex cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white p-4 text-center text-gray-700 has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:text-primary dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:has-[:checked]:border-primary dark:has-[:checked]:bg-primary/20 dark:has-[:checked]:text-primary">
-                  <input
-                    type="radio"
-                    name="userType"
-                    value="SHELTER"
-                    checked={formData.userType === 'SHELTER'}
-                    onChange={(e) => handleChange('userType', e.target.value)}
-                    className="sr-only"
-                  />
-                  <span>보호소 회원</span>
-                </label>
-              </div>
-            </div>
+            {/* 보호소 담당자 가입 안내 */}
+            <p className="rounded-lg border border-gray-200 p-4 text-sm text-gray-600">보호소 담당자도 일반 회원으로 가입한 뒤, 마이페이지에서 소속 보호소를 신청해 주세요. 관리자 승인 후 담당자 권한이 부여됩니다.</p>
 
             {/* Email Field with Verification */}
             <div className="space-y-2">
@@ -402,35 +360,6 @@ export default function Signup() {
                 <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.rePassword}</p>
               )}
             </div>
-
-            {/* Care Registration Number (보호소 등록번호) - SHELTER만 표시 */}
-            {formData.userType === 'SHELTER' && (
-              <div className="space-y-2">
-                <label className="text-base font-medium text-gray-900 dark:text-gray-100" htmlFor="careRegNo">
-                  보호소 등록번호 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="careRegNo"
-                  name="careRegNo"
-                  value={formData.careRegNo}
-                  onChange={(e) => handleChange('careRegNo', e.target.value)}
-                  placeholder="보호소 등록번호를 입력하세요 (예: 348527200900001)"
-                  className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
-                    errors.careRegNo
-                      ? 'border-red-500 dark:border-red-500'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                  disabled={!emailVerified || signupMutation.isPending}
-                />
-                {errors.careRegNo && (
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.careRegNo}</p>
-                )}
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  보호소 직원만 가입 가능합니다. 등록번호를 정확히 입력해주세요.
-                </p>
-              </div>
-            )}
 
             {/* Submit Button */}
             <div>
