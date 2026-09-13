@@ -5,8 +5,8 @@ export async function getTravelRegions(signal?: AbortSignal): Promise<TravelRegi
   return (await apiClient.get<TravelRegions>('/api/places/regions', { signal })).data;
 }
 
-export async function getTravelPlaces(areaCode: string, signal?: AbortSignal): Promise<TravelPlaces> {
-  return (await apiClient.get<TravelPlaces>('/api/places', { params: { areaCode }, signal })).data;
+export async function getTravelPlaces(areaCode: string, page = 0, signal?: AbortSignal): Promise<TravelPlaces> {
+  return (await apiClient.get<TravelPlaces>('/api/places', { params: { areaCode, page }, signal })).data;
 }
 
 export async function getTravelDetail(contentId: string, signal?: AbortSignal): Promise<TravelDetail> {
