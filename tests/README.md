@@ -88,3 +88,18 @@ playwright-cli -s=pawbridge-db-e2e run-code --filename=tests/travel-db.browser.j
 이번 검증에서 만든 브라우저 세션·Java 프로세스·미리보기·릴레이만 종료한다. 일회용 MySQL 컨테이너를 종료해 테스트 데이터를 제거한다. 운영 리소스와 다른 작업의 컨테이너·볼륨은 정리 대상이 아니다.
 
 이전 Redis 캐시 직결과 20초 대기 검사는 DB 전용 조회 계약으로 대체했다. 실제 관광공사 수집량·응답 품질과 DB 저장 이용 조건 확인은 운영 활성화 전 별도로 진행한다.
+
+
+## 보호소 신청·관리 UI
+
+개발 서버를 5194 포트로 실행한 뒤 격리된 Playwright CLI 세션에서 실행한다. 기존 설치된 브라우저의 CLI 설정을 사용하며, 테스트는 `/api/` 요청을 모두 가로채므로 운영 데이터에 쓰지 않는다.
+
+```bash
+npm run dev -- --port 5194 --strictPort
+playwright-cli -s=shelter-ui open --config=/path/to/local-playwright-config.json
+playwright-cli -s=shelter-ui run-code --filename=tests/shelter-flow.browser.js
+playwright-cli -s=shelter-ui run-code --filename=tests/shelter-errors.browser.js
+playwright-cli -s=shelter-ui close
+```
+
+첫 스크립트: 신청 후 폼 차단, 승인 최종 확인과 요청 본문, 연결 담당자, 검색 복귀, 반려 후 재신청, 390px 가로 넘침 검사. 두 번째: 조회 오류/재시도, 기존 담당자 이력 없음, 409 충돌 후 재조회, 일반 회원 관리자 화면 차단. 실제 게이트웨이·DB와 연결한 E2E 검증을 대체하지 않는다.

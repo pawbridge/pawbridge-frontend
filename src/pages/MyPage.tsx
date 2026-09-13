@@ -1,3 +1,4 @@
+import MyShelterApplications from '../components/shelter/MyShelterApplications';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -10,7 +11,7 @@ import Footer from '../components/layout/Footer';
 import placeholderImg from '../assets/image-placeholder.svg';
 import type { UpdateNicknameRequest, PasswordUpdateRequest, ProductStatus, OrderStatus } from '../types/api.types';
 
-type TabType = 'profile' | 'password' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
+type TabType = 'shelter' | 'profile' | 'password' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function MyPage() {
     }
     // 2. sessionStorage에서 확인 (뒤로가기 시)
     const savedTab = sessionStorage.getItem('mypageActiveTab');
-    if (savedTab && ['profile', 'password', 'favoriteAnimals', 'registeredAnimals', 'wishlist', 'cart', 'orders'].includes(savedTab)) {
+    if (savedTab && ['shelter', 'profile', 'password', 'favoriteAnimals', 'registeredAnimals', 'wishlist', 'cart', 'orders'].includes(savedTab)) {
       return savedTab as TabType;
     }
     // 3. 기본값
@@ -74,7 +75,7 @@ export default function MyPage() {
 
   // 내 정보 조회
   const { data: userInfo, isLoading } = useQuery({
-    queryKey: ['myInfo'],
+    queryKey: ['myInfo', user?.id],
     queryFn: getMyInfo,
   });
 
@@ -452,6 +453,7 @@ export default function MyPage() {
 
               {/* 메뉴 */}
               <nav className="flex flex-col gap-1">
+                <button onClick={() => setActiveTab('shelter')} className={`min-h-11 rounded-lg px-3 py-3 text-left text-sm ${activeTab === 'shelter' ? 'bg-gray-100 font-semibold dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>보호소 담당자 신청</button>
                 <button
                   onClick={() => setActiveTab('profile')}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
@@ -665,6 +667,7 @@ export default function MyPage() {
             </div>
 
             <div className="bg-white dark:bg-gray-800/20 p-6 sm:p-8 rounded-xl shadow-sm">
+              {activeTab === 'shelter' && <MyShelterApplications key={user?.id} role={userInfo.role} />}
               {activeTab === 'profile' && (
                 <>
                   <h2 className="text-text-main dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-6 border-b border-gray-200 dark:border-gray-700">
