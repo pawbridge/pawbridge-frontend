@@ -1,3 +1,7 @@
+import AdminShelters from './pages/AdminShelters';
+import AdminShelterDetail from './pages/AdminShelterDetail';
+import AdminShelterApplications from './pages/AdminShelterApplications';
+import AdminShelterApplicationDetail from './pages/AdminShelterApplicationDetail';
 import { Routes, Route, useLocation, Link } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { useAuthStore } from './store/authStore.ts';
@@ -63,7 +67,7 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
         <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
           <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            펫마켓은 회원만 이용 가능합니다. 로그인 후 다시 이용해 주세요.
+            이 기능은 로그인이 필요합니다. 로그인 후 다시 이용해 주세요.
           </p>
           <div className="flex flex-col gap-3">
             <Link
@@ -420,6 +424,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/admin/shelters" element={<AdminRoute><AdminShelters /></AdminRoute>} />
+      <Route path="/admin/shelters/:registration" element={<AdminRoute><AdminShelterDetail /></AdminRoute>} />
+      <Route path="/admin/shelter-applications" element={<AdminRoute><AdminShelterApplications /></AdminRoute>} />
+      <Route path="/admin/shelter-applications/:id" element={<AdminRoute><AdminShelterApplicationDetail /></AdminRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
