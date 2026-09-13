@@ -35,3 +35,4 @@ dist-ssr
 *.pdf
 *.md
 !README.md
+!.github/PULL_REQUEST_TEMPLATE.md
