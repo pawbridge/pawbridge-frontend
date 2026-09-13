@@ -4,7 +4,6 @@ import { getTravelPlaces, getTravelRegions } from '../api/travel.api';
 import TravelLayout from '../components/travel/TravelLayout';
 import TravelFeedback from '../components/travel/TravelFeedback';
 import TravelPlaceCard from '../components/travel/TravelPlaceCard';
-import TravelSource from '../components/travel/TravelSource';
 import { isTravelRegionCode } from '../lib/travel';
 
 export default function Travel() {
@@ -82,7 +81,6 @@ export default function Travel() {
           )}
           {places.data?.availability === 'PARTIAL' && <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">현재 수집된 장소부터 보여드리고 있어요. 이 지역의 전체 목록은 확인 중입니다.</p>}
           <p className="rounded-lg bg-gray-50 p-4 text-sm leading-6 text-gray-600 dark:bg-card-dark dark:text-gray-400">동반 가능 범위와 준비물은 장소마다 다릅니다. 상세 안내를 확인하고, 방문 전 운영처에 최신 조건을 확인해 주세요.</p>
-          {places.data && <TravelSource fetchedAt={places.data.fetchedAt} />}
         </section>
       )}
     </TravelLayout>
