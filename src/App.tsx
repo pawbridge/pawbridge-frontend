@@ -1,3 +1,5 @@
+import Shelters from './pages/Shelters';
+import ShelterDetail from './pages/ShelterDetail';
 import AdminShelters from './pages/AdminShelters';
 import AdminShelterDetail from './pages/AdminShelterDetail';
 import AdminShelterApplications from './pages/AdminShelterApplications';
@@ -160,6 +162,8 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
+      <Route path="/shelters" element={<Shelters />} />
+      <Route path="/shelters/:registration" element={<ShelterDetail />} />
       <Route path="/travel" element={<Travel />} />
       <Route path="/travel/:contentId" element={<TravelDetail />} />
       <Route path="/animals/stats" element={<AnimalStats />} />
