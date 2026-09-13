@@ -3,10 +3,11 @@ import type { Animal } from '../../types/api.types';
 
 interface AnimalCardSimpleProps {
   animal: Animal;
+  searchReturnTo?: string;
   onCardClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
-export default function AnimalCardSimple({ animal, onCardClick }: AnimalCardSimpleProps) {
+export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo }: AnimalCardSimpleProps) {
   const getStatusLabel = () => {
     switch (animal.status) {
       case 'PROTECT':
@@ -89,6 +90,7 @@ export default function AnimalCardSimple({ animal, onCardClick }: AnimalCardSimp
   return (
     <Link
       to={`/animals/${animal.id}`}
+      state={searchReturnTo ? { searchReturnTo } : undefined}
       className="flex flex-col bg-card-light dark:bg-card-dark rounded-xl overflow-hidden shadow-sm border border-border-light dark:border-border-dark transition-transform hover:-translate-y-1"
       onClick={onCardClick}
     >
