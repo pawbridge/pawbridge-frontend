@@ -34,13 +34,14 @@ export default function Header() {
           </Link>
 
           {/* 데스크톱 네비게이션 */}
-          <nav className="hidden md:flex items-center gap-9">
+          <nav className="hidden xl:flex items-center gap-5">
             <Link
               to="/animals"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
               동물 검색
             </Link>
+            <Link to="/animals/lost" className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary">실종동물 찾기</Link>
             <Link
               to="/animals/stats"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
@@ -124,7 +125,7 @@ export default function Header() {
               </>
             )}
             <button
-              className="md:hidden text-primary-content dark:text-white"
+              className="xl:hidden text-primary-content dark:text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <span className="material-symbols-outlined">
@@ -136,7 +137,7 @@ export default function Header() {
 
         {/* 모바일 메뉴 */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden py-4 border-b border-primary/20">
+          <nav className="xl:hidden py-4 border-b border-primary/20">
             <div className="flex flex-col space-y-4">
               <Link
                 to="/animals"
@@ -145,6 +146,7 @@ export default function Header() {
               >
                 동물 검색
               </Link>
+              <Link to="/animals/lost" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-primary-content dark:text-gray-300">실종동물 찾기</Link>
               <Link
                 to="/animals/stats"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"

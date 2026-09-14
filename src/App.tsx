@@ -6,6 +6,7 @@ import Login from './pages/Login.tsx';
 import Signup from './pages/Signup.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
 import Animals from './pages/Animals.tsx';
+import LostAnimalSearch from './pages/LostAnimalSearch.tsx';
 import AnimalDetail from './pages/AnimalDetail.tsx';
 import AnimalCreate from './pages/AnimalCreate.tsx';
 import AnimalEdit from './pages/AnimalEdit.tsx';
@@ -154,6 +155,7 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
+      <Route path="/animals/lost" element={<LostAnimalSearch />} />
       <Route path="/animals/stats" element={<AnimalStats />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
       <Route
