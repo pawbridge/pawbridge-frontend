@@ -1,9 +1,11 @@
 import type { AnimalSearchParams } from '../types/api.types';
 
 export const defaultAnimalSearch = { page: 0, size: 21, sort: 'createdAt,desc' };
+export const maxAnimalSearchResults = 10_000;
+export const relevanceAnimalSearchSort = 'relevance,desc';
 const textKeys = ['keyword', 'species', 'breed', 'gender', 'neuterStatus', 'status', 'region', 'city'] as const;
 const numberKeys = ['page', 'size', 'minAge', 'maxAge', 'shelterId'] as const;
-const sorts = ['createdAt,desc', 'noticeEndDate,asc', 'age,asc'];
+const sorts = [relevanceAnimalSearchSort, 'createdAt,desc', 'noticeEndDate,asc', 'age,asc'];
 
 export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
   const fields: Record<string, string | number> = {};
@@ -21,8 +23,34 @@ export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
     fields[key] = value;
   }
   const sort = params.get('sort');
-  if (sort && sorts.includes(sort)) fields.sort = sort;
+  if (sort && sorts.includes(sort)) {
+    fields.sort = sort;
+  } else if (fields.keyword) {
+    fields.sort = relevanceAnimalSearchSort;
+  }
   return { ...defaultAnimalSearch, ...fields };
+}
+
+export function applyAnimalSearchFilters(
+  current: AnimalSearchParams,
+  next: AnimalSearchParams,
+): AnimalSearchParams {
+  const currentKeyword = current.keyword?.trim() || '';
+  const nextKeyword = next.keyword?.trim() || '';
+  let sort = next.sort || defaultAnimalSearch.sort;
+
+  if (nextKeyword && nextKeyword !== currentKeyword) {
+    sort = relevanceAnimalSearchSort;
+  } else if (!nextKeyword && sort === relevanceAnimalSearchSort) {
+    sort = defaultAnimalSearch.sort;
+  }
+
+  return {
+    ...next,
+    keyword: nextKeyword || undefined,
+    sort,
+    page: 0,
+  };
 }
 
 export function writeAnimalSearch(filters: AnimalSearchParams): URLSearchParams {
@@ -38,4 +66,9 @@ export function writeAnimalSearch(filters: AnimalSearchParams): URLSearchParams 
 
 export function animalSearchReturnTo(value: unknown): string {
   return typeof value === 'string' && (value === '/animals' || value.startsWith('/animals?')) ? value : '/animals';
+}
+
+export function visibleAnimalSearchPages(totalPages: number, pageSize: number): number {
+  if (!Number.isSafeInteger(pageSize) || pageSize < 1) return 0;
+  return Math.min(totalPages, Math.floor(maxAnimalSearchResults / pageSize));
 }
