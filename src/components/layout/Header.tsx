@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { logout } from '../../api/auth.api';
+import { canSeePetMarket } from '../../lib/petMarket';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
+  const showPetMarket = canSeePetMarket(user?.role);
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
 
@@ -47,6 +49,9 @@ export default function Header() {
             >
               유기동물 현황
             </Link>
+            <NavLink to="/travel" className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
+              동반여행
+            </NavLink>
             <Link
               to="/adoption"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
@@ -59,16 +64,13 @@ export default function Header() {
             >
               커뮤니티
             </Link>
-            <Link
+            {showPetMarket && <Link
               to="/products"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
               펫마켓
-            </Link>
+            </Link>}
             <NavLink to="/shelters" className="text-primary-content text-sm font-medium hover:text-emerald-700 aria-[current=page]:text-emerald-700 dark:text-gray-300">보호소 찾기</NavLink>
-            <NavLink to="/travel" className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
-              동반여행
-            </NavLink>
           </nav>
 
           {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
@@ -76,13 +78,13 @@ export default function Header() {
             {user ? (
               // 로그인된 경우: 찜 아이콘 + 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
-                <Link
+                {showPetMarket && <Link
                   to="/wishlist"
                   className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
                   title="찜한 상품"
                 >
                   <span className="material-symbols-outlined text-[20px]">favorite</span>
-                </Link>
+                </Link>}
                 <span className="hidden sm:block text-primary-content dark:text-gray-300 text-sm font-medium">
                   {user.name}님
                 </span>
@@ -160,6 +162,9 @@ export default function Header() {
               >
                 유기동물 현황
               </Link>
+              <NavLink to="/travel" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
+                동반여행
+              </NavLink>
               <Link
                 to="/adoption"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
@@ -174,28 +179,25 @@ export default function Header() {
               >
                 커뮤니티
               </Link>
-              <Link
+              {showPetMarket && <Link
                 to="/products"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 펫마켓
-              </Link>
+              </Link>}
               <NavLink to="/shelters" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">보호소 찾기</NavLink>
-              <NavLink to="/travel" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
-                동반여행
-              </NavLink>
               <div className="pt-2 border-t border-primary/20 sm:hidden">
                 {user ? (
                   <>
-                    <Link
+                    {showPetMarket && <Link
                       to="/wishlist"
                       className="flex items-center gap-2 mb-2 text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <span className="material-symbols-outlined text-[18px]">favorite</span>
                       <span>찜한 상품</span>
-                    </Link>
+                    </Link>}
                     <div className="text-primary-content dark:text-gray-300 text-sm font-medium mb-2">
                       {user.name}님
                     </div>
