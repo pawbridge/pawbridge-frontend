@@ -1,3 +1,9 @@
+import Shelters from './pages/Shelters';
+import ShelterDetail from './pages/ShelterDetail';
+import AdminShelters from './pages/AdminShelters';
+import AdminShelterDetail from './pages/AdminShelterDetail';
+import AdminShelterApplications from './pages/AdminShelterApplications';
+import AdminShelterApplicationDetail from './pages/AdminShelterApplicationDetail';
 import { Routes, Route, useLocation, Link } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { useAuthStore } from './store/authStore.ts';
@@ -45,6 +51,8 @@ import AdoptionCreate from './pages/AdoptionCreate.tsx';
 import AdoptionEdit from './pages/AdoptionEdit.tsx';
 import OAuthCallback from './pages/OAuthCallback.tsx';
 import AnimalStats from './pages/AnimalStats.tsx';
+import Travel from './pages/Travel.tsx';
+import TravelDetail from './pages/TravelDetail.tsx';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -62,7 +70,7 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
         <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
           <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            펫마켓은 회원만 이용 가능합니다. 로그인 후 다시 이용해 주세요.
+            이 기능은 로그인이 필요합니다. 로그인 후 다시 이용해 주세요.
           </p>
           <div className="flex flex-col gap-3">
             <Link
@@ -156,6 +164,11 @@ function App() {
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/lost" element={<LostAnimalSearch />} />
+
+      <Route path="/shelters" element={<Shelters />} />
+      <Route path="/shelters/:registration" element={<ShelterDetail />} />
+      <Route path="/travel" element={<Travel />} />
+      <Route path="/travel/:contentId" element={<TravelDetail />} />
       <Route path="/animals/stats" element={<AnimalStats />} />
       <Route path="/animals/:id" element={<AnimalDetail />} />
       <Route
@@ -418,6 +431,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/admin/shelters" element={<AdminRoute><AdminShelters /></AdminRoute>} />
+      <Route path="/admin/shelters/:registration" element={<AdminRoute><AdminShelterDetail /></AdminRoute>} />
+      <Route path="/admin/shelter-applications" element={<AdminRoute><AdminShelterApplications /></AdminRoute>} />
+      <Route path="/admin/shelter-applications/:id" element={<AdminRoute><AdminShelterApplicationDetail /></AdminRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

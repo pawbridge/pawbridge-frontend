@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ subdued = false }: { subdued?: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuthStore();
@@ -100,6 +100,15 @@ export default function AdminSidebar() {
             회원 관리
           </span>
         </Link>
+        <details open={location.pathname.startsWith('/admin/shelter')} className="mt-2">
+          <summary className="cursor-pointer rounded-lg px-3 py-3 text-sm font-semibold">보호소 관리</summary>
+          <div className="flex flex-col gap-1 mt-1">
+            {[['/admin/shelters', '보호소 목록'], ['/admin/shelter-applications', '담당자 신청']].map(([path, label]) => (
+              <Link key={path} to={path} aria-current={location.pathname.startsWith(path) ? 'page' : undefined}
+                className={`min-h-11 rounded-lg py-3 pl-10 text-sm ${location.pathname.startsWith(path) ? 'bg-gray-100 text-gray-900 font-semibold dark:bg-gray-800 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>{label}</Link>
+            ))}
+          </div>
+        </details>
         <Link
           to="/admin/posts"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
@@ -236,7 +245,7 @@ export default function AdminSidebar() {
       <div className="p-4 border-t border-[#e5e7eb] dark:border-gray-700">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary hover:bg-primary-dark transition-colors text-text-main font-bold text-sm tracking-wide shadow-sm"
+          className={`w-full flex items-center justify-center gap-2 rounded-lg h-11 px-4 transition-colors text-text-main font-bold text-sm ${subdued ? 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-white' : 'bg-primary hover:bg-primary-dark shadow-sm'}`}
         >
           <span className="material-symbols-outlined text-[18px]">logout</span>
           로그아웃

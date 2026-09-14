@@ -97,7 +97,7 @@ export interface Animal {
   species: string;              // 종 (강아지, 고양이 등)
   breed?: string;               // 품종
   gender: 'MALE' | 'FEMALE' | 'NEUTERED';  // 성별
-  age?: number;                 // 나이 (개월)
+  age?: number;                 // 나이 (현재 연도 - 출생 연도)
   weight?: number;              // 체중 (kg)
   description?: string;         // 설명
   imageUrl?: string;            // 이미지 URL

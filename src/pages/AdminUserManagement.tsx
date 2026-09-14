@@ -516,7 +516,7 @@ export default function AdminUserManagement() {
               >
                 <option value="ROLE_USER">일반회원</option>
                 <option value="ROLE_ADMIN">관리자</option>
-                <option value="ROLE_SHELTER">보호소회원</option>
+                {editingUser?.role === 'ROLE_SHELTER' && <option value="ROLE_SHELTER">보호소회원</option>}
               </select>
             </div>
 
@@ -529,8 +529,8 @@ export default function AdminUserManagement() {
                 <input
                   type="text"
                   value={editForm.careRegNo || ''}
-                  onChange={(e) => setEditForm({ ...editForm, careRegNo: e.target.value })}
-                  placeholder="보호소 등록번호 입력"
+                  readOnly
+                  title="보호소 연결은 담당자 신청 승인에서 관리합니다"
                   className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>

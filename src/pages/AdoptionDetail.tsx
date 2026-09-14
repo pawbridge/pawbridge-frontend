@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import placeholderImg from '../assets/image-placeholder.svg';
@@ -21,6 +21,10 @@ export default function AdoptionDetail() {
   const user = useAuthStore((state) => state.user);
 
   const [newComment, setNewComment] = useState('');
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [id]);
 
   // 게시글 조회
   const { data: post, isLoading: postLoading, error: postError } = useQuery({

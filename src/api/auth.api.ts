@@ -86,7 +86,7 @@ export const sendEmailVerificationCode = async (data: SendVerificationCodeReques
     message: string;
     data: null;
   }>(
-    '/api/email/send',
+    '/api/v1/email/send',
       data,
       {
         timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
@@ -101,7 +101,7 @@ export const verifyEmailCode = async (data: VerifyCodeRequest): Promise<EmailVer
     message: string;
     data: EmailVerifiedResponse;
   }>(
-    '/api/email/verify',
+    '/api/v1/email/verify',
     data
   );
   return response.data.data;

@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { logout } from '../../api/auth.api';
+import { canSeePetMarket } from '../../lib/petMarket';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
+  const showPetMarket = canSeePetMarket(user?.role);
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
 
@@ -24,17 +26,17 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 h-16">
           {/* 로고 */}
-          <Link to="/" className="flex items-center gap-4 text-primary-content dark:text-white">
+          <Link to="/" className="flex items-center gap-2 sm:gap-4 text-primary-content dark:text-white">
             <div className="text-primary text-2xl">
               <span className="material-symbols-outlined">pets</span>
             </div>
             <h2 className="text-primary-content dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-              포우 브릿지
+              PawBridge
             </h2>
           </Link>
 
           {/* 데스크톱 네비게이션 */}
-          <nav className="hidden xl:flex items-center gap-5">
+          <nav className="hidden xl:flex items-center gap-6">
             <Link
               to="/animals"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
@@ -48,6 +50,9 @@ export default function Header() {
             >
               유기동물 현황
             </Link>
+            <NavLink to="/travel" className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
+              동반여행
+            </NavLink>
             <Link
               to="/adoption"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
@@ -60,12 +65,13 @@ export default function Header() {
             >
               커뮤니티
             </Link>
-            <Link
+            {showPetMarket && <Link
               to="/products"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
               펫마켓
-            </Link>
+            </Link>}
+            <NavLink to="/shelters" className="text-primary-content text-sm font-medium hover:text-emerald-700 aria-[current=page]:text-emerald-700 dark:text-gray-300">보호소 찾기</NavLink>
           </nav>
 
           {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
@@ -73,13 +79,13 @@ export default function Header() {
             {user ? (
               // 로그인된 경우: 찜 아이콘 + 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
-                <Link
+                {showPetMarket && <Link
                   to="/wishlist"
-                  className="relative flex h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
                   title="찜한 상품"
                 >
                   <span className="material-symbols-outlined text-[20px]">favorite</span>
-                </Link>
+                </Link>}
                 <span className="hidden sm:block text-primary-content dark:text-gray-300 text-sm font-medium">
                   {user.name}님
                 </span>
@@ -125,7 +131,11 @@ export default function Header() {
               </>
             )}
             <button
-              className="xl:hidden text-primary-content dark:text-white"
+              type="button"
+              aria-label={isMobileMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
+              className="flex h-11 w-11 shrink-0 items-center justify-center xl:hidden text-primary-content dark:text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <span className="material-symbols-outlined">
@@ -137,7 +147,7 @@ export default function Header() {
 
         {/* 모바일 메뉴 */}
         {isMobileMenuOpen && (
-          <nav className="xl:hidden py-4 border-b border-primary/20">
+          <nav id="mobile-navigation" className="xl:hidden py-4 border-b border-primary/20">
             <div className="flex flex-col space-y-4">
               <Link
                 to="/animals"
@@ -154,6 +164,9 @@ export default function Header() {
               >
                 유기동물 현황
               </Link>
+              <NavLink to="/travel" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
+                동반여행
+              </NavLink>
               <Link
                 to="/adoption"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
@@ -168,24 +181,25 @@ export default function Header() {
               >
                 커뮤니티
               </Link>
-              <Link
+              {showPetMarket && <Link
                 to="/products"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 펫마켓
-              </Link>
+              </Link>}
+              <NavLink to="/shelters" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">보호소 찾기</NavLink>
               <div className="pt-2 border-t border-primary/20 sm:hidden">
                 {user ? (
                   <>
-                    <Link
+                    {showPetMarket && <Link
                       to="/wishlist"
                       className="flex items-center gap-2 mb-2 text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <span className="material-symbols-outlined text-[18px]">favorite</span>
                       <span>찜한 상품</span>
-                    </Link>
+                    </Link>}
                     <div className="text-primary-content dark:text-gray-300 text-sm font-medium mb-2">
                       {user.name}님
                     </div>
@@ -235,4 +249,3 @@ export default function Header() {
     </header>
   );
 }
-
