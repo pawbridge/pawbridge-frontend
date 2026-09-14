@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { applyAnimalSearchFilters, readAnimalSearch, writeAnimalSearch, defaultAnimalSearch, animalSearchReturnTo, relevanceAnimalSearchSort, visibleAnimalSearchPages } from '../src/utils/animalSearch.ts';
+import { applyAnimalSearchFilters, readAnimalSearch, writeAnimalSearch, defaultAnimalSearch, animalSearchReturnTo, hasAnimalRelevanceSearch, relevanceAnimalSearchSort, visibleAnimalSearchPages } from '../src/utils/animalSearch.ts';
 
 test('검색어·필터·정렬·페이지를 URL로 왕복 복원한다', () => {
-  const filters = { ...defaultAnimalSearch, keyword: '믹스 & 흰색 + #', species: 'DOG', breed: '믹스견', region: '경기', city: '수원', status: 'PROTECT' as const, minAge: 0, maxAge: 5, page: 2, sort: 'age,asc' };
+  const filters = { ...defaultAnimalSearch, keyword: '믹스 & 흰색 + #', noticeNo: '경남-사천-2026-00027', species: 'DOG', breed: '믹스견', region: '경기', city: '수원', status: 'PROTECT' as const, minAge: 0, maxAge: 5, page: 2, sort: 'age,asc' };
   assert.deepEqual(readAnimalSearch(writeAnimalSearch(filters)), filters);
 });
 test('초기화 시 기본 URL로 돌아가며 잘못된 숫자를 API 조건에 넣지 않는다', () => {
@@ -30,6 +30,27 @@ test('검색어를 새로 적용하면 관련도순을 기본으로 사용한다
   assert.equal(applied.sort, relevanceAnimalSearchSort);
   assert.equal(applied.page, 0);
   assert.equal(readAnimalSearch(new URLSearchParams('keyword=말티즈')).sort, relevanceAnimalSearchSort);
+});
+
+test('품종을 새로 적용하면 관련도순을 사용하고 오타 수정 후에도 첫 페이지로 돌아간다', () => {
+  const first = applyAnimalSearchFilters(defaultAnimalSearch, { ...defaultAnimalSearch, breed: '말티즈' });
+  assert.equal(first.sort, relevanceAnimalSearchSort);
+  assert.equal(first.page, 0);
+  const corrected = applyAnimalSearchFilters({ ...first, page: 3 }, { ...first, breed: '마티즈', page: 3 });
+  assert.equal(corrected.sort, relevanceAnimalSearchSort);
+  assert.equal(corrected.page, 0);
+  assert.equal(readAnimalSearch(new URLSearchParams('breed=마티즈')).sort, relevanceAnimalSearchSort);
+});
+
+test('공고번호만 검색하면 날짜순을 유지하고 관련도순을 노출하지 않는다', () => {
+  const applied = applyAnimalSearchFilters(defaultAnimalSearch, {
+    ...defaultAnimalSearch,
+    noticeNo: '  경남-사천-2026-00027  ',
+  });
+  assert.equal(applied.noticeNo, '경남-사천-2026-00027');
+  assert.equal(applied.sort, defaultAnimalSearch.sort);
+  assert.equal(hasAnimalRelevanceSearch(applied), false);
+  assert.equal(readAnimalSearch(new URLSearchParams('noticeNo=경남-사천-2026-00027&sort=relevance,desc')).sort, defaultAnimalSearch.sort);
 });
 
 test('같은 검색어에서 사용자가 고른 정렬은 유지하고 검색어를 지우면 관련도순을 해제한다', () => {
