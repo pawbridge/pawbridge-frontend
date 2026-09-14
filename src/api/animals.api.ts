@@ -51,6 +51,7 @@ export const getAnimals = async (params?: AnimalSearchParams): Promise<PageRespo
       ...(params?.region && { region: params.region }),
       ...(params?.city && { city: params.city }),
       ...(params?.keyword && { keyword: params.keyword }),
+      ...(params?.noticeNo && { noticeNo: params.noticeNo }),
       ...(params?.shelterId && { shelterId: params.shelterId }),
     },
   });
