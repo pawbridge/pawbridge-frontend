@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { defaultAnimalSearch, readAnimalSearch, writeAnimalSearch } from '../utils/animalSearch';
+import { defaultAnimalSearch, maxAnimalSearchResults, readAnimalSearch, visibleAnimalSearchPages, writeAnimalSearch } from '../utils/animalSearch';
 import { useQuery } from '@tanstack/react-query';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
@@ -110,8 +110,9 @@ export default function Animals() {
 
   const animals = data?.content || [];
   const totalElements = data?.totalElements || 0;
-  const totalPages = data?.totalPages || 0;
+  const totalPages = visibleAnimalSearchPages(data?.totalPages || 0, filters.size || defaultAnimalSearch.size);
   const currentPage = data?.number || 0;
+  const hasHiddenResults = totalElements > maxAnimalSearchResults;
   
 
   return (
@@ -140,13 +141,7 @@ export default function Animals() {
             {/* 상단 바 (결과 수 + 뷰 토글 + 정렬) */}
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
               <p className="text-base text-gray-600 dark:text-gray-400">
-                {animals.length > 0 ? (
-                  <>
-                    총 <span className="font-bold text-primary">{totalElements.toLocaleString()}</span> 마리의 친구들이 기다리고 있어요
-                  </>
-                ) : (
-                  '동물 정보를 불러오는 중...'
-                )}
+                총 <span className="font-bold text-primary">{totalElements.toLocaleString()}</span> 마리의 친구들이 기다리고 있어요
               </p>
 
               <div className="flex items-center gap-4">
@@ -216,6 +211,11 @@ export default function Animals() {
             )}
 
             {/* 페이지네이션 */}
+            {hasHiddenResults && (
+              <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                현재는 앞의 {maxAnimalSearchResults.toLocaleString()}마리까지 볼 수 있어요. 원하는 동물을 더 빨리 찾으려면 검색 조건을 좁혀주세요.
+              </p>
+            )}
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
