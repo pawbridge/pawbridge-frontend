@@ -43,6 +43,7 @@ export default function Header() {
             >
               동물 검색
             </Link>
+            <Link to="/animals/lost" className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary">실종동물 찾기</Link>
             <Link
               to="/animals/stats"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
@@ -155,6 +156,7 @@ export default function Header() {
               >
                 동물 검색
               </Link>
+              <Link to="/animals/lost" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-primary-content dark:text-gray-300">실종동물 찾기</Link>
               <Link
                 to="/animals/stats"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
