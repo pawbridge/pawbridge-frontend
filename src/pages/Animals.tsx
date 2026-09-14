@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { defaultAnimalSearch, maxAnimalSearchResults, readAnimalSearch, visibleAnimalSearchPages, writeAnimalSearch } from '../utils/animalSearch';
+import { applyAnimalSearchFilters, defaultAnimalSearch, maxAnimalSearchResults, readAnimalSearch, relevanceAnimalSearchSort, visibleAnimalSearchPages, writeAnimalSearch } from '../utils/animalSearch';
 import { useQuery } from '@tanstack/react-query';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
@@ -29,7 +29,7 @@ export default function Animals() {
 
   // 필터 변경
   const handleFilterChange = (newFilters: AnimalSearchParams) => {
-    setFilters({ ...newFilters, page: 0 }); // 필터 변경 시 첫 페이지로
+    setFilters(applyAnimalSearchFilters(filters, newFilters));
   };
 
   // 필터 초기화
@@ -177,6 +177,7 @@ export default function Animals() {
                     onChange={(e) => handleSortChange(e.target.value)}
                     className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-1 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-10 placeholder:text-gray-400 px-3 text-sm font-normal"
                   >
+                    {filters.keyword && <option value={relevanceAnimalSearchSort}>관련도순</option>}
                     <option value="createdAt,desc">접수일순</option>
                     <option value="noticeEndDate,asc">마감임박순</option>
                     <option value="age,asc">나이순</option>
