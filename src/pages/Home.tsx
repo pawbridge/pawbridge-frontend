@@ -11,12 +11,15 @@ import { defaultAnimalSearch, writeAnimalSearch } from '../utils/animalSearch';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import HomeAnimalCard from '../components/home/HomeAnimalCard';
+import { useAuthStore } from '../store/authStore';
+import { canSeePetMarket } from '../lib/petMarket';
 
 const focus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700 dark:focus-visible:outline-primary';
 const textLink = `inline-flex min-h-11 items-center text-sm font-bold text-emerald-700 hover:underline dark:text-primary ${focus}`;
 const selectStyle = 'h-11 w-full min-w-0 rounded-lg border-border-light bg-white text-base text-text-light focus:border-emerald-700 focus:ring-emerald-700 dark:border-border-dark dark:bg-card-dark dark:text-text-dark';
 
 export default function Home() {
+  const showPetMarket = useAuthStore(state => canSeePetMarket(state.user?.role));
   const navigate = useNavigate();
   const [region, setRegion] = useState('');
   const [species, setSpecies] = useState('');
@@ -118,8 +121,8 @@ export default function Home() {
           <Link to="/animals/stats" className={`mt-1 ${textLink}`}>유기동물 현황 보기 →</Link>
         </section>
 
-        <nav aria-label="더 둘러보기" className="mt-12 grid divide-y divide-border-light rounded-xl border border-border-light dark:divide-border-dark dark:border-border-dark sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {[['/adoption', '입양 후기', '가족이 된 이후의 이야기'], ['/community', '커뮤니티', '궁금한 점을 함께 나눠요'], ['/products', '펫마켓', '반려생활에 필요한 것들']].map(([to, title, description]) => (
+        <nav aria-label="더 둘러보기" className={`mt-12 grid divide-y divide-border-light rounded-xl border border-border-light dark:divide-border-dark dark:border-border-dark ${showPetMarket ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} sm:divide-x sm:divide-y-0`}>
+          {[['/adoption', '입양 후기', '가족이 된 이후의 이야기'], ['/community', '커뮤니티', '궁금한 점을 함께 나눠요'], ...(showPetMarket ? [['/products', '펫마켓', '반려생활에 필요한 것들']] : [])].map(([to, title, description]) => (
             <Link key={to} to={to} className={`flex min-h-16 flex-wrap items-center gap-x-4 gap-y-1 p-4 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 sm:block ${focus}`}><span className="text-sm font-bold">{title}</span><span className="text-xs text-gray-600 dark:text-gray-400 sm:mt-2 sm:block">{description}</span></Link>
           ))}
         </nav>
