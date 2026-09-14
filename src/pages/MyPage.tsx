@@ -8,6 +8,7 @@ import { getOrders } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import { canSeePetMarket } from '../lib/petMarket';
 import placeholderImg from '../assets/image-placeholder.svg';
 import type { UpdateNicknameRequest, PasswordUpdateRequest, ProductStatus, OrderStatus } from '../types/api.types';
 
@@ -19,10 +20,11 @@ export default function MyPage() {
   const queryClient = useQueryClient();
   const { logout } = useAuthStore();
   const user = useAuthStore((state) => state.user);
+  const showPetMarket = canSeePetMarket(user?.role);
 
   // location.state에서 탭 정보 가져오기 (뒤로가기 시)
   // sessionStorage도 확인하여 뒤로가기 시에도 탭 유지
-  const [activeTab, setActiveTab] = useState<TabType>(() => {
+  const [selectedTab, setActiveTab] = useState<TabType>(() => {
     // 1. location.state에서 우선 확인
     if (location.state?.tab) {
       return location.state.tab as TabType;
@@ -35,6 +37,9 @@ export default function MyPage() {
     // 3. 기본값
     return 'profile';
   });
+  // A saved market tab must not render or fetch market data for a non-admin.
+  const activeTab = !showPetMarket && ['wishlist', 'cart', 'orders'].includes(selectedTab)
+    ? 'profile' : selectedTab;
 
   // location.state가 변경되면 탭 업데이트
   useEffect(() => {
@@ -537,6 +542,7 @@ export default function MyPage() {
                   </button>
                 )}
 
+                {showPetMarket && <>
                 <button
                   onClick={() => setActiveTab('wishlist')}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
@@ -617,6 +623,7 @@ export default function MyPage() {
                     나의 주문 목록
                   </p>
                 </button>
+                </>}
 
                 <button
                   onClick={() => setActiveTab('password')}
