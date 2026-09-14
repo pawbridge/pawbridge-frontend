@@ -1,6 +1,7 @@
 import type { AnimalSearchParams } from '../types/api.types';
 
 export const defaultAnimalSearch = { page: 0, size: 21, sort: 'createdAt,desc' };
+export const maxAnimalSearchResults = 10_000;
 const textKeys = ['keyword', 'species', 'breed', 'gender', 'neuterStatus', 'status', 'region', 'city'] as const;
 const numberKeys = ['page', 'size', 'minAge', 'maxAge', 'shelterId'] as const;
 const sorts = ['createdAt,desc', 'noticeEndDate,asc', 'age,asc'];
@@ -38,4 +39,9 @@ export function writeAnimalSearch(filters: AnimalSearchParams): URLSearchParams 
 
 export function animalSearchReturnTo(value: unknown): string {
   return typeof value === 'string' && (value === '/animals' || value.startsWith('/animals?')) ? value : '/animals';
+}
+
+export function visibleAnimalSearchPages(totalPages: number, pageSize: number): number {
+  if (!Number.isSafeInteger(pageSize) || pageSize < 1) return 0;
+  return Math.min(totalPages, Math.floor(maxAnimalSearchResults / pageSize));
 }
