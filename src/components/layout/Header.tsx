@@ -44,12 +44,14 @@ export default function Header() {
               동물 검색
             </Link>
             <Link to="/animals/lost" className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary">실종동물 찾기</Link>
+            <NavLink to="/shelters" className="text-primary-content text-sm font-medium hover:text-emerald-700 aria-[current=page]:text-emerald-700 dark:text-gray-300">보호소 찾기</NavLink>
             <Link
               to="/animals/stats"
               className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
             >
               유기동물 현황
             </Link>
+
             <NavLink to="/travel" className="text-primary-content dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
               동반여행
             </NavLink>
@@ -71,7 +73,7 @@ export default function Header() {
             >
               펫마켓
             </Link>}
-            <NavLink to="/shelters" className="text-primary-content text-sm font-medium hover:text-emerald-700 aria-[current=page]:text-emerald-700 dark:text-gray-300">보호소 찾기</NavLink>
+
           </nav>
 
           {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
@@ -157,6 +159,7 @@ export default function Header() {
                 동물 검색
               </Link>
               <Link to="/animals/lost" onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-primary-content dark:text-gray-300">실종동물 찾기</Link>
+              <NavLink to="/shelters" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">보호소 찾기</NavLink>
               <Link
                 to="/animals/stats"
                 className="text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors"
@@ -164,6 +167,7 @@ export default function Header() {
               >
                 유기동물 현황
               </Link>
+
               <NavLink to="/travel" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">
                 동반여행
               </NavLink>
@@ -188,7 +192,7 @@ export default function Header() {
               >
                 펫마켓
               </Link>}
-              <NavLink to="/shelters" onClick={() => setIsMobileMenuOpen(false)} className="flex min-h-11 items-center text-primary-content dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary">보호소 찾기</NavLink>
+
               <div className="pt-2 border-t border-primary/20 sm:hidden">
                 {user ? (
                   <>
