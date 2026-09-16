@@ -207,17 +207,33 @@ export default function AnimalFilterSidebar({
           </select>
         </div>
 
-        {/* 통합 검색어 */}
+        {/* 키워드 검색 */}
         <label className="flex flex-col w-full">
-          <p className="text-base font-medium pb-2 text-text-light dark:text-text-dark">통합 검색어</p>
+          <p className="text-base font-medium pb-2 text-text-light dark:text-text-dark">키워드 검색</p>
           <input
             type="text"
             value={localFilters.keyword || ''}
             onChange={(e) => handleTextChange('keyword', e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="품종, 특징, 발견 장소 (엔터로 검색)"
+            placeholder="품종, 색상, 특징, 발견 장소"
             className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           />
+        </label>
+
+        {/* 공고번호 */}
+        <label className="flex flex-col w-full">
+          <p className="text-base font-medium pb-2 text-text-light dark:text-text-dark">공고번호</p>
+          <input
+            type="text"
+            value={localFilters.noticeNo || ''}
+            onChange={(e) => handleTextChange('noticeNo', e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="예: 경남-사천-2026-00027"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+          />
+          <span className="mt-2 text-xs leading-5 text-gray-500 dark:text-gray-400">
+            전체 공고번호와 정확히 일치하는 동물만 찾습니다.
+          </span>
         </label>
       </div>
 
@@ -240,5 +256,4 @@ export default function AnimalFilterSidebar({
     </div>
   );
 }
-
 

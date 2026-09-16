@@ -3,7 +3,7 @@ import type { AnimalSearchParams } from '../types/api.types';
 export const defaultAnimalSearch = { page: 0, size: 21, sort: 'createdAt,desc' };
 export const maxAnimalSearchResults = 10_000;
 export const relevanceAnimalSearchSort = 'relevance,desc';
-const textKeys = ['keyword', 'species', 'breed', 'gender', 'neuterStatus', 'status', 'region', 'city'] as const;
+const textKeys = ['keyword', 'noticeNo', 'species', 'breed', 'gender', 'neuterStatus', 'status', 'region', 'city'] as const;
 const numberKeys = ['page', 'size', 'minAge', 'maxAge', 'shelterId'] as const;
 const sorts = [relevanceAnimalSearchSort, 'createdAt,desc', 'noticeEndDate,asc', 'age,asc'];
 
@@ -23,9 +23,10 @@ export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
     fields[key] = value;
   }
   const sort = params.get('sort');
-  if (sort && sorts.includes(sort)) {
+  const hasRelevanceTerms = Boolean(fields.keyword || fields.breed);
+  if (sort && sorts.includes(sort) && (sort !== relevanceAnimalSearchSort || hasRelevanceTerms)) {
     fields.sort = sort;
-  } else if (fields.keyword) {
+  } else if (hasRelevanceTerms) {
     fields.sort = relevanceAnimalSearchSort;
   }
   return { ...defaultAnimalSearch, ...fields };
@@ -37,20 +38,30 @@ export function applyAnimalSearchFilters(
 ): AnimalSearchParams {
   const currentKeyword = current.keyword?.trim() || '';
   const nextKeyword = next.keyword?.trim() || '';
+  const currentBreed = current.breed?.trim() || '';
+  const nextBreed = next.breed?.trim() || '';
+  const nextNoticeNo = next.noticeNo?.trim() || '';
+  const hasRelevanceTerms = Boolean(nextKeyword || nextBreed);
   let sort = next.sort || defaultAnimalSearch.sort;
 
-  if (nextKeyword && nextKeyword !== currentKeyword) {
+  if (hasRelevanceTerms && (nextKeyword !== currentKeyword || nextBreed !== currentBreed)) {
     sort = relevanceAnimalSearchSort;
-  } else if (!nextKeyword && sort === relevanceAnimalSearchSort) {
+  } else if (!hasRelevanceTerms && sort === relevanceAnimalSearchSort) {
     sort = defaultAnimalSearch.sort;
   }
 
   return {
     ...next,
     keyword: nextKeyword || undefined,
+    noticeNo: nextNoticeNo || undefined,
+    breed: nextBreed || undefined,
     sort,
     page: 0,
   };
+}
+
+export function hasAnimalRelevanceSearch(filters: AnimalSearchParams): boolean {
+  return Boolean(filters.keyword?.trim() || filters.breed?.trim());
 }
 
 export function writeAnimalSearch(filters: AnimalSearchParams): URLSearchParams {

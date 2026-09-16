@@ -131,6 +131,7 @@ export interface Animal {
 // 동물 검색 파라미터
 export interface AnimalSearchParams {
   keyword?: string;              // 검색어 (이름, 품종, 설명)
+  noticeNo?: string;             // 공고번호 (완전 일치)
   species?: string;             // 종 필터
   gender?: 'MALE' | 'FEMALE' | 'NEUTERED';
   status?: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT';
