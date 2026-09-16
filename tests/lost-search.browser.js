@@ -3,14 +3,15 @@ async (page) => {
   const check = (ok, message) => { if (!ok) throw new Error(message); };
   const photo = 'tests/fixtures/lost-search.png';
   const endpoint = '**/api/v1/animals/lost-candidates';
-  const card = { animal: { id: 77, species: 'DOG', breed: '믹스견', gender: 'MALE', status: 'ADOPTED', happenDate: '2026-09-10', happenPlace: '상주시 동문동', shelterName: '테스트 동물보호센터', imageUrl: '/src/assets/image-placeholder.svg' }, shelterPhone: '02-000-0000', matchedEvidence: ['DISCOVERY_PLACE_TEXT_MATCH'] };
-  let status = 200, payload = { candidates: [card] }, delay = false, requests = [];
+  const protectedCard = { animal: { id: 77, species: 'DOG', breed: '믹스견', gender: 'MALE', status: 'PROTECT', happenDate: '2026-09-10', happenPlace: '상주시 동문동', shelterName: '테스트 동물보호센터', imageUrl: '/src/assets/image-placeholder.svg' }, shelterPhone: '02-000-0000', matchedEvidence: ['DISCOVERY_PLACE_TEXT_MATCH'] };
+  const adoptedCard = { ...protectedCard, animal: { ...protectedCard.animal, status: 'ADOPTED' } };
+  let status = 200, payload = { candidates: [protectedCard] }, delay = false, requests = [];
   await page.route(endpoint, async route => {
     requests.push(route.request().postData());
     if (delay) await page.waitForTimeout(3000);
     await route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(payload) }).catch(() => {});
   });
-  await page.goto('http://127.0.0.1:5184/animals/lost');
+  await page.goto('http://127.0.0.1:5187/animals/lost');
   await page.getByRole('heading', { level: 1 }).waitFor();
   check(await page.getByRole('button', { name: '사진으로 후보 찾기' }).isDisabled(), 'photo is required');
   const layouts = [];
@@ -30,10 +31,17 @@ async (page) => {
   await page.getByLabel('실종 날짜', { exact: true }).fill('2026-09-08');
   await page.getByLabel('실종 지역', { exact: true }).fill('상주시');
   await page.getByLabel('털색·무늬·특징', { exact: true }).fill('갈색 귀');
+  check(!await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).isChecked(), 'status option should default to false');
   await page.getByRole('button', { name: '사진으로 후보 찾기' }).click();
   await page.getByRole('heading', { name: '확인할 후보 1마리' }).waitFor();
   check(requests[0].includes('name="region"') && requests[0].includes('상주시') && requests[0].includes('갈색 귀') && requests[0].includes('2026-09-08'), 'conditions were not transmitted');
-  check(await page.getByText('종료 · 입양', { exact: true }).isVisible(), 'ended animal removed');
+  check(requests[0].includes('name="includeAdoptedOrReturned"') && requests[0].includes('false'), 'default status policy was not transmitted');
+  payload = { candidates: [adoptedCard] };
+  await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).check();
+  check(await page.getByRole('heading', { name: '확인할 후보 1마리' }).count() === 0, 'status option did not invalidate old results');
+  await page.getByRole('button', { name: '사진으로 후보 찾기' }).click();
+  await page.getByText('종료 · 입양', { exact: true }).waitFor();
+  check(requests[1].includes('name="includeAdoptedOrReturned"') && requests[1].includes('true'), 'expanded status policy was not transmitted');
   check((await page.getByRole('link', { name: '보호소 문의', exact: false }).getAttribute('href')) === 'tel:020000000', 'shelter phone action missing');
   await page.waitForFunction(() => {
     const photo = document.querySelector('img[alt="선택한 실종동물 사진"]')?.parentElement;
@@ -68,7 +76,7 @@ async (page) => {
   status = 200; payload = { candidates: [] };
   await page.getByRole('button', { name: '다시 시도하기' }).click();
   await page.getByText('이번 검색에서는 후보를 찾지 못했어요').waitFor();
-  payload = { candidates: [card] }; delay = true;
+  payload = { candidates: [adoptedCard] }; delay = true;
   const beforeCancel = requests.length;
   await page.getByRole('button', { name: '사진으로 후보 찾기' }).click();
   await page.getByRole('button', { name: '검색 취소' }).click();
@@ -79,5 +87,5 @@ async (page) => {
   await page.getByLabel('실종 지역', { exact: true }).fill('다른 지역');
   await page.waitForTimeout(3500);
   check(await page.getByRole('heading', { name: '확인할 후보 1마리' }).count() === 0, 'old condition response overwrote state');
-  return { result: 'PASS', layouts, requests: requests.length, checked: ['required photo', '4 responsive widths', 'column alignment', 'multipart conditions', 'ended candidates', 'phone link', 'delete invalidation', 'oversized file', '503 retry', '401 stays public', 'empty result', 'cancel race', 'condition race'] };
+  return { result: 'PASS', layouts, requests: requests.length, checked: ['required photo', '4 responsive widths', 'column alignment', 'multipart conditions', 'default and expanded status policy', 'status option invalidation', 'phone link', 'delete invalidation', 'oversized file', '503 retry', '401 stays public', 'empty result', 'cancel race', 'condition race'] };
 }

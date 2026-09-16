@@ -18,6 +18,7 @@ async (page) => {
   await page.getByLabel('실종 날짜', { exact: true }).fill('2026-09-08');
   await page.getByLabel('실종 지역', { exact: true }).fill('상주시');
   await page.getByLabel('털색·무늬·특징', { exact: true }).fill('갈색 귀');
+  await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).check();
   await page.getByRole('button', { name: '사진으로 후보 찾기', exact: true }).click();
   await page.getByRole('heading', { name: '확인할 후보 2마리' }).waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
@@ -35,6 +36,7 @@ async (page) => {
   check(await page.getByLabel('실종 날짜', { exact: true }).inputValue() === '2026-09-08', 'date not restored');
   check(await page.getByLabel('실종 지역', { exact: true }).inputValue() === '상주시', 'region not restored');
   check(await page.getByLabel('털색·무늬·특징', { exact: true }).inputValue() === '갈색 귀', 'description not restored');
+  check(await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).isChecked(), 'status option not restored');
   check(await page.getByAltText('선택한 실종동물 사진').count() === 1, 'photo not restored');
   check(searches === 1, 'back reran GPU search');
   await page.getByRole('link', { name: '공고 상세 보기', exact: true }).nth(1).click();
@@ -52,5 +54,5 @@ async (page) => {
   await page.locator('#mobile-navigation').getByRole('link', { name: '실종동물 찾기', exact: true }).click();
   check(await page.getByRole('button', { name: '사진으로 후보 찾기', exact: true }).isDisabled(), 'new entry reused previous photo');
   check(await page.getByRole('heading', { name: '확인할 후보 2마리' }).count() === 0, 'new entry reused previous results');
-  return { result: 'PASS', searches, restoredScrollY: beforeY, checked: ['desktop/mobile menu order', 'browser-back photo conditions results scroll without search', 'second candidate and detail return', 'new entry isolation'] };
+  return { result: 'PASS', searches, restoredScrollY: beforeY, checked: ['desktop/mobile menu order', 'browser-back photo conditions status option results scroll without search', 'second candidate and detail return', 'new entry isolation'] };
 }
