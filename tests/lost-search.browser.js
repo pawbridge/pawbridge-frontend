@@ -35,9 +35,11 @@ async (page) => {
   check(requests[0].includes('name="region"') && requests[0].includes('상주시') && requests[0].includes('갈색 귀') && requests[0].includes('2026-09-08'), 'conditions were not transmitted');
   check(await page.getByText('종료 · 입양', { exact: true }).isVisible(), 'ended animal removed');
   check((await page.getByRole('link', { name: '보호소 문의', exact: false }).getAttribute('href')) === 'tel:020000000', 'shelter phone action missing');
-  const photoBox = await page.getByAltText('선택한 실종동물 사진').locator('..').boundingBox();
-  const cardBox = await page.locator('article').first().boundingBox();
-  check(Math.abs(photoBox.y - cardBox.y) < 2, 'photo and candidate panels are not aligned');
+  await page.waitForFunction(() => {
+    const photo = document.querySelector('img[alt="선택한 실종동물 사진"]')?.parentElement;
+    const card = document.querySelector('article');
+    return photo && card && Math.abs(photo.getBoundingClientRect().y - card.getBoundingClientRect().y) < 2;
+  }, undefined, { timeout: 5000 });
   await page.screenshot({ path: '/tmp/lost-search-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'result mobile overflow');
