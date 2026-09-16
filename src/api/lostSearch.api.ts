@@ -24,12 +24,14 @@ export interface LostSearchInput {
   lostDate: string;
   region: string;
   description: string;
+  includeAdoptedOrReturned: boolean;
 }
 
 export async function findLostCandidates(input: LostSearchInput, signal: AbortSignal): Promise<LostCandidate[]> {
   const form = new FormData();
   form.append('image', input.image, 'photo');
   form.append('species', input.species);
+  form.append('includeAdoptedOrReturned', String(input.includeAdoptedOrReturned));
   if (input.lostDate) form.append('lostDate', input.lostDate);
   if (input.region.trim()) form.append('region', input.region.trim());
   if (input.description.trim()) form.append('description', input.description.trim());
