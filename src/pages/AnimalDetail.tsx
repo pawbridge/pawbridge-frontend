@@ -1,3 +1,4 @@
+import { readLostSearchSession } from '../utils/lostSearchSession';
 import { animalSearchReturnTo } from '../utils/animalSearch';
 import axios from 'axios';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
@@ -23,6 +24,14 @@ export default function AnimalDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchReturnTo = animalSearchReturnTo(location.state?.searchReturnTo);
+  const fromLostSearch = location.state?.from === 'lost-search';
+  const returnToSearch = () => {
+    if (fromLostSearch && readLostSearchSession(location.state?.lostSearchEntryKey)) {
+      navigate(-1);
+    } else {
+      navigate(fromLostSearch ? '/animals/lost' : searchReturnTo);
+    }
+  };
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const [selectedImage, setSelectedImage] = useState<string>('');
@@ -201,7 +210,7 @@ export default function AnimalDetail() {
                 존재하지 않거나 삭제된 동물입니다
               </p>
               <button
-                onClick={() => navigate(searchReturnTo)}
+                onClick={returnToSearch}
                 className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
               >
                 목록으로 돌아가기
@@ -287,8 +296,8 @@ export default function AnimalDetail() {
                 </button>
               </>
             ) : (
-              <button onClick={() => navigate(searchReturnTo)} className="text-secondary dark:text-primary hover:underline">
-                동물 검색
+              <button onClick={returnToSearch} className="text-secondary dark:text-primary hover:underline">
+                {fromLostSearch ? '실종 검색 결과' : '동물 검색'}
               </button>
             )}
             <span className="text-secondary dark:text-primary">/</span>
