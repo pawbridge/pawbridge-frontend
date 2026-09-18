@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { AnimalSearchParams } from '../../types/api.types';
 import { defaultAnimalSearch } from '../../utils/animalSearch';
 import { animalRegions } from '../../utils/animalRegions';
@@ -37,6 +37,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset }: Anima
   const [selectedRegion, setSelectedRegion] = useState(filters.region || '');
   const [selectedCity, setSelectedCity] = useState(filters.city || '');
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const regionListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMode(filters.noticeNo ? 'notice' : 'feature');
@@ -45,6 +46,15 @@ export default function AnimalSearchFilters({ filters, onApply, onReset }: Anima
     setSelectedRegion(filters.region || '');
     setSelectedCity(filters.city || '');
   }, [filters]);
+
+  useEffect(() => {
+    if (picker !== 'region') return;
+
+    const frame = window.requestAnimationFrame(() => {
+      regionListRef.current?.scrollTo({ top: 0 });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [picker, selectedRegion]);
 
   const summary = selectedSummary(filters);
   const activeRegion = animalRegions.find((region) => region.value === selectedRegion);
@@ -205,7 +215,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset }: Anima
               <div className="px-5"><input value={picker === 'breed' ? breedDraft : pickerQuery} onChange={(event) => picker === 'breed' ? setBreedDraft(event.target.value) : setPickerQuery(event.target.value)} onKeyDown={(event) => { if (picker === 'breed' && event.key === 'Enter') applyBreed(); }} placeholder={picker === 'breed' ? '예: 말티즈, 믹스견' : '지역명 검색'} className={fieldClass} autoFocus /></div>
 
               {picker === 'region' && (
-                <div className="grid max-h-[360px] grid-cols-1 overflow-y-auto px-5 py-3 md:grid-cols-2 md:gap-6">
+                <div ref={regionListRef} className="grid max-h-[360px] grid-cols-1 overflow-y-auto [overflow-anchor:none] px-5 py-3 md:grid-cols-2 md:gap-6">
                   <div className={`${selectedRegion ? 'hidden md:block' : ''} md:border-r md:border-[#dee5e3] md:pr-5`}>
                     <p className="mb-1 text-xs font-bold text-[#052e16]">시·도</p>
                     {animalRegions.filter((region) => !pickerQuery.trim() || `${region.label} ${region.cities.join(' ')}`.includes(pickerQuery.trim())).map((region) => (
