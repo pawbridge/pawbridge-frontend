@@ -1,232 +1,102 @@
-import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { applyAnimalSearchFilters, defaultAnimalSearch, hasAnimalRelevanceSearch, maxAnimalSearchResults, readAnimalSearch, relevanceAnimalSearchSort, visibleAnimalSearchPages, writeAnimalSearch } from '../utils/animalSearch';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
-import Header from '../components/layout/Header';
+import {
+  applyAnimalSearchFilters,
+  defaultAnimalSearch,
+  hasAnimalRelevanceSearch,
+  maxAnimalSearchResults,
+  readAnimalSearch,
+  relevanceAnimalSearchSort,
+  visibleAnimalSearchPages,
+  writeAnimalSearch,
+} from '../utils/animalSearch';
+import AnimalSearchCard from '../components/animals/AnimalSearchCard';
+import AnimalSearchFilters from '../components/animals/AnimalSearchFilters';
+import AnimalSearchPagination from '../components/animals/AnimalSearchPagination';
 import Footer from '../components/layout/Footer';
-import AnimalFilterSidebar from '../components/common/AnimalFilterSidebar';
-import AnimalCardSimple from '../components/common/AnimalCardSimple';
-import Pagination from '../components/common/Pagination';
+import Header from '../components/layout/Header';
 
 export default function Animals() {
-  // Applied search conditions live in the URL so history and reload can restore them.
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = useMemo(() => readAnimalSearch(searchParams), [searchParams]);
   const setFilters = (next: AnimalSearchParams) => setSearchParams(writeAnimalSearch(next));
   const searchReturnTo = `/animals${searchParams.size ? `?${searchParams.toString()}` : ''}`;
 
-  // 뷰 모드 (그리드/리스트)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
-  // 데이터 가져오기
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['animals', filters],
     queryFn: () => getAnimals(filters),
   });
 
-
-  // 필터 변경
-  const handleFilterChange = (newFilters: AnimalSearchParams) => {
-    setFilters(applyAnimalSearchFilters(filters, newFilters));
+  const handleFilterChange = (next: AnimalSearchParams) => setFilters(applyAnimalSearchFilters(filters, next));
+  const handlePageChange = (page: number) => {
+    setFilters({ ...filters, page });
+    window.scrollTo({ top: 500, behavior: 'smooth' });
   };
-
-  // 필터 초기화
-  const handleReset = () => {
-    setFilters(defaultAnimalSearch);
-  };
-
-  // 정렬 변경
-  const handleSortChange = (sort: string) => {
-    setFilters({ ...filters, sort, page: 0 });
-  };
-
-  // 페이지 변경
-  const handlePageChange = (newPage: number) => {
-    setFilters({ ...filters, page: newPage });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // 로딩 상태
-  if (isLoading && !data) {
-    return (
-      <div className="min-h-screen bg-background-light dark:bg-background-dark">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center justify-center min-h-[400px]">
-            <div className="w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-            <p className="mt-8 text-xl text-text-light dark:text-text-dark font-semibold animate-pulse">
-              동물 친구들을 불러오고 있어요...
-            </p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  // 에러 상태
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background-light dark:bg-background-dark">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl p-8 max-w-md text-center border border-border-light dark:border-border-dark">
-              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg
-                  className="w-10 h-10 text-red-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-3">
-                에러가 발생했습니다
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {error instanceof Error ? error.message : '알 수 없는 에러'}
-              </p>
-              <div className="bg-primary/10 rounded-lg p-4">
-                <p className="text-sm text-text-light dark:text-text-dark">
-                  ※ <strong>해결 방법:</strong> 백엔드 서버가 실행 중인지 확인해주세요
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
 
   const animals = data?.content || [];
   const totalElements = data?.totalElements || 0;
   const totalPages = visibleAnimalSearchPages(data?.totalPages || 0, filters.size || defaultAnimalSearch.size);
   const currentPage = data?.number || 0;
-  const hasHiddenResults = totalElements > maxAnimalSearchResults;
-  
+  const relevanceSearch = hasAnimalRelevanceSearch(filters);
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+    <div className="min-h-screen bg-white font-display text-[#052e16] dark:bg-background-dark dark:text-text-dark">
       <Header />
+      <main className="mx-auto w-full max-w-[1504px] px-4 pb-14 pt-10 md:px-6 md:pb-20 md:pt-14">
+        <header className="mb-6">
+          <p className="text-sm font-bold text-[#036b3c]">동물 검색</p>
+          <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-[-0.025em] text-[#091f15] md:text-[38px]">기억나는 특징으로 빠르게 찾아보세요</h1>
+          <p className="mt-3 max-w-5xl text-sm leading-6 text-[#6e7a75] md:text-base">털색, 무늬, 착용 물품, 발견 장소처럼 기억나는 정보를 함께 입력할수록 가까운 결과를 먼저 보여드립니다.</p>
+        </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* 페이지 제목 */}
-        <div className="mb-8">
-          <p className="text-4xl font-black leading-tight tracking-[-0.033em]">새로운 가족을 기다려요</p>
-        </div>
+        <AnimalSearchFilters filters={filters} onApply={handleFilterChange} onReset={() => setFilters(defaultAnimalSearch)} />
 
-        {/* 레이아웃: 사이드바 + 메인 */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* 사이드바 필터 */}
-          <aside className="lg:col-span-1">
-            <AnimalFilterSidebar
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onReset={handleReset}
-            />
-          </aside>
-
-          {/* 메인 컨텐츠 */}
-          <div className="lg:col-span-3">
-            {/* 상단 바 (결과 수 + 뷰 토글 + 정렬) */}
-            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-              <p className="text-base text-gray-600 dark:text-gray-400">
-                총 <span className="font-bold text-primary">{totalElements.toLocaleString()}</span> 마리의 친구들이 기다리고 있어요
-              </p>
-
-              <div className="flex items-center gap-4">
-                {/* 뷰 토글 */}
-                <div className="flex items-center border border-border-light dark:border-border-dark rounded-lg p-1 bg-background-light dark:bg-background-dark">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-md ${
-                      viewMode === 'grid'
-                        ? 'bg-card-light dark:bg-card-dark shadow-sm text-primary'
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined">grid_view</span>
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-md ${
-                      viewMode === 'list'
-                        ? 'bg-card-light dark:bg-card-dark shadow-sm text-primary'
-                        : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined">view_list</span>
-                  </button>
-                </div>
-
-                {/* 정렬 */}
-                <label className="flex items-center gap-2">
-                  <span className="text-sm whitespace-nowrap">정렬:</span>
-                  <select
-                    value={filters.sort}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-1 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-10 placeholder:text-gray-400 px-3 text-sm font-normal"
-                  >
-                    {hasAnimalRelevanceSearch(filters) && <option value={relevanceAnimalSearchSort}>관련도순</option>}
-                    <option value="createdAt,desc">접수일순</option>
-                    <option value="noticeEndDate,asc">마감임박순</option>
-                    <option value="age,asc">나이순</option>
-                  </select>
-                </label>
-              </div>
+        <section aria-labelledby="animal-search-results" className="mt-10">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 id="animal-search-results" className="text-xl font-bold text-[#091f15] md:text-2xl">검색 결과 {totalElements.toLocaleString()}마리</h2>
+              <p className="mt-1 text-xs text-[#6e7a75] md:text-sm">{filters.noticeNo ? '입력한 공고번호와 정확히 일치하는 결과예요.' : relevanceSearch ? '입력한 특징과 가까운 순서로 보여드려요.' : '최근 접수된 동물부터 보여드려요.'}</p>
             </div>
-
-            {/* 동물 목록 */}
-            {animals.length === 0 ? (
-              <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-md p-16 text-center border border-border-light dark:border-border-dark">
-                <div className="text-7xl mb-6">😢</div>
-                <h3 className="text-2xl font-bold text-text-light dark:text-text-dark mb-3">
-                  검색 결과가 없습니다
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  다른 검색 조건을 시도해보세요
-                </p>
-                <button
-                  onClick={handleReset}
-                  className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
-                >
-                  필터 초기화
-                </button>
-              </div>
-            ) : (
-              <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-6`}>
-                {animals.map((animal) => (
-                  <AnimalCardSimple key={animal.id} animal={animal} searchReturnTo={searchReturnTo} />
-                ))}
-              </div>
-            )}
-
-            {/* 페이지네이션 */}
-            {hasHiddenResults && (
-              <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                현재는 앞의 {maxAnimalSearchResults.toLocaleString()}마리까지 볼 수 있어요. 원하는 동물을 더 빨리 찾으려면 검색 조건을 좁혀주세요.
-              </p>
-            )}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              showPagination={animals.length > 0}
-            />
+            <label className="flex items-center gap-2 self-start sm:self-auto">
+              <span className="sr-only">검색 결과 정렬</span>
+              <select value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.target.value, page: 0 })} className="h-10 min-w-[168px] rounded-xl border border-[#dee5e3] bg-white px-3 text-sm font-medium text-[#052e16] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                {relevanceSearch && <option value={relevanceAnimalSearchSort}>관련도순</option>}
+                <option value="createdAt,desc">최근 접수순</option>
+                <option value="noticeEndDate,asc">마감 임박순</option>
+                <option value="age,asc">나이 어린순</option>
+              </select>
+            </label>
           </div>
-        </div>
-      </main>
 
+          {isLoading && !data ? (
+            <div aria-label="동물 검색 결과를 불러오는 중" className="grid gap-4 lg:grid-cols-2">
+              {[0, 1, 2, 3].map((item) => <div key={item} className="h-[236px] animate-pulse rounded-2xl border border-[#dee5e3] bg-[#f6f9f7] md:h-[252px]" />)}
+            </div>
+          ) : error ? (
+            <div role="alert" className="rounded-2xl border border-[#f1c6c6] bg-[#fff8f8] px-6 py-12 text-center">
+              <h3 className="text-lg font-bold text-[#7f1d1d]">검색 결과를 불러오지 못했습니다</h3>
+              <p className="mt-2 text-sm text-[#6e7a75]">잠시 후 다시 시도해 주세요.</p>
+              <button type="button" onClick={() => void refetch()} className="mt-5 h-11 rounded-xl bg-[#052e16] px-6 text-sm font-bold text-white">다시 시도</button>
+            </div>
+          ) : animals.length === 0 ? (
+            <div className="rounded-2xl border border-[#dee5e3] bg-[#f6f9f7] px-6 py-14 text-center">
+              <h3 className="text-lg font-bold text-[#052e16]">조건에 맞는 동물을 찾지 못했습니다</h3>
+              <p className="mt-2 text-sm text-[#6e7a75]">검색어를 줄이거나 지역과 품종 조건을 바꿔 보세요.</p>
+              <button type="button" onClick={() => setFilters(defaultAnimalSearch)} className="mt-5 h-11 rounded-xl border border-[#c7ced1] bg-white px-6 text-sm font-bold text-[#2f7d68]">조건 초기화</button>
+            </div>
+          ) : (
+            <div className="grid gap-4 lg:grid-cols-2">
+              {animals.map((animal) => <AnimalSearchCard key={animal.id} animal={animal} searchReturnTo={searchReturnTo} />)}
+            </div>
+          )}
+
+          {totalElements > maxAnimalSearchResults && <p className="mt-6 text-center text-xs leading-5 text-[#6e7a75]">공고 정보를 안정적으로 제공하기 위해 앞의 {maxAnimalSearchResults.toLocaleString()}마리까지 볼 수 있습니다. 조건을 좁히면 원하는 동물을 더 빠르게 찾을 수 있어요.</p>}
+          {animals.length > 0 && <AnimalSearchPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
+        </section>
+      </main>
       <Footer />
     </div>
   );
