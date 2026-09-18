@@ -96,7 +96,7 @@ export interface Animal {
   name: string;
   species: string;              // 종 (강아지, 고양이 등)
   breed?: string;               // 품종
-  gender: 'MALE' | 'FEMALE' | 'NEUTERED';  // 성별
+  gender: 'MALE' | 'FEMALE' | 'UNKNOWN';  // 성별
   age?: number;                 // 나이 (현재 연도 - 출생 연도)
   weight?: number;              // 체중 (kg)
   description?: string;         // 설명
@@ -133,7 +133,7 @@ export interface AnimalSearchParams {
   keyword?: string;              // 검색어 (이름, 품종, 설명)
   noticeNo?: string;             // 공고번호 (완전 일치)
   species?: string;             // 종 필터
-  gender?: 'MALE' | 'FEMALE' | 'NEUTERED';
+  gender?: 'MALE' | 'FEMALE' | 'UNKNOWN';
   status?: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT';
   shelterId?: number;           // 보호소 ID
   careRegNo?: string;            // 보호소 등록번호
