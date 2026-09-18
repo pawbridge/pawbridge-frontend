@@ -1,6 +1,7 @@
 import type { AnimalSearchParams } from '../types/api.types';
+import { normalizeAnimalRegion } from './animalRegions.ts';
 
-export const defaultAnimalSearch = { page: 0, size: 21, sort: 'createdAt,desc' };
+export const defaultAnimalSearch = { page: 0, size: 20, sort: 'createdAt,desc', status: 'PROTECT' as const };
 export const maxAnimalSearchResults = 10_000;
 export const relevanceAnimalSearchSort = 'relevance,desc';
 const textKeys = ['keyword', 'noticeNo', 'species', 'breed', 'gender', 'neuterStatus', 'status', 'region', 'city'] as const;
@@ -11,7 +12,7 @@ export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
   const fields: Record<string, string | number> = {};
   for (const key of textKeys) {
     const value = params.get(key);
-    if (value) fields[key] = value;
+    if (value) fields[key] = key === 'region' ? normalizeAnimalRegion(value) : value;
   }
   for (const key of numberKeys) {
     const raw = params.get(key);
@@ -21,6 +22,15 @@ export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
     if ((key === 'size' || key === 'shelterId') && value === 0) continue;
     if (key === 'size' && value > 100) continue;
     fields[key] = value;
+  }
+  if (typeof fields.noticeNo === 'string') {
+    return {
+      ...defaultAnimalSearch,
+      status: undefined,
+      noticeNo: fields.noticeNo,
+      page: typeof fields.page === 'number' ? fields.page : 0,
+      size: typeof fields.size === 'number' ? fields.size : defaultAnimalSearch.size,
+    };
   }
   const sort = params.get('sort');
   const hasRelevanceTerms = Boolean(fields.keyword || fields.breed);
@@ -43,6 +53,15 @@ export function applyAnimalSearchFilters(
   const nextNoticeNo = next.noticeNo?.trim() || '';
   const hasRelevanceTerms = Boolean(nextKeyword || nextBreed);
   let sort = next.sort || defaultAnimalSearch.sort;
+
+  if (nextNoticeNo && nextNoticeNo !== current.noticeNo?.trim()) {
+    return {
+      ...defaultAnimalSearch,
+      status: undefined,
+      noticeNo: nextNoticeNo,
+      page: 0,
+    };
+  }
 
   if (hasRelevanceTerms && (nextKeyword !== currentKeyword || nextBreed !== currentBreed)) {
     sort = relevanceAnimalSearchSort;
@@ -70,7 +89,7 @@ export function writeAnimalSearch(filters: AnimalSearchParams): URLSearchParams 
     const value = filters[key];
     if (value === undefined || value === '') continue;
     if (key in defaultAnimalSearch && value === defaultAnimalSearch[key as keyof typeof defaultAnimalSearch]) continue;
-    params.set(key, String(value));
+    params.set(key, key === 'region' ? normalizeAnimalRegion(String(value)) : String(value));
   }
   return params;
 }

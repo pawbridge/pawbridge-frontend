@@ -180,13 +180,11 @@ export default function RegisteredAnimals() {
                       <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-base">
                           {animal.gender === 'MALE' ? 'male' :
-                           animal.gender === 'FEMALE' ? 'female' :
-                           animal.gender === 'NEUTERED' ? 'transgender' : 'help'}
+                           animal.gender === 'FEMALE' ? 'female' : 'help'}
                         </span>
                         <span>
                           {animal.gender === 'MALE' ? '수컷' :
-                           animal.gender === 'FEMALE' ? '암컷' :
-                           animal.gender === 'NEUTERED' ? '중성화' : '성별 정보 없음'}
+                           animal.gender === 'FEMALE' ? '암컷' : '성별 미상'}
                         </span>
                       </div>
 
