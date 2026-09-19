@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /login
+Disallow: /signup
+Disallow: /reset-password
+Disallow: /oauth/callback
+Disallow: /mypage
+Disallow: /favorite-animals
+Disallow: /registered-animals
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-complete
+Disallow: /wishlist
+Disallow: /orders
+Disallow: /animals/new
+Disallow: /products
+Disallow: /community/new
+Disallow: /adoption/new
+
+Sitemap: https://www.pawbridge.kr/sitemap.xml
