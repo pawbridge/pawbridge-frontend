@@ -1,0 +1,42 @@
+# AI model training and bulk dataset crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# Public search crawlers
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /login
+Disallow: /signup
+Disallow: /reset-password
+Disallow: /oauth/callback
+Disallow: /mypage
+Disallow: /favorite-animals
+Disallow: /registered-animals
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-complete
+Disallow: /wishlist
+Disallow: /orders
+Disallow: /animals/new
+Disallow: /products
+Disallow: /community/new
+Disallow: /adoption/new
+
+Sitemap: https://www.pawbridge.kr/sitemap.xml

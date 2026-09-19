@@ -8,11 +8,13 @@ import './index.css'
 import App from './App.tsx'
 import AnalyticsConsent from './components/analytics/AnalyticsConsent.tsx'
 import AnalyticsRouteBoundary from './components/analytics/AnalyticsRouteBoundary.tsx'
+import RouteSeo from './components/seo/RouteSeo.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <RouteSeo />
         <AnalyticsRouteBoundary>
           <App />
         </AnalyticsRouteBoundary>
