@@ -53,6 +53,7 @@ import OAuthCallback from './pages/OAuthCallback.tsx';
 import AnimalStats from './pages/AnimalStats.tsx';
 import Travel from './pages/Travel.tsx';
 import TravelDetail from './pages/TravelDetail.tsx';
+import Privacy from './pages/Privacy.tsx';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -162,6 +163,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/lost" element={<LostAnimalSearch />} />
 
