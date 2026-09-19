@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import AnalyticsSettingsButton from '../analytics/AnalyticsSettingsButton';
 
 const linkClass = 'inline-flex min-h-8 items-center text-sm text-[#4b575c] transition-colors hover:text-[#036b3c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 
@@ -31,9 +32,10 @@ export default function Footer() {
           <p>반려동물 동반여행 정보는 <a href="https://api.visitkorea.or.kr/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[#036b3c]">한국관광공사 TourAPI</a>를 활용합니다.</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 포우 브릿지</p>
-            <div className="flex gap-5">
+            <div className="flex flex-wrap gap-x-5 gap-y-3">
               <Link to="/terms" className="hover:text-[#036b3c]">이용약관</Link>
               <Link to="/privacy" className="hover:text-[#036b3c]">개인정보처리방침</Link>
+              <AnalyticsSettingsButton className="min-h-0 border-0 p-0 text-xs font-normal hover:bg-transparent" />
               <a href="https://api.visitkorea.or.kr/#/useServiceGuide/2" target="_blank" rel="noopener noreferrer" className="hover:text-[#036b3c]">여행정보 저작권 정책</a>
             </div>
           </div>
