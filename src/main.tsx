@@ -6,12 +6,17 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from './lib/queryClient.ts'
 import './index.css'
 import App from './App.tsx'
+import AnalyticsConsent from './components/analytics/AnalyticsConsent.tsx'
+import AnalyticsRouteBoundary from './components/analytics/AnalyticsRouteBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <App />
+        <AnalyticsRouteBoundary>
+          <App />
+        </AnalyticsRouteBoundary>
+        <AnalyticsConsent />
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
