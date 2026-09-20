@@ -1,3 +1,6 @@
+import MyPageSidebar, { type MyPageTab } from '../components/mypage/MyPageSidebar';
+import MyProfilePanel from '../components/mypage/MyProfilePanel';
+import MyPasswordPanel from '../components/mypage/MyPasswordPanel';
 import MyShelterApplications from '../components/shelter/MyShelterApplications';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,8 +15,6 @@ import { canSeePetMarket } from '../lib/petMarket';
 import placeholderImg from '../assets/image-placeholder.svg';
 import type { UpdateNicknameRequest, PasswordUpdateRequest, ProductStatus, OrderStatus } from '../types/api.types';
 
-type TabType = 'shelter' | 'profile' | 'password' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
-
 export default function MyPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,15 +25,15 @@ export default function MyPage() {
 
   // location.state에서 탭 정보 가져오기 (뒤로가기 시)
   // sessionStorage도 확인하여 뒤로가기 시에도 탭 유지
-  const [selectedTab, setActiveTab] = useState<TabType>(() => {
+  const [selectedTab, setActiveTab] = useState<MyPageTab>(() => {
     // 1. location.state에서 우선 확인
     if (location.state?.tab) {
-      return location.state.tab as TabType;
+      return location.state.tab as MyPageTab;
     }
     // 2. sessionStorage에서 확인 (뒤로가기 시)
     const savedTab = sessionStorage.getItem('mypageActiveTab');
     if (savedTab && ['shelter', 'profile', 'password', 'favoriteAnimals', 'registeredAnimals', 'wishlist', 'cart', 'orders'].includes(savedTab)) {
-      return savedTab as TabType;
+      return savedTab as MyPageTab;
     }
     // 3. 기본값
     return 'profile';
@@ -44,7 +45,7 @@ export default function MyPage() {
   // location.state가 변경되면 탭 업데이트
   useEffect(() => {
     if (location.state?.tab) {
-      const tab = location.state.tab as TabType;
+      const tab = location.state.tab as MyPageTab;
       setActiveTab(tab);
       // sessionStorage에 저장 (뒤로가기 대비)
       sessionStorage.setItem('mypageActiveTab', tab);
@@ -439,231 +440,13 @@ export default function MyPage() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
           {/* 사이드바 */}
-          <aside className="md:w-1/4 lg:w-1/5">
-            <div className="flex flex-col gap-6 p-4 bg-white dark:bg-gray-800/20 rounded-xl shadow-sm sticky top-24">
-              {/* 프로필 정보 */}
-              <div className="flex gap-4 items-center pb-6 border-b border-gray-200 dark:border-gray-700">
-                <div className="size-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xl">
-                  {userInfo.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex flex-col">
-                  <h1 className="text-text-main dark:text-gray-100 text-base font-bold leading-normal">
-                    {userInfo.name}
-                  </h1>
-                  <p className="text-primary dark:text-green-300 text-sm font-normal leading-normal">
-                    {userInfo.email}
-                  </p>
-                </div>
-              </div>
-
-              {/* 메뉴 */}
-              <nav className="flex flex-col gap-1">
-                <button onClick={() => setActiveTab('shelter')} className={`min-h-11 rounded-lg px-3 py-3 text-left text-sm ${activeTab === 'shelter' ? 'bg-gray-100 font-semibold dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>보호소 담당자 신청</button>
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    activeTab === 'profile'
-                      ? 'bg-primary/20 dark:bg-primary/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined ${
-                      activeTab === 'profile' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                    style={{ fontVariationSettings: activeTab === 'profile' ? "'FILL' 1" : "'FILL' 0" }}
-                  >
-                    person
-                  </span>
-                  <p
-                    className={`text-sm ${
-                      activeTab === 'profile'
-                        ? 'text-text-main dark:text-gray-100 font-bold'
-                        : 'text-gray-500 dark:text-gray-400 font-medium'
-                    }`}
-                  >
-                    프로필 정보
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('favoriteAnimals')}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    activeTab === 'favoriteAnimals'
-                      ? 'bg-primary/20 dark:bg-primary/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined ${
-                      activeTab === 'favoriteAnimals' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                    style={{ fontVariationSettings: activeTab === 'favoriteAnimals' ? "'FILL' 1" : "'FILL' 0" }}
-                  >
-                    pets
-                  </span>
-                  <p
-                    className={`text-sm ${
-                      activeTab === 'favoriteAnimals'
-                        ? 'text-text-main dark:text-gray-100 font-bold'
-                        : 'text-gray-500 dark:text-gray-400 font-medium'
-                    }`}
-                  >
-                    내가 찜한 동물
-                  </p>
-                </button>
-
-                {userInfo.role === 'ROLE_SHELTER' && (
-                  <button
-                    onClick={() => setActiveTab('registeredAnimals')}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                      activeTab === 'registeredAnimals'
-                        ? 'bg-primary/20 dark:bg-primary/30'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                    }`}
-                  >
-                    <span
-                      className={`material-symbols-outlined ${
-                        activeTab === 'registeredAnimals' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                      }`}
-                      style={{ fontVariationSettings: activeTab === 'registeredAnimals' ? "'FILL' 1" : "'FILL' 0" }}
-                    >
-                      home
-                    </span>
-                    <p
-                      className={`text-sm ${
-                        activeTab === 'registeredAnimals'
-                          ? 'text-text-main dark:text-gray-100 font-bold'
-                          : 'text-gray-500 dark:text-gray-400 font-medium'
-                      }`}
-                    >
-                      내 보호소가 등록한 동물
-                    </p>
-                  </button>
-                )}
-
-                {showPetMarket && <>
-                <button
-                  onClick={() => setActiveTab('wishlist')}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    activeTab === 'wishlist'
-                      ? 'bg-primary/20 dark:bg-primary/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined ${
-                      activeTab === 'wishlist' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                    style={{ fontVariationSettings: activeTab === 'wishlist' ? "'FILL' 1" : "'FILL' 0" }}
-                  >
-                    favorite
-                  </span>
-                  <p
-                    className={`text-sm ${
-                      activeTab === 'wishlist'
-                        ? 'text-text-main dark:text-gray-100 font-bold'
-                        : 'text-gray-500 dark:text-gray-400 font-medium'
-                    }`}
-                  >
-                    나의 위시리스트
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('cart')}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    activeTab === 'cart'
-                      ? 'bg-primary/20 dark:bg-primary/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined ${
-                      activeTab === 'cart' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                    style={{ fontVariationSettings: activeTab === 'cart' ? "'FILL' 1" : "'FILL' 0" }}
-                  >
-                    shopping_cart
-                  </span>
-                  <p
-                    className={`text-sm ${
-                      activeTab === 'cart'
-                        ? 'text-text-main dark:text-gray-100 font-bold'
-                        : 'text-gray-500 dark:text-gray-400 font-medium'
-                    }`}
-                  >
-                    나의 장바구니
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('orders')}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    activeTab === 'orders'
-                      ? 'bg-primary/20 dark:bg-primary/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined ${
-                      activeTab === 'orders' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                    style={{ fontVariationSettings: activeTab === 'orders' ? "'FILL' 1" : "'FILL' 0" }}
-                  >
-                    receipt_long
-                  </span>
-                  <p
-                    className={`text-sm ${
-                      activeTab === 'orders'
-                        ? 'text-text-main dark:text-gray-100 font-bold'
-                        : 'text-gray-500 dark:text-gray-400 font-medium'
-                    }`}
-                  >
-                    나의 주문 목록
-                  </p>
-                </button>
-                </>}
-
-                <button
-                  onClick={() => setActiveTab('password')}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    activeTab === 'password'
-                      ? 'bg-primary/20 dark:bg-primary/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
-                >
-                  <span
-                    className={`material-symbols-outlined ${
-                      activeTab === 'password' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}
-                  >
-                    lock_reset
-                  </span>
-                  <p
-                    className={`text-sm ${
-                      activeTab === 'password'
-                        ? 'text-text-main dark:text-gray-100 font-bold'
-                        : 'text-gray-500 dark:text-gray-400 font-medium'
-                    }`}
-                  >
-                    비밀번호 변경
-                  </p>
-                </button>
-              </nav>
-
-              {/* 로그아웃 */}
-              <div className="flex flex-col gap-1 border-t border-gray-100 dark:border-gray-700 pt-4">
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                >
-                  <span className="material-symbols-outlined text-red-500">logout</span>
-                  <p className="text-red-500 text-sm font-medium leading-normal">로그아웃</p>
-                </button>
-              </div>
-            </div>
-          </aside>
+          <MyPageSidebar
+            userInfo={userInfo}
+            activeTab={activeTab}
+            showPetMarket={showPetMarket}
+            onTabChange={setActiveTab}
+            onLogout={handleLogout}
+          />
 
           {/* 메인 콘텐츠 */}
           <div className="flex-1 md:w-3/4 lg:w-4/5">
@@ -676,185 +459,27 @@ export default function MyPage() {
             <div className="bg-white dark:bg-gray-800/20 p-6 sm:p-8 rounded-xl shadow-sm">
               {activeTab === 'shelter' && <MyShelterApplications key={user?.id} role={userInfo.role} />}
               {activeTab === 'profile' && (
-                <>
-                  <h2 className="text-text-main dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-6 border-b border-gray-200 dark:border-gray-700">
-                    프로필 정보
-                  </h2>
-
-                  <div className="mt-8 space-y-6">
-                    {/* 기본 정보 (읽기 전용) */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          이메일 주소
-                        </label>
-                        <input
-                          type="email"
-                          value={userInfo.email}
-                          readOnly
-                          className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름</label>
-                        <input
-                          type="text"
-                          value={userInfo.name}
-                          readOnly
-                          className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          닉네임
-                        </label>
-                        <input
-                          type="text"
-                          value={userInfo.nickname || '미설정'}
-                          readOnly
-                          className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          가입 경로
-                        </label>
-                        <input
-                          type="text"
-                          value={getProviderLabel(userInfo.provider)}
-                          readOnly
-                          className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">권한</label>
-                        <input
-                          type="text"
-                          value={getRoleLabel(userInfo.role)}
-                          readOnly
-                          className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          가입일시
-                        </label>
-                        <input
-                          type="text"
-                          value={formatDate(userInfo.createdAt)}
-                          readOnly
-                          className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
-                        />
-                      </div>
-                    </div>
-
-                    {/* 닉네임 변경 폼 */}
-                    <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-text-main dark:text-white mb-4">닉네임 변경</h3>
-                      <form onSubmit={handleNicknameSubmit} className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            새 닉네임
-                          </label>
-                          <input
-                            type="text"
-                            value={nicknameInput}
-                            onChange={(e) => setNicknameInput(e.target.value)}
-                            placeholder="2~30자의 한글, 영문, 숫자"
-                            className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-primary focus:ring-primary"
-                          />
-                          <p className="text-xs text-gray-500 mt-1">
-                            한글, 영문, 숫자를 사용할 수 있으며 띄어쓰기가 불가능합니다.
-                          </p>
-                        </div>
-
-                        <div className="flex justify-end gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setNicknameInput('')}
-                            className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-text-main dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
-                          >
-                            취소
-                          </button>
-                          <button
-                            type="submit"
-                            disabled={updateNicknameMutation.isPending}
-                            className="px-6 py-2 bg-primary text-text-main rounded-lg hover:bg-green-400 transition-colors disabled:opacity-50"
-                          >
-                            {updateNicknameMutation.isPending ? '변경 중...' : '변경하기'}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </>
+                <MyProfilePanel
+                  userInfo={userInfo}
+                  providerLabel={getProviderLabel(userInfo.provider)}
+                  roleLabel={getRoleLabel(userInfo.role)}
+                  joinedAtLabel={formatDate(userInfo.createdAt)}
+                  nickname={nicknameInput}
+                  onNicknameChange={setNicknameInput}
+                  onSubmit={handleNicknameSubmit}
+                  isPending={updateNicknameMutation.isPending}
+                />
               )}
 
               {activeTab === 'password' && (
-                <>
-                  <h2 className="text-text-main dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-6 border-b border-gray-200 dark:border-gray-700">
-                    비밀번호 변경
-                  </h2>
-
-                  {userInfo.provider !== 'LOCAL' && userInfo.provider !== null ? (
-                    <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg text-center">
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {getProviderLabel(userInfo.provider)} 계정은 비밀번호를 변경할 수 없습니다.
-                      </p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handlePasswordSubmit} className="mt-8 space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          현재 비밀번호
-                        </label>
-                        <input
-                          type="password"
-                          value={passwordData.currentPassword}
-                          onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                          className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-primary focus:ring-primary"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          새 비밀번호
-                        </label>
-                        <input
-                          type="password"
-                          value={passwordData.newPassword}
-                          onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                          className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-primary focus:ring-primary"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.
-                        </p>
-                      </div>
-
-                      <div className="flex justify-end gap-3 pt-4">
-                        <button
-                          type="button"
-                          onClick={() => setPasswordData({ currentPassword: '', newPassword: '' })}
-                          className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-text-main dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
-                        >
-                          취소
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={updatePasswordMutation.isPending}
-                          className="px-6 py-2 bg-primary text-text-main rounded-lg hover:bg-green-400 transition-colors disabled:opacity-50"
-                        >
-                          {updatePasswordMutation.isPending ? '변경 중...' : '변경하기'}
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </>
+                <MyPasswordPanel
+                  provider={userInfo.provider}
+                  providerLabel={getProviderLabel(userInfo.provider)}
+                  value={passwordData}
+                  onChange={setPasswordData}
+                  onSubmit={handlePasswordSubmit}
+                  isPending={updatePasswordMutation.isPending}
+                />
               )}
 
               {activeTab === 'favoriteAnimals' && (
