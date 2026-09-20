@@ -8,6 +8,14 @@ export default {
     theme: {
       extend: {
         colors: {
+          brand: {
+            DEFAULT: '#FFF2A6',
+            hover: '#F7E58C',
+            soft: '#FFFCE9',
+            ink: '#30302E',
+            muted: '#646460',
+            border: '#DDDDD8',
+          },
           "primary": "#34d399",
           "background-light": "#ffffff",
           "background-dark": "#0f0f0f",
