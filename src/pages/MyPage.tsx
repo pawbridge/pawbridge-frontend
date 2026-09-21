@@ -6,6 +6,7 @@ import MyRegisteredAnimalsPanel from '../components/mypage/MyRegisteredAnimalsPa
 import MyPageSidebar, { type MyPageTab } from '../components/mypage/MyPageSidebar';
 import MyProfilePanel from '../components/mypage/MyProfilePanel';
 import MyPasswordPanel from '../components/mypage/MyPasswordPanel';
+import MyPageInfoState from '../components/mypage/MyPageInfoState';
 import MyShelterApplications from '../components/shelter/MyShelterApplications';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -82,7 +83,14 @@ export default function MyPage() {
   const [ordersPage, setOrdersPage] = useState(0);
 
   // 내 정보 조회
-  const { data: userInfo, isLoading } = useQuery({
+  const {
+    data: userInfo,
+    isLoading: isUserInfoLoading,
+    isFetched: isUserInfoFetched,
+    isError: isUserInfoError,
+    isFetching: isUserInfoFetching,
+    refetch: refetchUserInfo,
+  } = useQuery({
     queryKey: ['myInfo', user?.id],
     queryFn: ({ signal }) => getMyInfo(signal),
     enabled: !!user?.id,
@@ -373,16 +381,18 @@ export default function MyPage() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+  if (isUserInfoLoading && !isUserInfoFetched) {
+    return <MyPageInfoState variant="loading" />;
   }
 
-  if (!userInfo) {
-    return null;
+  if (isUserInfoError || !userInfo) {
+    return (
+      <MyPageInfoState
+        variant="error"
+        isRetrying={isUserInfoFetching}
+        onRetry={() => { void refetchUserInfo(); }}
+      />
+    );
   }
 
   return (
