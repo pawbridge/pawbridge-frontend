@@ -130,8 +130,8 @@ export default function AnimalDetail() {
 
   // 찜 여부 확인
   const { data: isFavorited } = useQuery({
-    queryKey: ['favorite', id],
-    queryFn: () => checkFavorite(Number(id)),
+    queryKey: ['favorite', id, user?.id],
+    queryFn: ({ signal }) => checkFavorite(Number(id), signal),
     enabled: !!id && !!user,
   });
 
@@ -139,7 +139,7 @@ export default function AnimalDetail() {
   const addFavoriteMutation = useMutation({
     mutationFn: () => addFavorite(Number(id)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorite', id] });
+      queryClient.invalidateQueries({ queryKey: ['favorite', id, user?.id] });
       queryClient.invalidateQueries({ queryKey: ['animal', id] });
       queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
     },
@@ -152,7 +152,7 @@ export default function AnimalDetail() {
   const removeFavoriteMutation = useMutation({
     mutationFn: () => removeFavorite(Number(id)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorite', id] });
+      queryClient.invalidateQueries({ queryKey: ['favorite', id, user?.id] });
       queryClient.invalidateQueries({ queryKey: ['animal', id] });
       queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
     },

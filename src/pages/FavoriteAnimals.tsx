@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getFavoriteAnimals } from '../api/user.api';
+import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
 export default function FavoriteAnimals() {
+  const userId = useAuthStore(state => state.user?.id);
   // 찜한 동물 목록 조회
   const { data: favoriteAnimals, isLoading } = useQuery({
-    queryKey: ['favoriteAnimals'],
-    queryFn: getFavoriteAnimals,
+    queryKey: ['favoriteAnimals', userId],
+    queryFn: ({ signal }) => getFavoriteAnimals(signal),
+    enabled: !!userId,
   });
 
   if (isLoading) {
