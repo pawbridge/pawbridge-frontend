@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRegisteredAnimals } from '../api/user.api';
+import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
 export default function RegisteredAnimals() {
+  const userId = useAuthStore(state => state.user?.id);
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 20;
 
   // 등록한 동물 목록 조회 (페이징)
   const { data, isLoading } = useQuery({
-    queryKey: ['registeredAnimals', currentPage, pageSize],
-    queryFn: () => getRegisteredAnimals(currentPage, pageSize),
+    queryKey: ['registeredAnimals', userId, currentPage, pageSize],
+    queryFn: ({ signal }) => getRegisteredAnimals(currentPage, pageSize, signal),
+    enabled: !!userId,
   });
 
   const handlePageChange = (newPage: number) => {

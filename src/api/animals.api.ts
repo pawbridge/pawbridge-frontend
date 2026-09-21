@@ -98,9 +98,9 @@ export const removeFavorite = async (animalId: number): Promise<void> => {
 };
 
 // 찜 여부 확인
-export const checkFavorite = async (animalId: number): Promise<boolean> => {
+export const checkFavorite = async (animalId: number, signal?: AbortSignal): Promise<boolean> => {
   const response = await apiClient.get<{ code: number; data: boolean; message: string }>(
-    `/api/favorites/${animalId}/check`
+    `/api/favorites/${animalId}/check`, { signal }
   );
   return response.data.data;
 };
