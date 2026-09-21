@@ -13,15 +13,17 @@ export default function AnimalCreate() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const user = useAuthStore((state) => state.user);
+
   // 사용자 정보 조회 (보호소 등록번호 확인용)
   const { data: userInfo } = useQuery({
-    queryKey: ['myInfo'],
-    queryFn: getMyInfo,
+    queryKey: ['myInfo', user?.id],
+    queryFn: ({ signal }) => getMyInfo(signal),
+    enabled: !!user?.id,
   });
 
   // authStore에서도 user 정보 가져오기 (로그인 시 저장된 careRegNo 사용)
   const authUser = useAuthStore((state) => state.user);
-  const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
 
   // 기본 정보

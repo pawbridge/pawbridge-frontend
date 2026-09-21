@@ -46,8 +46,8 @@ export const deleteUser = async (userId: number): Promise<void> => {
 // ========== 마이페이지 관련 API ==========
 
 // 내 정보 조회
-export const getMyInfo = async (): Promise<UserInfoResponse> => {
-  const response = await apiClient.get<{ code: number; data: UserInfoResponse; message: string }>('/api/users/me');
+export const getMyInfo = async (signal?: AbortSignal): Promise<UserInfoResponse> => {
+  const response = await apiClient.get<{ code: number; data: UserInfoResponse; message: string }>('/api/users/me', { signal });
   return response.data.data;
 };
 
@@ -62,17 +62,18 @@ export const updatePassword = async (data: PasswordUpdateRequest): Promise<void>
 };
 
 // 내가 찜한 동물 목록 조회
-export const getFavoriteAnimals = async (): Promise<FavoriteListResponse> => {
-  const response = await apiClient.get<{ code: number; data: FavoriteListResponse; message: string }>('/api/users/me/favorite-animals');
+export const getFavoriteAnimals = async (signal?: AbortSignal): Promise<FavoriteListResponse> => {
+  const response = await apiClient.get<{ code: number; data: FavoriteListResponse; message: string }>('/api/users/me/favorite-animals', { signal });
   return response.data.data;
 };
 
 // 내 보호소가 등록한 동물 목록 조회 (페이징)
 // 명세서 4.2: GET /api/users/me/registered-animals
 // 서버가 수동 등록 조건으로 조회·집계한 페이지를 반환한다.
-export const getRegisteredAnimals = async (page: number = 0, size: number = 20): Promise<PageResponse<Animal>> => {
+export const getRegisteredAnimals = async (page: number = 0, size: number = 20, signal?: AbortSignal): Promise<PageResponse<Animal>> => {
   const response = await apiClient.get<{ code: number; data: PageResponse<Animal>; message: string }>('/api/users/me/registered-animals', {
     params: { page, size, sort: 'createdAt,desc' },
+    signal,
   });
   return response.data.data;
 };

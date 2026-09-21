@@ -3,10 +3,12 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getOrderById, confirmPayment } from '../api/products.api';
 import type { OrderItem } from '../types/api.types';
+import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
 export default function OrderComplete() {
+  const userId = useAuthStore(state => state.user?.id);
   const [searchParams] = useSearchParams();
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const pollDeadlineRef = useRef<number | null>(null); // 결제 승인 후 폴링 마감 시점
@@ -39,9 +41,9 @@ export default function OrderComplete() {
 
   // 주문 정보 조회
   const { data: order, isLoading, error, refetch } = useQuery({
-    queryKey: ['order', internalOrderId],
+    queryKey: ['order', internalOrderId, userId],
     queryFn: () => getOrderById(Number(internalOrderId)),
-    enabled: !!internalOrderId && paymentConfirmed,
+    enabled: !!userId && !!internalOrderId && paymentConfirmed,
     // 결제 승인 후 PAID로 바뀔 때까지 1초 폴링, 최대 10초
     refetchInterval: (query) => {
       const latest = query.state.data;

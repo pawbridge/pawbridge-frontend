@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { isPublicShelterRequest } from '../lib/shelters';
 import { isPublicTravelRequest } from '../lib/travel';
-import { useAuthStore } from '../store/authStore.ts';  // 추가
+import { getAuthSessionVersion, useAuthStore } from '../store/authStore.ts';
 
 /**
  * API Client 설정
@@ -20,9 +20,16 @@ const apiClient = axios.create({
   },
 });
 
+// Axios가 응답에도 전달하는 요청 config를 기준으로 로그인 세션을 구분한다.
+const requestSessions = new WeakMap<object, number>();
+const isPreviousSession = (config?: object) => config !== undefined
+  && requestSessions.has(config)
+  && requestSessions.get(config) !== getAuthSessionVersion();
+
 // 요청 인터셉터
 apiClient.interceptors.request.use(
   (config) => {
+    requestSessions.set(config, getAuthSessionVersion());
     // ✅ Zustand에서 토큰 가져오기
     const token = useAuthStore.getState().accessToken;
 
@@ -48,9 +55,17 @@ apiClient.interceptors.request.use(
 // 응답 인터셉터
 apiClient.interceptors.response.use(
   (response) => {
+    if (isPreviousSession(response.config)) {
+      throw new axios.CanceledError('로그인 정보가 변경되어 이전 요청 결과를 사용할 수 없습니다.');
+    }
     return response;
   },
   (error) => {
+    // 이전 계정의 401이 현재 계정을 로그아웃시키지 않도록 먼저 거른다.
+    if (isPreviousSession(error.config)) {
+      return Promise.reject(new axios.CanceledError('로그인 정보가 변경되어 이전 요청 결과를 사용할 수 없습니다.'));
+    }
+    if (axios.isCancel(error)) return Promise.reject(error);
     if (error.response) {
       switch (error.response.status) {
         case 401: {

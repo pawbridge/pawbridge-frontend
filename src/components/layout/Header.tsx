@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
+import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { logout } from '../../api/auth.api';
 import { canSeePetMarket } from '../../lib/petMarket';
 
@@ -32,12 +32,18 @@ export default function Header({ colorScheme = 'default' }: HeaderProps) {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    const sessionVersion = getAuthSessionVersion();
     try {
       await logout();
-      alert('로그아웃되었습니다.');
+      if (sessionVersion === getAuthSessionVersion()) alert('로그아웃되었습니다.');
+    } catch {
+      // 서버 로그아웃 실패와 무관하게 현재 세션의 로컬 정보는 정리한다.
     } finally {
-      clearAuth();
-      navigate('/');
+      // 대기 중 다른 계정으로 로그인했다면 새 계정을 로그아웃시키지 않는다.
+      if (sessionVersion === getAuthSessionVersion()) {
+        clearAuth();
+        navigate('/');
+      }
     }
   };
 

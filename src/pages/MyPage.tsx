@@ -84,22 +84,23 @@ export default function MyPage() {
   // 내 정보 조회
   const { data: userInfo, isLoading } = useQuery({
     queryKey: ['myInfo', user?.id],
-    queryFn: getMyInfo,
+    queryFn: ({ signal }) => getMyInfo(signal),
+    enabled: !!user?.id,
   });
 
   // 찜한 동물 목록 조회
   const { data: favoriteAnimals } = useQuery({
-    queryKey: ['favoriteAnimals'],
-    queryFn: getFavoriteAnimals,
-    enabled: activeTab === 'favoriteAnimals',
+    queryKey: ['favoriteAnimals', user?.id],
+    queryFn: ({ signal }) => getFavoriteAnimals(signal),
+    enabled: !!user?.id && activeTab === 'favoriteAnimals',
   });
 
   // 등록한 동물 목록 조회 (보호소만)
   const [registeredPage, setRegisteredPage] = useState(0);
   const { data: registeredAnimals } = useQuery({
-    queryKey: ['registeredAnimals', registeredPage],
-    queryFn: () => getRegisteredAnimals(registeredPage, 20),
-    enabled: activeTab === 'registeredAnimals' && userInfo?.role === 'ROLE_SHELTER',
+    queryKey: ['registeredAnimals', user?.id, registeredPage, 20],
+    queryFn: ({ signal }) => getRegisteredAnimals(registeredPage, 20, signal),
+    enabled: !!user?.id && activeTab === 'registeredAnimals' && userInfo?.role === 'ROLE_SHELTER',
   });
 
   // 위시리스트 조회
@@ -111,9 +112,9 @@ export default function MyPage() {
 
   // 장바구니 조회
   const { data: cartItems = [] } = useQuery({
-    queryKey: ['cart'],
-    queryFn: getCart,
-    enabled: activeTab === 'cart',
+    queryKey: ['cart', user?.id],
+    queryFn: ({ signal }) => getCart(signal),
+    enabled: !!user?.id && activeTab === 'cart',
   });
 
   // 주문 내역 조회

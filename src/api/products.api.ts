@@ -40,8 +40,8 @@ export const getProductById = async (productId: number): Promise<Product> => {
 };
 
 // 장바구니 조회
-export const getCart = async (): Promise<CartItem[]> => {
-  const response = await apiClient.get<CartItem[]>('/api/carts');
+export const getCart = async (signal?: AbortSignal): Promise<CartItem[]> => {
+  const response = await apiClient.get<CartItem[]>('/api/carts', { signal });
   return response.data;
 };
 
