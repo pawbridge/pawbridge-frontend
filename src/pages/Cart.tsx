@@ -1,6 +1,7 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCart, clearCart } from '../api/products.api';
+import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
@@ -8,12 +9,14 @@ const SHIPPING_FEE = 3000;
 const FREE_SHIPPING_THRESHOLD = 50000;
 
 export default function Cart() {
+  const userId = useAuthStore(state => state.user?.id);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: cartItems = [], isLoading, error } = useQuery({
-    queryKey: ['cart'],
-    queryFn: getCart,
+    queryKey: ['cart', userId],
+    queryFn: ({ signal }) => getCart(signal),
+    enabled: !!userId,
   });
 
   const clearCartMutation = useMutation({
