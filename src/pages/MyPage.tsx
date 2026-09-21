@@ -100,18 +100,6 @@ export default function MyPage() {
     enabled: activeTab === 'registeredAnimals' && userInfo?.role === 'ROLE_SHELTER',
   });
 
-  // 디버깅: 등록한 동물 목록 확인
-  useEffect(() => {
-    if (registeredAnimals) {
-      console.log('=== 등록한 동물 목록 응답 ===');
-      console.log('전체 응답:', registeredAnimals);
-      console.log('전체 개수:', registeredAnimals.content?.length || 0);
-      console.log('각 동물의 apiSource:', registeredAnimals.content?.map((a) => ({ id: a.id, apiSource: a.apiSource, breed: a.breed })));
-      const manualAnimals = registeredAnimals.content?.filter((animal) => animal.apiSource === 'MANUAL') || [];
-      console.log('MANUAL 필터링 후 개수:', manualAnimals.length);
-    }
-  }, [registeredAnimals]);
-
   // 위시리스트 조회
   const { data: wishlists } = useQuery({
     queryKey: ['wishlists', user?.id || 'mock', wishlistPage, 20],
@@ -587,22 +575,11 @@ export default function MyPage() {
 
                   {registeredAnimals && registeredAnimals.content && registeredAnimals.content.length > 0 ? (
                     (() => {
-                      // apiSource 필드가 없을 경우 apmsNoticeNo로 판단
-                      // MAN-으로 시작하면 수동 등록, 그 외는 APMS 동기화
-                      const manualAnimals = registeredAnimals.content.filter((animal) => {
-                        // apiSource가 있으면 그것을 우선 사용
-                        if (animal.apiSource) {
-                          return animal.apiSource === 'MANUAL';
-                        }
-                        // apiSource가 없으면 apmsNoticeNo로 판단
-                        return animal.apmsNoticeNo && animal.apmsNoticeNo.startsWith('MAN-');
-                      });
-                      console.log('MyPage - 필터링 전:', registeredAnimals.content.length, '개');
-                      console.log('MyPage - 필터링 후:', manualAnimals.length, '개');
+                      const manualAnimals = registeredAnimals.content;
                       return manualAnimals.length > 0 ? (
                         <div className="mt-8">
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                            총 {manualAnimals.length}마리의 동물을 등록했습니다
+                            총 {registeredAnimals.totalElements}마리의 동물을 등록했습니다
                           </p>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {manualAnimals.map((animal) => (
@@ -674,11 +651,10 @@ export default function MyPage() {
 
                           {/* 페이지네이션 */}
                           {(() => {
-                            // 필터링 후 실제 동물 수를 기준으로 페이지 수 계산
-                            const pageSize = 20;
-                            const actualTotalPages = Math.ceil(manualAnimals.length / pageSize);
-                            
-                            return actualTotalPages > 1 ? (
+                            const totalPages = registeredAnimals.totalPages;
+                            const firstPage = Math.max(0, Math.min(registeredPage - 1, totalPages - 3));
+
+                            return totalPages > 1 ? (
                               <div className="flex items-center justify-center gap-2 mt-8">
                                 <button
                                   onClick={() => setRegisteredPage((prev) => Math.max(0, prev - 1))}
@@ -688,9 +664,10 @@ export default function MyPage() {
                                   이전
                                 </button>
                                 <div className="flex items-center gap-1">
-                                  {Array.from({ length: actualTotalPages }, (_, i) => i).map((page) => (
+                                  {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => firstPage + i).map((page) => (
                                     <button
                                       key={page}
+                                      aria-current={registeredPage === page ? 'page' : undefined}
                                       onClick={() => setRegisteredPage(page)}
                                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                                         registeredPage === page
@@ -703,8 +680,8 @@ export default function MyPage() {
                                   ))}
                                 </div>
                                 <button
-                                  onClick={() => setRegisteredPage((prev) => Math.min(actualTotalPages - 1, prev + 1))}
-                                  disabled={registeredPage >= actualTotalPages - 1}
+                                  onClick={() => setRegisteredPage((prev) => Math.min(totalPages - 1, prev + 1))}
+                                  disabled={registeredPage >= totalPages - 1}
                                   className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
                                   다음
