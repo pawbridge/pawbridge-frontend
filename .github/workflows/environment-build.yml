@@ -20,7 +20,7 @@ jobs:
       - run: npm run test:environment
       - run: npm run build:dev
         env:
-          VITE_API_BASE_URL: https://dev-api.pawbridge.kr
+          VITE_API_BASE_URL: http://localhost:28080
       - run: npm run build:prod
         env:
           VITE_API_BASE_URL: https://api.pawbridge.kr

@@ -7,10 +7,9 @@ export function validateEnvironment(environment, values) {
     throw new Error('API base must be an origin without credentials, path or query');
   }
   const local = ['localhost', '127.0.0.1'].includes(url.hostname);
-  const dev = url.hostname === 'dev-api.pawbridge.kr' && url.protocol === 'https:' && !url.port;
   const prod = url.origin === 'https://api.pawbridge.kr';
-  if (environment === 'dev' && !((local && url.protocol === 'http:') || dev)) {
-    throw new Error('Dev must use the dedicated dev API or local port-forward');
+  if (environment === 'dev' && !(local && url.protocol === 'http:' && url.port === '28080')) {
+    throw new Error('Dev must use the local Compose API on port 28080');
   }
   if (environment === 'prod' && !prod) throw new Error('Prod must use the production API');
   const key = values.VITE_TOSS_CLIENT_KEY || '';

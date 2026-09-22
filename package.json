@@ -12,7 +12,8 @@
     "test:stats": "node --experimental-strip-types --test tests/regionalStats.test.ts tests/animalStatistics.test.ts",
     "build:dev": "node scripts/build-environment.mjs dev",
     "build:prod": "node scripts/build-environment.mjs prod",
-    "test:environment": "node --test tests/environment-policy.test.mjs"
+    "test:environment": "node --test tests/environment-policy.test.mjs",
+    "dev:local": "node scripts/start-local.mjs"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.5.10",
