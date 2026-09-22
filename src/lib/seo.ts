@@ -60,7 +60,7 @@ const exactPages = new Map<string, PageDefinition>([
   }],
   ['/privacy', {
     title: '개인정보처리방침 | 포우브릿지',
-    description: '포우브릿지의 개인정보 처리와 이용 분석 도구 사용 방침을 안내합니다.',
+    description: '포우브릿지의 개인정보 처리 방침과 이용자 권리를 안내합니다.',
     indexable: false,
   }],
   ['/products', {

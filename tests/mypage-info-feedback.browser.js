@@ -20,7 +20,6 @@ async page => {
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
   await page.addInitScript(user => {
-    localStorage.setItem('pawbridge.analytics-consent.v1', 'denied');
     localStorage.setItem('auth-storage', JSON.stringify({ state: { user, accessToken: 'feedback-token-only' }, version: 0 }));
   }, profile);
   page.on('pageerror', error => errors.push(error.message));

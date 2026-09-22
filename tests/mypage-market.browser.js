@@ -64,7 +64,6 @@ async page => {
     const finish = pendingMutation; pendingMutation = null; holdMutation = false; finish();
   };
   await page.addInitScript(() => {
-    localStorage.setItem('pawbridge.analytics-consent.v1', 'denied');
     window.__marketAlerts = []; window.__marketConfirm = false;
     window.alert = text => window.__marketAlerts.push(text);
     window.confirm = () => window.__marketConfirm;
