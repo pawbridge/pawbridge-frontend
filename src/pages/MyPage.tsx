@@ -97,7 +97,7 @@ export default function MyPage() {
   });
 
   // 찜한 동물 목록 조회
-  const { data: favoriteAnimals } = useQuery({
+  const favoriteAnimalsQuery = useQuery({
     queryKey: ['favoriteAnimals', user?.id],
     queryFn: ({ signal }) => getFavoriteAnimals(signal),
     enabled: !!user?.id && activeTab === 'favoriteAnimals',
@@ -105,28 +105,28 @@ export default function MyPage() {
 
   // 등록한 동물 목록 조회 (보호소만)
   const [registeredPage, setRegisteredPage] = useState(0);
-  const { data: registeredAnimals } = useQuery({
+  const registeredAnimalsQuery = useQuery({
     queryKey: ['registeredAnimals', user?.id, registeredPage, 20],
     queryFn: ({ signal }) => getRegisteredAnimals(registeredPage, 20, signal),
     enabled: !!user?.id && activeTab === 'registeredAnimals' && userInfo?.role === 'ROLE_SHELTER',
   });
 
   // 위시리스트 조회
-  const { data: wishlists } = useQuery({
+  const wishlistsQuery = useQuery({
     queryKey: ['wishlists', user?.id || 'mock', wishlistPage, 20],
     queryFn: () => getWishlists(user?.id || 1, { page: wishlistPage, size: 20 }),
     enabled: activeTab === 'wishlist',
   });
 
   // 장바구니 조회
-  const { data: cartItems = [] } = useQuery({
+  const cartQuery = useQuery({
     queryKey: ['cart', user?.id],
     queryFn: ({ signal }) => getCart(signal),
     enabled: !!user?.id && activeTab === 'cart',
   });
 
   // 주문 내역 조회
-  const { data: ordersData } = useQuery({
+  const ordersQuery = useQuery({
     queryKey: ['orders', user?.id || 'test', statusFilter, ordersPage],
     queryFn: () =>
       getOrders({
@@ -136,6 +136,12 @@ export default function MyPage() {
       }),
     enabled: activeTab === 'orders',
   });
+
+  const { data: favoriteAnimals } = favoriteAnimalsQuery;
+  const { data: registeredAnimals } = registeredAnimalsQuery;
+  const { data: wishlists } = wishlistsQuery;
+  const { data: cartItems = [] } = cartQuery;
+  const { data: ordersData } = ordersQuery;
 
   // 닉네임 변경 mutation
   const updateNicknameMutation = useMutation({
@@ -446,6 +452,13 @@ export default function MyPage() {
 
               {activeTab === 'favoriteAnimals' && (
                 <MyFavoriteAnimalsPanel
+                  feedback={{
+                    isLoading: favoriteAnimalsQuery.isLoading,
+                    isError: favoriteAnimalsQuery.isError,
+                    isFetching: favoriteAnimalsQuery.isFetching,
+                    isFetched: favoriteAnimalsQuery.isFetched,
+                    onRetry: () => { void favoriteAnimalsQuery.refetch({ cancelRefetch: false }); },
+                  }}
                   favoriteAnimals={favoriteAnimals}
                   currentPage={favoriteAnimalsPage}
                   onPageChange={setFavoriteAnimalsPage}
@@ -454,6 +467,13 @@ export default function MyPage() {
 
               {activeTab === 'registeredAnimals' && (
                 <MyRegisteredAnimalsPanel
+                  feedback={{
+                    isLoading: registeredAnimalsQuery.isLoading,
+                    isError: registeredAnimalsQuery.isError,
+                    isFetching: registeredAnimalsQuery.isFetching,
+                    isFetched: registeredAnimalsQuery.isFetched,
+                    onRetry: () => { void registeredAnimalsQuery.refetch({ cancelRefetch: false }); },
+                  }}
                   registeredAnimals={registeredAnimals}
                   currentPage={registeredPage}
                   onPageChange={setRegisteredPage}
@@ -462,6 +482,13 @@ export default function MyPage() {
 
               {activeTab === 'wishlist' && (
                 <MyWishlistPanel
+                  feedback={{
+                    isLoading: wishlistsQuery.isLoading,
+                    isError: wishlistsQuery.isError,
+                    isFetching: wishlistsQuery.isFetching,
+                    isFetched: wishlistsQuery.isFetched,
+                    onRetry: () => { void wishlistsQuery.refetch({ cancelRefetch: false }); },
+                  }}
                   wishlists={wishlists}
                   filteredAndSortedWishlist={filteredAndSortedWishlist}
                   selectedWishlistItems={selectedWishlistItems}
@@ -484,6 +511,13 @@ export default function MyPage() {
 
               {activeTab === 'cart' && (
                 <MyCartPanel
+                  feedback={{
+                    isLoading: cartQuery.isLoading,
+                    isError: cartQuery.isError,
+                    isFetching: cartQuery.isFetching,
+                    isFetched: cartQuery.isFetched,
+                    onRetry: () => { void cartQuery.refetch({ cancelRefetch: false }); },
+                  }}
                   cartItems={cartItems}
                   totalProductPrice={totalProductPrice}
                   shippingFee={shippingFee}
@@ -497,6 +531,13 @@ export default function MyPage() {
 
               {activeTab === 'orders' && (
                 <MyOrdersPanel
+                  feedback={{
+                    isLoading: ordersQuery.isLoading,
+                    isError: ordersQuery.isError,
+                    isFetching: ordersQuery.isFetching,
+                    isFetched: ordersQuery.isFetched,
+                    onRetry: () => { void ordersQuery.refetch({ cancelRefetch: false }); },
+                  }}
                   ordersData={ordersData}
                   statusFilter={statusFilter}
                   ordersPage={ordersPage}
