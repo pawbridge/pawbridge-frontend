@@ -5,12 +5,12 @@ function shellRequest(request: Request): Request {
   return new Request(url, { method: 'GET' });
 }
 
-function transformShell(response: Response, pathname: string, search: string): Response {
+function transformShell(response: Response, pathname: string, search: string, development: boolean): Response {
   const metadata = resolveSeoMetadata(pathname, search);
   const transformed = new HTMLRewriter()
     .on('title', { element(element) { element.setInnerContent(metadata.title); } })
     .on('meta[name="description"]', { element(element) { element.setAttribute('content', metadata.description); } })
-    .on('meta[name="robots"]', { element(element) { element.setAttribute('content', metadata.robots); } })
+    .on('meta[name="robots"]', { element(element) { element.setAttribute('content', (development ? 'noindex, nofollow' : metadata.robots)); } })
     .on('meta[property="og:title"]', { element(element) { element.setAttribute('content', metadata.title); } })
     .on('meta[property="og:description"]', { element(element) { element.setAttribute('content', metadata.description); } })
     .on('meta[property="og:url"]', { element(element) { element.setAttribute('content', metadata.canonicalUrl); } })
@@ -25,7 +25,7 @@ function transformShell(response: Response, pathname: string, search: string): R
   headers.delete('Last-Modified');
   headers.delete('Content-Length');
   headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
-  headers.set('X-Robots-Tag', metadata.robots);
+  headers.set('X-Robots-Tag', (development ? 'noindex, nofollow' : metadata.robots));
 
   return new Response(transformed.body, {
     status: metadata.knownRoute ? 200 : 404,
@@ -47,7 +47,7 @@ export default {
     const shell = await env.ASSETS.fetch(shellRequest(request));
     if (!shell.ok) return shell;
 
-    const transformed = transformShell(shell, url.pathname, url.search);
+    const transformed = transformShell(shell, url.pathname, url.search, env.DEPLOYMENT_ENVIRONMENT === 'dev');
     if (request.method === 'HEAD') {
       return new Response(null, {
         status: transformed.status,
