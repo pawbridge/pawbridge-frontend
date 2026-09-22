@@ -1,19 +1,15 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-interface FooterProps {
-  colorScheme?: 'default' | 'warm';
-}
-
-export default function Footer({ colorScheme = 'default' }: FooterProps) {
-  const warm = colorScheme === 'warm';
-  const titleColor = warm ? 'text-brand-ink' : 'text-[#052e16]';
-  const mutedColor = warm ? 'text-brand-muted dark:text-gray-300' : 'text-[#4b575c]';
-  const hoverColor = warm ? 'hover:text-brand-ink dark:hover:text-white' : 'hover:text-[#036b3c]';
-  const focusColor = warm ? 'focus-visible:outline-brand-ink dark:focus-visible:outline-brand' : 'focus-visible:outline-primary';
+export default function Footer() {
+  const titleColor = 'text-brand-ink';
+  const mutedColor = 'text-brand-muted dark:text-gray-300';
+  const hoverColor = 'hover:text-brand-accent';
+  const focusColor = 'focus-visible:outline-brand-focus';
   const linkClass = `inline-flex min-h-8 items-center text-sm ${mutedColor} transition-colors ${hoverColor} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${focusColor}`;
+
   return (
-    <footer className={`mt-16 w-full border-t-4 ${warm ? 'border-brand' : 'border-primary'} bg-white dark:bg-background-dark md:mt-24`}>
+    <footer className={`mt-16 w-full border-t-4 border-brand bg-white dark:bg-background-dark md:mt-24`}>
       <div className="mx-auto w-full max-w-[1504px] px-4 py-8 md:px-6 md:py-9">
         <div className="grid gap-8 md:grid-cols-[minmax(260px,2fr)_repeat(3,minmax(120px,1fr))]">
           <div>
@@ -35,7 +31,7 @@ export default function Footer({ colorScheme = 'default' }: FooterProps) {
           </FooterColumn>
         </div>
 
-        <div className={`mt-8 border-t ${warm ? 'border-brand-border text-brand-muted' : 'border-[#c7ced1] text-[#6e7a75]'} pt-5 text-xs leading-5 dark:border-gray-700 dark:text-gray-400`}>
+        <div className={`mt-8 border-t border-brand-border text-brand-muted pt-5 text-xs leading-5 dark:border-gray-700 dark:text-gray-400`}>
           <p>반려동물 동반여행 정보는 <a href="https://api.visitkorea.or.kr/" target="_blank" rel="noopener noreferrer" className={`underline underline-offset-2 ${hoverColor}`}>한국관광공사 TourAPI</a>를 활용합니다.</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 포우 브릿지</p>

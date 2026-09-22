@@ -34,7 +34,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
   const isFirstPage = currentPage === 0;
   const isLastPage = currentPage >= totalPages - 1;
   const mobileStart = Math.max(0, Math.min(pageNumbers.indexOf(currentPage) - 1, pageNumbers.length - 3));
-  const separatedButton = 'flex h-11 min-w-11 items-center justify-center rounded-lg border border-border-light bg-card-light text-gray-600 transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-border-dark dark:bg-card-dark dark:text-gray-300 dark:hover:bg-gray-700';
+  const separatedButton = 'flex h-11 min-w-11 items-center justify-center rounded-lg border border-border-light bg-card-light text-gray-600 transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:cursor-not-allowed disabled:opacity-50 dark:border-border-dark dark:bg-card-dark dark:text-gray-300 dark:hover:bg-gray-700';
 
   return (
     <nav aria-label="페이지 이동" className="flex items-center justify-center pt-10 mt-10 border-t border-border-light dark:border-border-dark">
@@ -58,9 +58,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
             <li key={`page-${pageNum}`} className={separated && (index < mobileStart || index >= mobileStart + 3) ? 'hidden sm:list-item' : undefined}>
               <button
                 onClick={() => onPageChange(pageNum)}
-                className={separated ? `${separatedButton} ${isActive ? '!border-primary !bg-primary !text-primary-content font-bold' : ''}` : `flex items-center justify-center px-4 h-10 leading-tight transition-colors ${
+                className={separated ? `${separatedButton} ${isActive ? '!border-brand-focus !bg-brand !text-brand-ink font-bold' : ''}` : `flex items-center justify-center px-4 h-10 leading-tight transition-colors ${
                   isActive
-                    ? 'text-primary bg-primary/20 border border-primary dark:border-primary font-bold'
+                    ? 'text-brand-accent bg-brand/20 border border-brand-focus dark:border-brand-focus font-bold'
                     : 'text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white'
                 }`}
                 aria-label={`${pageNum + 1}페이지`}

@@ -17,7 +17,7 @@ export default function FavoriteAnimals() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-light dark:bg-background-dark">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus"></div>
       </div>
     );
   }
@@ -124,7 +124,7 @@ export default function FavoriteAnimals() {
             </p>
             <Link
               to="/animals"
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-text-main rounded-lg font-bold hover:bg-green-400 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-brand text-text-main rounded-lg font-bold hover:bg-brand-hover transition-colors"
             >
               <span className="material-symbols-outlined">search</span>
               동물 둘러보기

@@ -16,7 +16,7 @@ interface StatCardProps {
   iconColor?: string;
 }
 
-function StatCard({ title, value, icon, trend, iconBgColor = 'bg-primary/20', iconColor = 'text-text-main' }: StatCardProps) {
+function StatCard({ title, value, icon, trend, iconBgColor = 'bg-brand/20', iconColor = 'text-text-main' }: StatCardProps) {
   return (
     <div className="flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-[#e5e7eb] dark:border-gray-700 relative overflow-hidden group">
       <div className="flex justify-between items-start z-10">
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">대시보드</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-text-main dark:text-white">최근 활동</h3>
-                <button className="text-sm font-semibold text-primary-dark hover:text-primary transition-colors flex items-center gap-1">
+                <button className="text-sm font-semibold text-brand-accent hover:text-brand-accent transition-colors flex items-center gap-1">
                   전체 보기
                   <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                 </button>
@@ -300,10 +300,10 @@ export default function AdminDashboard() {
                                 <div
                                   className={`size-9 rounded-full flex items-center justify-center font-bold text-xs ${
                                     activity.userInitial === '김'
-                                      ? 'bg-primary/20 text-text-main'
+                                      ? 'bg-brand/20 text-text-main'
                                       : activity.userInitial === '정'
                                       ? 'bg-purple-100 text-purple-700'
-                                      : 'bg-primary/20 text-text-main'
+                                      : 'bg-brand/20 text-text-main'
                                   }`}
                                 >
                                   {activity.userInitial || activity.userName.charAt(0)}

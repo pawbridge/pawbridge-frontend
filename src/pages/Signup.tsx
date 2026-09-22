@@ -219,7 +219,7 @@ export default function Signup() {
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
                   placeholder="이메일 주소를 입력하세요"
-                  className={`block flex-1 rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
+                  className={`block flex-1 rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-brand-focus focus:ring-brand-focus dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
                     errors.email
                       ? 'border-red-500 dark:border-red-500'
                       : 'border-gray-300 dark:border-gray-600'
@@ -230,7 +230,7 @@ export default function Signup() {
                   type="button"
                   onClick={handleSendCode}
                   disabled={emailVerified || sendCodeMutation.isPending}
-                  className="whitespace-nowrap rounded-lg bg-primary px-4 py-3.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="whitespace-nowrap rounded-lg bg-brand px-4 py-3.5 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {emailVerified ? '인증완료' : sendCodeMutation.isPending ? '발송중...' : '인증코드 발송'}
                 </button>
@@ -258,7 +258,7 @@ export default function Signup() {
                       value={digit}
                       onChange={(e) => handleCodeChange(index, e.target.value)}
                       onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                      className="h-14 w-full text-center text-lg font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-800 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-primary focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="h-14 w-full text-center text-lg font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-800 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-brand-focus focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       disabled={verifyCodeMutation.isPending}
                     />
                   ))}
@@ -267,7 +267,7 @@ export default function Signup() {
                   type="button"
                   onClick={handleVerifyCode}
                   disabled={verifyCodeMutation.isPending}
-                  className="w-full mt-2 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full mt-2 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-brand-ink hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {verifyCodeMutation.isPending ? '확인 중...' : '인증 확인'}
                 </button>
@@ -301,7 +301,7 @@ export default function Signup() {
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="이름을 입력하세요"
-                className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
+                className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-brand-focus focus:ring-brand-focus dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
                   errors.name
                     ? 'border-red-500 dark:border-red-500'
                     : 'border-gray-300 dark:border-gray-600'
@@ -325,7 +325,7 @@ export default function Signup() {
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
                 placeholder="비밀번호를 입력하세요"
-                className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
+                className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-brand-focus focus:ring-brand-focus dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
                   errors.password
                     ? 'border-red-500 dark:border-red-500'
                     : 'border-gray-300 dark:border-gray-600'
@@ -349,7 +349,7 @@ export default function Signup() {
                 value={formData.rePassword}
                 onChange={(e) => handleChange('rePassword', e.target.value)}
                 placeholder="비밀번호를 다시 한번 입력하세요"
-                className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-primary focus:ring-primary dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
+                className={`block w-full rounded-lg border p-3.5 text-gray-900 placeholder:text-gray-500 focus:border-brand-focus focus:ring-brand-focus dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 sm:text-sm sm:leading-6 ${
                   errors.rePassword
                     ? 'border-red-500 dark:border-red-500'
                     : 'border-gray-300 dark:border-gray-600'
@@ -366,7 +366,7 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={!emailVerified || signupMutation.isPending}
-                className="flex w-full justify-center rounded-lg bg-primary px-3 py-4 text-base font-bold leading-6 text-gray-900 shadow-sm transition-transform hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="flex w-full justify-center rounded-lg bg-brand px-3 py-4 text-base font-bold leading-6 text-gray-900 shadow-sm transition-transform hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {signupMutation.isPending ? '처리 중...' : '회원가입 완료'}
               </button>
@@ -377,7 +377,7 @@ export default function Signup() {
               이미 회원이신가요?{' '}
               <Link
                 to="/login"
-                className="font-medium text-primary-dark hover:text-primary dark:text-primary dark:hover:text-primary-light"
+                className="font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
               >
                 로그인
               </Link>

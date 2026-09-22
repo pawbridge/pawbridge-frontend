@@ -37,7 +37,7 @@ export function buildRegionRows(data: RegionalAnimalStats[]) {
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'ko'));
 }
 
-export const terrainColors = ['#e8edf2', '#dcefe9', '#6ee7b7', '#047857', '#1f5b4b'] as const;
+export const terrainColors = ['var(--chart-zero)', 'var(--chart-low)', 'var(--chart-mid)', 'var(--chart-high)', 'var(--chart-highest)'] as const;
 
 // Exact 1-D natural breaks: minimize within-group squared deviation for up to
 // four positive-count groups. Zero is separate; equal values are never split.

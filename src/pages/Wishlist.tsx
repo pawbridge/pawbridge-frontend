@@ -223,9 +223,9 @@ export default function Wishlist() {
                     type="checkbox"
                     checked={isAllSelected}
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded text-primary border-gray-300 focus:ring-primary h-5 w-5"
+                    className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-5 w-5"
                   />
-                  <span className="text-sm font-medium text-text-light dark:text-text-dark group-hover:text-primary transition-colors">
+                  <span className="text-sm font-medium text-text-light dark:text-text-dark group-hover:text-brand-accent transition-colors">
                     전체 선택 ({selectedItems.length})
                   </span>
                 </label>
@@ -252,14 +252,14 @@ export default function Wishlist() {
                     type="checkbox"
                     checked={hideSoldOut}
                     onChange={(e) => setHideSoldOut(e.target.checked)}
-                    className="rounded text-primary border-gray-300 focus:ring-primary h-4 w-4"
+                    className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-4 w-4"
                   />
                   <span>품절 상품 숨기기</span>
                 </label>
                 <select
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-primary focus:ring-primary py-2 pl-3 pr-8 cursor-pointer"
+                  className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-brand-focus focus:ring-brand-focus py-2 pl-3 pr-8 cursor-pointer"
                 >
                   <option value="latest">최신순</option>
                   <option value="priceAsc">가격 낮은순</option>
@@ -273,8 +273,8 @@ export default function Wishlist() {
           {/* 상품 목록 */}
           {isEmpty ? (
             <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-dashed">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 mb-6">
-                <span className="material-symbols-outlined text-4xl text-primary">favorite_border</span>
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand/10 mb-6">
+                <span className="material-symbols-outlined text-4xl text-brand-accent">favorite_border</span>
               </div>
               <h3 className="text-xl font-bold text-text-light dark:text-text-dark">찜한 상품이 없습니다.</h3>
               <p className="mt-2 text-subtext-light dark:text-subtext-dark max-w-sm">
@@ -282,7 +282,7 @@ export default function Wishlist() {
               </p>
               <Link
                 to="/products"
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-hover transition-all"
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
               >
                 쇼핑하러 가기
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -304,7 +304,7 @@ export default function Wishlist() {
                   return (
                     <div
                       key={item.wishlistId}
-                      className={`group flex flex-col bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 ${
+                      className={`group flex flex-col bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:shadow-brand/5 transition-all duration-300 ${
                         isSoldOut ? 'opacity-75 grayscale hover:grayscale-0 hover:opacity-100' : ''
                       }`}
                     >
@@ -326,7 +326,7 @@ export default function Wishlist() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={(e) => handleSelectItem(item.wishlistId, e.target.checked)}
-                            className="rounded-md text-primary border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-primary focus:ring-offset-0"
+                            className="rounded-md text-brand-ink border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-brand-focus focus:ring-offset-0"
                           />
                         </div>
                         <div className="absolute top-3 right-3 z-10">
@@ -347,7 +347,7 @@ export default function Wishlist() {
                         
                         {/* 상품명 */}
                         <Link to={`/products/${item.productId}`}>
-                          <h3 className="text-base font-bold text-text-light dark:text-text-dark cursor-pointer hover:text-primary transition-colors line-clamp-2">
+                          <h3 className="text-base font-bold text-text-light dark:text-text-dark cursor-pointer hover:text-brand-accent transition-colors line-clamp-2">
                             {item.productName}
                           </h3>
                         </Link>
@@ -389,7 +389,7 @@ export default function Wishlist() {
                           <button
                             onClick={() => addToCartMutation.mutate(item.skuId)}
                             disabled={isSoldOut || addToCartMutation.isPending}
-                            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary py-2.5 px-3 text-sm font-bold text-white shadow-sm hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
+                            className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-brand py-2.5 px-3 text-sm font-bold text-brand-ink shadow-sm hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
                           >
                             {isSoldOut ? (
                               <>
@@ -438,8 +438,8 @@ export default function Wishlist() {
                       onClick={() => setCurrentPage(i)}
                       className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium transition-colors ${
                         i === currentPage
-                          ? 'bg-primary text-white border-primary'
-                          : 'text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary'
+                          ? 'bg-brand text-brand-ink border-brand-focus'
+                          : 'text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-brand-accent'
                       }`}
                     >
                       {i + 1}

@@ -98,7 +98,7 @@ export default function AdminUserDetail() {
         <AdminSidebar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-text-sub dark:text-gray-400">회원 정보를 불러오는 중...</p>
           </div>
         </main>
@@ -115,7 +115,7 @@ export default function AdminUserDetail() {
             <p className="text-red-500 mb-4">회원 정보를 불러오는 중 오류가 발생했습니다.</p>
             <button
               onClick={() => navigate('/admin/users')}
-              className="px-4 py-2 bg-primary text-text-main rounded-lg hover:bg-primary-hover transition-colors"
+              className="px-4 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors"
             >
               회원 목록으로 돌아가기
             </button>
@@ -146,8 +146,8 @@ export default function AdminUserDetail() {
                 <p className="text-sm font-bold text-text-main dark:text-white">{user?.name || '관리자'}</p>
                 <p className="text-xs text-text-sub dark:text-gray-400">Super Admin</p>
               </div>
-              <div className="h-9 w-9 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                <span className="material-symbols-outlined text-primary text-[20px]">person</span>
+              <div className="h-9 w-9 rounded-full bg-brand/20 flex items-center justify-center border border-brand-focus">
+                <span className="material-symbols-outlined text-brand-accent text-[20px]">person</span>
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default function AdminUserDetail() {
                     onClick={() => navigate('/admin/users')}
                     className="hover:bg-gray-200 dark:hover:bg-gray-700 p-2 -ml-2 rounded-full transition-colors group"
                   >
-                    <span className="material-symbols-outlined text-text-main dark:text-white group-hover:text-primary transition-colors">arrow_back</span>
+                    <span className="material-symbols-outlined text-text-main dark:text-white group-hover:text-brand-accent transition-colors">arrow_back</span>
                   </button>
                   <h1 className="text-text-main dark:text-white text-3xl font-black leading-tight">회원 상세 정보</h1>
                 </div>
@@ -177,8 +177,8 @@ export default function AdminUserDetail() {
               {/* 프로필 헤더 */}
               <div className="p-8 flex flex-col md:flex-row gap-6 items-start md:items-center border-b border-gray-100 dark:border-gray-800">
                 <div className="relative group">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-gradient-to-br from-primary/20 to-blue-100 dark:from-primary/10 dark:to-blue-900/30 rounded-full ring-4 ring-background-light dark:ring-gray-800 shadow-md flex items-center justify-center">
-                    <span className="text-4xl font-bold text-primary">{userDetail.email.charAt(0).toUpperCase()}</span>
+                  <div className="w-24 h-24 md:w-28 md:h-28 bg-gradient-to-br from-brand/20 to-blue-100 dark:from-brand/10 dark:to-blue-900/30 rounded-full ring-4 ring-background-light dark:ring-gray-800 shadow-md flex items-center justify-center">
+                    <span className="text-4xl font-bold text-brand-accent">{userDetail.email.charAt(0).toUpperCase()}</span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2 flex-grow">
@@ -211,7 +211,7 @@ export default function AdminUserDetail() {
               {/* 기본 정보 */}
               <div className="p-8 bg-white dark:bg-gray-900">
                 <h3 className="text-text-main dark:text-white text-lg font-bold mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">info</span>
+                  <span className="material-symbols-outlined text-brand-accent">info</span>
                   기본 정보
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
@@ -255,7 +255,7 @@ export default function AdminUserDetail() {
                 </button>
                 <button
                   onClick={handleEditClick}
-                  className="w-full sm:w-auto flex items-center justify-center rounded-lg h-11 px-8 bg-primary text-[#111816] text-sm font-bold hover:bg-primary-hover transition-colors shadow-sm"
+                  className="w-full sm:w-auto flex items-center justify-center rounded-lg h-11 px-8 bg-brand text-brand-ink text-sm font-bold hover:bg-brand-hover transition-colors shadow-sm"
                 >
                   <span className="material-symbols-outlined mr-2 text-[20px]">edit</span>
                   <span>정보 수정</span>
@@ -301,7 +301,7 @@ export default function AdminUserDetail() {
                   value={editFormData.nickname || ''}
                   onChange={(e) => setEditFormData({ ...editFormData, nickname: e.target.value })}
                   placeholder="2~10자의 영문, 숫자, 한글"
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
                 />
                 <p className="text-xs text-text-sub dark:text-gray-500 mt-1">2~10자의 영문, 숫자, 한글만 가능합니다.</p>
               </div>
@@ -312,7 +312,7 @@ export default function AdminUserDetail() {
                 <select
                   value={editFormData.role || ''}
                   onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value as 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER' })}
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
                 >
                   <option value="ROLE_USER">일반회원</option>
                   <option value="ROLE_ADMIN">관리자</option>
@@ -331,7 +331,7 @@ export default function AdminUserDetail() {
                     value={editFormData.careRegNo || ''}
                     readOnly
                     title="보호소 연결은 담당자 신청 승인에서 관리합니다"
-                    className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
                   />
                 </div>
               )}
@@ -354,7 +354,7 @@ export default function AdminUserDetail() {
                 <button
                   onClick={handleEditSubmit}
                   disabled={updateMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-primary text-text-main rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {updateMutation.isPending ? '저장 중...' : '저장'}
                 </button>

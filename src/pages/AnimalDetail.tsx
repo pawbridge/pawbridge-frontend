@@ -174,7 +174,7 @@ export default function AnimalDetail() {
         <Header />
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center justify-center min-h-[400px]">
-            <div className="w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            <div className="w-20 h-20 border-4 border-brand-focus border-t-brand-focus rounded-full animate-spin"></div>
             <p className="mt-8 text-xl text-text-light dark:text-text-dark font-semibold animate-pulse">
               정보를 불러오고 있어요...
             </p>
@@ -202,7 +202,7 @@ export default function AnimalDetail() {
               </p>
               <button
                 onClick={() => navigate(searchReturnTo)}
-                className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
+                className="px-6 py-3 bg-brand text-brand-ink font-semibold rounded-lg hover:opacity-90 transition-opacity"
               >
                 목록으로 돌아가기
               </button>
@@ -266,32 +266,32 @@ export default function AnimalDetail() {
         {/* Breadcrumb */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2 text-sm">
-            <button onClick={() => navigate('/')} className="text-secondary dark:text-primary hover:underline">
+            <button onClick={() => navigate('/')} className="text-secondary dark:text-brand-accent hover:underline">
               홈
             </button>
-            <span className="text-secondary dark:text-primary">/</span>
+            <span className="text-secondary dark:text-brand-accent">/</span>
             {fromMyPage ? (
               <>
                 <button 
                   onClick={() => navigate('/mypage', { state: { tab: previousTab } })}
-                  className="text-secondary dark:text-primary hover:underline"
+                  className="text-secondary dark:text-brand-accent hover:underline"
                 >
                   마이페이지
                 </button>
-                <span className="text-secondary dark:text-primary">/</span>
+                <span className="text-secondary dark:text-brand-accent">/</span>
                 <button 
                   onClick={() => navigate('/mypage', { state: { tab: previousTab } })}
-                  className="text-secondary dark:text-primary hover:underline"
+                  className="text-secondary dark:text-brand-accent hover:underline"
                 >
                   내 보호소가 등록한 동물
                 </button>
               </>
             ) : (
-              <button onClick={() => navigate(searchReturnTo)} className="text-secondary dark:text-primary hover:underline">
+              <button onClick={() => navigate(searchReturnTo)} className="text-secondary dark:text-brand-accent hover:underline">
                 동물 검색
               </button>
             )}
-            <span className="text-secondary dark:text-primary">/</span>
+            <span className="text-secondary dark:text-brand-accent">/</span>
             <span className="font-medium text-text-light dark:text-text-dark">[{speciesLabel}] {animal.breed}</span>
           </div>
         </div>
@@ -321,7 +321,7 @@ export default function AnimalDetail() {
                     alt={`${animal.breed} 사진 ${index + 1}`}
                     className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all ${
                       selectedImage === img || (!selectedImage && index === 0)
-                        ? 'border-2 border-primary ring-2 ring-primary/50 dark:border-primary dark:ring-primary/50 shadow-md'
+                        ? 'border-2 border-brand-focus ring-2 ring-brand-focus dark:border-brand-focus dark:ring-brand-focus shadow-md'
                         : 'hover:opacity-80'
                     }`}
                     onClick={() => setSelectedImage(img)}
@@ -348,8 +348,8 @@ export default function AnimalDetail() {
               {/* 상태 태그, 찜 버튼, 수정 버튼 영역 */}
               <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 dark:bg-primary/30 px-4">
-                    <p className="text-primary dark:text-primary text-sm font-bold">
+                  <div className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-brand/20 dark:bg-brand/30 px-4">
+                    <p className="text-brand-accent dark:text-brand-accent text-sm font-bold">
                       {getStatusLabel(animal.status)}
                     </p>
                   </div>
@@ -386,7 +386,7 @@ export default function AnimalDetail() {
                     <Link
                       to={`/animals/${id}/edit`}
                       state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }}
-                      className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-bold text-sm"
+                      className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
                     >
                       <span className="material-symbols-outlined text-[18px]">edit</span>
                       수정하기
@@ -483,13 +483,13 @@ export default function AnimalDetail() {
               <h3 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">보호소 정보</h3>
               <div className="space-y-3 text-sm text-text-light dark:text-text-dark">
                 <p className="flex items-start gap-2">
-                  <span className="material-symbols-outlined text-base text-primary dark:text-primary">home</span>
+                  <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">home</span>
                   <span><strong>보호소명:</strong> {animal.shelterName || animal.shelter?.name || '정보 없음'}</span>
                 </p>
                 
                 {animal.shelter?.phone && (
                   <p className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-primary dark:text-primary">call</span>
+                    <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">call</span>
                     <span>
                       <strong>연락처:</strong>{' '}
                       <button
@@ -501,7 +501,7 @@ export default function AnimalDetail() {
                             });
                           }
                         }}
-                        className="text-primary hover:underline font-medium cursor-pointer"
+                        className="text-brand-accent hover:underline font-medium cursor-pointer"
                       >
                         {animal.shelter.phone}
                       </button>
@@ -512,14 +512,14 @@ export default function AnimalDetail() {
                 
                 {animal.shelter?.address && (
                   <p className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-primary dark:text-primary">location_on</span>
+                    <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">location_on</span>
                     <span><strong>주소:</strong> {animal.shelter.address}</span>
                   </p>
                 )}
                 
                 {animal.shelter?.operatingHours && (
                   <p className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-primary dark:text-primary">schedule</span>
+                    <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">schedule</span>
                     <span><strong>운영시간:</strong> {animal.shelter.operatingHours}</span>
                   </p>
                 )}
@@ -580,7 +580,7 @@ export default function AnimalDetail() {
                       });
                     }
                   }}
-                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-lg"
+                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-brand text-brand-ink text-base font-bold tracking-wide hover:bg-brand-hover transition-colors shadow-lg"
                 >
                   <span className="material-symbols-outlined mr-2">call</span>
                   <span className="truncate">입양 문의하기</span>
@@ -591,7 +591,7 @@ export default function AnimalDetail() {
                   onClick={() => {
                     alert(`입양 문의는 보호소에 직접 연락해주세요!\n\n보호소: ${animal.shelterName}\n\n※ Tip: 공고번호를 말씀해주시면 빠른 상담이 가능합니다.\n공고번호: ${animal.apmsNoticeNo || 'N/A'}`);
                   }}
-                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-lg"
+                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-brand text-brand-ink text-base font-bold tracking-wide hover:bg-brand-hover transition-colors shadow-lg"
                 >
                   <span className="material-symbols-outlined mr-2">call</span>
                   <span className="truncate">입양 문의하기</span>
@@ -654,7 +654,7 @@ export default function AnimalDetail() {
         {similarAnimals && similarAnimals.length > 0 && (
           <section className="mt-12">
             <div className="flex items-center gap-3 mb-6">
-              <span className="material-symbols-outlined text-2xl text-primary">pets</span>
+              <span className="material-symbols-outlined text-2xl text-brand-accent">pets</span>
               <h2 className="text-2xl font-bold text-text-light dark:text-text-dark">
                 이 동물과 비슷한 친구들
               </h2>

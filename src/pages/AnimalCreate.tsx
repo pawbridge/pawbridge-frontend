@@ -204,7 +204,7 @@ export default function AnimalCreate() {
             <p className="text-gray-500 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
             <Link
               to="/mypage"
-              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+              className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
             >
               마이페이지로 돌아가기
             </Link>
@@ -221,12 +221,12 @@ export default function AnimalCreate() {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-[#111816] dark:text-gray-100 font-body h-screen flex overflow-hidden">
+    <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex overflow-hidden">
       {/* 사이드바 */}
-      <aside className="w-64 bg-surface-light dark:bg-surface-dark border-r border-[#e0e8e5] dark:border-[#1f3530] flex flex-col flex-shrink-0 z-50">
+      <aside className="w-64 bg-surface-light dark:bg-surface-dark border-r border-brand-border dark:border-stone-800 flex flex-col flex-shrink-0 z-50">
         {/* 로고 */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-[#e0e8e5] dark:border-[#1f3530]">
-          <div className="size-8 text-primary">
+        <div className="h-16 flex items-center gap-3 px-6 border-b border-brand-border dark:border-stone-800">
+          <div className="size-8 text-brand-accent">
             <svg className="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_6_330)">
                 <path clipRule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fillRule="evenodd"></path>
@@ -236,33 +236,33 @@ export default function AnimalCreate() {
               </defs>
             </svg>
           </div>
-          <h1 className="text-xl font-display font-bold tracking-tight text-[#111816] dark:text-white">PawBridge</h1>
+          <h1 className="text-xl font-display font-bold tracking-tight text-brand-ink dark:text-white">PawBridge</h1>
         </div>
         
         {/* 네비게이션 */}
         <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-hide">
-          <Link to="/mypage" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
+          <Link to="/mypage" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors">
             <span className="material-symbols-outlined text-[22px]">person</span>
             <span className="text-sm font-medium">마이페이지</span>
           </Link>
-          <div className="my-2 h-px bg-[#e0e8e5] dark:bg-[#1f3530] mx-3"></div>
-          <Link to="/animals" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] dark:hover:text-white transition-colors">
+          <div className="my-2 h-px bg-brand-border dark:bg-stone-800 mx-3"></div>
+          <Link to="/animals" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors">
             <span className="material-symbols-outlined text-[22px]">pets</span>
             <span className="text-sm font-medium">동물 목록</span>
           </Link>
           <div className="flex flex-col gap-1 mt-1">
-            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#111816] dark:text-white bg-[#f0f5f3] dark:bg-[#1f3530] font-bold">
+            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-brand-ink dark:text-white bg-brand-soft dark:bg-stone-800 font-bold">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[22px] text-primary">pets</span>
+                <span className="material-symbols-outlined text-[22px] text-brand-accent">pets</span>
                 <span className="text-sm">동물 관리</span>
               </div>
               <span className="material-symbols-outlined text-[18px]">expand_less</span>
             </div>
             <div className="flex flex-col pl-11 gap-1">
-              <Link to="/mypage" className="block px-3 py-2 rounded-lg text-sm text-[#5f8c80] hover:text-[#111816] hover:bg-[#f0f5f3] dark:hover:text-white dark:hover:bg-[#1f3530] transition-colors">
+              <Link to="/mypage" className="block px-3 py-2 rounded-lg text-sm text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:text-white dark:hover:bg-stone-800 transition-colors">
                 내 보호소가 등록한 동물
               </Link>
-              <Link to="/animals/new" className="block px-3 py-2 rounded-lg text-sm font-bold text-primary bg-primary/10 transition-colors">
+              <Link to="/animals/new" className="block px-3 py-2 rounded-lg text-sm font-bold text-brand-accent bg-brand/10 transition-colors">
                 동물 등록
               </Link>
             </div>
@@ -270,8 +270,8 @@ export default function AnimalCreate() {
         </nav>
         
         {/* 하단 고객지원 */}
-        <div className="p-4 border-t border-[#e0e8e5] dark:border-[#1f3530]">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-[#5f8c80] hover:text-[#111816] dark:hover:text-white bg-transparent hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] rounded-lg transition-colors">
+        <div className="p-4 border-t border-brand-border dark:border-stone-800">
+          <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-brand-muted hover:text-brand-ink dark:hover:text-white bg-transparent hover:bg-brand-soft dark:hover:bg-stone-800 rounded-lg transition-colors">
             <span className="material-symbols-outlined text-[18px]">help</span>
             고객지원
           </button>
@@ -281,25 +281,25 @@ export default function AnimalCreate() {
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* 상단 헤더 */}
-        <header className="flex items-center justify-end h-16 px-8 border-b border-[#e0e8e5] dark:border-[#1f3530] bg-surface-light dark:bg-surface-dark flex-shrink-0">
+        <header className="flex items-center justify-end h-16 px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
           <div className="flex items-center gap-6">
-            <button className="relative flex items-center gap-2 text-[#5f8c80] hover:text-primary transition-colors">
+            <button className="relative flex items-center gap-2 text-brand-muted hover:text-brand-accent transition-colors">
               <span className="material-symbols-outlined text-[24px]">notifications</span>
               <span className="absolute top-0 right-0 size-2.5 bg-red-500 rounded-full border-2 border-surface-light dark:border-surface-dark"></span>
             </button>
-            <div className="h-6 w-px bg-[#e0e8e5] dark:border-[#1f3530]"></div>
+            <div className="h-6 w-px bg-brand-border dark:border-stone-800"></div>
             <div className="flex items-center gap-3">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-primary/20 bg-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary">person</span>
+              <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-brand-focus bg-brand/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-brand-accent">person</span>
               </div>
               <div className="hidden md:flex flex-col text-right">
-                <span className="text-sm font-bold leading-none text-[#111816] dark:text-white">{user?.name || '사용자'}</span>
-                <span className="text-xs text-[#5f8c80]">{user?.role === 'ROLE_SHELTER' ? '보호소' : user?.role === 'ROLE_ADMIN' ? '관리자' : '회원'}</span>
+                <span className="text-sm font-bold leading-none text-brand-ink dark:text-white">{user?.name || '사용자'}</span>
+                <span className="text-xs text-brand-muted">{user?.role === 'ROLE_SHELTER' ? '보호소' : user?.role === 'ROLE_ADMIN' ? '관리자' : '회원'}</span>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="flex items-center justify-center size-9 rounded-lg hover:bg-[#f0f5f3] dark:hover:bg-[#1f3530] text-[#5f8c80] hover:text-red-500 transition-colors ml-2"
+              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2"
             >
               <span className="material-symbols-outlined text-[20px]">logout</span>
             </button>
@@ -311,41 +311,41 @@ export default function AnimalCreate() {
         <div className="max-w-5xl mx-auto flex flex-col gap-6">
           {/* 브레드크럼 */}
           <nav className="flex flex-wrap gap-2 text-sm font-medium">
-            <Link to="/" className="text-[#5f8c80] hover:text-primary transition-colors">
+            <Link to="/" className="text-brand-muted hover:text-brand-accent transition-colors">
               홈
             </Link>
-            <span className="text-[#5f8c80] material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-            <Link to="/mypage" className="text-[#5f8c80] hover:text-primary transition-colors">
+            <span className="text-brand-muted material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
+            <Link to="/mypage" className="text-brand-muted hover:text-brand-accent transition-colors">
               마이페이지
             </Link>
-            <span className="text-[#5f8c80] material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-            <span className="text-[#111816] dark:text-white font-bold">동물 등록</span>
+            <span className="text-brand-muted material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
+            <span className="text-brand-ink dark:text-white font-bold">동물 등록</span>
           </nav>
 
           {/* 페이지 제목 */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 pb-2">
             <div className="flex flex-col gap-2">
-              <h1 className="text-[#111816] dark:text-white text-3xl font-display font-black leading-tight tracking-tight">
+              <h1 className="text-brand-ink dark:text-white text-3xl font-display font-black leading-tight tracking-tight">
                 동물 등록
               </h1>
-              <p className="text-[#5f8c80] text-base font-normal">
+              <p className="text-brand-muted text-base font-normal">
                 보호소에서 보호 중인 동물을 등록하세요.
               </p>
             </div>
           </div>
 
           {/* 기본 정보 섹션 */}
-          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
-            <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
+            <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
+            <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold">
               1
             </div>
-            <h2 className="text-[#111816] dark:text-white text-lg font-bold">기본 정보</h2>
+            <h2 className="text-brand-ink dark:text-white text-lg font-bold">기본 정보</h2>
           </div>
           <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="md:col-span-8 flex flex-col gap-5">
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                     종 <span className="text-red-500">*</span>
                   </span>
                 <CustomSelect
@@ -361,19 +361,19 @@ export default function AnimalCreate() {
               </label>
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">품종</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">품종</span>
                   <input
                     type="text"
                     value={breed}
                     onChange={(e) => setBreed(e.target.value)}
                     placeholder="예: 믹스견, 라브라도 리트리버"
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
 
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex flex-col gap-2">
-                    <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                       성별 <span className="text-red-500">*</span>
                     </span>
                     <CustomSelect
@@ -389,7 +389,7 @@ export default function AnimalCreate() {
                   </label>
 
                   <label className="flex flex-col gap-2">
-                    <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                       중성화 여부 <span className="text-red-500">*</span>
                     </span>
                     <CustomSelect
@@ -407,7 +407,7 @@ export default function AnimalCreate() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex flex-col gap-2">
-                    <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">출생년도</span>
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">출생년도</span>
                     <input
                       type="number"
                       value={birthYear}
@@ -415,48 +415,48 @@ export default function AnimalCreate() {
                       placeholder="예: 2023"
                       min="1900"
                       max={new Date().getFullYear()}
-                      className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                     />
                   </label>
 
                   <label className="flex flex-col gap-2">
-                    <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">체중</span>
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">체중</span>
                     <input
                       type="text"
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
                       placeholder="예: 5.5kg"
-                      className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                      className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                     />
                   </label>
                 </div>
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">색상</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">색상</span>
                   <input
                     type="text"
                     value={color}
                     onChange={(e) => setColor(e.target.value)}
                     placeholder="예: 갈색, 흰색"
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">특이사항</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">특이사항</span>
                   <textarea
                     value={specialMark}
                     onChange={(e) => setSpecialMark(e.target.value)}
                     placeholder="동물의 특징이나 특이사항을 입력해주세요."
                     rows={3}
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-y"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all resize-y"
                   />
                 </label>
               </div>
 
               {/* 이미지 업로드 영역 */}
               <div className="md:col-span-4 flex flex-col gap-2">
-                <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                   대표 이미지 <span className="text-red-500">*</span>
                 </span>
                 {imagePreview ? (
@@ -464,7 +464,7 @@ export default function AnimalCreate() {
                     <img
                       src={imagePreview}
                       alt="대표 이미지 미리보기"
-                      className="w-full h-full object-cover rounded-xl border border-[#e0e8e5] dark:border-[#2a453d]"
+                      className="w-full h-full object-cover rounded-xl border border-brand-border dark:border-stone-700"
                     />
                     <button
                       onClick={handleRemoveImage}
@@ -474,15 +474,15 @@ export default function AnimalCreate() {
                     </button>
                   </div>
                 ) : (
-                  <label className="flex-1 min-h-[240px] border-2 border-dashed border-[#dbe6e3] dark:border-[#2a453d] rounded-xl bg-[#f8fbfb] dark:bg-[#122822] flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors group/upload">
-                    <div className="size-14 rounded-full bg-white dark:bg-[#1a2e29] shadow-sm flex items-center justify-center text-[#5f8c80] group-hover/upload:text-primary transition-colors border border-[#e0e8e5] dark:border-[#2a453d]">
+                  <label className="flex-1 min-h-[240px] border-2 border-dashed border-brand-border dark:border-stone-700 rounded-xl bg-white dark:bg-stone-900 flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-brand-focus hover:bg-brand/5 transition-colors group/upload">
+                    <div className="size-14 rounded-full bg-white dark:bg-stone-800 shadow-sm flex items-center justify-center text-brand-muted group-hover/upload:text-brand-accent transition-colors border border-brand-border dark:border-stone-700">
                       <span className="material-symbols-outlined text-[32px]">add_photo_alternate</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <p className="text-sm font-bold text-[#111816] dark:text-white group-hover/upload:text-primary transition-colors">
+                      <p className="text-sm font-bold text-brand-ink dark:text-white group-hover/upload:text-brand-accent transition-colors">
                         클릭하여 이미지 업로드
                       </p>
-                      <p className="text-xs text-[#5f8c80]">SVG, PNG, JPG (최대 10MB)</p>
+                      <p className="text-xs text-brand-muted">SVG, PNG, JPG (최대 10MB)</p>
                     </div>
                     <input
                       type="file"
@@ -497,32 +497,32 @@ export default function AnimalCreate() {
         </section>
 
         {/* 발견 정보 섹션 */}
-        <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
-            <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">2</div>
-            <h2 className="text-[#111816] dark:text-white text-lg font-bold">발견 정보</h2>
+        <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
+            <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">2</div>
+            <h2 className="text-brand-ink dark:text-white text-lg font-bold">발견 정보</h2>
           </div>
           <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="md:col-span-8 flex flex-col gap-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">발견 일자</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">발견 일자</span>
                   <input
                     type="date"
                     value={happenDate}
                     onChange={(e) => setHappenDate(e.target.value)}
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">발견 장소</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">발견 장소</span>
                   <input
                     type="text"
                     value={happenPlace}
                     onChange={(e) => setHappenPlace(e.target.value)}
                     placeholder="예: 서울시 강남구 역삼동"
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
               </div>
@@ -531,31 +531,31 @@ export default function AnimalCreate() {
         </section>
 
         {/* 공고 정보 섹션 */}
-        <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
-            <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">3</div>
-            <h2 className="text-[#111816] dark:text-white text-lg font-bold">공고 정보</h2>
+        <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
+            <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">3</div>
+            <h2 className="text-brand-ink dark:text-white text-lg font-bold">공고 정보</h2>
           </div>
           <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="md:col-span-8 flex flex-col gap-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">공고 시작일</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">공고 시작일</span>
                   <input
                     type="date"
                     value={noticeStartDate}
                     onChange={(e) => setNoticeStartDate(e.target.value)}
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
 
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">공고 종료일</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">공고 종료일</span>
                   <input
                     type="date"
                     value={noticeEndDate}
                     onChange={(e) => setNoticeEndDate(e.target.value)}
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
               </div>
@@ -564,21 +564,21 @@ export default function AnimalCreate() {
         </section>
 
         {/* 설명 섹션 */}
-        <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
-            <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">4</div>
-            <h2 className="text-[#111816] dark:text-white text-lg font-bold">보호소 설명</h2>
+        <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
+          <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
+            <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">4</div>
+            <h2 className="text-brand-ink dark:text-white text-lg font-bold">보호소 설명</h2>
           </div>
           <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="md:col-span-8 flex flex-col gap-5">
               <label className="flex flex-col gap-2">
-                <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">상세 설명</span>
+                <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">상세 설명</span>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="동물에 대한 상세한 설명을 입력해주세요."
                   rows={6}
-                  className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-y"
+                  className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all resize-y"
                 />
               </label>
             </div>
@@ -586,17 +586,17 @@ export default function AnimalCreate() {
         </section>
 
           {/* 버튼 영역 */}
-          <div className="flex justify-end gap-4 pt-6 border-t border-[#e0e8e5] dark:border-[#1f3530]">
+          <div className="flex justify-end gap-4 pt-6 border-t border-brand-border dark:border-stone-800">
             <Link
               to="/mypage"
-              className="px-4 py-2 text-sm font-bold text-[#5f8c80] bg-transparent border border-[#dbe6e3] rounded-lg hover:bg-white hover:text-primary dark:border-[#1f3530] dark:hover:bg-[#1f3530] transition-colors"
+              className="px-4 py-2 text-sm font-bold text-brand-muted bg-transparent border border-brand-border rounded-lg hover:bg-white hover:text-brand-accent dark:border-stone-800 dark:hover:bg-stone-800 transition-colors"
             >
               취소
             </Link>
             <button
               onClick={handleSubmit}
               disabled={createAnimalMutation.isPending || uploadImageMutation.isPending}
-              className="px-4 py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-bold text-brand-ink bg-brand rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createAnimalMutation.isPending || uploadImageMutation.isPending
                 ? '등록 중...'

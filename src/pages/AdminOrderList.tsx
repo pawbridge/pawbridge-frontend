@@ -125,7 +125,7 @@ export default function AdminOrderList() {
       {/* 사이드바 */}
       <aside className="w-64 h-full flex flex-col bg-surface-light dark:bg-surface-dark border-r border-[#e5e7eb] dark:border-gray-700 flex-shrink-0 z-20 hidden md:flex">
         <div className="p-6 flex items-center gap-3">
-          <div className="size-10 rounded-full bg-primary flex items-center justify-center text-text-main">
+          <div className="size-10 rounded-full bg-brand flex items-center justify-center text-text-main">
             <span className="material-symbols-outlined text-[24px]">pets</span>
           </div>
           <div className="flex flex-col">
@@ -147,7 +147,7 @@ export default function AdminOrderList() {
           </Link>
           <Link
             to="/admin/orders"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/20 text-text-main dark:text-white group transition-colors"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-brand/20 text-text-main dark:text-white group transition-colors"
           >
             <span className="material-symbols-outlined text-text-main dark:text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
               receipt_long
@@ -250,7 +250,7 @@ export default function AdminOrderList() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">주문 관리</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -265,7 +265,7 @@ export default function AdminOrderList() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -286,10 +286,10 @@ export default function AdminOrderList() {
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-end flex-wrap gap-4">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-black tracking-tight text-[#0d151c] dark:text-white mb-1">
+                  <h1 className="text-2xl md:text-3xl font-black tracking-tight text-brand-ink dark:text-white mb-1">
                     주문 관리
                   </h1>
-                  <p className="text-[#49749c] dark:text-gray-400 text-sm md:text-base">
+                  <p className="text-brand-muted dark:text-gray-400 text-sm md:text-base">
                     모든 주문 내역을 조회하고 관리합니다.
                   </p>
                 </div>
@@ -302,7 +302,7 @@ export default function AdminOrderList() {
         <div className="w-full">
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">
+              <span className="material-symbols-outlined text-gray-400 group-focus-within:text-brand-accent transition-colors">
                 search
               </span>
             </div>
@@ -314,7 +314,7 @@ export default function AdminOrderList() {
                 setCurrentPage(0);
               }}
               placeholder="주문번호 또는 수령인 이름으로 검색"
-              className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg leading-5 bg-[#f5f7f8] dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+              className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg leading-5 bg-[#f5f7f8] dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-focus focus:border-brand-focus sm:text-sm transition-all"
             />
           </div>
         </div>
@@ -329,7 +329,7 @@ export default function AdminOrderList() {
                 setStatusFilter(e.target.value as OrderStatus | 'ALL');
                 setCurrentPage(0);
               }}
-              className="flex items-center gap-2 px-3 py-2 pr-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary dark:hover:border-primary transition-colors text-sm text-gray-700 dark:text-gray-200 appearance-none cursor-pointer"
+              className="flex items-center gap-2 px-3 py-2 pr-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-brand-focus dark:hover:border-brand-focus transition-colors text-sm text-gray-700 dark:text-gray-200 appearance-none cursor-pointer"
               style={{ 
                 WebkitAppearance: 'none', 
                 MozAppearance: 'none',
@@ -357,7 +357,7 @@ export default function AdminOrderList() {
                 setDeliveryStatusFilter(e.target.value as DeliveryStatus | 'ALL');
                 setCurrentPage(0);
               }}
-              className="flex items-center gap-2 px-3 py-2 pr-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary dark:hover:border-primary transition-colors text-sm text-gray-700 dark:text-gray-200 appearance-none cursor-pointer"
+              className="flex items-center gap-2 px-3 py-2 pr-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-brand-focus dark:hover:border-brand-focus transition-colors text-sm text-gray-700 dark:text-gray-200 appearance-none cursor-pointer"
               style={{ 
                 WebkitAppearance: 'none', 
                 MozAppearance: 'none',
@@ -409,7 +409,7 @@ export default function AdminOrderList() {
           <div className="flex-1"></div>
           <button
             onClick={handleResetFilters}
-            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary dark:hover:border-primary transition-colors text-sm text-gray-700 dark:text-gray-200 font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-brand-focus dark:hover:border-brand-focus transition-colors text-sm text-gray-700 dark:text-gray-200 font-medium"
           >
             <span className="material-symbols-outlined text-[18px]">refresh</span>
             필터 초기화
@@ -421,7 +421,7 @@ export default function AdminOrderList() {
       {isLoading ? (
         <div className="bg-white dark:bg-[#1a2632] border border-[#e7edf4] dark:border-gray-800 rounded-xl shadow-sm p-12">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-gray-500 dark:text-gray-400">주문 목록을 불러오는 중...</p>
           </div>
         </div>
@@ -431,7 +431,7 @@ export default function AdminOrderList() {
             <p className="text-red-500 mb-4">주문 목록을 불러오는 중 오류가 발생했습니다.</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
             >
               다시 시도
             </button>
@@ -526,7 +526,7 @@ export default function AdminOrderList() {
                         <td className="py-4 px-6 text-center">
                           <button
                             onClick={() => handleViewDetail(order.orderId)}
-                            className="text-gray-400 hover:text-primary transition-colors p-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                            className="text-gray-400 hover:text-brand-accent transition-colors p-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20"
                           >
                             <span className="material-symbols-outlined text-[20px]">chevron_right</span>
                           </button>
@@ -556,7 +556,7 @@ export default function AdminOrderList() {
                     onClick={() => setCurrentPage(page)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === page
-                        ? 'bg-primary text-white'
+                        ? 'bg-brand text-brand-ink'
                         : 'bg-white dark:bg-[#1a2632] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }`}
                   >

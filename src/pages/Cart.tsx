@@ -70,7 +70,7 @@ export default function Cart() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-gray-500">장바구니를 불러오는 중...</p>
           </div>
         </main>
@@ -90,7 +90,7 @@ export default function Cart() {
             <p className="text-gray-400 text-sm mb-4">로그인이 필요합니다.</p>
             <button
               onClick={() => navigate('/login')}
-              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+              className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
             >
               로그인하기
             </button>
@@ -112,14 +112,14 @@ export default function Cart() {
               장바구니
             </h1>
             <div className="flex flex-col items-center justify-center text-center gap-8 py-16 px-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-              <span className="material-symbols-outlined text-6xl text-primary">shopping_cart_off</span>
+              <span className="material-symbols-outlined text-6xl text-brand-accent">shopping_cart_off</span>
               <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-bold text-text-light dark:text-text-dark">장바구니가 비어있습니다.</h2>
                 <p className="text-gray-500 dark:text-gray-400">마음에 드는 상품을 담아보세요.</p>
               </div>
               <Link
                 to="/products"
-                className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
+                className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-ink text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
               >
                 쇼핑 계속하기
               </Link>
@@ -231,7 +231,7 @@ export default function Cart() {
                     </p>
                   </div>
                   {totalProductPrice < FREE_SHIPPING_THRESHOLD && (
-                    <p className="text-xs text-primary">
+                    <p className="text-xs text-brand-accent">
                       ₩{formatPrice(FREE_SHIPPING_THRESHOLD - totalProductPrice)} 더 구매 시 무료배송!
                     </p>
                   )}
@@ -240,7 +240,7 @@ export default function Cart() {
                     <p className="text-text-light dark:text-text-dark text-base font-bold leading-normal">
                       총 결제 예정 금액
                     </p>
-                    <p className="text-primary text-xl font-bold leading-normal text-right">
+                    <p className="text-brand-accent text-xl font-bold leading-normal text-right">
                       ₩{formatPrice(totalPrice)}
                     </p>
                   </div>
@@ -248,7 +248,7 @@ export default function Cart() {
                 <div className="mt-8 flex flex-col gap-3">
                   <button
                     onClick={handleOrder}
-                    className="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
+                    className="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
                   >
                     주문하기
                   </button>

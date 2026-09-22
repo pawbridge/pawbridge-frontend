@@ -171,7 +171,7 @@ export default function ResetPassword() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-gray-300 bg-background-light dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-white h-14 p-[15px] text-base font-normal leading-normal placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-gray-300 bg-background-light dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-white h-14 p-[15px] text-base font-normal leading-normal placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-2 focus:ring-brand-focus"
                     placeholder="이메일 주소를 입력하세요"
                     disabled={sendCodeMutation.isPending}
                   />
@@ -185,7 +185,7 @@ export default function ResetPassword() {
                 <button
                   type="submit"
                   disabled={sendCodeMutation.isPending}
-                  className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="truncate">
                     {sendCodeMutation.isPending ? '발송 중...' : '인증 코드 발송'}
@@ -196,7 +196,7 @@ export default function ResetPassword() {
 
             <Link
               to="/login"
-              className="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal pt-6 pb-3 text-center underline hover:text-primary dark:hover:text-primary transition-colors"
+              className="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal pt-6 pb-3 text-center underline hover:text-brand-accent dark:hover:text-brand-accent transition-colors"
             >
               로그인 페이지로 돌아가기
             </Link>
@@ -231,7 +231,7 @@ export default function ResetPassword() {
                       value={digit}
                       onChange={(e) => handleCodeChange(index, e.target.value)}
                       onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                      className="flex h-14 w-full text-center text-lg font-bold text-gray-900 dark:text-white bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-primary focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="flex h-14 w-full text-center text-lg font-bold text-gray-900 dark:text-white bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-brand-focus focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       disabled={resetPasswordMutation.isPending}
                     />
                   ))}
@@ -252,7 +252,7 @@ export default function ResetPassword() {
                       type={showNewPassword ? 'text' : 'password'}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
+                      className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-focus border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
                       placeholder="새 비밀번호를 입력하세요"
                       disabled={resetPasswordMutation.isPending}
                     />
@@ -286,7 +286,7 @@ export default function ResetPassword() {
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
+                      className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-focus border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
                       placeholder="비밀번호를 다시 한번 입력하세요"
                       disabled={resetPasswordMutation.isPending}
                     />
@@ -310,7 +310,7 @@ export default function ResetPassword() {
               <button
                 type="submit"
                 disabled={resetPasswordMutation.isPending}
-                className="flex items-center justify-center whitespace-nowrap h-12 px-6 rounded-lg w-full bg-primary text-white text-base font-bold leading-normal tracking-[-0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center whitespace-nowrap h-12 px-6 rounded-lg w-full bg-brand text-brand-ink text-base font-bold leading-normal tracking-[-0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {resetPasswordMutation.isPending ? '재설정 중...' : '비밀번호 재설정'}
               </button>
@@ -324,7 +324,7 @@ export default function ResetPassword() {
                   type="button"
                   onClick={handleResendCode}
                   disabled={sendCodeMutation.isPending}
-                  className="font-bold text-primary hover:underline disabled:opacity-50"
+                  className="font-bold text-brand-accent hover:underline disabled:opacity-50"
                 >
                   다시 받기
                 </button>

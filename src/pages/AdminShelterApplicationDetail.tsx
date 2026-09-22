@@ -52,7 +52,7 @@ function Detail() {
             <label className="block" htmlFor="review-note">확인 메모<textarea id="review-note" className={input} rows={4} required maxLength={1000} value={note} onChange={e => { setNote(e.target.value); setMode(null); }} disabled={mutation.isPending} />
             </label>
             <div className="flex flex-wrap gap-3">
-              <button className={`${control} bg-emerald-50 text-gray-900`} disabled={mutation.isPending || !registration.trim() || !note.trim()}>확인 후 승인하기</button>
+              <button className={`${control} bg-brand text-brand-ink text-gray-900`} disabled={mutation.isPending || !registration.trim() || !note.trim()}>확인 후 승인하기</button>
               <button type="button" className={control} disabled={mutation.isPending} onClick={() => setMode('reject')}>반려 사유 작성하기</button>
             </div>
           </form>

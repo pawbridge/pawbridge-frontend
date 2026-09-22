@@ -77,7 +77,7 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
             <Link
               to="/login"
               state={{ from: location.pathname }}
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
             >
               로그인
             </Link>
@@ -114,7 +114,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
             <Link
               to="/login"
               state={{ from: location.pathname }}
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
             >
               로그인
             </Link>
@@ -142,7 +142,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
           <div className="flex flex-col gap-3">
             <Link
               to="/"
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
             >
               홈으로
             </Link>

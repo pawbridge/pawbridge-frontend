@@ -76,23 +76,23 @@ export default function AdoptionList() {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-[#111816] dark:text-gray-200">
+    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-brand-ink dark:text-gray-200">
       <Header />
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
         {/* PageHeading */}
         <div className="flex flex-wrap justify-between items-start gap-4 mb-8 sm:mb-12">
           <div className="flex min-w-72 flex-col gap-2">
-            <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#111816] dark:text-white">입양후기</p>
-            <p className="text-base font-normal leading-normal text-[#5f8c80] dark:text-gray-400">커뮤니티의 따뜻한 이야기들을 만나보세요.</p>
+            <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-brand-ink dark:text-white">입양후기</p>
+            <p className="text-base font-normal leading-normal text-brand-muted dark:text-gray-400">커뮤니티의 따뜻한 이야기들을 만나보세요.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-[#5f8c80] dark:text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
               <span className="material-symbols-outlined text-lg">lock</span>
               <span>로그인이 필요한 서비스입니다.</span>
             </div>
             <button
               onClick={handleWriteClick}
-              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-[#111816] text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-brand text-brand-ink text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
             >
               <span className="truncate">작성하기</span>
             </button>
@@ -129,8 +129,8 @@ export default function AdoptionList() {
                     </div>
                   )}
                   <div>
-                    <p className="text-base font-medium leading-normal text-[#111816] dark:text-white">{post.title}</p>
-                    <p className="text-sm font-normal leading-normal text-[#5f8c80] dark:text-gray-400">
+                    <p className="text-base font-medium leading-normal text-brand-ink dark:text-white">{post.title}</p>
+                    <p className="text-sm font-normal leading-normal text-brand-muted dark:text-gray-400">
                       {post.authorName || `작성자 ${post.authorId}`} • {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                     </p>
                   </div>
