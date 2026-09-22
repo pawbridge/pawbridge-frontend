@@ -170,20 +170,21 @@ async page => {
     for (const selected of ['wishlist','cart','orders']) {
       seed(); readMode='hold'; pendingRead=null; await open(selected);
       const empty=selected==='wishlist'?'찜한 상품이 없습니다.':selected==='cart'?'장바구니가 비어있습니다.':'주문 내역이 없습니다.';
-      await page.getByText(empty,{exact:true}).waitFor();
+      await page.getByRole('status').filter({ hasText: '불러오는 중입니다.' }).waitFor();
+      assert(await page.getByText(empty,{exact:true}).count()===0, 'Loading rendered as empty');
       assert(pendingRead!==null, 'Read not intercepted'); readMode='normal'; pendingRead();
       if(selected==='wishlist') await wishCards().nth(2).waitFor();
       else if(selected==='cart') await button('주문하기').waitFor();
       else await button('상세 보기').first().waitFor();
-      readMode='fail'; await open(selected); await page.getByText(empty,{exact:true}).waitFor();
-      await page.waitForTimeout(1400); assert(await page.getByText(empty,{exact:true}).count()===1, 'Failure baseline changed');
+      readMode='fail'; await open(selected); await button('다시 시도').waitFor();
+      assert(await page.getByText(empty,{exact:true}).count()===0, 'Failure rendered as empty');
     }
     readMode='normal'; role='ROLE_USER';
     for (const selected of ['wishlist','cart','orders']) {
       await open(selected);
       assert(await tab('나의 위시리스트').count()===0 && !requests.some(x=>/wishlists|carts|orders/.test(x)), 'Non-admin market access');
     }
-    checks.push('empty/loading/error baseline and role/request restrictions');
+    checks.push('empty/loading/error distinction and role/request restrictions');
     assert(errors.length===0 && unexpected.length===0, JSON.stringify({errors,unexpected}));
     return {checks, layouts, mutations:writes.length, pageErrors:errors, unexpectedRequests:unexpected};
   } finally {
