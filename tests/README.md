@@ -121,3 +121,24 @@ playwright-cli -s=brand close
 ```
 
 스크린샷은 `/tmp/brand-*.png`에 저장한다. 기존에 설치된 Playwright 브라우저를 사용한다.
+
+## 마이페이지 목록 조회 상태
+
+`mypage-list-feedback.browser.js`는 찜한 동물·등록 동물·위시리스트·장바구니·주문의
+최초 로딩, 조회 실패, 재시도 진행/실패/성공, 정상 빈 결과를 1920px/390px에서 검증한다.
+주문 상태와 서버 페이지 보존, 키보드 재시도, 요청 중 중복 클릭 차단,
+캐시가 있는 장바구니의 갱신 실패도 포함한다.
+
+```sh
+npm run build
+npm run preview -- --host 127.0.0.1 --port 5210 --strictPort
+playwright-cli -s=mypage-list-feedback open about:blank --browser=firefox
+playwright-cli -s=mypage-list-feedback run-code --filename=tests/mypage-list-feedback.browser.js
+playwright-cli -s=mypage-list-feedback close
+```
+
+모든 API 요청과 장바구니 비우기는 모의 처리한다. 실제 계정·운영 데이터는 사용하지 않으며,
+실제 인증 백엔드와의 통합 검증을 대체하지 않는다. 의도한 500 응답의 콘솔 로그는 발생한다.
+스크린샷은 `/tmp/mypage-list-*.png`에 저장한다. 기존 설치된 브라우저를 사용한다.
+기존 역할 제한·정렬·선택·탭 전환·상세 복귀는 `mypage-animals.browser.js`(5205),
+`mypage-market.browser.js`(5207)로 회귀 검증한다.
