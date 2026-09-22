@@ -31,7 +31,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
   return (
     <aside className="w-64 h-full flex flex-col bg-surface-light dark:bg-surface-dark border-r border-[#e5e7eb] dark:border-gray-700 flex-shrink-0 z-20">
       <Link to="/" className="p-6 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
-        <div className="size-10 rounded-full bg-primary flex items-center justify-center text-text-main">
+        <div className="size-10 rounded-full bg-brand flex items-center justify-center text-text-main">
           <span className="material-symbols-outlined text-[24px]">pets</span>
         </div>
         <div className="flex flex-col">
@@ -44,7 +44,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
           to="/admin/dashboard"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
             isActive('/admin/dashboard')
-              ? 'bg-primary/20 text-text-main dark:text-white'
+              ? 'bg-brand/20 text-text-main dark:text-white'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
           } group`}
         >
@@ -64,7 +64,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
           to="/admin/statistics"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
             isActive('/admin/statistics')
-              ? 'bg-primary/20 text-text-main dark:text-white'
+              ? 'bg-brand/20 text-text-main dark:text-white'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
           } group`}
         >
@@ -84,7 +84,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
           to="/admin/users"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
             isActive('/admin/users')
-              ? 'bg-primary/20 text-text-main dark:text-white'
+              ? 'bg-brand/20 text-text-main dark:text-white'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
           } group`}
         >
@@ -113,7 +113,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
           to="/admin/posts"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
             isActive('/admin/posts')
-              ? 'bg-primary/20 text-text-main dark:text-white'
+              ? 'bg-brand/20 text-text-main dark:text-white'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
           } group`}
         >
@@ -133,7 +133,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
           to="/admin/categories"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
             isActive('/admin/categories')
-              ? 'bg-primary/20 text-text-main dark:text-white'
+              ? 'bg-brand/20 text-text-main dark:text-white'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
           } group`}
         >
@@ -154,7 +154,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
             onClick={() => setIsProductMenuOpen(!isProductMenuOpen)}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
               shouldProductMenuBeOpen
-                ? 'bg-primary/20 text-text-main dark:text-white'
+                ? 'bg-brand/20 text-text-main dark:text-white'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
             }`}
           >
@@ -181,7 +181,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
                 to="/admin/products"
                 className={`pl-11 flex items-center gap-3 py-2 rounded-lg transition-colors text-sm ${
                   isActive('/admin/products')
-                    ? 'bg-primary/10 text-primary dark:text-primary font-bold'
+                    ? 'bg-brand/10 text-brand-accent dark:text-brand-accent font-bold'
                     : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white'
                 }`}
               >
@@ -191,7 +191,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
                 to="/products/new"
                 className={`pl-11 flex items-center gap-3 py-2 rounded-lg transition-colors text-sm ${
                   isActive('/products/new')
-                    ? 'bg-primary/10 text-primary dark:text-primary font-bold'
+                    ? 'bg-brand/10 text-brand-accent dark:text-brand-accent font-bold'
                     : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white'
                 }`}
               >
@@ -205,7 +205,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
             onClick={() => setIsOptionMenuOpen(!isOptionMenuOpen)}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
               shouldOptionMenuBeOpen
-                ? 'bg-primary/20 text-text-main dark:text-white'
+                ? 'bg-brand/20 text-text-main dark:text-white'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary'
             }`}
           >
@@ -232,7 +232,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
                 to="/admin/option-groups"
                 className={`pl-11 flex items-center gap-3 py-2 rounded-lg transition-colors text-sm ${
                   isActive('/admin/option-groups')
-                    ? 'bg-primary/10 text-primary dark:text-primary font-bold'
+                    ? 'bg-brand/10 text-brand-accent dark:text-brand-accent font-bold'
                     : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-secondary hover:text-text-main dark:hover:text-white'
                 }`}
               >
@@ -245,7 +245,7 @@ export default function AdminSidebar({ subdued = false }: { subdued?: boolean })
       <div className="p-4 border-t border-[#e5e7eb] dark:border-gray-700">
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center justify-center gap-2 rounded-lg h-11 px-4 transition-colors text-text-main font-bold text-sm ${subdued ? 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-white' : 'bg-primary hover:bg-primary-dark shadow-sm'}`}
+          className={`w-full flex items-center justify-center gap-2 rounded-lg h-11 px-4 transition-colors text-text-main font-bold text-sm ${subdued ? 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-white' : 'bg-brand hover:bg-brand-hover shadow-sm'}`}
         >
           <span className="material-symbols-outlined text-[18px]">logout</span>
           로그아웃

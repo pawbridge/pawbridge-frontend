@@ -164,7 +164,7 @@ export default function AdminPostManagement() {
       MISSING: { label: '실종', className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
       PROTECTION: { label: '보호', className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
       REPORT: { label: '제보', className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300' },
-      ADOPTION: { label: '입양후기', className: 'bg-primary/20 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' },
+      ADOPTION: { label: '입양후기', className: 'bg-brand/20 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' },
       COMMUNICATION: { label: '소통', className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
     };
     return boardTypeMap[boardType] || boardTypeMap.COMMUNICATION;
@@ -198,7 +198,7 @@ export default function AdminPostManagement() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">게시글 관리</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 type="text"
@@ -218,7 +218,7 @@ export default function AdminPostManagement() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -241,7 +241,7 @@ export default function AdminPostManagement() {
             </div>
             {/* 공지사항 작성 버튼 (백엔드 API 없으므로 주석 처리) */}
             {/* <div className="flex gap-3">
-              <button className="flex items-center gap-2 bg-primary text-black px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:brightness-105 transition-all">
+              <button className="flex items-center gap-2 bg-brand text-black px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:brightness-105 transition-all">
                 <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
                 <span>공지사항 작성</span>
               </button>
@@ -258,8 +258,8 @@ export default function AdminPostManagement() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 boardTypeFilter === ''
-                  ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                  : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                  ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                  : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
               }`}
             >
               전체
@@ -271,8 +271,8 @@ export default function AdminPostManagement() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 boardTypeFilter === 'MISSING'
-                  ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                  : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                  ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                  : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
               }`}
             >
               실종
@@ -284,8 +284,8 @@ export default function AdminPostManagement() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 boardTypeFilter === 'PROTECTION'
-                  ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                  : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                  ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                  : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
               }`}
             >
               보호
@@ -297,8 +297,8 @@ export default function AdminPostManagement() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 boardTypeFilter === 'REPORT'
-                  ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                  : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                  ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                  : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
               }`}
             >
               제보
@@ -310,8 +310,8 @@ export default function AdminPostManagement() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 boardTypeFilter === 'ADOPTION'
-                  ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                  : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                  ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                  : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
               }`}
             >
               입양후기
@@ -323,19 +323,19 @@ export default function AdminPostManagement() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 boardTypeFilter === 'COMMUNICATION'
-                  ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                  : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                  ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                  : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
               }`}
             >
               소통
             </button>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 border border-[#dbe6e3] dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-white dark:bg-gray-900 border border-brand-border dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden flex flex-col">
             <div className="overflow-x-auto">
               {isLoading ? (
                 <div className="p-12 text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
                   <p className="text-text-sub dark:text-gray-400">게시글 목록을 불러오는 중...</p>
                 </div>
               ) : error ? (
@@ -343,7 +343,7 @@ export default function AdminPostManagement() {
                   <p className="text-red-500 mb-4">게시글 목록을 불러오는 중 오류가 발생했습니다.</p>
                   <button
                     onClick={() => window.location.reload()}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     다시 시도
                   </button>
@@ -356,7 +356,7 @@ export default function AdminPostManagement() {
               ) : (
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-[#dbe6e3] dark:border-gray-700 text-xs uppercase tracking-wider text-text-sub dark:text-gray-400 font-semibold">
+                    <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-brand-border dark:border-gray-700 text-xs uppercase tracking-wider text-text-sub dark:text-gray-400 font-semibold">
                       <th className="px-6 py-4 w-20">번호</th>
                       <th className="px-6 py-4 w-[40%]">제목</th>
                       <th className="px-6 py-4">작성자</th>
@@ -371,7 +371,7 @@ export default function AdminPostManagement() {
                       const nickname = post.authorNickname || post.authorName || '익명';
                       const avatarColor = getAvatarColor(nickname);
                       return (
-                        <tr key={post.postId || post.id} className="hover:bg-primary/5 dark:hover:bg-primary/5 transition-colors group">
+                        <tr key={post.postId || post.id} className="hover:bg-brand/5 dark:hover:bg-brand/5 transition-colors group">
                           <td className="px-6 py-4 text-text-sub dark:text-gray-400 font-mono">{totalElements - (currentPage * pageSize + index)}</td>
                           <td className="px-6 py-4">
                             <div className="font-medium text-text-main dark:text-gray-200 group-hover:text-black dark:group-hover:text-white">
@@ -405,7 +405,7 @@ export default function AdminPostManagement() {
                               </button>
                               <button
                                 onClick={() => handleEditClick(post)}
-                                className="p-1.5 rounded-lg text-text-sub dark:text-gray-400 hover:text-primary dark:hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/10 transition-colors"
+                                className="p-1.5 rounded-lg text-text-sub dark:text-gray-400 hover:text-brand-accent dark:hover:text-brand-accent hover:bg-brand/10 dark:hover:bg-brand/10 transition-colors"
                                 title="수정"
                               >
                                 <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
@@ -434,7 +434,7 @@ export default function AdminPostManagement() {
 
             {/* 페이지네이션 */}
             {!isLoading && posts.length > 0 && (
-              <div className="px-6 py-4 bg-white dark:bg-gray-900 border-t border-[#dbe6e3] dark:border-gray-700 flex items-center justify-between">
+              <div className="px-6 py-4 bg-white dark:bg-gray-900 border-t border-brand-border dark:border-gray-700 flex items-center justify-between">
                 <p className="text-sm text-text-sub dark:text-gray-400 hidden sm:block">
                   Showing <span className="font-medium text-text-main dark:text-white">{currentPage * pageSize + 1}</span> to{' '}
                   <span className="font-medium text-text-main dark:text-white">{Math.min((currentPage + 1) * pageSize, totalElements)}</span> of{' '}
@@ -444,7 +444,7 @@ export default function AdminPostManagement() {
                   <button
                     onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
                     disabled={currentPage === 0}
-                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#dbe6e3] dark:border-gray-700 text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-gray-800 hover:text-text-main dark:hover:text-white disabled:opacity-50 transition-colors"
+                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-brand-border dark:border-gray-700 text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-gray-800 hover:text-text-main dark:hover:text-white disabled:opacity-50 transition-colors"
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                       chevron_left
@@ -459,8 +459,8 @@ export default function AdminPostManagement() {
                         onClick={() => setCurrentPage(pageNum)}
                         className={`w-9 h-9 flex items-center justify-center rounded-lg ${
                           currentPage === pageNum
-                            ? 'bg-primary text-black font-semibold shadow-sm ring-1 ring-primary'
-                            : 'border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-gray-300 hover:bg-background-light dark:hover:bg-gray-800'
+                            ? 'bg-brand text-black font-semibold shadow-sm ring-1 ring-brand-focus'
+                            : 'border border-brand-border dark:border-gray-700 text-text-main dark:text-gray-300 hover:bg-background-light dark:hover:bg-gray-800'
                         } transition-colors`}
                       >
                         {pageNum + 1}
@@ -472,7 +472,7 @@ export default function AdminPostManagement() {
                       <span className="text-text-sub dark:text-gray-400 px-1">...</span>
                       <button
                         onClick={() => setCurrentPage(totalPages - 1)}
-                        className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-gray-300 hover:bg-background-light dark:hover:bg-gray-800 transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg border border-brand-border dark:border-gray-700 text-text-main dark:text-gray-300 hover:bg-background-light dark:hover:bg-gray-800 transition-colors"
                       >
                         {totalPages}
                       </button>
@@ -481,7 +481,7 @@ export default function AdminPostManagement() {
                   <button
                     onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#dbe6e3] dark:border-gray-700 text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-gray-800 hover:text-text-main dark:hover:text-white disabled:opacity-50 transition-colors"
+                    className="w-9 h-9 flex items-center justify-center rounded-lg border border-brand-border dark:border-gray-700 text-text-sub dark:text-gray-400 hover:bg-background-light dark:hover:bg-gray-800 hover:text-text-main dark:hover:text-white disabled:opacity-50 transition-colors"
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
                       chevron_right
@@ -526,7 +526,7 @@ export default function AdminPostManagement() {
                   value={editFormData.title || ''}
                   onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
                   placeholder="제목을 입력하세요 (1-200자)"
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
                 />
                 <p className="text-xs text-text-sub dark:text-gray-500 mt-1">1~200자 이내로 입력해주세요.</p>
               </div>
@@ -539,7 +539,7 @@ export default function AdminPostManagement() {
                   onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
                   placeholder="내용을 입력하세요"
                   rows={10}
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent resize-none"
                 />
                 <p className="text-xs text-text-sub dark:text-gray-500 mt-1">1자 이상 입력해주세요.</p>
               </div>
@@ -562,7 +562,7 @@ export default function AdminPostManagement() {
                 <button
                   onClick={handleEditSubmit}
                   disabled={updateMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-primary text-text-main rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {updateMutation.isPending ? '저장 중...' : '저장'}
                 </button>

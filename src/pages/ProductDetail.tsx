@@ -148,7 +148,7 @@ export default function ProductDetail() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-gray-500">상품 정보를 불러오는 중...</p>
           </div>
         </main>
@@ -167,7 +167,7 @@ export default function ProductDetail() {
             <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
             <button
               onClick={() => navigate('/products')}
-              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+              className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
             >
               상품 목록으로
             </button>
@@ -224,7 +224,7 @@ export default function ProductDetail() {
             <div className="flex flex-col">
               {product.categoryName && (
                 <div className="mb-2">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand/10 text-brand-accent">
                     {product.categoryName}
                   </span>
                 </div>
@@ -259,7 +259,7 @@ export default function ProductDetail() {
                             className={`
                               px-4 py-2 rounded-full text-sm font-medium transition-all
                               ${isSelected 
-                                ? 'bg-primary text-white ring-2 ring-primary ring-offset-2' 
+                                ? 'bg-brand text-brand-ink ring-2 ring-brand-focus ring-offset-2'
                                 : 'bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700'
                               }
                               ${isOutOfStock 
@@ -315,7 +315,7 @@ export default function ProductDetail() {
                   <div className="border-t border-gray-300 dark:border-gray-700 my-4"></div>
                   <div className="flex justify-between items-center">
                     <span className="text-base font-medium">총 상품 금액</span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="text-2xl font-bold text-brand-accent">
                       ₩{formatPrice(selectedSku.price * quantity)}
                     </span>
                   </div>
@@ -333,7 +333,7 @@ export default function ProductDetail() {
                   <span>장바구니 담기</span>
                 </button>
                 <button
-                  className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-primary text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-brand text-brand-ink gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleBuyNow}
                   disabled={!selectedSku || selectedSku.stockQuantity <= 0}
                 >
@@ -347,7 +347,7 @@ export default function ProductDetail() {
           <div className="w-full mt-16 border-t border-gray-200 dark:border-gray-700">
             <div className="border-b border-gray-200 dark:border-gray-700">
               <nav className="-mb-px flex gap-6">
-                <span className="shrink-0 border-b-2 border-primary px-1 py-4 text-sm font-medium text-primary cursor-pointer">
+                <span className="shrink-0 border-b-2 border-brand-focus px-1 py-4 text-sm font-medium text-brand-accent cursor-pointer">
                   상세 정보
                 </span>
                 <span className="shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 cursor-pointer">

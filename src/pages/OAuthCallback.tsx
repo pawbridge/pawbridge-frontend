@@ -72,7 +72,7 @@ export default function OAuthCallback() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background-light dark:bg-background-dark">
       <div className="text-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-focus border-r-transparent"></div>
         <p className="mt-4 text-gray-700 dark:text-gray-300">로그인 처리 중...</p>
       </div>
     </div>

@@ -40,7 +40,7 @@ export default function TravelDetail() {
 
   return (
     <TravelLayout>
-      <Link to={travelListPath(areaCode, travelPage(params.getAll('page')) ?? 0)} className="mb-6 inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700">
+      <Link to={travelListPath(areaCode, travelPage(params.getAll('page')) ?? 0)} className="mb-6 inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus">
         <span aria-hidden="true">←</span> {region ? `${region.name} 목록으로` : '장소 목록으로'}
       </Link>
       {!validId ? (

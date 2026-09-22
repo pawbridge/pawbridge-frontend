@@ -59,9 +59,9 @@ export default function MyWishlistPanel({
                   type="checkbox"
                   checked={filteredAndSortedWishlist.length > 0 && selectedWishlistItems.length === filteredAndSortedWishlist.length}
                   onChange={(e) => onSelectAll(e.target.checked)}
-                  className="rounded text-primary border-gray-300 focus:ring-primary h-5 w-5"
+                  className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-5 w-5"
                 />
-                <span className="text-sm font-medium text-text-light dark:text-text-dark group-hover:text-primary transition-colors">
+                <span className="text-sm font-medium text-text-light dark:text-text-dark group-hover:text-brand-accent transition-colors">
                   전체 선택 ({selectedWishlistItems.length})
                 </span>
               </label>
@@ -80,14 +80,14 @@ export default function MyWishlistPanel({
                   type="checkbox"
                   checked={hideSoldOut}
                   onChange={(e) => onHideSoldOutChange(e.target.checked)}
-                  className="rounded text-primary border-gray-300 focus:ring-primary h-4 w-4"
+                  className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-4 w-4"
                 />
                 <span>품절 상품 숨기기</span>
               </label>
               <select
                 value={sortOption}
                 onChange={(e) => onSortChange(e.target.value as WishlistSortOption)}
-                className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-primary focus:ring-primary py-2 pl-3 pr-8 cursor-pointer"
+                className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-brand-focus focus:ring-brand-focus py-2 pl-3 pr-8 cursor-pointer"
               >
                 <option value="latest">최신순</option>
                 <option value="priceAsc">가격 낮은순</option>
@@ -122,7 +122,7 @@ export default function MyWishlistPanel({
                         type="checkbox"
                         checked={isSelected}
                         onChange={(e) => onSelectItem(item.wishlistId, e.target.checked)}
-                        className="absolute top-2 left-2 z-10 rounded-md text-primary border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-primary focus:ring-offset-0"
+                        className="absolute top-2 left-2 z-10 rounded-md text-brand-ink border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-brand-focus focus:ring-offset-0"
                       />
                       <Link to={`/products/${item.productId}`}>
                         <img
@@ -148,7 +148,7 @@ export default function MyWishlistPanel({
                           </p>
                         )}
                         <Link to={`/products/${item.productId}`}>
-                          <h3 className="text-base font-bold text-text-light dark:text-text-dark hover:text-primary transition-colors line-clamp-2">
+                          <h3 className="text-base font-bold text-text-light dark:text-text-dark hover:text-brand-accent transition-colors line-clamp-2">
                             {item.productName}
                           </h3>
                         </Link>
@@ -175,7 +175,7 @@ export default function MyWishlistPanel({
                         <button
                           onClick={() => onAddToCart(item.skuId)}
                           disabled={isSoldOut || isAddingToCart}
-                          className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 px-3 text-sm font-bold text-white hover:bg-primary-hover transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
+                          className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-brand py-2 px-3 text-sm font-bold text-brand-ink hover:bg-brand-hover transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
                         >
                           {isSoldOut ? (
                             <>
@@ -222,7 +222,7 @@ export default function MyWishlistPanel({
                     onClick={() => onPageChange(page)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       wishlistPage === page
-                        ? 'bg-primary text-white'
+                        ? 'bg-brand text-brand-ink'
                         : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -247,7 +247,7 @@ export default function MyWishlistPanel({
           <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 찾아 위시리스트에 담아보세요.</p>
           <Link
             to="/products"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-hover transition-all"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
           >
             쇼핑하러 가기
             <span className="material-symbols-outlined text-sm">arrow_forward</span>

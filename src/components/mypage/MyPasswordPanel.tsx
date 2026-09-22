@@ -40,7 +40,7 @@ export default function MyPasswordPanel({
               type="password"
               value={value.currentPassword}
               onChange={(e) => onChange({ ...value, currentPassword: e.target.value })}
-              className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-primary focus:ring-primary"
+              className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"
             />
           </div>
 
@@ -52,7 +52,7 @@ export default function MyPasswordPanel({
               type="password"
               value={value.newPassword}
               onChange={(e) => onChange({ ...value, newPassword: e.target.value })}
-              className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-primary focus:ring-primary"
+              className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"
             />
             <p className="text-xs text-gray-500 mt-1">
               8~20자의 영문, 숫자, 특수문자를 포함해야 합니다.
@@ -70,7 +70,7 @@ export default function MyPasswordPanel({
             <button
               type="submit"
               disabled={isPending}
-              className="px-6 py-2 bg-primary text-text-main rounded-lg hover:bg-green-400 transition-colors disabled:opacity-50"
+              className="px-6 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50"
             >
               {isPending ? '변경 중...' : '변경하기'}
             </button>

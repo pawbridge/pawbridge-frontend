@@ -17,11 +17,11 @@ function AddressActions({ name, address }: { name: string; address?: string }) {
   return <div className="space-y-2">
     <div className="flex flex-wrap gap-2">
       <a href={shelterMapUrl(name, address)} target="_blank" rel="noopener noreferrer"
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border-light px-4 text-sm font-semibold hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 dark:border-border-dark dark:hover:bg-gray-800">
+        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border-light px-4 text-sm font-semibold hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus dark:border-border-dark dark:hover:bg-gray-800">
         네이버 지도에서 보기 ↗<span className="sr-only"> (새 창)</span>
       </a>
       {address && <button type="button" onClick={() => void copyAddress()}
-        className="min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 dark:border-border-dark dark:hover:bg-gray-800">주소 복사</button>}
+        className="min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus dark:border-border-dark dark:hover:bg-gray-800">주소 복사</button>}
     </div>
     <p role="status" className="text-sm leading-6 text-gray-600 dark:text-gray-400">
       {copyState === 'copied' ? '주소를 복사했어요.' : copyState === 'failed' ? '자동으로 복사하지 못했어요. 위 주소를 선택해 복사해 주세요.' : null}
@@ -39,10 +39,10 @@ export default function ShelterDetail() {
   const telephone = shelterTelephone(phone);
   const hours = (start?: string, end?: string) => start && end ? `${start} – ${end}` : '등록된 정보가 없어요';
   return <ShelterLayout>
-    <Link to={`/shelters?${params.toString()}`} className="mb-8 inline-flex min-h-11 items-center text-sm font-semibold text-emerald-800 dark:text-primary">← 검색 결과로 돌아가기</Link>
+    <Link to={`/shelters?${params.toString()}`} className="mb-8 inline-flex min-h-11 items-center text-sm font-semibold text-brand-accent dark:text-brand-accent">← 검색 결과로 돌아가기</Link>
     {!/^\d{15}$/.test(registration) ? <h1 className="text-2xl font-bold">보호소 주소를 확인해 주세요</h1>
       : result.isPending ? <p role="status" className="py-16 text-center">보호소 정보를 불러오고 있어요.</p>
-      : result.isError || !shelter ? <div role="alert"><h1 className="text-2xl font-bold">보호소 정보를 불러오지 못했어요</h1><button onClick={() => void result.refetch()} className="mt-5 min-h-12 rounded-lg bg-primary px-6 font-bold text-primary-content">다시 시도</button></div>
+      : result.isError || !shelter ? <div role="alert"><h1 className="text-2xl font-bold">보호소 정보를 불러오지 못했어요</h1><button onClick={() => void result.refetch()} className="mt-5 min-h-12 rounded-lg bg-brand px-6 font-bold text-brand-ink">다시 시도</button></div>
       : <>
         <p className="text-sm text-gray-600 dark:text-gray-400">{shelter.organizationName}</p>
         <h1 className="mt-3 break-words text-3xl font-bold tracking-tight sm:text-4xl">{shelter.name}</h1>
@@ -75,7 +75,7 @@ export default function ShelterDetail() {
         </div>
         {shelter.introduction && <section className="mb-8"><h2 className="text-xl font-bold">보호소 소개</h2><p className="mt-3 whitespace-pre-wrap break-words leading-7">{shelter.introduction}</p></section>}
         {shelter.adoptionProcedure && <section className="mb-8"><h2 className="text-xl font-bold">입양 절차</h2><p className="mt-3 whitespace-pre-wrap break-words leading-7">{shelter.adoptionProcedure}</p></section>}
-        <section className="mt-8 border-t border-border-light pt-8 dark:border-border-dark"><h2 className="text-xl font-bold">이 보호소의 동물을 만나보세요</h2><Link to={`/animals?shelterId=${shelter.id}`} className="mt-5 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 font-bold text-primary-content">보호 동물 보기</Link></section>
+        <section className="mt-8 border-t border-border-light pt-8 dark:border-border-dark"><h2 className="text-xl font-bold">이 보호소의 동물을 만나보세요</h2><Link to={`/animals?shelterId=${shelter.id}`} className="mt-5 inline-flex min-h-12 items-center justify-center rounded-lg bg-brand px-6 font-bold text-brand-ink">보호 동물 보기</Link></section>
       </>}
   </ShelterLayout>;
 }

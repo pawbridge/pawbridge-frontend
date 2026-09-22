@@ -97,11 +97,11 @@ export default function Login() {
       <div className="w-full max-w-5xl flex flex-col gap-6">
         {/* 로고 - 카드 바로 위 */}
         <div className="flex justify-center">
-          <Link to="/" className="flex items-center gap-4 text-primary-content dark:text-white hover:opacity-80 transition-opacity">
-            <div className="text-primary text-2xl">
+          <Link to="/" className="flex items-center gap-4 text-brand-ink dark:text-white hover:opacity-80 transition-opacity">
+            <div className="text-brand-accent text-2xl">
               <span className="material-symbols-outlined">pets</span>
             </div>
-            <h2 className="text-primary-content dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
+            <h2 className="text-brand-ink dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
               포우 브릿지
             </h2>
           </Link>
@@ -110,14 +110,14 @@ export default function Login() {
         {/* 로그인 폼 카드 */}
         <div className="flex h-full w-full overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700">
         {/* Left Side - Image & Welcome Message */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-emerald-200/50 dark:bg-gray-800 p-12">
+        <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-brand-soft dark:bg-gray-800 p-12">
           <div className="flex flex-col items-center text-center gap-6">
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvVy0FVCRXUdSS1RMfqcRZOpupHqPdWMGTlsGKB-sEfuo-bTI7QI5lllkGy__chxfvNt4DFcyA3Ixmoi8rWp_JsFfSLOVPTfBXvC53-AbyRIjyOt98RkWW9mvY1ZCbhgeR9McROS520VWyxIi0CZgZpk5ooy15zMqvvJRg64a43gZA-b6udBnKWRgbAEds9Qm5YgGypudMo32-IhafKYW7PCsC-Az_LrdiYhjengwROMo9LB7xnbONL9P38Jz2eUiAQMoIPrkkxb0"
               alt="A person gently holding a small dog, symbolizing care and adoption"
               className="w-40 h-40 rounded-full object-cover mb-4"
             />
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-emerald-600 dark:text-primary">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-brand-ink dark:text-brand-accent">
               세상의 모든 동물이<br />행복해지는 그날까지
             </h1>
             <p className="text-base font-normal leading-relaxed text-gray-600 dark:text-gray-400">
@@ -153,7 +153,7 @@ export default function Login() {
                         setErrorMessage('');
                       }
                     }}
-                    className={`form-input w-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border ${
+                    className={`form-input w-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-focus border ${
                       emailError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                     } bg-white dark:bg-gray-700 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 text-sm font-normal leading-normal`}
                     placeholder="이메일 주소를 입력하세요"
@@ -186,7 +186,7 @@ export default function Login() {
                           setErrorMessage('');
                         }
                       }}
-                      className={`form-input w-full h-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary border ${
+                      className={`form-input w-full h-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-focus border ${
                         passwordError || errorMessage ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
                       } bg-white dark:bg-gray-700 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 pr-10 text-sm font-normal leading-normal`}
                       placeholder="비밀번호를 입력하세요"
@@ -216,7 +216,7 @@ export default function Login() {
               <div className="flex justify-end">
                 <Link
                   to="/reset-password"
-                  className="text-sm font-medium text-primary-dark hover:text-primary dark:text-primary dark:hover:text-primary-light"
+                  className="text-sm font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
                 >
                   비밀번호 찾기
                 </Link>
@@ -226,7 +226,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loginMutation.isPending}
-                className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-md h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-md h-12 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-wide hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-focus dark:focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="truncate">
                   {loginMutation.isPending ? '로그인 중...' : '로그인'}
@@ -266,7 +266,7 @@ export default function Login() {
                 아직 회원이 아니신가요?{' '}
                 <Link
                   to="/signup"
-                  className="font-medium text-primary-dark hover:text-primary dark:text-primary dark:hover:text-primary-light"
+                  className="font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
                 >
                   회원가입
                 </Link>

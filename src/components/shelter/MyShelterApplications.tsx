@@ -39,7 +39,7 @@ export default function MyShelterApplications({ role }: { role: string; }) {
       <label htmlFor="shelter-name" className="font-medium">소속 보호소 이름</label>
       <input id="shelter-name" className={input} required maxLength={100} value={name} onChange={e => setName(e.target.value)} placeholder="소속 보호소 이름을 입력하세요" />
       <p className="mt-2 text-sm">등록번호는 관리자가 확인합니다. 이름을 정확히 입력해 주세요.</p>
-      <button className={`${control} mt-4 bg-emerald-50`} disabled={mutation.isPending || !name.trim()}>{mutation.isPending ? '신청 중…' : '담당자 신청하기'}</button>
+      <button className={`${control} mt-4 bg-brand text-brand-ink`} disabled={mutation.isPending || !name.trim()}>{mutation.isPending ? '신청 중…' : '담당자 신청하기'}</button>
     </form>}
     {mutation.isError && <Feedback error={mutation.error} />}
     <div className={panel}>

@@ -211,9 +211,9 @@ export default function ProductEdit() {
   return (
     <div className="bg-background-light dark:bg-background-dark text-text-main font-sans min-h-screen flex overflow-hidden">
       {/* 사이드바 */}
-      <aside className="w-64 bg-surface-light dark:bg-surface-dark border-r border-[#e0e8e5] dark:border-[#1f3530] flex flex-col flex-shrink-0 z-50">
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-[#e0e8e5] dark:border-[#1f3530]">
-          <div className="size-8 text-primary">
+      <aside className="w-64 bg-surface-light dark:bg-surface-dark border-r border-brand-border dark:border-stone-800 flex flex-col flex-shrink-0 z-50">
+        <div className="h-16 flex items-center gap-3 px-6 border-b border-brand-border dark:border-stone-800">
+          <div className="size-8 text-brand-accent">
             <svg className="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_6_330)">
                 <path clipRule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fillRule="evenodd"></path>
@@ -223,7 +223,7 @@ export default function ProductEdit() {
               </defs>
             </svg>
           </div>
-          <h1 className="text-xl font-display font-bold tracking-tight text-[#111816] dark:text-white">PawBridge</h1>
+          <h1 className="text-xl font-display font-bold tracking-tight text-brand-ink dark:text-white">PawBridge</h1>
         </div>
         
         <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-hide">
@@ -232,12 +232,12 @@ export default function ProductEdit() {
             <span className="text-sm font-medium">대시보드</span>
           </Link>
           <div className="py-2">
-            <div className="flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-text-main transition-colors">
-              <span className="material-symbols-outlined text-[24px] text-primary-dark">inventory_2</span>
+            <div className="flex items-center gap-3 rounded-lg bg-brand/10 px-3 py-2.5 text-text-main transition-colors">
+              <span className="material-symbols-outlined text-[24px] text-brand-accent">inventory_2</span>
               <span className="text-sm font-bold">상품 관리</span>
             </div>
             <div className="mt-1 flex flex-col space-y-1 pl-12 pr-2">
-              <Link to="/admin/products" className="rounded-md px-2 py-1.5 text-sm font-medium text-primary-dark bg-white/50 dark:bg-black/20">
+              <Link to="/admin/products" className="rounded-md px-2 py-1.5 text-sm font-medium text-brand-accent bg-white/50 dark:bg-black/20">
                 상품 목록
               </Link>
               <Link to="/products/new" className="rounded-md px-2 py-1.5 text-sm font-medium text-text-secondary hover:text-text-main transition-colors">
@@ -255,13 +255,13 @@ export default function ProductEdit() {
       {/* 메인 콘텐츠 */}
       <main className="flex flex-1 flex-col overflow-y-auto">
         {/* 헤더 */}
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-[#e0e8e5] dark:border-[#1f3530] bg-surface-light/80 dark:bg-surface-dark/80 px-6 backdrop-blur-md">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-brand-border dark:border-stone-800 bg-surface-light/80 dark:bg-surface-dark/80 px-6 backdrop-blur-md">
           <div className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-text-secondary hover:text-primary transition-colors">홈</Link>
+            <Link to="/" className="text-text-secondary hover:text-brand-accent transition-colors">홈</Link>
             <span className="text-text-secondary">/</span>
-            <Link to="/admin/products" className="text-text-secondary hover:text-primary transition-colors">상품 관리</Link>
+            <Link to="/admin/products" className="text-text-secondary hover:text-brand-accent transition-colors">상품 관리</Link>
             <span className="text-text-secondary">/</span>
-            <Link to="/admin/products" className="text-text-secondary hover:text-primary transition-colors">상품 목록</Link>
+            <Link to="/admin/products" className="text-text-secondary hover:text-brand-accent transition-colors">상품 목록</Link>
             <span className="text-text-secondary">/</span>
             <span className="font-medium text-text-main dark:text-white">상품 수정</span>
           </div>
@@ -287,14 +287,14 @@ export default function ProductEdit() {
               {/* 왼쪽: 기본 정보 및 SKU */}
               <div className="flex flex-col gap-6 lg:col-span-2">
                 {/* 기본 정보 */}
-                <div className="rounded-2xl border border-[#e0e8e5] dark:border-gray-700 bg-white dark:bg-surface-dark p-6 shadow-sm">
+                <div className="rounded-2xl border border-brand-border dark:border-gray-700 bg-white dark:bg-surface-dark p-6 shadow-sm">
                   <h3 className="mb-5 text-lg font-bold text-text-main dark:text-white flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">edit_note</span>
+                    <span className="material-symbols-outlined text-brand-accent">edit_note</span>
                     기본 정보
                   </h3>
                   
                   {/* 상품 ID 및 생성일 */}
-                  <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2 rounded-xl bg-background-light dark:bg-gray-800/50 p-4 border border-[#e0e8e5] dark:border-gray-600">
+                  <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2 rounded-xl bg-background-light dark:bg-gray-800/50 p-4 border border-brand-border dark:border-gray-600">
                     <div>
                       <label className="block text-xs font-bold text-text-secondary uppercase">상품 ID</label>
                       <p className="mt-1 font-mono text-sm font-medium text-text-main dark:text-gray-300">#{product.productId}</p>
@@ -313,7 +313,7 @@ export default function ProductEdit() {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full rounded-lg border border-[#e0e8e5] dark:border-gray-600 bg-background-light dark:bg-gray-800 px-4 py-3 text-sm text-text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:text-white"
+                        className="w-full rounded-lg border border-brand-border dark:border-gray-600 bg-background-light dark:bg-gray-800 px-4 py-3 text-sm text-text-main focus:border-brand-focus focus:outline-none focus:ring-1 focus:ring-brand-focus dark:text-white"
                         required
                       />
                     </div>
@@ -324,8 +324,8 @@ export default function ProductEdit() {
                       <div className="flex flex-wrap gap-3">
                         <label className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 cursor-pointer transition-colors ${
                           status === 'ACTIVE' 
-                            ? 'border-primary bg-primary/5 text-primary-dark' 
-                            : 'border-[#e0e8e5] dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
+                            ? 'border-brand-focus bg-brand/5 text-brand-accent'
+                            : 'border-brand-border dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
                         }`}>
                           <input
                             type="radio"
@@ -333,14 +333,14 @@ export default function ProductEdit() {
                             value="ACTIVE"
                             checked={status === 'ACTIVE'}
                             onChange={() => setStatus('ACTIVE')}
-                            className="form-radio text-primary focus:ring-primary"
+                            className="form-radio text-brand-ink focus:ring-brand-focus"
                           />
                           <span className="text-sm font-medium">활성</span>
                         </label>
                         <label className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 cursor-pointer transition-colors ${
                           status === 'HIDDEN' 
-                            ? 'border-primary bg-primary/5 text-primary-dark' 
-                            : 'border-[#e0e8e5] dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
+                            ? 'border-brand-focus bg-brand/5 text-brand-accent'
+                            : 'border-brand-border dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
                         }`}>
                           <input
                             type="radio"
@@ -348,14 +348,14 @@ export default function ProductEdit() {
                             value="HIDDEN"
                             checked={status === 'HIDDEN'}
                             onChange={() => setStatus('HIDDEN')}
-                            className="form-radio text-primary focus:ring-primary"
+                            className="form-radio text-brand-ink focus:ring-brand-focus"
                           />
                           <span className="text-sm font-medium">숨김</span>
                         </label>
                         <label className={`flex flex-1 items-center justify-center gap-2 rounded-lg border p-3 cursor-pointer transition-colors ${
                           status === 'SOLD_OUT' 
-                            ? 'border-primary bg-primary/5 text-primary-dark' 
-                            : 'border-[#e0e8e5] dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
+                            ? 'border-brand-focus bg-brand/5 text-brand-accent'
+                            : 'border-brand-border dark:border-gray-600 hover:bg-background-light dark:hover:bg-gray-800'
                         }`}>
                           <input
                             type="radio"
@@ -363,7 +363,7 @@ export default function ProductEdit() {
                             value="SOLD_OUT"
                             checked={status === 'SOLD_OUT'}
                             onChange={() => setStatus('SOLD_OUT')}
-                            className="form-radio text-primary focus:ring-primary"
+                            className="form-radio text-brand-ink focus:ring-brand-focus"
                           />
                           <span className="text-sm font-medium">품절</span>
                         </label>
@@ -384,8 +384,8 @@ export default function ProductEdit() {
                     {/* 상세 설명 */}
                     <div>
                       <label className="mb-2 block text-sm font-medium text-text-main dark:text-gray-200">상세 설명</label>
-                      <div className="relative rounded-lg border border-[#e0e8e5] dark:border-gray-600 bg-background-light dark:bg-gray-800">
-                        <div className="flex items-center gap-1 border-b border-[#e0e8e5] dark:border-gray-600 px-2 py-2">
+                      <div className="relative rounded-lg border border-brand-border dark:border-gray-600 bg-background-light dark:bg-gray-800">
+                        <div className="flex items-center gap-1 border-b border-brand-border dark:border-gray-600 px-2 py-2">
                           <button type="button" className="rounded p-1 text-text-secondary hover:bg-gray-200 hover:text-text-main dark:hover:bg-gray-700">
                             <span className="material-symbols-outlined text-[20px]">format_bold</span>
                           </button>
@@ -410,10 +410,10 @@ export default function ProductEdit() {
                 </div>
 
                 {/* 옵션 및 재고 관리 (SKU) */}
-                <div className="rounded-2xl border border-[#e0e8e5] dark:border-gray-700 bg-white dark:bg-surface-dark p-6 shadow-sm">
+                <div className="rounded-2xl border border-brand-border dark:border-gray-700 bg-white dark:bg-surface-dark p-6 shadow-sm">
                   <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <h3 className="text-lg font-bold text-text-main dark:text-white flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary">inventory</span>
+                      <span className="material-symbols-outlined text-brand-accent">inventory</span>
                       옵션 및 재고 관리 (SKU)
                     </h3>
                     <div className="flex items-center gap-2 rounded-full bg-orange-50 dark:bg-orange-900/20 px-3 py-1.5 text-xs text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800">
@@ -422,7 +422,7 @@ export default function ProductEdit() {
                     </div>
                   </div>
 
-                  <div className="overflow-x-auto rounded-xl border border-[#e0e8e5] dark:border-gray-600">
+                  <div className="overflow-x-auto rounded-xl border border-brand-border dark:border-gray-600">
                     <table className="w-full text-left text-sm">
                       <thead className="bg-background-light dark:bg-gray-800">
                         <tr>
@@ -457,7 +457,7 @@ export default function ProductEdit() {
                                 type="number"
                                 value={sku.price || 0}
                                 onChange={(e) => handleSkuPriceChange(index, Number(e.target.value))}
-                                className="w-full rounded border border-[#e0e8e5] dark:border-gray-600 px-2 py-1.5 text-right text-sm text-text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:bg-gray-700 dark:text-white"
+                                className="w-full rounded border border-brand-border dark:border-gray-600 px-2 py-1.5 text-right text-sm text-text-main focus:border-brand-focus focus:outline-none focus:ring-1 focus:ring-brand-focus dark:bg-gray-700 dark:text-white"
                                 min="0"
                               />
                             </td>
@@ -469,7 +469,7 @@ export default function ProductEdit() {
                                 className={`w-full rounded border px-2 py-1.5 text-right text-sm focus:outline-none focus:ring-1 ${
                                   (sku.stockQuantity || 0) === 0
                                     ? 'border-red-300 bg-red-50 text-red-600 focus:border-red-500 focus:ring-red-500 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300'
-                                    : 'border-[#e0e8e5] dark:border-gray-600 text-text-main focus:border-primary focus:ring-primary dark:bg-gray-700 dark:text-white'
+                                    : 'border-brand-border dark:border-gray-600 text-text-main focus:border-brand-focus focus:ring-brand-focus dark:bg-gray-700 dark:text-white'
                                 }`}
                                 min="0"
                               />
@@ -483,7 +483,7 @@ export default function ProductEdit() {
                                     readOnly
                                     className="peer sr-only"
                                   />
-                                  <div className="peer h-5 w-9 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-focus:outline-none dark:bg-gray-600"></div>
+                                  <div className="peer h-5 w-9 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-brand-ink peer-checked:after:translate-x-full peer-focus:outline-none dark:bg-gray-600"></div>
                                 </label>
                               </div>
                             </td>
@@ -497,15 +497,15 @@ export default function ProductEdit() {
 
               {/* 오른쪽: 이미지 업로드 */}
               <div className="flex flex-col gap-6">
-                <div className="rounded-2xl border border-[#e0e8e5] dark:border-gray-700 bg-white dark:bg-surface-dark p-6 shadow-sm">
+                <div className="rounded-2xl border border-brand-border dark:border-gray-700 bg-white dark:bg-surface-dark p-6 shadow-sm">
                   <h3 className="mb-5 text-lg font-bold text-text-main dark:text-white flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">image</span>
+                    <span className="material-symbols-outlined text-brand-accent">image</span>
                     상품 이미지
                   </h3>
                   
                   {imagePreview ? (
                     <div className="space-y-4">
-                      <div className="relative aspect-square rounded-xl bg-gray-100 overflow-hidden group border border-[#e0e8e5] dark:border-gray-600">
+                      <div className="relative aspect-square rounded-xl bg-gray-100 overflow-hidden group border border-brand-border dark:border-gray-600">
                         <img
                           src={imagePreview}
                           alt="상품 이미지"
@@ -519,8 +519,8 @@ export default function ProductEdit() {
                           <span className="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                       </div>
-                      <label className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 px-6 py-3 text-center cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors">
-                        <span className="material-symbols-outlined text-primary">cloud_upload</span>
+                      <label className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-brand-focus bg-brand/5 px-6 py-3 text-center cursor-pointer hover:border-brand-focus hover:bg-brand/10 transition-colors">
+                        <span className="material-symbols-outlined text-brand-accent">cloud_upload</span>
                         <span className="text-sm font-medium text-text-main dark:text-white">이미지 변경</span>
                         <input
                           type="file"
@@ -531,8 +531,8 @@ export default function ProductEdit() {
                       </label>
                     </div>
                   ) : (
-                    <label className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 px-6 py-8 text-center transition-colors hover:border-primary hover:bg-primary/10 cursor-pointer">
-                      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary-dark group-hover:scale-110 transition-transform">
+                    <label className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-brand-focus bg-brand/5 px-6 py-8 text-center transition-colors hover:border-brand-focus hover:bg-brand/10 cursor-pointer">
+                      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand/20 text-brand-accent group-hover:scale-110 transition-transform">
                         <span className="material-symbols-outlined">cloud_upload</span>
                       </div>
                       <p className="text-sm font-medium text-text-main dark:text-white">클릭하여 이미지 업로드</p>
@@ -550,12 +550,12 @@ export default function ProductEdit() {
             </div>
 
             {/* 하단 버튼 */}
-            <div className="sticky bottom-6 z-20 mt-8 rounded-2xl border border-[#e0e8e5] dark:border-gray-700 bg-surface-light dark:bg-surface-dark p-4 shadow-xl shadow-gray-200/50 dark:shadow-black/20">
+            <div className="sticky bottom-6 z-20 mt-8 rounded-2xl border border-brand-border dark:border-gray-700 bg-surface-light dark:bg-surface-dark p-4 shadow-xl shadow-gray-200/50 dark:shadow-black/20">
               <div className="flex flex-col gap-3">
                 <button
                   type="submit"
                   disabled={updateProductMutation.isPending || uploadImageMutation.isPending}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-bold text-text-main shadow-sm shadow-primary/30 transition-all hover:bg-primary-dark hover:shadow-primary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3.5 text-sm font-bold text-text-main shadow-sm shadow-brand/30 transition-all hover:bg-brand-hover hover:shadow-brand/50 focus:outline-none focus:ring-2 focus:ring-brand-focus focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50"
                 >
                   <span className="material-symbols-outlined text-[20px]">save</span>
                   수정 완료
@@ -563,7 +563,7 @@ export default function ProductEdit() {
                 <button
                   type="button"
                   onClick={() => navigate('/admin/products')}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#e0e8e5] dark:border-gray-600 bg-white dark:bg-gray-800 px-6 py-3.5 text-sm font-bold text-text-secondary transition-colors hover:bg-gray-50 hover:text-text-main dark:hover:bg-gray-700 dark:hover:text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand-border dark:border-gray-600 bg-white dark:bg-gray-800 px-6 py-3.5 text-sm font-bold text-text-secondary transition-colors hover:bg-gray-50 hover:text-text-main dark:hover:bg-gray-700 dark:hover:text-white"
                 >
                   취소
                 </button>

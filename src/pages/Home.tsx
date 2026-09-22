@@ -47,7 +47,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background-light font-display text-brand-ink dark:bg-background-dark dark:text-gray-200">
-      <Header colorScheme="warm" />
+      <Header />
       <main className="container mx-auto w-full flex-1 px-4 pb-12 pt-7 md:pb-16 lg:pt-14">
         <section aria-labelledby="home-heading" className="grid items-stretch gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
           <div className="min-w-0">
@@ -127,7 +127,7 @@ export default function Home() {
           ))}
         </nav>
       </main>
-      <Footer colorScheme="warm" />
+      <Footer />
     </div>
   );
 }

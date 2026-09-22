@@ -288,7 +288,7 @@ export default function AdminOptionGroupManagement() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">옵션 그룹 관리</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -303,7 +303,7 @@ export default function AdminOptionGroupManagement() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -338,11 +338,11 @@ export default function AdminOptionGroupManagement() {
               <section className="lg:col-span-4 flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden h-full max-h-[calc(100vh-200px)] lg:h-auto">
                 <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-surface-dark sticky top-0 z-10 flex-shrink-0">
                   <div className="relative group">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-accent transition-colors">
                       <span className="material-symbols-outlined text-[20px]">search</span>
                     </span>
                     <input
-                      className="w-full pl-10 pr-4 py-2 bg-background-light dark:bg-background-dark border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-primary text-text-main dark:text-white placeholder-gray-400 transition-all"
+                      className="w-full pl-10 pr-4 py-2 bg-background-light dark:bg-background-dark border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-brand-focus text-text-main dark:text-white placeholder-gray-400 transition-all"
                       placeholder="그룹 검색..."
                       type="text"
                       value={searchQuery}
@@ -353,7 +353,7 @@ export default function AdminOptionGroupManagement() {
                 <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar min-h-0">
                   {isLoading ? (
                     <div className="flex items-center justify-center h-full">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-focus"></div>
                     </div>
                   ) : error ? (
                     <div className="text-red-500 text-sm p-4">옵션 그룹 목록을 불러오는데 실패했습니다.</div>
@@ -366,7 +366,7 @@ export default function AdminOptionGroupManagement() {
                         onClick={() => handleSelectGroup(group)}
                         className={`w-full text-left p-3 rounded-lg flex justify-between items-center group transition-all ${
                           selectedGroup?.id === group.id
-                            ? 'bg-primary/10 border border-primary/30'
+                            ? 'bg-brand/10 border border-brand-focus'
                             : 'hover:bg-gray-50 dark:hover:bg-gray-800/60 border border-transparent'
                         }`}
                       >
@@ -375,7 +375,7 @@ export default function AdminOptionGroupManagement() {
                             className={`text-sm ${
                               selectedGroup?.id === group.id
                                 ? 'font-bold text-text-main dark:text-white'
-                                : 'font-medium text-text-main dark:text-gray-300 group-hover:text-primary dark:group-hover:text-primary'
+                                : 'font-medium text-text-main dark:text-gray-300 group-hover:text-brand-accent dark:group-hover:text-brand-accent'
                             }`}
                           >
                             {group.name}
@@ -393,7 +393,7 @@ export default function AdminOptionGroupManagement() {
                             {group.values.length}
                           </span>
                           {selectedGroup?.id === group.id && (
-                            <span className="material-symbols-outlined text-primary text-[20px]">chevron_right</span>
+                            <span className="material-symbols-outlined text-brand-accent text-[20px]">chevron_right</span>
                           )}
                         </div>
                       </button>
@@ -403,7 +403,7 @@ export default function AdminOptionGroupManagement() {
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-surface-dark/50 flex-shrink-0">
                   <button
                     onClick={handleNewGroup}
-                    className="w-full py-2.5 bg-primary hover:bg-primary-dark text-text-main text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md shadow-primary/20 active:scale-[0.98]"
+                    className="w-full py-2.5 bg-brand hover:bg-brand-hover text-text-main text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md shadow-brand/20 active:scale-[0.98]"
                   >
                     <span className="material-symbols-outlined text-[20px]">add_circle</span>
                     새 그룹 추가
@@ -429,7 +429,7 @@ export default function AdminOptionGroupManagement() {
                             className={`w-full bg-transparent text-xl font-bold border-0 border-b-2 px-0 py-1.5 text-text-main dark:text-white transition-colors placeholder-gray-300 ${
                               !isCreateMode && !isEditMode
                                 ? 'border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : 'border-gray-200 dark:border-gray-700 focus:border-primary focus:ring-0'
+                                : 'border-gray-200 dark:border-gray-700 focus:border-brand-focus focus:ring-0'
                             }`}
                             placeholder="그룹 이름을 입력하세요"
                             required
@@ -441,7 +441,7 @@ export default function AdminOptionGroupManagement() {
                           <button
                             type="button"
                             onClick={handleEditClick}
-                            className="px-4 py-2 rounded-lg bg-primary hover:bg-[#0fd6a3] text-[#0f231e] text-sm font-bold transition-all flex items-center justify-center gap-2"
+                            className="px-4 py-2 rounded-lg bg-brand hover:bg-brand text-card-dark text-sm font-bold transition-all flex items-center justify-center gap-2"
                           >
                             <span className="material-symbols-outlined text-[18px]">edit</span>
                             수정하기
@@ -464,7 +464,7 @@ export default function AdminOptionGroupManagement() {
                     <div className="flex-1 flex flex-col min-h-0">
                       <div className="p-4 sm:px-6 sm:py-4 flex items-center justify-between">
                         <h3 className="font-bold text-text-main dark:text-white flex items-center gap-2">
-                          <span className="material-symbols-outlined text-primary">list</span>
+                          <span className="material-symbols-outlined text-brand-accent">list</span>
                           옵션 값 관리
                         </h3>
                         {selectedGroup && (
@@ -492,7 +492,7 @@ export default function AdminOptionGroupManagement() {
                                       handleAddValue();
                                     }
                                   }}
-                                  className="w-full h-10 rounded-md border-gray-200 dark:border-gray-600 dark:bg-surface-dark dark:text-white text-sm focus:border-primary focus:ring-primary/20 transition-shadow px-4"
+                                  className="w-full h-10 rounded-md border-gray-200 dark:border-gray-600 dark:bg-surface-dark dark:text-white text-sm focus:border-brand-focus focus:ring-brand-focus transition-shadow px-4"
                                   placeholder="예: 말티즈"
                                 />
                               </div>
@@ -500,7 +500,7 @@ export default function AdminOptionGroupManagement() {
                                 type="button"
                                 onClick={handleAddValue}
                                 disabled={createValueMutation.isPending}
-                                className="w-full sm:w-auto h-10 px-5 bg-white dark:bg-surface-dark border border-primary text-primary hover:bg-primary hover:text-text-main text-sm font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-sm disabled:opacity-50"
+                                className="w-full sm:w-auto h-10 px-5 bg-white dark:bg-surface-dark border border-brand-focus text-brand-accent hover:bg-brand hover:text-text-main text-sm font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-sm disabled:opacity-50"
                               >
                                 <span className="material-symbols-outlined text-[20px]">add</span>
                                 추가
@@ -541,7 +541,7 @@ export default function AdminOptionGroupManagement() {
                                                 handleCancelEditValue();
                                               }
                                             }}
-                                            className="w-full bg-transparent border border-primary focus:ring-1 focus:ring-primary rounded py-1 px-2 text-text-main dark:text-gray-200 font-medium text-sm"
+                                            className="w-full bg-transparent border border-brand-focus focus:ring-1 focus:ring-brand-focus rounded py-1 px-2 text-text-main dark:text-gray-200 font-medium text-sm"
                                             autoFocus
                                           />
                                         ) : (
@@ -556,7 +556,7 @@ export default function AdminOptionGroupManagement() {
                                                 type="button"
                                                 onClick={() => handleSaveValue(value.id)}
                                                 disabled={updateValueMutation.isPending}
-                                                className="p-1 text-primary hover:bg-primary/10 transition-colors rounded"
+                                                className="p-1 text-brand-accent hover:bg-brand/10 transition-colors rounded"
                                                 title="저장"
                                               >
                                                 <span className="material-symbols-outlined text-[18px]">check</span>
@@ -575,7 +575,7 @@ export default function AdminOptionGroupManagement() {
                                               <button
                                                 type="button"
                                                 onClick={() => handleStartEditValue(value)}
-                                                className="p-1 text-gray-400 hover:text-primary transition-colors"
+                                                className="p-1 text-gray-400 hover:text-brand-accent transition-colors"
                                                 title="수정"
                                               >
                                                 <span className="material-symbols-outlined text-[18px]">edit</span>
@@ -609,7 +609,7 @@ export default function AdminOptionGroupManagement() {
                           type="button"
                           onClick={handleGroupSubmit}
                           disabled={createMutation.isPending || updateMutation.isPending}
-                          className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-text-main font-bold text-sm rounded-lg transition-all shadow-md shadow-primary/20 flex items-center gap-2 active:scale-[0.98] disabled:opacity-50"
+                          className="px-5 py-2.5 bg-brand hover:bg-brand-hover text-text-main font-bold text-sm rounded-lg transition-all shadow-md shadow-brand/20 flex items-center gap-2 active:scale-[0.98] disabled:opacity-50"
                         >
                           <span className="material-symbols-outlined text-[20px]">save</span>
                           저장하기

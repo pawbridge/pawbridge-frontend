@@ -122,7 +122,7 @@ export default function OrderComplete() {
             <p className="text-gray-500 mb-4">잘못된 접근입니다.</p>
             <Link
               to="/"
-              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 inline-block"
+              className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover inline-block"
             >
               홈으로
             </Link>
@@ -140,7 +140,7 @@ export default function OrderComplete() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-gray-500">결제를 진행 중입니다.</p>
           </div>
         </main>
@@ -163,7 +163,7 @@ export default function OrderComplete() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 to="/products"
-                className="px-6 py-2 bg-primary text-gray-900 font-bold rounded-lg hover:bg-primary/90"
+                className="px-6 py-2 bg-brand text-gray-900 font-bold rounded-lg hover:bg-brand-hover"
               >
                 쇼핑 계속하기
               </Link>
@@ -200,7 +200,7 @@ export default function OrderComplete() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => refetch()}
-                className="px-6 py-2 bg-primary text-gray-900 font-bold rounded-lg hover:bg-primary/90"
+                className="px-6 py-2 bg-brand text-gray-900 font-bold rounded-lg hover:bg-brand-hover"
               >
                 다시 시도
               </button>
@@ -225,7 +225,7 @@ export default function OrderComplete() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-gray-500 mb-2">결제를 진행 중입니다.</p>
             <p className="text-gray-400 text-sm">잠시만 기다려 주세요.</p>
           </div>
@@ -241,7 +241,7 @@ export default function OrderComplete() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-gray-500">주문 정보를 불러오는 중...</p>
           </div>
         </main>
@@ -260,7 +260,7 @@ export default function OrderComplete() {
             <p className="text-gray-500 mb-4">주문 정보를 불러올 수 없습니다.</p>
             <Link
               to="/"
-              className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 inline-block"
+              className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover inline-block"
             >
               홈으로
             </Link>
@@ -280,9 +280,9 @@ export default function OrderComplete() {
         <div className="flex flex-col w-full max-w-3xl gap-8">
           {/* 성공 아이콘 및 메시지 */}
           <div className="flex flex-col items-center text-center gap-4 pt-8">
-            <div className="flex items-center justify-center size-24 bg-primary/20 dark:bg-primary/30 rounded-full">
+            <div className="flex items-center justify-center size-24 bg-brand/20 dark:bg-brand/30 rounded-full">
               <span 
-                className="material-symbols-outlined text-primary text-6xl"
+                className="material-symbols-outlined text-brand-accent text-6xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
               >
                 check
@@ -311,7 +311,7 @@ export default function OrderComplete() {
                 </div>
                 <div className="col-span-2 grid grid-cols-subgrid border-t border-gray-200 dark:border-gray-700 py-4">
                   <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">결제 금액</p>
-                  <p className="text-primary text-sm font-bold leading-normal">
+                  <p className="text-brand-accent text-sm font-bold leading-normal">
                     {formatPrice(order.totalAmount)}원
                   </p>
                 </div>
@@ -365,7 +365,7 @@ export default function OrderComplete() {
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Link
               to="/"
-              className="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90"
+              className="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90"
             >
               홈으로
             </Link>

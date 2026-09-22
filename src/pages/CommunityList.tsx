@@ -123,7 +123,7 @@ export default function CommunityList() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           {/* PageHeading */}
           <div className="mb-6 md:mb-8">
-            <h1 className="text-4xl font-black leading-tight tracking-[-0.033em] text-[#111816] dark:text-white">
+            <h1 className="text-4xl font-black leading-tight tracking-[-0.033em] text-brand-ink dark:text-white">
               커뮤니티
             </h1>
           </div>
@@ -140,7 +140,7 @@ export default function CommunityList() {
                     onClick={() => handleTabChange(tab.key)}
                     className={`flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 transition-colors ${
                       active
-                        ? 'border-primary text-[#111816] dark:text-white'
+                        ? 'border-brand-focus text-brand-ink dark:text-white'
                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
                     }`}
                   >
@@ -157,7 +157,7 @@ export default function CommunityList() {
               <label className="relative flex items-center">
                 <span className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
                 <input
-                  className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary/50"
+                  className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-focus"
                   placeholder="제목, 내용으로 검색 (Enter)"
                   type="text"
                   value={inputValue}
@@ -167,13 +167,13 @@ export default function CommunityList() {
               </label>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-[#5f8c80] dark:text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
                 <span className="material-symbols-outlined text-lg">lock</span>
                 <span>로그인이 필요한 서비스입니다.</span>
               </div>
               <button
                 onClick={handleWriteClick}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
               >
                 <span className="material-symbols-outlined text-base">edit</span>
                 <span>글쓰기</span>
@@ -240,7 +240,7 @@ export default function CommunityList() {
                       </div>
                     )}
                     <div>
-                      <p className="text-base font-medium leading-normal text-[#111816] dark:text-white truncate">
+                      <p className="text-base font-medium leading-normal text-brand-ink dark:text-white truncate">
                         {post.title}
                       </p>
                       <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">

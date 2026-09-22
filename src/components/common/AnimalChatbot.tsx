@@ -137,7 +137,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
     <div className="fixed bottom-5 right-5 z-40 flex w-[calc(100%-2rem)] max-w-[380px] flex-col items-end sm:bottom-6 sm:right-6">
       {isOpen && (
         <section className="mb-3 flex h-[560px] max-h-[calc(100vh-7rem)] w-full flex-col overflow-hidden rounded-2xl border border-border-light bg-white shadow-2xl dark:border-border-dark dark:bg-card-dark">
-          <div className="flex items-start justify-between gap-3 bg-primary px-5 py-4 text-text-light">
+          <div className="flex items-start justify-between gap-3 bg-brand px-5 py-4 text-text-light">
             <div>
               <p className="text-sm font-bold">AI 입양 준비 도우미</p>
               <p className="mt-1 text-xs font-medium text-text-light/80">{animalName}에 대해 물어보세요</p>
@@ -152,9 +152,9 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
             </button>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto bg-[#f7fbf9] px-4 py-4 dark:bg-[#111816]">
+          <div className="flex-1 space-y-3 overflow-y-auto bg-stone-50 px-4 py-4 dark:bg-brand-ink">
             {messages.length === 0 && (
-              <div className="rounded-2xl border border-primary/20 bg-white p-4 text-sm text-text-light shadow-sm dark:border-primary/30 dark:bg-card-dark dark:text-text-dark">
+              <div className="rounded-2xl border border-brand-focus bg-white p-4 text-sm text-text-light shadow-sm dark:border-brand-focus dark:bg-card-dark dark:text-text-dark">
                 <p className="font-bold">무엇을 도와드릴까요?</p>
                 <p className="mt-2 text-xs leading-5 text-gray-600 dark:text-gray-300">
                   성격, 보호 상태, 입양 전 확인할 점처럼 상세 페이지를 보며 궁금한 내용을 질문해보세요.
@@ -170,8 +170,8 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 <div
                   className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
                     message.role === 'user'
-                      ? 'bg-primary text-text-light'
-                      : 'border border-border-light bg-white text-text-light dark:border-border-dark dark:bg-[#1b2421] dark:text-text-dark'
+                      ? 'bg-brand text-text-light'
+                      : 'border border-border-light bg-white text-text-light dark:border-border-dark dark:bg-stone-900 dark:text-text-dark'
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{message.text}</p>
@@ -181,7 +181,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
 
             {isSending && (
               <div className="flex justify-start">
-                <div className="rounded-2xl border border-border-light bg-white px-4 py-3 text-sm text-gray-600 shadow-sm dark:border-border-dark dark:bg-[#1b2421] dark:text-gray-300">
+                <div className="rounded-2xl border border-border-light bg-white px-4 py-3 text-sm text-gray-600 shadow-sm dark:border-border-dark dark:bg-stone-900 dark:text-gray-300">
                   답변을 준비하고 있습니다...
                 </div>
               </div>
@@ -211,13 +211,13 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 }}
                 maxLength={MAX_QUESTION_LENGTH}
                 placeholder="궁금한 점을 입력하세요"
-                className="min-w-0 flex-1 rounded-xl border-border-light bg-white text-sm text-text-light placeholder:text-gray-400 focus:border-primary focus:ring-primary dark:border-border-dark dark:bg-[#111816] dark:text-text-dark"
+                className="min-w-0 flex-1 rounded-xl border-border-light bg-white text-sm text-text-light placeholder:text-gray-400 focus:border-brand-focus focus:ring-brand-focus dark:border-border-dark dark:bg-brand-ink dark:text-text-dark"
                 disabled={isSending}
               />
               <button
                 type="submit"
                 disabled={isSending || !question.trim()}
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-text-light transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-text-light transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="질문 보내기"
               >
                 <span className="material-symbols-outlined text-[20px]">send</span>
@@ -233,7 +233,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-5 font-bold text-text-light shadow-xl transition-transform hover:scale-[1.02] hover:bg-primary/90"
+        className="inline-flex h-14 items-center gap-2 rounded-full bg-brand px-5 font-bold text-text-light shadow-xl transition-transform hover:scale-[1.02] hover:bg-brand-hover"
         aria-expanded={isOpen}
         aria-label={isOpen ? 'AI 입양 준비 도우미 닫기' : 'AI 입양 준비 도우미 열기'}
       >

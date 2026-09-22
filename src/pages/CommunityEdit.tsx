@@ -104,7 +104,7 @@ export default function CommunityEdit() {
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <p className="text-lg text-red-600 dark:text-red-400">게시글을 찾을 수 없습니다.</p>
-            <Link to="/community" className="mt-4 inline-block text-primary underline">
+            <Link to="/community" className="mt-4 inline-block text-brand-accent underline">
               목록으로 돌아가기
             </Link>
           </div>
@@ -121,7 +121,7 @@ export default function CommunityEdit() {
         <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
           <div className="flex flex-col gap-8 p-6 sm:p-10">
             <div>
-              <h1 className="text-[#111816] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+              <h1 className="text-brand-ink dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
                 게시글 수정
               </h1>
             </div>
@@ -129,11 +129,11 @@ export default function CommunityEdit() {
             <div className="flex flex-col gap-6">
               {/* Title Input */}
               <label className="flex flex-col w-full">
-                <p className="text-[#111816] dark:text-white text-base font-medium leading-normal pb-2">
+                <p className="text-brand-ink dark:text-white text-base font-medium leading-normal pb-2">
                   제목 *
                 </p>
                 <input
-                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111816] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
+                  className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-brand-ink dark:text-white focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
                   placeholder="제목을 입력하세요"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -142,11 +142,11 @@ export default function CommunityEdit() {
 
               {/* Content Textarea */}
               <label className="flex flex-col w-full">
-                <p className="text-[#111816] dark:text-white text-base font-medium leading-normal pb-2">
+                <p className="text-brand-ink dark:text-white text-base font-medium leading-normal pb-2">
                   내용 *
                 </p>
                 <textarea
-                  className="form-input flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-[#111816] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 min-h-60 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
+                  className="form-input flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-brand-ink dark:text-white focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 min-h-60 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
                   placeholder="내용을 입력하세요"
                   value={form.content}
                   onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -156,7 +156,7 @@ export default function CommunityEdit() {
               {/* 기존 이미지 표시 */}
               {post.imageUrls && post.imageUrls.length > 0 && (
                 <div className="flex flex-col gap-4">
-                  <p className="text-[#111816] dark:text-white text-base font-medium leading-normal">
+                  <p className="text-brand-ink dark:text-white text-base font-medium leading-normal">
                     기존 이미지 (수정 시 새 파일을 업로드하면 기존 파일은 삭제됩니다)
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -176,7 +176,7 @@ export default function CommunityEdit() {
               {/* Photo Upload Grid */}
               {form.files.length > 0 && (
                 <div className="flex flex-col gap-4">
-                  <p className="text-[#111816] dark:text-white text-base font-medium leading-normal">
+                  <p className="text-brand-ink dark:text-white text-base font-medium leading-normal">
                     새 이미지 ({form.files.length}개)
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -202,8 +202,8 @@ export default function CommunityEdit() {
 
               {/* File Upload Button */}
               <div className="flex flex-col gap-4">
-                <label className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary transition-colors cursor-pointer p-4">
-                  <span className="material-symbols-outlined text-primary text-2xl">add_photo_alternate</span>
+                <label className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-brand-focus dark:hover:border-brand-focus transition-colors cursor-pointer p-4">
+                  <span className="material-symbols-outlined text-brand-accent text-2xl">add_photo_alternate</span>
                   <span className="text-gray-700 dark:text-gray-300 font-medium">
                     이미지 추가
                   </span>
@@ -222,13 +222,13 @@ export default function CommunityEdit() {
                 <button
                   onClick={handleSubmit}
                   disabled={updatePostMutation.isPending}
-                  className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white hover:bg-primary/80 transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-ink hover:bg-brand-hover transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="truncate">{updatePostMutation.isPending ? '수정 중...' : '수정완료'}</span>
                 </button>
                 <Link
                   to={`/community/${postId}`}
-                  className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-100 dark:bg-gray-700 text-[#111816] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-base font-bold leading-normal"
+                  className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-100 dark:bg-gray-700 text-brand-ink dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-base font-bold leading-normal"
                 >
                   <span className="truncate">취소</span>
                 </Link>

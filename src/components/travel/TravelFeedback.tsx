@@ -6,7 +6,7 @@ export default function TravelFeedback({ title, description, error = false, onRe
       <h2 className="text-xl font-bold leading-tight tracking-[-0.015em]">{title}</h2>
       <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-400">{description}</p>
       {onRetry && (
-        <button type="button" onClick={onRetry} className="mt-6 h-12 rounded-lg bg-primary px-6 text-sm font-bold text-primary-content hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700">
+        <button type="button" onClick={onRetry} className="mt-6 h-12 rounded-lg bg-brand px-6 text-sm font-bold text-brand-ink hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus">
           다시 시도
         </button>
       )}
