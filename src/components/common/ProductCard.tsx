@@ -91,7 +91,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
             className={`ml-auto flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
               isOutOfStock
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-primary/20 text-primary hover:bg-primary hover:text-white'
+                : 'bg-brand/20 text-brand-accent hover:bg-brand hover:text-brand-ink'
             }`}
           >
             <span className="material-symbols-outlined text-xl">add_shopping_cart</span>

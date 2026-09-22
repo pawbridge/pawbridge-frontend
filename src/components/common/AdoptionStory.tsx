@@ -28,7 +28,7 @@ export default function AdoptionStory({ postId, tag, title, excerpt, imageUrl }:
       </div>
       <div className="text-center sm:text-left">
         <p className="text-secondary-content dark:text-gray-400 text-sm">{tag}</p>
-        <h4 className="text-primary-content dark:text-white text-lg font-bold mt-1 group-hover:text-primary transition-colors">
+        <h4 className="text-brand-ink dark:text-white text-lg font-bold mt-1 group-hover:text-brand-accent transition-colors">
           {title}
         </h4>
         <p className="text-secondary-content dark:text-gray-400 text-sm mt-2 line-clamp-2">

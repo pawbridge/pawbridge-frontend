@@ -29,7 +29,7 @@ export default function MyOrdersPanel({
           <select
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value as OrderStatus | 'ALL')}
-            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-text-light dark:text-text-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-text-light dark:text-text-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-focus"
           >
             <option value="ALL">전체 상태</option>
             <option value="PENDING">주문 대기</option>
@@ -95,7 +95,7 @@ export default function MyOrdersPanel({
                         </span>
                         <button
                           onClick={() => onOrderDetail(order.orderId)}
-                          className="text-sm text-primary hover:underline font-medium"
+                          className="text-sm text-brand-accent hover:underline font-medium"
                         >
                           상세 보기
                         </button>
@@ -130,7 +130,7 @@ export default function MyOrdersPanel({
                     onClick={() => onPageChange(page)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       ordersPage === page
-                        ? 'bg-primary text-white'
+                        ? 'bg-brand text-brand-ink'
                         : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -155,7 +155,7 @@ export default function MyOrdersPanel({
           <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">상품을 주문하고 주문 내역을 확인해보세요.</p>
           <Link
             to="/products"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-hover transition-all"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
           >
             쇼핑하러 가기
             <span className="material-symbols-outlined text-sm">arrow_forward</span>

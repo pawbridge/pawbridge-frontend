@@ -113,7 +113,7 @@ export default function MyProfilePanel({
                 value={nickname}
                 onChange={(e) => onNicknameChange(e.target.value)}
                 placeholder="2~30자의 한글, 영문, 숫자"
-                className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-primary focus:ring-primary"
+                className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"
               />
               <p className="text-xs text-gray-500 mt-1">
                 한글, 영문, 숫자를 사용할 수 있으며 띄어쓰기가 불가능합니다.
@@ -131,7 +131,7 @@ export default function MyProfilePanel({
               <button
                 type="submit"
                 disabled={isPending}
-                className="px-6 py-2 bg-primary text-text-main rounded-lg hover:bg-green-400 transition-colors disabled:opacity-50"
+                className="px-6 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50"
               >
                 {isPending ? '변경 중...' : '변경하기'}
               </button>

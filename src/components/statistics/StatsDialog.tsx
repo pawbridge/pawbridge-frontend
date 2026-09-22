@@ -19,7 +19,7 @@ export default function StatsDialog({ title, onClose, children }: { title: strin
       <div className="p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="text-xl font-bold">{title}</h2>
-          <button autoFocus type="button" onClick={onClose} className="min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-border-dark">닫기</button>
+          <button autoFocus type="button" onClick={onClose} className="min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus dark:border-border-dark">닫기</button>
         </div>
         {children}
       </div>

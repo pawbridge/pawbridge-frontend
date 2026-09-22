@@ -131,7 +131,7 @@ export default function AdminPostDetail() {
         <AdminSidebar />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
             <p className="text-text-sub dark:text-gray-400">게시글 정보를 불러오는 중...</p>
           </div>
         </main>
@@ -148,7 +148,7 @@ export default function AdminPostDetail() {
             <p className="text-red-500 mb-4">게시글 정보를 불러오는 중 오류가 발생했습니다.</p>
             <button
               onClick={() => navigate('/admin/posts')}
-              className="px-4 py-2 bg-primary text-text-main rounded-lg hover:bg-primary-hover transition-colors"
+              className="px-4 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors"
             >
               게시글 목록으로 돌아가기
             </button>
@@ -179,8 +179,8 @@ export default function AdminPostDetail() {
                 <p className="text-sm font-bold text-text-main dark:text-white">{user?.name || '관리자'}</p>
                 <p className="text-xs text-text-sub dark:text-gray-400">Super Admin</p>
               </div>
-              <div className="h-9 w-9 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                <span className="material-symbols-outlined text-primary text-[20px]">person</span>
+              <div className="h-9 w-9 rounded-full bg-brand/20 flex items-center justify-center border border-brand-focus">
+                <span className="material-symbols-outlined text-brand-accent text-[20px]">person</span>
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function AdminPostDetail() {
                     onClick={() => navigate('/admin/posts')}
                     className="hover:bg-gray-200 dark:hover:bg-gray-700 p-2 -ml-2 rounded-full transition-colors group"
                   >
-                    <span className="material-symbols-outlined text-text-main dark:text-white group-hover:text-primary transition-colors">arrow_back</span>
+                    <span className="material-symbols-outlined text-text-main dark:text-white group-hover:text-brand-accent transition-colors">arrow_back</span>
                   </button>
                   <h1 className="text-text-main dark:text-white text-3xl font-black leading-tight">게시글 상세 정보</h1>
                 </div>
@@ -241,7 +241,7 @@ export default function AdminPostDetail() {
               {/* 내용 */}
               <div className="p-8 bg-white dark:bg-gray-900">
                 <h3 className="text-text-main dark:text-white text-lg font-bold mb-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">description</span>
+                  <span className="material-symbols-outlined text-brand-accent">description</span>
                   내용
                 </h3>
                 <div className="prose dark:prose-invert max-w-none">
@@ -253,7 +253,7 @@ export default function AdminPostDetail() {
               {postDetail.imageUrls && postDetail.imageUrls.length > 0 && (
                 <div className="p-8 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800">
                   <h3 className="text-text-main dark:text-white text-lg font-bold mb-4 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">image</span>
+                    <span className="material-symbols-outlined text-brand-accent">image</span>
                     첨부 이미지 ({postDetail.imageUrls.length}개)
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -283,7 +283,7 @@ export default function AdminPostDetail() {
                 </button>
                 <button
                   onClick={handleEditClick}
-                  className="w-full sm:w-auto flex items-center justify-center rounded-lg h-11 px-8 bg-primary text-[#111816] text-sm font-bold hover:bg-primary-hover transition-colors shadow-sm"
+                  className="w-full sm:w-auto flex items-center justify-center rounded-lg h-11 px-8 bg-brand text-brand-ink text-sm font-bold hover:bg-brand-hover transition-colors shadow-sm"
                 >
                   <span className="material-symbols-outlined mr-2 text-[20px]">edit</span>
                   <span>정보 수정</span>
@@ -326,7 +326,7 @@ export default function AdminPostDetail() {
                   value={editFormData.title || ''}
                   onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
                   placeholder="제목을 입력하세요 (1-200자)"
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
                 />
                 <p className="text-xs text-text-sub dark:text-gray-500 mt-1">1~200자 이내로 입력해주세요.</p>
               </div>
@@ -339,7 +339,7 @@ export default function AdminPostDetail() {
                   onChange={(e) => setEditFormData({ ...editFormData, content: e.target.value })}
                   placeholder="내용을 입력하세요"
                   rows={10}
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent resize-none"
                 />
                 <p className="text-xs text-text-sub dark:text-gray-500 mt-1">1자 이상 입력해주세요.</p>
               </div>
@@ -361,7 +361,7 @@ export default function AdminPostDetail() {
                 <button
                   onClick={handleEditSubmit}
                   disabled={updateMutation.isPending}
-                  className="flex-1 px-4 py-2 bg-primary text-text-main rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {updateMutation.isPending ? '저장 중...' : '저장'}
                 </button>

@@ -345,7 +345,7 @@ export default function Checkout() {
       {paymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-            <span className="material-symbols-outlined text-4xl text-primary mx-auto">
+            <span className="material-symbols-outlined text-4xl text-brand-accent mx-auto">
               {paymentModal.type === 'cancel' ? 'info' : 'error'}
             </span>
             <p className="text-lg font-bold text-text-light dark:text-text-dark">
@@ -357,7 +357,7 @@ export default function Checkout() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => setPaymentModal(null)}
-                className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-primary text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+                className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
               >
                 확인
               </button>
@@ -467,10 +467,10 @@ export default function Checkout() {
                       value={formData.receiverName}
                       onChange={handleInputChange}
                       placeholder="이름을 입력하세요"
-                      className={`block w-full px-4 py-3 rounded-lg border bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:outline-none ${
+                      className={`block w-full px-4 py-3 rounded-lg border bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-brand-focus focus:outline-none ${
                         errors.receiverName 
                           ? 'border-red-500 focus:border-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-primary'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-brand-focus'
                       }`}
                     />
                     {errors.receiverName && (
@@ -489,10 +489,10 @@ export default function Checkout() {
                       value={formData.receiverPhone}
                       onChange={handlePhoneChange}
                       placeholder="010-0000-0000"
-                      className={`block w-full px-4 py-3 rounded-lg border bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:outline-none ${
+                      className={`block w-full px-4 py-3 rounded-lg border bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-brand-focus focus:outline-none ${
                         errors.receiverPhone 
                           ? 'border-red-500 focus:border-red-500' 
-                          : 'border-gray-300 dark:border-gray-600 focus:border-primary'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-brand-focus'
                       }`}
                     />
                     {errors.receiverPhone && (
@@ -513,10 +513,10 @@ export default function Checkout() {
                         readOnly
                         onClick={handleAddressSearch}
                         placeholder="주소 찾기를 클릭하세요"
-                        className={`block w-full px-4 py-3 rounded-lg border bg-gray-100 dark:bg-gray-900 cursor-pointer focus:ring-2 focus:ring-primary focus:outline-none ${
+                        className={`block w-full px-4 py-3 rounded-lg border bg-gray-100 dark:bg-gray-900 cursor-pointer focus:ring-2 focus:ring-brand-focus focus:outline-none ${
                           errors.deliveryAddress 
                             ? 'border-red-500 focus:border-red-500' 
-                            : 'border-gray-300 dark:border-gray-600 focus:border-primary'
+                            : 'border-gray-300 dark:border-gray-600 focus:border-brand-focus'
                         }`}
                       />
                       <button
@@ -533,7 +533,7 @@ export default function Checkout() {
                       value={formData.deliveryAddressDetail}
                       onChange={handleInputChange}
                       placeholder="상세주소를 입력하세요"
-                      className="mt-2 block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none"
+                      className="mt-2 block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-brand-focus focus:border-brand-focus focus:outline-none"
                     />
                     {errors.deliveryAddress && (
                       <p className="mt-1 text-xs text-red-500">{errors.deliveryAddress}</p>
@@ -551,7 +551,7 @@ export default function Checkout() {
                       onChange={handleInputChange}
                       placeholder="예: 문 앞에 놔주세요"
                       rows={3}
-                      className="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-primary focus:outline-none resize-none"
+                      className="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-brand-focus focus:border-brand-focus focus:outline-none resize-none"
                     />
                   </div>
                 </div>
@@ -581,12 +581,12 @@ export default function Checkout() {
                 <div className="border-t border-gray-200 dark:border-gray-700"></div>
                 <div className="flex justify-between items-center">
                   <p className="text-base font-bold text-text-light dark:text-text-dark">총 결제 금액</p>
-                  <p className="text-2xl font-bold text-primary">{formatPrice(prices.totalPrice)}원</p>
+                  <p className="text-2xl font-bold text-brand-accent">{formatPrice(prices.totalPrice)}원</p>
                 </div>
                 <button
                   onClick={handleSubmit}
                   disabled={isPending}
-                  className="w-full flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isPending ? '처리 중...' : '결제하기'}
                 </button>

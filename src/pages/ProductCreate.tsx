@@ -363,7 +363,7 @@ export default function ProductCreate() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">상품 등록</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -378,7 +378,7 @@ export default function ProductCreate() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -402,15 +402,15 @@ export default function ProductCreate() {
             </div>
 
             {/* 기본 정보 섹션 */}
-          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
-              <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">1</div>
-              <h2 className="text-[#111816] dark:text-white text-lg font-bold">기본 정보</h2>
+          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
+            <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
+              <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">1</div>
+              <h2 className="text-brand-ink dark:text-white text-lg font-bold">기본 정보</h2>
             </div>
             <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
               <div className="md:col-span-8 flex flex-col gap-5">
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                     상품명 <span className="text-red-500">*</span>
                   </span>
                   <input
@@ -418,11 +418,11 @@ export default function ProductCreate() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="상품 이름을 입력하세요 (예: 유기견 후원 티셔츠)"
-                    className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
                 <label className="flex flex-col gap-2 relative" style={{ zIndex: 200 }}>
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                     카테고리 <span className="text-red-500">*</span>
                   </span>
                   <CustomSelect
@@ -439,17 +439,17 @@ export default function ProductCreate() {
                   />
                 </label>
                 <label className="flex flex-col gap-2">
-                  <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">상품 상세 설명</span>
+                  <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">상품 상세 설명</span>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="상품에 대한 상세한 설명을 입력해주세요."
-                    className="w-full h-32 resize-y rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-4 py-3 text-[#111816] dark:text-white placeholder-[#5f8c80] focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                    className="w-full h-32 resize-y rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-4 py-3 text-brand-ink dark:text-white placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all"
                   />
                 </label>
               </div>
               <div className="md:col-span-4 flex flex-col gap-2">
-                <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">
+                <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
                   대표 이미지 <span className="text-red-500">*</span>
                 </span>
                 {imagePreview ? (
@@ -457,7 +457,7 @@ export default function ProductCreate() {
                     <img
                       src={imagePreview}
                       alt="상품 이미지 미리보기"
-                      className="w-full h-full object-cover rounded-xl border border-[#e0e8e5] dark:border-[#2a453d]"
+                      className="w-full h-full object-cover rounded-xl border border-brand-border dark:border-stone-700"
                     />
                     <button
                       onClick={handleRemoveImage}
@@ -467,15 +467,15 @@ export default function ProductCreate() {
                     </button>
                   </div>
                 ) : (
-                  <label className="flex-1 min-h-[240px] border-2 border-dashed border-[#dbe6e3] dark:border-[#2a453d] rounded-xl bg-[#f8fbfb] dark:bg-[#122822] flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors group/upload">
-                    <div className="size-14 rounded-full bg-white dark:bg-[#1a2e29] shadow-sm flex items-center justify-center text-[#5f8c80] group-hover/upload:text-primary transition-colors border border-[#e0e8e5] dark:border-[#2a453d]">
+                  <label className="flex-1 min-h-[240px] border-2 border-dashed border-brand-border dark:border-stone-700 rounded-xl bg-white dark:bg-stone-900 flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-brand-focus hover:bg-brand/5 transition-colors group/upload">
+                    <div className="size-14 rounded-full bg-white dark:bg-stone-800 shadow-sm flex items-center justify-center text-brand-muted group-hover/upload:text-brand-accent transition-colors border border-brand-border dark:border-stone-700">
                       <span className="material-symbols-outlined text-[32px]">add_photo_alternate</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <p className="text-sm font-bold text-[#111816] dark:text-white group-hover/upload:text-primary transition-colors">
+                      <p className="text-sm font-bold text-brand-ink dark:text-white group-hover/upload:text-brand-accent transition-colors">
                         클릭하여 이미지 업로드
                       </p>
-                      <p className="text-xs text-[#5f8c80]">SVG, PNG, JPG (최대 5MB)</p>
+                      <p className="text-xs text-brand-muted">SVG, PNG, JPG (최대 5MB)</p>
                     </div>
                     <input
                       type="file"
@@ -490,11 +490,11 @@ export default function ProductCreate() {
           </section>
 
           {/* 옵션 설정 섹션 */}
-          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-visible">
-            <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center justify-between bg-[#fbfdfc] dark:bg-[#1a2e29]">
+          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-visible">
+            <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center justify-between bg-white dark:bg-stone-800">
               <div className="flex items-center gap-3">
-                <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">2</div>
-                <h2 className="text-[#111816] dark:text-white text-lg font-bold">옵션 설정</h2>
+                <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">2</div>
+                <h2 className="text-brand-ink dark:text-white text-lg font-bold">옵션 설정</h2>
               </div>
               <label className="flex items-center cursor-pointer gap-2 select-none">
                 <input
@@ -503,15 +503,15 @@ export default function ProductCreate() {
                   onChange={(e) => setUseOptions(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                <span className="text-sm font-medium text-[#111816] dark:text-gray-300">옵션 사용</span>
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-ink"></div>
+                <span className="text-sm font-medium text-brand-ink dark:text-gray-300">옵션 사용</span>
               </label>
             </div>
             {useOptions && (
-              <div className="p-6 bg-[#f8fbfb] dark:bg-[#122822] relative z-0 overflow-visible">
+              <div className="p-6 bg-white dark:bg-stone-900 relative z-0 overflow-visible">
                 <div className="flex flex-col md:flex-row gap-6 items-start relative">
                   <div className="w-full md:w-1/3 flex flex-col gap-2 relative" style={{ zIndex: 1000 }}>
-                    <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">옵션 그룹</span>
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">옵션 그룹</span>
                     <CustomSelect
                       value={selectedOptionGroupId}
                       onChange={(value) => handleOptionGroupSelect(value ? Number(value) : '')}
@@ -522,15 +522,15 @@ export default function ProductCreate() {
                       placeholder="옵션 그룹 선택"
                       disabled={isLoadingOptions}
                     />
-                    <p className="text-xs text-[#5f8c80] mt-1 pl-1">
+                    <p className="text-xs text-brand-muted mt-1 pl-1">
                       옵션 그룹을 선택하면 아래에 선택 가능한 값이 표시됩니다.
                     </p>
                   </div>
                   <div className="w-full md:w-2/3 flex flex-col gap-2">
-                    <span className="text-[#111816] dark:text-gray-200 text-sm font-bold">옵션 값 선택</span>
-                    <div className="flex flex-wrap gap-3 p-5 rounded-xl bg-white dark:bg-[#0f231e] border border-[#dbe6e3] dark:border-[#2a453d] min-h-[100px] content-start">
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">옵션 값 선택</span>
+                    <div className="flex flex-wrap gap-3 p-5 rounded-xl bg-white dark:bg-card-dark border border-brand-border dark:border-stone-700 min-h-[100px] content-start">
                       {currentOptionValues.length === 0 ? (
-                        <p className="text-sm text-[#5f8c80]">옵션 그룹을 선택해주세요.</p>
+                        <p className="text-sm text-brand-muted">옵션 그룹을 선택해주세요.</p>
                       ) : (
                         currentOptionValues.map((value) => {
                           const groupId = Number(selectedOptionGroupId);
@@ -549,8 +549,8 @@ export default function ProductCreate() {
                               />
                               <div className={`px-4 py-2 rounded-full border text-sm font-medium transition-all flex items-center gap-2 shadow-sm ${
                                 isSelected
-                                  ? 'bg-primary text-[#111816] border-primary'
-                                  : 'border-[#dbe6e3] dark:border-[#2a453d] text-[#5f8c80] hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29]'
+                                  ? 'bg-brand text-brand-ink border-brand-focus'
+                                  : 'border-brand-border dark:border-stone-700 text-brand-muted hover:bg-brand-soft dark:hover:bg-stone-800'
                               }`}>
                                 <span>{value.name}</span>
                                 {isSelected && (
@@ -569,14 +569,14 @@ export default function ProductCreate() {
           </section>
 
           {/* 재고 및 가격 관리 (SKU) 섹션 */}
-          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#e0e8e5] dark:border-[#1f3530] overflow-visible mb-8" style={{ zIndex: 1 }}>
-            <div className="px-6 py-4 border-b border-[#f0f5f3] dark:border-[#1f3530] flex items-center gap-3 bg-[#fbfdfc] dark:bg-[#1a2e29]">
-              <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold font-display">3</div>
-              <h2 className="text-[#111816] dark:text-white text-lg font-bold">재고 및 가격 관리 (SKU)</h2>
+          <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-visible mb-8" style={{ zIndex: 1 }}>
+            <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
+              <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">3</div>
+              <h2 className="text-brand-ink dark:text-white text-lg font-bold">재고 및 가격 관리 (SKU)</h2>
             </div>
             <div className="p-0 overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-[#f8fbfb] dark:bg-[#122822] text-[#5f8c80] text-sm font-bold border-b border-[#e0e8e5] dark:border-[#1f3530]">
+                <thead className="bg-white dark:bg-stone-900 text-brand-muted text-sm font-bold border-b border-brand-border dark:border-stone-800">
                   <tr>
                     <th className="px-6 py-3 whitespace-nowrap w-[25%]">SKU 코드</th>
                     <th className="px-6 py-3 whitespace-nowrap w-[25%]">옵션 정보</th>
@@ -587,25 +587,25 @@ export default function ProductCreate() {
                 <tbody className="divide-y divide-[#f0f5f3] dark:divide-[#1f3530]">
                   {skus.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-[#5f8c80]">
+                      <td colSpan={4} className="px-6 py-8 text-center text-brand-muted">
                         {useOptions ? '옵션을 선택하면 SKU가 자동 생성됩니다.' : 'SKU 정보를 입력해주세요.'}
                       </td>
                     </tr>
                   ) : (
                     skus.map((sku, index) => (
-                      <tr key={index} className="hover:bg-[#f8fbfb] dark:hover:bg-[#122822] transition-colors">
+                      <tr key={index} className="hover:bg-white dark:hover:bg-stone-900 transition-colors">
                         <td className="px-6 py-4">
                           <input
                             type="text"
                             value={sku.skuCode}
                             onChange={(e) => handleSkuCodeChange(index, e.target.value)}
-                            className="font-mono text-sm text-[#5f8c80] bg-[#f0f5f3] dark:bg-[#1f3530] px-2 py-1 rounded border border-[#e0e8e5] dark:border-[#2a453d] w-full focus:outline-none focus:ring-1 focus:ring-primary dark:text-white"
+                            className="font-mono text-sm text-brand-muted bg-brand-soft dark:bg-stone-800 px-2 py-1 rounded border border-brand-border dark:border-stone-700 w-full focus:outline-none focus:ring-1 focus:ring-brand-focus dark:text-white"
                           />
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <span className="inline-block size-2.5 rounded-full bg-primary ring-2 ring-primary/30"></span>
-                            <span className="text-sm font-medium text-[#111816] dark:text-white">
+                            <span className="inline-block size-2.5 rounded-full bg-brand ring-2 ring-brand-focus"></span>
+                            <span className="text-sm font-medium text-brand-ink dark:text-white">
                               {getOptionDisplay(sku.optionValueIds)}
                             </span>
                           </div>
@@ -616,9 +616,9 @@ export default function ProductCreate() {
                               type="number"
                               value={sku.price || ''}
                               onChange={(e) => handleSkuPriceChange(index, Number(e.target.value))}
-                              className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] pl-3 pr-8 py-2 text-sm text-right focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all dark:text-white"
+                              className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark pl-3 pr-8 py-2 text-sm text-right focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all dark:text-white"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#5f8c80] font-bold">원</span>
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-brand-muted font-bold">원</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -627,9 +627,9 @@ export default function ProductCreate() {
                               type="number"
                               value={sku.stockQuantity || ''}
                               onChange={(e) => handleSkuStockChange(index, Number(e.target.value))}
-                              className="w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] bg-white dark:bg-[#0f231e] px-3 py-2 text-sm text-right focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all dark:text-white"
+                              className="w-full rounded-lg border border-brand-border dark:border-stone-700 bg-white dark:bg-card-dark px-3 py-2 text-sm text-right focus:border-brand-focus focus:ring-1 focus:ring-brand-focus outline-none transition-all dark:text-white"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#5f8c80] pointer-events-none">개</span>
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-brand-muted pointer-events-none">개</span>
                           </div>
                         </td>
                       </tr>
@@ -641,9 +641,9 @@ export default function ProductCreate() {
           </section>
 
           {/* 하단 고정 버튼 */}
-          <footer className="sticky bottom-0 bg-white dark:bg-[#0f231e] border-t border-[#e0e8e5] dark:border-[#1f3530] px-6 md:px-10 py-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 -mx-8 -mb-8 mt-8">
+          <footer className="sticky bottom-0 bg-white dark:bg-card-dark border-t border-brand-border dark:border-stone-800 px-6 md:px-10 py-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 -mx-8 -mb-8 mt-8">
             <div className="max-w-5xl mx-auto flex justify-between items-center">
-              <p className="text-sm text-[#5f8c80] hidden md:flex items-center gap-2">
+              <p className="text-sm text-brand-muted hidden md:flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">info</span>
                 <span><span className="font-bold">Tip:</span> 필수 항목(*)을 모두 입력해야 상품 등록이 가능합니다.</span>
               </p>
@@ -651,14 +651,14 @@ export default function ProductCreate() {
                 <button
                   onClick={handleSubmit}
                   disabled={createProductMutation.isPending || uploadImageMutation.isPending}
-                  className="px-8 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-[#111816] font-bold shadow-lg shadow-primary/25 transition-colors flex items-center justify-center gap-2 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-2.5 rounded-lg bg-brand hover:bg-brand-hover text-brand-ink font-bold shadow-lg shadow-brand/25 transition-colors flex items-center justify-center gap-2 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined text-[20px]">check</span>
                   {createProductMutation.isPending || uploadImageMutation.isPending ? '등록 중...' : '상품 등록하기'}
                 </button>
                 <button
                   onClick={() => navigate('/admin/products')}
-                  className="px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] text-[#111816] dark:text-gray-300 font-bold hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29] transition-colors w-full md:w-auto"
+                  className="px-6 py-2.5 rounded-lg border border-brand-border dark:border-stone-700 text-brand-ink dark:text-gray-300 font-bold hover:bg-brand-soft dark:hover:bg-stone-800 transition-colors w-full md:w-auto"
                 >
                   취소하기
                 </button>

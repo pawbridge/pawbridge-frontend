@@ -68,7 +68,7 @@ export default function OrderDetail() {
         <main className="flex-grow w-full max-w-[1200px] mx-auto px-4 md:px-10 py-8">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
               <p className="text-gray-500 dark:text-gray-400">주문 정보를 불러오는 중...</p>
             </div>
           </div>
@@ -88,7 +88,7 @@ export default function OrderDetail() {
               <p className="text-red-500 mb-4">주문 정보를 불러올 수 없습니다.</p>
               <button
                 onClick={() => navigate('/orders')}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+                className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
               >
                 주문 내역으로 돌아가기
               </button>
@@ -131,7 +131,7 @@ export default function OrderDetail() {
           </div>
           <button
             onClick={() => navigate('/orders')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border-color rounded-lg text-text-main font-bold hover:bg-gray-50 transition-colors dark:bg-[#1a2e22] dark:border-[#2a4034] dark:text-white dark:hover:bg-[#25382c]"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border-color rounded-lg text-text-main font-bold hover:bg-gray-50 transition-colors dark:bg-stone-800 dark:border-stone-700 dark:text-white dark:hover:bg-stone-800"
           >
             <span className="material-symbols-outlined text-[20px]">arrow_back</span>
             목록으로 돌아가기
@@ -139,7 +139,7 @@ export default function OrderDetail() {
         </div>
 
         {/* Order Status */}
-        <div className="bg-white dark:bg-[#1a2e22] rounded-xl border border-border-color p-6 mb-6">
+        <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-text-secondary mb-1">주문 상태</p>
@@ -155,7 +155,7 @@ export default function OrderDetail() {
         </div>
 
         {/* Delivery Information */}
-        <div className="bg-white dark:bg-[#1a2e22] rounded-xl border border-border-color p-6 mb-6">
+        <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6 mb-6">
           <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">배송 정보</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -180,7 +180,7 @@ export default function OrderDetail() {
         </div>
 
         {/* Order Items */}
-        <div className="bg-white dark:bg-[#1a2e22] rounded-xl border border-border-color p-6 mb-6">
+        <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6 mb-6">
           <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">주문 상품</h2>
           <div className="space-y-4">
             {order.items.map((item, index) => (
@@ -204,7 +204,7 @@ export default function OrderDetail() {
         </div>
 
         {/* Payment Summary */}
-        <div className="bg-white dark:bg-[#1a2e22] rounded-xl border border-border-color p-6">
+        <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6">
           <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">결제 정보</h2>
           <div className="space-y-3">
             <div className="flex justify-between">
@@ -217,7 +217,7 @@ export default function OrderDetail() {
             </div>
             <div className="border-t border-border-color pt-3 flex justify-between">
               <span className="text-lg font-bold text-text-main dark:text-white">총 결제 금액</span>
-              <span className="text-lg font-bold text-primary">{formatPrice(order.totalAmount)}원</span>
+              <span className="text-lg font-bold text-brand-accent">{formatPrice(order.totalAmount)}원</span>
             </div>
           </div>
         </div>

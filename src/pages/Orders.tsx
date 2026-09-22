@@ -80,7 +80,7 @@ export default function Orders() {
         <main className="flex-1 w-full max-w-[1080px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
               <p className="text-gray-500 dark:text-gray-400">주문 내역을 불러오는 중...</p>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function Orders() {
               <p className="text-red-500 mb-4">주문 내역을 불러오는 중 오류가 발생했습니다.</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+                className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
               >
                 다시 시도
               </button>
@@ -150,7 +150,7 @@ export default function Orders() {
                   setStatusFilter(e.target.value as OrderStatus | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="appearance-none w-full bg-surface dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-background-dark dark:text-white rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer font-medium text-sm shadow-sm"
+                className="appearance-none w-full bg-surface dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-background-dark dark:text-white rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-brand-focus focus:border-transparent cursor-pointer font-medium text-sm shadow-sm"
               >
                 <option value="ALL">전체 상태</option>
                 <option value="PENDING">주문 대기</option>
@@ -226,7 +226,7 @@ export default function Orders() {
                             </span>
                             <button
                               onClick={() => handleViewDetail(order.orderId)}
-                              className="text-xs text-gray-500 hover:text-primary hover:underline text-left"
+                              className="text-xs text-gray-500 hover:text-brand-accent hover:underline text-left"
                             >
                               No. {order.orderUuid.slice(0, 13)}
                             </button>
@@ -253,7 +253,7 @@ export default function Orders() {
                             </span>
                             <button
                               onClick={() => handleViewDetail(order.orderId)}
-                              className="w-full max-w-[100px] py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-xs font-medium hover:bg-white hover:border-primary hover:text-primary dark:hover:bg-gray-700 transition-colors bg-transparent"
+                              className="w-full max-w-[100px] py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-xs font-medium hover:bg-white hover:border-brand-focus hover:text-brand-accent dark:hover:bg-gray-700 transition-colors bg-transparent"
                             >
                               상세 보기
                             </button>
@@ -285,7 +285,7 @@ export default function Orders() {
                   onClick={() => setCurrentPage(page)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     currentPage === page
-                      ? 'bg-primary text-white'
+                      ? 'bg-brand text-brand-ink'
                       : 'bg-white dark:bg-surface-dark text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
                 >

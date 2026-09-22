@@ -4,27 +4,19 @@ import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { logout } from '../../api/auth.api';
 import { canSeePetMarket } from '../../lib/petMarket';
 
-interface HeaderProps {
-  colorScheme?: 'default' | 'warm';
-}
+const palette = {
+  text: 'text-brand-ink',
+  icon: 'text-brand-accent',
+  navigation: 'hover:text-brand-accent hover:underline',
+  active: 'aria-[current=page]:text-brand-accent aria-[current=page]:underline',
+  shelterHover: 'hover:text-brand-accent hover:underline',
+  filled: 'bg-brand text-brand-ink hover:bg-brand-hover',
+  outline: 'text-brand-accent border-brand-border',
+  border: 'border-brand-border dark:border-border-dark',
+  focus: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus',
+};
 
-export default function Header({ colorScheme = 'default' }: HeaderProps) {
-  const warm = colorScheme === 'warm';
-  const palette = {
-    text: warm ? 'text-brand-ink' : 'text-primary-content',
-    icon: warm ? 'text-brand-ink dark:text-brand' : 'text-primary',
-    navigation: warm
-      ? 'hover:text-brand-ink hover:underline dark:hover:text-brand'
-      : 'hover:text-primary dark:hover:text-primary',
-    active: warm
-      ? 'aria-[current=page]:text-brand-ink aria-[current=page]:underline dark:aria-[current=page]:text-brand'
-      : 'aria-[current=page]:text-emerald-700 dark:aria-[current=page]:text-primary',
-    shelterHover: warm ? 'hover:text-brand-ink hover:underline dark:hover:text-brand' : 'hover:text-emerald-700',
-    filled: warm ? 'bg-brand text-brand-ink' : 'bg-primary text-white',
-    outline: warm ? 'text-brand-ink dark:text-brand border-brand-border' : 'text-primary dark:text-primary border-primary',
-    border: warm ? 'border-brand-border' : 'border-primary/20',
-    focus: warm ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-ink dark:focus-visible:outline-brand' : '',
-  };
+export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
   const showPetMarket = canSeePetMarket(user?.role);

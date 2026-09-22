@@ -129,7 +129,7 @@ export default function CommunityDetail() {
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <p className="text-lg text-red-600 dark:text-red-400">게시글을 찾을 수 없습니다.</p>
-            <Link to="/community" className="mt-4 inline-block text-primary underline">
+            <Link to="/community" className="mt-4 inline-block text-brand-accent underline">
               목록으로 돌아가기
             </Link>
           </div>
@@ -150,7 +150,7 @@ export default function CommunityDetail() {
           <div className="mb-6">
             <Link
               to="/community"
-              className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary"
+              className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-brand-accent dark:hover:text-brand-accent"
             >
               <span className="material-symbols-outlined mr-1">arrow_back</span>
               목록으로
@@ -162,7 +162,7 @@ export default function CommunityDetail() {
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="inline-block px-3 py-1 bg-primary/20 dark:bg-primary/30 text-primary text-sm font-semibold rounded-full mb-3">
+                <span className="inline-block px-3 py-1 bg-brand/20 dark:bg-brand/30 text-brand-accent text-sm font-semibold rounded-full mb-3">
                   {boardLabel[post.boardType] || post.boardType}
                 </span>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -241,14 +241,14 @@ export default function CommunityDetail() {
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder={user ? "댓글을 입력하세요..." : "로그인 후 댓글을 작성할 수 있습니다."}
                 disabled={!user || createCommentMutation.isPending}
-                className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white resize-none focus:ring-2 focus:ring-brand-focus disabled:opacity-50"
                 rows={3}
               />
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handleCommentSubmit}
                   disabled={!user || createCommentMutation.isPending}
-                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createCommentMutation.isPending ? '작성 중...' : '댓글 작성'}
                 </button>

@@ -186,7 +186,7 @@ export default function AdminUserManagement() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">회원 관리</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 type="text"
@@ -206,7 +206,7 @@ export default function AdminUserManagement() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -230,11 +230,11 @@ export default function AdminUserManagement() {
                 <p className="text-text-sub dark:text-gray-400 text-sm font-normal">플랫폼에 가입된 모든 회원을 관리합니다.</p>
               </div>
               {/* 회원 추가 API가 없어서 주석처리 */}
-              {/* <button className="flex items-center justify-center gap-2 h-10 px-5 bg-primary hover:bg-primary-dark transition-all duration-200 rounded-lg shadow-sm group">
-                <span className="material-symbols-outlined text-[#111816]" style={{ fontSize: '20px' }}>
+              {/* <button className="flex items-center justify-center gap-2 h-10 px-5 bg-brand hover:bg-brand-hover transition-all duration-200 rounded-lg shadow-sm group">
+                <span className="material-symbols-outlined text-brand-ink" style={{ fontSize: '20px' }}>
                   add
                 </span>
-                <span className="text-[#111816] text-sm font-bold">회원 추가</span>
+                <span className="text-brand-ink text-sm font-bold">회원 추가</span>
               </button> */}
             </div>
 
@@ -248,8 +248,8 @@ export default function AdminUserManagement() {
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   roleFilter === 'ALL'
-                    ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                    : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                    ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                    : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
                 }`}
               >
                 전체
@@ -261,8 +261,8 @@ export default function AdminUserManagement() {
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   roleFilter === 'ROLE_ADMIN'
-                    ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                    : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                    ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                    : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
                 }`}
               >
                 관리자
@@ -274,8 +274,8 @@ export default function AdminUserManagement() {
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   roleFilter === 'ROLE_USER'
-                    ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                    : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                    ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                    : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
                 }`}
               >
                 일반회원
@@ -287,8 +287,8 @@ export default function AdminUserManagement() {
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   roleFilter === 'ROLE_SHELTER'
-                    ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                    : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-gray-700 hover:border-primary dark:hover:border-primary'
+                    ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                    : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-gray-700 hover:border-brand-focus dark:hover:border-brand-focus'
                 }`}
               >
                 보호소회원
@@ -296,11 +296,11 @@ export default function AdminUserManagement() {
             </div>
 
             {/* 회원 목록 테이블 */}
-            <div className="bg-white dark:bg-gray-900 border border-[#dbe6e3] dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-gray-900 border border-brand-border dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden flex flex-col">
               <div className="overflow-x-auto">
                 {isLoading ? (
                   <div className="p-12 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
                     <p className="text-text-sub dark:text-gray-400">회원 목록을 불러오는 중...</p>
                   </div>
                 ) : error ? (
@@ -308,7 +308,7 @@ export default function AdminUserManagement() {
                     <p className="text-red-500 mb-4">회원 목록을 불러오는 중 오류가 발생했습니다.</p>
                     <button
                       onClick={() => window.location.reload()}
-                      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
+                      className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
                     >
                       다시 시도
                     </button>
@@ -321,7 +321,7 @@ export default function AdminUserManagement() {
                 ) : (
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-[#dbe6e3] dark:border-gray-700 text-xs uppercase tracking-wider text-text-sub dark:text-gray-400 font-semibold">
+                      <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-brand-border dark:border-gray-700 text-xs uppercase tracking-wider text-text-sub dark:text-gray-400 font-semibold">
                         <th className="px-6 py-4 w-20">번호</th>
                         <th className="px-6 py-4">이메일</th>
                         <th className="px-6 py-4">이름</th>
@@ -336,7 +336,7 @@ export default function AdminUserManagement() {
                         const roleBadge = getRoleBadge(userItem.role);
                         const avatarColor = getAvatarColor(userItem.email);
                         return (
-                          <tr key={userItem.userId} className="hover:bg-primary/5 dark:hover:bg-primary/5 transition-colors group">
+                          <tr key={userItem.userId} className="hover:bg-brand/5 dark:hover:bg-brand/5 transition-colors group">
                             <td className="px-6 py-4 text-sm text-text-sub dark:text-gray-400">
                               {currentPage * pageSize + index + 1}
                             </td>
@@ -369,7 +369,7 @@ export default function AdminUserManagement() {
                                 </button>
                                 <button
                                   onClick={() => handleEdit(userItem)}
-                                  className="text-text-sub hover:text-primary dark:text-gray-500 dark:hover:text-primary transition-colors p-1 rounded-md hover:bg-background-light dark:hover:bg-gray-800"
+                                  className="text-text-sub hover:text-brand-accent dark:text-gray-500 dark:hover:text-brand-accent transition-colors p-1 rounded-md hover:bg-background-light dark:hover:bg-gray-800"
                                   title="수정"
                                 >
                                   <span className="material-symbols-outlined text-[20px]">edit</span>
@@ -394,7 +394,7 @@ export default function AdminUserManagement() {
 
               {/* 페이지네이션 */}
               {totalPages > 1 && (
-                <div className="px-6 py-4 bg-white dark:bg-gray-900 border-t border-[#dbe6e3] dark:border-gray-700 flex items-center justify-between">
+                <div className="px-6 py-4 bg-white dark:bg-gray-900 border-t border-brand-border dark:border-gray-700 flex items-center justify-between">
                   <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
                       <p className="text-sm text-text-sub dark:text-gray-400">
@@ -408,7 +408,7 @@ export default function AdminUserManagement() {
                         <button
                           onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
                           disabled={currentPage === 0}
-                          className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-[#dbe6e3] dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-medium text-text-sub hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-brand-border dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-medium text-text-sub hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <span className="sr-only">Previous</span>
                           <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
@@ -432,8 +432,8 @@ export default function AdminUserManagement() {
                               onClick={() => setCurrentPage(pageNum)}
                               className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                 currentPage === pageNum
-                                  ? 'z-10 bg-primary border-primary text-[#111816]'
-                                  : 'bg-white dark:bg-gray-900 border-[#dbe6e3] dark:border-gray-700 text-text-sub dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                  ? 'z-10 bg-brand border-brand-focus text-brand-ink'
+                                  : 'bg-white dark:bg-gray-900 border-brand-border dark:border-gray-700 text-text-sub dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                               }`}
                             >
                               {pageNum + 1}
@@ -441,14 +441,14 @@ export default function AdminUserManagement() {
                           );
                         })}
                         {totalPages > 10 && currentPage < totalPages - 6 && (
-                          <span className="relative inline-flex items-center px-4 py-2 border border-[#dbe6e3] dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-medium text-text-sub">
+                          <span className="relative inline-flex items-center px-4 py-2 border border-brand-border dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-medium text-text-sub">
                             ...
                           </span>
                         )}
                         <button
                           onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
                           disabled={currentPage >= totalPages - 1}
-                          className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-[#dbe6e3] dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-medium text-text-sub hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-brand-border dark:border-gray-700 bg-white dark:bg-gray-900 text-sm font-medium text-text-sub hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <span className="sr-only">Next</span>
                           <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
@@ -501,7 +501,7 @@ export default function AdminUserManagement() {
                 value={editForm.nickname || ''}
                 onChange={(e) => setEditForm({ ...editForm, nickname: e.target.value })}
                 placeholder="2~10자의 영문, 숫자, 한글"
-                className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
               />
               <p className="text-xs text-text-sub dark:text-gray-500 mt-1">2~10자의 영문, 숫자, 한글만 가능합니다.</p>
             </div>
@@ -512,7 +512,7 @@ export default function AdminUserManagement() {
               <select
                 value={editForm.role || ''}
                 onChange={(e) => setEditForm({ ...editForm, role: e.target.value as 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER' })}
-                className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
               >
                 <option value="ROLE_USER">일반회원</option>
                 <option value="ROLE_ADMIN">관리자</option>
@@ -531,7 +531,7 @@ export default function AdminUserManagement() {
                   value={editForm.careRegNo || ''}
                   readOnly
                   title="보호소 연결은 담당자 신청 승인에서 관리합니다"
-                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-[#dbe6e3] dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-3 py-2 bg-background-light dark:bg-background-dark border border-brand-border dark:border-gray-700 text-text-main dark:text-white rounded-lg focus:ring-2 focus:ring-brand-focus focus:border-transparent"
                 />
               </div>
             )}
@@ -551,7 +551,7 @@ export default function AdminUserManagement() {
               <button
                 onClick={handleSubmitEdit}
                 disabled={updateUserMutation.isPending}
-                className="flex-1 px-4 py-2 bg-primary text-text-main rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {updateUserMutation.isPending ? '저장 중...' : '저장'}
               </button>

@@ -73,7 +73,7 @@ export default function CommunityCreate() {
           <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
             <div className="flex flex-col gap-8 p-6 sm:p-10">
               <div>
-                <h1 className="text-[#111816] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                <h1 className="text-brand-ink dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
                   소통 게시판 글 작성
                 </h1>
               </div>
@@ -81,11 +81,11 @@ export default function CommunityCreate() {
               <div className="flex flex-col gap-6">
                 {/* Title Input */}
                 <label className="flex flex-col w-full">
-                  <p className="text-[#111816] dark:text-white text-base font-medium leading-normal pb-2">
+                  <p className="text-brand-ink dark:text-white text-base font-medium leading-normal pb-2">
                     제목 *
                   </p>
                   <input
-                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111816] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
+                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-brand-ink dark:text-white focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
                     placeholder="제목을 입력하세요"
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -94,11 +94,11 @@ export default function CommunityCreate() {
 
                 {/* Content Textarea */}
                 <label className="flex flex-col w-full">
-                  <p className="text-[#111816] dark:text-white text-base font-medium leading-normal pb-2">
+                  <p className="text-brand-ink dark:text-white text-base font-medium leading-normal pb-2">
                     내용 *
                   </p>
                   <textarea
-                    className="form-input flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-[#111816] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 min-h-60 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
+                    className="form-input flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-brand-ink dark:text-white focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 min-h-60 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal"
                     placeholder="자유롭게 이야기를 공유해주세요. (예: 입양 후기, 반려동물 자랑 등)"
                     value={form.content}
                     onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -107,7 +107,7 @@ export default function CommunityCreate() {
 
                 {/* Photo Upload Grid */}
                 <div className="flex flex-col gap-4">
-                  <p className="text-[#111816] dark:text-white text-base font-medium leading-normal">
+                  <p className="text-brand-ink dark:text-white text-base font-medium leading-normal">
                     사진 첨부 (선택)
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -128,8 +128,8 @@ export default function CommunityCreate() {
                       </div>
                     ))}
                     {form.files.length < 10 && (
-                      <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary transition-colors cursor-pointer aspect-square p-4">
-                        <span className="material-symbols-outlined text-primary text-3xl">add_photo_alternate</span>
+                      <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-brand-focus dark:hover:border-brand-focus transition-colors cursor-pointer aspect-square p-4">
+                        <span className="material-symbols-outlined text-brand-accent text-3xl">add_photo_alternate</span>
                         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal text-center">
                           사진 추가
                         </p>
@@ -149,14 +149,14 @@ export default function CommunityCreate() {
                 <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <Link
                     to="/community"
-                    className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-100 dark:bg-gray-700 text-[#111816] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-base font-bold leading-normal"
+                    className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-100 dark:bg-gray-700 text-brand-ink dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-base font-bold leading-normal"
                   >
                     <span className="truncate">취소</span>
                   </Link>
                   <button
                     onClick={handleSubmit}
                     disabled={createPostMutation.isPending}
-                    className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white hover:bg-primary/80 transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-ink hover:bg-brand-hover transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span className="truncate">{createPostMutation.isPending ? '등록 중...' : '등록'}</span>
                   </button>
@@ -187,10 +187,10 @@ export default function CommunityCreate() {
               {/* Board Type Selector */}
               <div>
                 <label className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2" htmlFor="boardType">
-                  게시판 선택<span className="text-primary ml-1">*</span>
+                  게시판 선택<span className="text-brand-accent ml-1">*</span>
                 </label>
                 <select
-                  className="form-select w-full rounded-lg text-gray-800 dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary dark:focus:border-primary h-14 p-[15px] text-base font-normal"
+                  className="form-select w-full rounded-lg text-gray-800 dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-brand-focus border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-brand-focus dark:focus:border-brand-focus h-14 p-[15px] text-base font-normal"
                   id="boardType"
                   value={form.boardType}
                   onChange={(e) => setForm({ ...form, boardType: e.target.value as BoardType })}
@@ -207,10 +207,10 @@ export default function CommunityCreate() {
               {/* Title Input */}
               <div>
                 <label className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2" htmlFor="title">
-                  제목<span className="text-primary ml-1">*</span>
+                  제목<span className="text-brand-accent ml-1">*</span>
                 </label>
                 <input
-                  className="form-input w-full rounded-lg text-gray-800 dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary dark:focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal"
+                  className="form-input w-full rounded-lg text-gray-800 dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-brand-focus border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-brand-focus dark:focus:border-brand-focus h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal"
                   id="title"
                   placeholder="제목을 입력하세요"
                   type="text"
@@ -222,10 +222,10 @@ export default function CommunityCreate() {
               {/* Content Textarea */}
               <div>
                 <label className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2" htmlFor="content">
-                  내용<span className="text-primary ml-1">*</span>
+                  내용<span className="text-brand-accent ml-1">*</span>
                 </label>
                 <textarea
-                  className="form-textarea w-full rounded-lg text-gray-800 dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary dark:focus:border-primary min-h-48 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal"
+                  className="form-textarea w-full rounded-lg text-gray-800 dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-brand-focus border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-brand-focus dark:focus:border-brand-focus min-h-48 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal"
                   id="content"
                   placeholder="내용을 입력하세요"
                   value={form.content}
@@ -243,7 +243,7 @@ export default function CommunityCreate() {
                     <span className="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">image</span>
                     <div className="mt-4 flex text-sm leading-6 text-gray-600 dark:text-gray-400">
                       <label
-                        className="relative cursor-pointer rounded-md font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 dark:ring-offset-background-dark hover:text-primary/80"
+                        className="relative cursor-pointer rounded-md font-semibold text-brand-accent focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-focus focus-within:ring-offset-2 dark:ring-offset-background-dark hover:text-brand-accent/80"
                         htmlFor="file-upload"
                       >
                         <span>이미지 첨부</span>
@@ -287,7 +287,7 @@ export default function CommunityCreate() {
                 <button
                   onClick={handleSubmit}
                   disabled={createPostMutation.isPending}
-                  className="flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 bg-primary text-gray-900 text-base font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex min-w-[120px] items-center justify-center rounded-lg h-12 px-6 bg-brand text-gray-900 text-base font-bold hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span>{createPostMutation.isPending ? '등록 중...' : '등록하기'}</span>
                 </button>

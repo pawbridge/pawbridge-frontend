@@ -25,7 +25,7 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
         <summary
           className={`flex cursor-pointer items-center justify-between gap-2 p-2 rounded-lg transition-colors ${
             isSelected
-              ? 'bg-primary/10 border border-primary/20'
+              ? 'bg-brand/10 border border-brand-focus'
               : 'hover:bg-background-light dark:hover:bg-background-dark/50'
           }`}
           onClick={(e) => {
@@ -55,13 +55,13 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
             </span>
           </div>
           {hasChildren && (
-            <span className="bg-white dark:bg-[#203632] border border-[#dbe6e3] dark:border-[#2a3c38] text-text-sub dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-white dark:bg-stone-800 border border-brand-border dark:border-stone-700 text-text-sub dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
               {category.children.length}
             </span>
           )}
         </summary>
         {hasChildren && (
-          <div className="flex flex-col ml-5 border-l-2 border-[#dbe6e3] dark:border-[#2a3c38] pl-3 mt-1 gap-1">
+          <div className="flex flex-col ml-5 border-l-2 border-brand-border dark:border-stone-700 pl-3 mt-1 gap-1">
             {category.children.map((child) => (
               <CategoryTreeNode
                 key={child.id}
@@ -325,7 +325,7 @@ export default function AdminCategoryManagement() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">카테고리 관리</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -340,7 +340,7 @@ export default function AdminCategoryManagement() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -367,15 +367,15 @@ export default function AdminCategoryManagement() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
               {/* 왼쪽: 카테고리 트리 구조 */}
               <section className="lg:col-span-4 flex flex-col gap-4">
-                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-[#dbe6e3] dark:border-[#2a3c38] shadow-sm p-5 flex flex-col min-h-[600px]">
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-[#f0f5f3] dark:border-[#2a3c38]">
+                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-brand-border dark:border-stone-700 shadow-sm p-5 flex flex-col min-h-[600px]">
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-brand-soft dark:border-stone-700">
                     <h3 className="text-lg font-bold text-text-main dark:text-white flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary">account_tree</span>
+                      <span className="material-symbols-outlined text-brand-accent">account_tree</span>
                       카테고리 구조
                     </h3>
                     <button
                       onClick={handleNewCategory}
-                      className="flex items-center justify-center gap-1 bg-primary text-background-dark px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-primary-dark transition-colors shadow-sm"
+                      className="flex items-center justify-center gap-1 bg-brand text-background-dark px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-brand-hover transition-colors shadow-sm"
                     >
                       <span className="material-symbols-outlined text-[16px]">add</span>
                       새 카테고리
@@ -384,7 +384,7 @@ export default function AdminCategoryManagement() {
                   <div className="flex-1 flex flex-col gap-2 overflow-y-auto pr-1">
                     {isLoading ? (
                       <div className="flex items-center justify-center h-full">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-focus"></div>
                       </div>
                     ) : error ? (
                       <div className="text-red-500 text-sm">카테고리 목록을 불러오는데 실패했습니다.</div>
@@ -401,7 +401,7 @@ export default function AdminCategoryManagement() {
                       ))
                     )}
                   </div>
-                  <div className="mt-4 pt-4 border-t border-[#dbe6e3] dark:border-[#2a3c38] text-center">
+                  <div className="mt-4 pt-4 border-t border-brand-border dark:border-stone-700 text-center">
                     <p className="text-xs text-text-sub dark:text-gray-500 flex items-center justify-center gap-1">
                       <span className="material-symbols-outlined text-[14px]">drag_indicator</span>
                       드래그 앤 드롭으로 순서 변경 가능
@@ -412,10 +412,10 @@ export default function AdminCategoryManagement() {
 
               {/* 오른쪽: 카테고리 수정 폼 */}
               <section className="lg:col-span-8 flex flex-col gap-4">
-                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-[#dbe6e3] dark:border-[#2a3c38] shadow-sm overflow-hidden flex flex-col flex-1">
-                  <div className="p-6 border-b border-[#f0f5f3] dark:border-[#2a3c38] flex items-center justify-between">
+                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-brand-border dark:border-stone-700 shadow-sm overflow-hidden flex flex-col flex-1">
+                  <div className="p-6 border-b border-brand-soft dark:border-stone-700 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary text-[28px]">edit_note</span>
+                      <span className="material-symbols-outlined text-brand-accent text-[28px]">edit_note</span>
                       {isCreateMode ? '카테고리 등록' : selectedCategory ? '카테고리 상세' : '카테고리 수정'}
                     </h2>
                     <div className="w-[120px] flex justify-end">
@@ -423,7 +423,7 @@ export default function AdminCategoryManagement() {
                         <button
                           type="button"
                           onClick={handleEditClick}
-                          className="px-4 py-2 rounded-lg bg-primary hover:bg-[#0fd6a3] text-[#0f231e] text-sm font-bold transition-all flex items-center justify-center gap-2"
+                          className="px-4 py-2 rounded-lg bg-brand hover:bg-brand text-card-dark text-sm font-bold transition-all flex items-center justify-center gap-2"
                         >
                           <span className="material-symbols-outlined text-[18px]">edit</span>
                           수정하기
@@ -444,8 +444,8 @@ export default function AdminCategoryManagement() {
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="카테고리 이름을 입력하세요"
                           readOnly={!isCreateMode && !isEditMode}
-                          className={`w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a3c38] dark:bg-[#203632] dark:text-white px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/50 focus:outline-none transition-all placeholder:text-gray-400 ${
-                            !isCreateMode && !isEditMode ? 'bg-gray-50 dark:bg-[#1a2e29] cursor-not-allowed' : ''
+                          className={`w-full rounded-lg border border-brand-border dark:border-stone-700 dark:bg-stone-800 dark:text-white px-4 py-3 text-sm focus:border-brand-focus focus:ring-2 focus:ring-brand-focus focus:outline-none transition-all placeholder:text-gray-400 ${
+                            !isCreateMode && !isEditMode ? 'bg-gray-50 dark:bg-stone-800 cursor-not-allowed' : ''
                           }`}
                           required
                         />
@@ -474,12 +474,12 @@ export default function AdminCategoryManagement() {
                           placeholder="카테고리에 대한 설명을 입력하세요..."
                           rows={4}
                           readOnly={!isCreateMode && !isEditMode}
-                          className={`w-full rounded-lg border border-[#dbe6e3] dark:border-[#2a3c38] dark:bg-[#203632] dark:text-white px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/50 focus:outline-none transition-all placeholder:text-gray-400 resize-none ${
-                            !isCreateMode && !isEditMode ? 'bg-gray-50 dark:bg-[#1a2e29] cursor-not-allowed' : ''
+                          className={`w-full rounded-lg border border-brand-border dark:border-stone-700 dark:bg-stone-800 dark:text-white px-4 py-3 text-sm focus:border-brand-focus focus:ring-2 focus:ring-brand-focus focus:outline-none transition-all placeholder:text-gray-400 resize-none ${
+                            !isCreateMode && !isEditMode ? 'bg-gray-50 dark:bg-stone-800 cursor-not-allowed' : ''
                           }`}
                         />
                     </div>
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-[#f0f5f3] dark:border-[#2a3c38] mt-auto">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-brand-soft dark:border-stone-700 mt-auto">
                       {!isCreateMode && selectedCategory && (
                         <button
                           type="button"
@@ -497,7 +497,7 @@ export default function AdminCategoryManagement() {
                           <button
                             type="button"
                             onClick={handleCancel}
-                            className="px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a3c38] text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-[#203632] text-sm font-bold transition-all"
+                            className="px-6 py-2.5 rounded-lg border border-brand-border dark:border-stone-700 text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-stone-800 text-sm font-bold transition-all"
                           >
                             닫기
                           </button>
@@ -507,7 +507,7 @@ export default function AdminCategoryManagement() {
                           <button
                             type="submit"
                             disabled={createMutation.isPending || updateMutation.isPending}
-                            className="flex-1 sm:flex-none px-8 py-2.5 rounded-lg bg-primary hover:bg-[#0fd6a3] text-[#0f231e] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="flex-1 sm:flex-none px-8 py-2.5 rounded-lg bg-brand hover:bg-brand text-card-dark text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                           >
                             <span className="material-symbols-outlined text-[20px]">check</span>
                             저장하기
@@ -515,7 +515,7 @@ export default function AdminCategoryManagement() {
                           <button
                             type="button"
                             onClick={handleCancel}
-                            className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-[#dbe6e3] dark:border-[#2a3c38] text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-[#203632] text-sm font-bold transition-all"
+                            className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-brand-border dark:border-stone-700 text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-stone-800 text-sm font-bold transition-all"
                           >
                             취소
                           </button>

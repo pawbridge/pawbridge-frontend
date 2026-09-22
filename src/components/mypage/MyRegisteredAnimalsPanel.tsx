@@ -20,7 +20,7 @@ export default function MyRegisteredAnimalsPanel({
         </h2>
         <Link
           to="/animals/new"
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-bold text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           새 동물 등록
@@ -125,7 +125,7 @@ export default function MyRegisteredAnimalsPanel({
                           onClick={() => onPageChange(page)}
                           className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                             currentPage === page
-                              ? 'bg-primary text-white'
+                              ? 'bg-brand text-brand-ink'
                               : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                           }`}
                         >
