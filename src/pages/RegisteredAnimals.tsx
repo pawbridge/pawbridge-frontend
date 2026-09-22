@@ -26,7 +26,7 @@ export default function RegisteredAnimals() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-light dark:bg-background-dark">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus"></div>
       </div>
     );
   }
@@ -210,7 +210,7 @@ export default function RegisteredAnimals() {
                         onClick={() => handlePageChange(pageNum)}
                         className={`px-4 py-2 rounded-lg border transition-colors ${
                           currentPage === pageNum
-                            ? 'bg-primary text-text-main border-primary font-bold'
+                            ? 'bg-brand text-text-main border-brand-focus font-bold'
                             : 'bg-white dark:bg-gray-800 text-text-main dark:text-white border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                       >

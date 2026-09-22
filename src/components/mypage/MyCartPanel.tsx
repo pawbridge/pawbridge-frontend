@@ -47,7 +47,7 @@ export default function MyCartPanel({
           <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 담아보세요.</p>
           <Link
             to="/products"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:bg-primary-hover transition-all"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
           >
             쇼핑 계속하기
             <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -109,19 +109,19 @@ export default function MyCartPanel({
                 </p>
               </div>
               {totalProductPrice < freeShippingThreshold && (
-                <p className="text-xs text-primary">
+                <p className="text-xs text-brand-accent">
                   ₩{formatPrice(freeShippingThreshold - totalProductPrice)} 더 구매 시 무료배송!
                 </p>
               )}
               <div className="border-t border-gray-200 dark:border-gray-700 my-3"></div>
               <div className="flex justify-between items-center">
                 <p className="text-text-light dark:text-text-dark text-base font-bold">총 결제 예정 금액</p>
-                <p className="text-primary text-xl font-bold">₩{formatPrice(totalPrice)}</p>
+                <p className="text-brand-accent text-xl font-bold">₩{formatPrice(totalPrice)}</p>
               </div>
             </div>
             <button
               onClick={onOrder}
-              className="w-full mt-6 flex items-center justify-center rounded-lg h-12 bg-primary text-white text-base font-bold hover:bg-primary-hover transition-colors"
+              className="w-full mt-6 flex items-center justify-center rounded-lg h-12 bg-brand text-brand-ink text-base font-bold hover:bg-brand-hover transition-colors"
             >
               주문하기
             </button>

@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --brand-accent: 48 48 46;
+    --brand-focus: 48 48 46;
+    --chart-zero: #e7e5e4;
+    --chart-low: #fff2a6;
+    --chart-mid: #c4b66a;
+    --chart-high: #7c7350;
+    --chart-highest: #30302e;
+    --chart-outline: #30302e;
+    --chart-surface: #ffffff;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --brand-accent: 255 242 166;
+    --brand-focus: 255 242 166;
+  }
+
+  body {
+    @apply text-brand-ink dark:text-gray-200;
+  }
+
+  :where(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid rgb(var(--brand-focus));
+    outline-offset: 3px;
+  }
+}
+
 /* 커스텀 애니메이션 */
 @layer utilities {
   .animate-fade-in {
@@ -42,12 +71,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  background: theme('colors.brand.muted');
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: theme('colors.brand.ink');
 }
 
 /* 부드러운 스크롤 */

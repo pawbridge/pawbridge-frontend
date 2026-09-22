@@ -5,7 +5,7 @@ import { terrainBand, terrainColor, terrainBreaks, buildRegionRows, normalizeReg
 import StatsDialog from './StatsDialog';
 
 const mapCenter: [number, number] = [127.7, 35.95];
-const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-40 dark:border-border-dark';
+const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-brand/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:opacity-40 dark:border-border-dark';
 
 export default function RegionalAnimalStats({ data }: { data: RegionalStats[] }) {
   const rows = useMemo(() => buildRegionRows(data), [data]);
@@ -42,7 +42,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   })];
 
   const details = (
-    <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-primary/40 bg-primary/10 p-4 sm:p-5">
+    <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-brand-focus bg-brand/10 p-4 sm:p-5">
       {selectedRow ? <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h3 className="text-lg font-bold">{selectedRow.name}</h3>
           <p className="mt-1"><strong className="text-2xl">{selectedRow.count.toLocaleString()}마리</strong><span className="ml-3 text-sm">지역 집계 전체의 {total ? (selectedRow.count / total * 100).toFixed(1) : '0'}%</span></p>
@@ -63,8 +63,8 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           return <Geography key={geo.rsmKey} geography={geo} tabIndex={-1}
             aria-label={`${name} · ${count.toLocaleString()}마리`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
             onClick={() => setSelected(name)} fill={terrainColor(count, breaks)}
-            stroke={active ? '#052e16' : '#ffffff'} strokeWidth={active ? 2 : 1}
-            style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: '#052e16', strokeWidth: 2 }, pressed: { outline: 'none' } }}
+            stroke={active ? 'var(--chart-outline)' : 'var(--chart-surface)'} strokeWidth={active ? 2 : 1}
+            style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: 'var(--chart-outline)', strokeWidth: 2 }, pressed: { outline: 'none' } }}
             className="cursor-pointer" filter={`url(#${filterId}-${zoomed ? 'expanded' : 'main'})`}>
           </Geography>;
         })}
@@ -74,8 +74,8 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
         const label = `${p.short} ${count.toLocaleString()}`;
         const width = Math.max(60, label.length * 8 + 12);
         return <Marker key={p.short} coordinates={[...p.coordinates]} className="pointer-events-none">
-          <rect x={-width / 2} y={-14} width={width} height={28} rx={5} fill={selected === p.name ? '#052e16' : '#ffffff'} fillOpacity={0.94} />
-          <text textAnchor="middle" y={5} fontSize={14} fontWeight={500} fill={selected === p.name ? '#ffffff' : '#052e16'}>{label}</text>
+          <rect x={-width / 2} y={-14} width={width} height={28} rx={5} fill={selected === p.name ? 'var(--chart-outline)' : 'var(--chart-surface)'} fillOpacity={0.94} />
+          <text textAnchor="middle" y={5} fontSize={14} fontWeight={500} fill={selected === p.name ? 'var(--chart-surface)' : 'var(--chart-outline)'}>{label}</text>
         </Marker>;
       })}
     </>;
@@ -96,13 +96,13 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       role="img" aria-label="17개 시·도 입체 지형 지도. 색이 진할수록 구조 동물이 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다."
       className={`mx-auto h-auto w-full ${zoomed ? 'max-w-[580px] touch-none' : 'max-w-[520px]'}`}>
       <defs><filter id={`${filterId}-${zoomed ? 'expanded' : 'main'}`} x="-30%" y="-30%" width="160%" height="180%">
-        <feDropShadow dx="0" dy="3" stdDeviation="1.2" floodColor="#164e3e" floodOpacity="0.22" />
+        <feDropShadow dx="0" dy="3" stdDeviation="1.2" floodColor="var(--chart-outline)" floodOpacity="0.22" />
       </filter></defs>
       {zoomed ? <ZoomableGroup center={position.coordinates} zoom={position.zoom} minZoom={1} maxZoom={3}
         onMoveEnd={p => setPosition({ coordinates: p.coordinates, zoom: p.zoom })}>{layers}</ZoomableGroup> : layers}
       </ComposableMap>
       {hovered?.zoomed === zoomed && <div role="tooltip"
-        className="absolute z-10 w-[200px] max-w-[calc(100%-16px)] rounded-lg border border-emerald-900/10 bg-white px-3 py-2 text-sm text-emerald-950 shadow-lg dark:border-emerald-200/20 dark:bg-gray-900 dark:text-emerald-50"
+        className="absolute z-10 w-[200px] max-w-[calc(100%-16px)] rounded-lg border border-brand-border bg-white px-3 py-2 text-sm text-brand-ink shadow-lg dark:border-border-dark dark:bg-gray-900 dark:text-gray-200"
         style={{ left: hovered.x, top: hovered.y }}>
         <span className="font-semibold">{hovered.name}</span><span className="ml-2 tabular-nums">{hovered.count.toLocaleString()}마리</span>
       </div>}
@@ -112,7 +112,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   return <div className="space-y-5 text-text-light dark:text-text-dark">
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,560fr)_minmax(0,536fr)]">
     <div className="min-w-0 space-y-5" data-map-column>
-      <div className="rounded-3xl bg-emerald-50 p-4 sm:p-5 dark:bg-emerald-950/40">
+      <div className="rounded-3xl bg-brand-soft p-4 sm:p-5 dark:bg-stone-900">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div><h3 className="text-xl font-bold">지역을 더 가까이</h3>
             <p className="mt-2 text-sm">전국 구조 동물 분포{selected ? ` · ${selected} 선택` : ''}</p></div>
@@ -134,9 +134,9 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       <ul className="space-y-2">
         {rows.map(row => <li key={row.name}>
           <button type="button" aria-pressed={selected === row.name} onClick={() => setSelected(row.name)}
-            className={`text-text-light dark:text-text-dark min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${selected === row.name ? 'bg-primary/15 ring-1 ring-primary' : 'hover:bg-primary/10'}`}>
+            className={`text-text-light dark:text-text-dark min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${selected === row.name ? 'bg-brand/15 ring-1 ring-brand-focus' : 'hover:bg-brand/10'}`}>
             <span className="mb-2 flex items-baseline justify-between gap-3 text-sm"><span className="font-medium">{row.name}</span><strong className="shrink-0 tabular-nums">{row.count.toLocaleString()}마리</strong></span>
-            <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"><span className="block h-full rounded-full bg-primary" style={{ width: `${maximum ? row.count / maximum * 100 : 0}%` }} /></span>
+            <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"><span className="block h-full rounded-full bg-brand-accent" style={{ width: `${maximum ? row.count / maximum * 100 : 0}%` }} /></span>
           </button>
         </li>)}
       </ul>
@@ -148,10 +148,10 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
         <output className="px-2 text-sm">{Math.round(position.zoom * 100)}%</output>
         <button type="button" aria-label="지도 확대" disabled={position.zoom >= 3} onClick={() => setPosition(p => ({ ...p, zoom: Math.min(3, p.zoom + 0.5) }))} className={buttonClass}>+</button>
         <button type="button" onClick={() => setPosition({ coordinates: mapCenter, zoom: 1 })} className={buttonClass}>전체 보기</button>
-        <label className="ml-auto flex min-h-11 items-center gap-2 text-sm">지역 선택<select value={selected ?? ''} onChange={e => setSelected(e.target.value || null)} className="min-h-11 max-w-48 rounded-lg border-border-light bg-card-light text-text-light focus:ring-primary dark:border-border-dark dark:bg-card-dark dark:text-text-dark"><option value="">전국</option>{rows.map(row => <option key={row.name} value={row.name}>{row.name}</option>)}</select></label>
+        <label className="ml-auto flex min-h-11 items-center gap-2 text-sm">지역 선택<select value={selected ?? ''} onChange={e => setSelected(e.target.value || null)} className="min-h-11 max-w-48 rounded-lg border-border-light bg-card-light text-text-light focus:ring-brand-focus dark:border-border-dark dark:bg-card-dark dark:text-text-dark"><option value="">전국</option>{rows.map(row => <option key={row.name} value={row.name}>{row.name}</option>)}</select></label>
       </div>
       <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">확대 후 지도를 드래그하거나, 지역 선택 메뉴를 이용하세요.</p>
-      <div className="my-3 overflow-hidden rounded-lg bg-primary/5">{drawMap(true)}</div>
+      <div className="my-3 overflow-hidden rounded-lg bg-brand/5">{drawMap(true)}</div>
       {details}
     </StatsDialog>}
   </div>;

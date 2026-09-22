@@ -9,7 +9,7 @@ export default function Privacy() {
       <Header />
       <main className="container mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:py-14">
         <header>
-          <p className="text-sm font-bold text-emerald-700 dark:text-primary">개인정보 안내</p>
+          <p className="text-sm font-bold text-brand-accent dark:text-brand-accent">개인정보 안내</p>
           <h1 className="mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl">개인정보처리방침</h1>
           <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 9월 22일</p>
         </header>
@@ -35,7 +35,7 @@ export default function Privacy() {
             </p>
             <p className="mt-4">
               자세한 처리 방식은{' '}
-              <a className="font-semibold text-emerald-700 underline underline-offset-4 dark:text-primary" href="https://developers.cloudflare.com/web-analytics/about/" target="_blank" rel="noreferrer">
+              <a className="font-semibold text-brand-accent underline underline-offset-4 dark:text-brand-accent" href="https://developers.cloudflare.com/web-analytics/about/" target="_blank" rel="noreferrer">
                 Cloudflare Web Analytics 안내
               </a>
               에서 확인할 수 있습니다.

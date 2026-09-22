@@ -103,3 +103,21 @@ playwright-cli -s=shelter-ui close
 ```
 
 첫 스크립트: 신청 후 폼 차단, 승인 최종 확인과 요청 본문, 연결 담당자, 검색 복귀, 반려 후 재신청, 390px 가로 넘침 검사. 두 번째: 조회 오류/재시도, 기존 담당자 이력 없음, 409 충돌 후 재조회, 일반 회원 관리자 화면 차단. 실제 게이트웨이·DB와 연결한 E2E 검증을 대체하지 않는다.
+
+
+## 공통 브랜드 색상 검증
+
+`tests/brand-theme.browser.js`는 포트 5195의 Vite 화면을 대상으로 공개 API 응답을 격리한다.
+메인·검색·통계·보호소·로그인·회원가입·비밀번호 재설정·개인정보·실종동물 검색의
+1920px/390px 및 밝은 모드/다크 모드에서 브랜드 클래스가 붙은 텍스트 대비와 가로 넘침을 확인한다.
+일반 텍스트 4.5:1, 큰 글자 3:1을 기준으로 하며, 이미지·아이콘·비활성 컨트롤은 이 자동 검사 대상이 아니다.
+운영 API 연결 검증이나 모든 접근성 항목의 검증을 대신하지 않는다.
+
+```sh
+npm run dev -- --host 127.0.0.1 --port 5195 --strictPort
+playwright-cli -s=brand open http://127.0.0.1:5195/login --browser=firefox
+playwright-cli -s=brand run-code --filename=tests/brand-theme.browser.js
+playwright-cli -s=brand close
+```
+
+스크린샷은 `/tmp/brand-*.png`에 저장한다. 기존에 설치된 Playwright 브라우저를 사용한다.

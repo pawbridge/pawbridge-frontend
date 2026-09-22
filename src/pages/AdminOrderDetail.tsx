@@ -176,7 +176,7 @@ export default function AdminOrderDetail() {
           <div className="flex-1 overflow-y-auto bg-background-light">
             <div className="flex items-center justify-center py-20">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
                 <p className="text-gray-500">주문 정보를 불러오는 중...</p>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function AdminOrderDetail() {
                 <p className="text-red-500 mb-4">주문 정보를 불러올 수 없습니다.</p>
                 <button
                   onClick={() => navigate('/admin/orders')}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
                 >
                   목록으로 돌아가기
                 </button>
@@ -218,7 +218,7 @@ export default function AdminOrderDetail() {
         {/* 사이드바 */}
         <aside className="w-64 h-full flex flex-col bg-surface-light dark:bg-surface-dark border-r border-[#e5e7eb] dark:border-gray-700 flex-shrink-0 z-20 hidden md:flex">
           <div className="p-6 flex items-center gap-3">
-            <div className="size-10 rounded-full bg-primary flex items-center justify-center text-text-main">
+            <div className="size-10 rounded-full bg-brand flex items-center justify-center text-text-main">
               <span className="material-symbols-outlined text-[24px]">pets</span>
             </div>
             <div className="flex flex-col">
@@ -240,7 +240,7 @@ export default function AdminOrderDetail() {
             </Link>
             <Link
               to="/admin/orders"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/20 text-text-main dark:text-white group transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-brand/20 text-text-main dark:text-white group transition-colors"
             >
               <span className="material-symbols-outlined text-text-main dark:text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
                 receipt_long
@@ -343,7 +343,7 @@ export default function AdminOrderDetail() {
               <h2 className="text-xl font-bold text-text-main dark:text-white">주문 상세</h2>
             </div>
             <div className="flex items-center gap-6">
-              <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+              <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
                 <span className="material-symbols-outlined text-text-secondary">search</span>
                 <input
                   className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -358,7 +358,7 @@ export default function AdminOrderDetail() {
                 </button>
                 <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <div
-                    className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                    className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                   >
                     <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                       {user?.name?.charAt(0) || '관'}
@@ -438,7 +438,7 @@ export default function AdminOrderDetail() {
                     updateDeliveryStatusMutation.isPending ||
                     (orderStatus === order.status && deliveryStatus === order.deliveryStatus)
                   }
-                  className="flex items-center justify-center rounded-lg bg-primary hover:bg-blue-500 text-white px-6 py-2.5 text-sm font-bold shadow-sm transition-all h-[42px] mt-4 md:mt-0 min-w-[100px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center rounded-lg bg-brand hover:bg-brand-hover text-brand-ink px-6 py-2.5 text-sm font-bold shadow-sm transition-all h-[42px] mt-4 md:mt-0 min-w-[100px] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined mr-2 text-[20px]">save</span>
                   변경 사항 저장
@@ -464,7 +464,7 @@ export default function AdminOrderDetail() {
                   <div className="grid grid-cols-[100px_1fr] items-center gap-2">
                     <span className="text-sm text-[#6b7280] dark:text-gray-400">주문자 ID</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-primary">{order.userId}</span>
+                      <span className="text-sm font-medium text-brand-accent">{order.userId}</span>
                     </div>
                   </div>
                   <div className="grid grid-cols-[100px_1fr] items-center gap-2">
@@ -563,7 +563,7 @@ export default function AdminOrderDetail() {
                 </div>
                 <div className="border-t border-[#f3f4f6] pt-4 flex justify-between">
                   <span className="text-lg font-bold text-[#111418]">총 결제 금액</span>
-                  <span className="text-lg font-bold text-primary">{formatPrice(order.totalAmount)}원</span>
+                  <span className="text-lg font-bold text-brand-accent">{formatPrice(order.totalAmount)}원</span>
                 </div>
               </div>
             </div>

@@ -76,7 +76,7 @@ export default function MyFavoriteAnimalsPanel({
                     onClick={() => onPageChange(page)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === page
-                        ? 'bg-primary text-white'
+                        ? 'bg-brand text-brand-ink'
                         : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -98,7 +98,7 @@ export default function MyFavoriteAnimalsPanel({
         <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">pets</span>
           <p className="text-gray-500 dark:text-gray-400">아직 찜한 동물이 없습니다.</p>
-          <Link to="/animals" className="inline-block mt-4 px-6 py-2 bg-primary text-text-main rounded-lg hover:bg-green-400 transition-colors">
+          <Link to="/animals" className="inline-block mt-4 px-6 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors">
             동물 둘러보기
           </Link>
         </div>

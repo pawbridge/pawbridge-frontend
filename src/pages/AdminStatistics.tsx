@@ -126,7 +126,7 @@ export default function AdminStatistics() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">통계</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -141,7 +141,7 @@ export default function AdminStatistics() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -177,7 +177,7 @@ export default function AdminStatistics() {
                       type="date"
                       value={startDate || calculatedStartDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="px-3 py-2 h-10 w-40 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="px-3 py-2 h-10 w-40 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-focus"
                     />
                   </div>
                   <span className="text-gray-400 font-medium">~</span>
@@ -189,7 +189,7 @@ export default function AdminStatistics() {
                       type="date"
                       value={endDate || calculatedEndDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="px-3 py-2 h-10 w-40 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="px-3 py-2 h-10 w-40 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-focus"
                     />
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export default function AdminStatistics() {
                     onClick={() => setSelectedTab('signup')}
                     className={`relative pb-4 -mb-[17px] font-medium text-base transition-colors ${
                       selectedTab === 'signup'
-                        ? 'text-text-main dark:text-white font-bold border-b-2 border-primary'
+                        ? 'text-text-main dark:text-white font-bold border-b-2 border-brand-focus'
                         : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
                     }`}
                   >
@@ -275,7 +275,7 @@ export default function AdminStatistics() {
                     onClick={() => setSelectedTab('animal')}
                     className={`relative pb-4 -mb-[17px] font-medium text-base transition-colors ${
                       selectedTab === 'animal'
-                        ? 'text-text-main dark:text-white font-bold border-b-2 border-primary'
+                        ? 'text-text-main dark:text-white font-bold border-b-2 border-brand-focus'
                         : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
                     }`}
                   >
@@ -283,7 +283,7 @@ export default function AdminStatistics() {
                   </button>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-text-sub dark:text-gray-400">
-                  <span className="size-2 rounded-full bg-primary"></span>
+                  <span className="size-2 rounded-full bg-brand"></span>
                   {selectedTab === 'signup' ? '신규 가입자 수' : '동물 등록 건수'}
                 </div>
               </div>
@@ -291,7 +291,7 @@ export default function AdminStatistics() {
               {/* 차트 */}
               {isLoading ? (
                 <div className="h-[320px] flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus"></div>
                 </div>
               ) : currentStats.length === 0 ? (
                 <div className="h-[320px] flex items-center justify-center">
@@ -331,11 +331,11 @@ export default function AdminStatistics() {
                         <div key={stat.date} className="group relative flex-1 flex flex-col justify-end items-center h-full">
                           <div
                             className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 hover:opacity-80 group-hover:scale-y-105 origin-bottom relative ${
-                              isToday ? 'bg-primary' : 'bg-primary/30 hover:bg-primary'
+                              isToday ? 'bg-brand' : 'bg-brand/30 hover:bg-brand'
                             }`}
                             style={{ height: `${heightPercent}%` }}
                           >
-                            <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-[#111816] text-white text-xs py-1 px-2 rounded whitespace-nowrap transition-opacity pointer-events-none z-20">
+                            <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-brand-ink text-white text-xs py-1 px-2 rounded whitespace-nowrap transition-opacity pointer-events-none z-20">
                               {stat.count}{selectedTab === 'signup' ? '명' : '건'}
                             </div>
                           </div>
@@ -356,7 +356,7 @@ export default function AdminStatistics() {
             <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">
                 <h3 className="text-base font-bold text-text-main dark:text-white">상세 데이터</h3>
-                <button className="flex items-center gap-1 text-sm font-medium text-text-sub dark:text-gray-400 hover:text-primary transition-colors">
+                <button className="flex items-center gap-1 text-sm font-medium text-text-sub dark:text-gray-400 hover:text-brand-accent transition-colors">
                   <span className="material-symbols-outlined text-[18px]">download</span>
                   엑셀 다운로드
                 </button>
@@ -365,7 +365,7 @@ export default function AdminStatistics() {
               <div className="overflow-x-auto">
                 {isLoading ? (
                   <div className="p-12 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
                     <p className="text-text-sub dark:text-gray-400">데이터를 불러오는 중...</p>
                   </div>
                 ) : paginatedStats.length === 0 ? (
@@ -392,7 +392,7 @@ export default function AdminStatistics() {
                         return (
                           <tr
                             key={stat.date}
-                            className="border-b border-gray-50 dark:border-gray-800 hover:bg-primary/5 dark:hover:bg-primary/5 transition-colors group"
+                            className="border-b border-gray-50 dark:border-gray-800 hover:bg-brand/5 dark:hover:bg-brand/5 transition-colors group"
                           >
                             <td className="px-6 py-4 text-text-main dark:text-white font-medium">
                               {formatDate(stat.date)}
@@ -446,7 +446,7 @@ export default function AdminStatistics() {
                         onClick={() => setCurrentPage(pageNum)}
                         className={`size-8 flex items-center justify-center rounded-lg transition-colors ${
                           currentPage === pageNum
-                            ? 'bg-primary text-[#0f231e] font-bold shadow-sm'
+                            ? 'bg-brand text-card-dark font-bold shadow-sm'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-sub dark:text-gray-400 font-medium'
                         }`}
                       >

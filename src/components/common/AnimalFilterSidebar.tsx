@@ -63,7 +63,7 @@ export default function AnimalFilterSidebar({
           <select
             value={localFilters.species || ''}
             onChange={(e) => handleImmediateChange('species', e.target.value)}
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>
             <option value="DOG">개</option>
@@ -81,7 +81,7 @@ export default function AnimalFilterSidebar({
             onChange={(e) => handleTextChange('breed', e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="예: 믹스견 (엔터로 검색)"
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           />
         </label>
 
@@ -91,7 +91,7 @@ export default function AnimalFilterSidebar({
           <select
             value={localFilters.status || ''}
             onChange={(e) => handleImmediateChange('status', e.target.value)}
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>
             <option value="PROTECT">보호중</option>
@@ -117,7 +117,7 @@ export default function AnimalFilterSidebar({
                 value={localFilters.minAge || ''}
                 onChange={(e) => handleImmediateChange('minAge', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="최소 (예: 1)"
-                className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+                className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
               />
             </label>
             <label className="flex flex-col w-full">
@@ -126,7 +126,7 @@ export default function AnimalFilterSidebar({
                 value={localFilters.maxAge || ''}
                 onChange={(e) => handleImmediateChange('maxAge', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="최대 (예: 5)"
-                className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+                className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
               />
             </label>
           </div>
@@ -141,7 +141,7 @@ export default function AnimalFilterSidebar({
           <select
             value={localFilters.region || ''}
             onChange={(e) => handleImmediateChange('region', e.target.value)}
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>
             <option value="서울">서울특별시</option>
@@ -173,7 +173,7 @@ export default function AnimalFilterSidebar({
             onChange={(e) => handleTextChange('city', e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="예: 강남구 (엔터로 검색)"
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           />
         </label>
 
@@ -183,7 +183,7 @@ export default function AnimalFilterSidebar({
           <select
             value={filters.gender || ''}
             onChange={(e) => handleImmediateChange('gender', e.target.value)}
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>
             <option value="MALE">수컷</option>
@@ -198,7 +198,7 @@ export default function AnimalFilterSidebar({
           <select
             value={filters.neuterStatus || ''}
             onChange={(e) => handleImmediateChange('neuterStatus', e.target.value)}
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           >
             <option value="">전체</option>
             <option value="YES">예</option>
@@ -216,7 +216,7 @@ export default function AnimalFilterSidebar({
             onChange={(e) => handleTextChange('keyword', e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="품종, 색상, 특징, 발견 장소"
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           />
         </label>
 
@@ -229,7 +229,7 @@ export default function AnimalFilterSidebar({
             onChange={(e) => handleTextChange('noticeNo', e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="예: 경남-사천-2026-00027"
-            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-primary/50 h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
+            className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:border-brand-focus h-14 placeholder:text-gray-400 p-[15px] text-base font-normal"
           />
           <span className="mt-2 text-xs leading-5 text-gray-500 dark:text-gray-400">
             전체 공고번호와 정확히 일치하는 동물만 찾습니다.
@@ -241,7 +241,7 @@ export default function AnimalFilterSidebar({
       <div className="flex flex-col gap-2 pt-4">
         <button
           onClick={handleSearch}
-          className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white hover:bg-primary/90 text-base font-bold transition-colors shadow-md"
+          className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-brand text-brand-ink hover:bg-brand-hover text-base font-bold transition-colors shadow-md"
         >
           <span className="material-symbols-outlined mr-2">search</span>
           <span>검색</span>

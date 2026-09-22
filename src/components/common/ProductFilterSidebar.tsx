@@ -100,14 +100,14 @@ export default function ProductFilterSidebar({
             onChange={(e) => setLocalKeyword(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="상품 검색..."
-            className="form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary/50 border-none bg-background-light dark:bg-secondary-dark h-10 placeholder:text-gray-500 pl-10 pr-4 text-sm font-normal"
+            className="form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border-none bg-background-light dark:bg-secondary-dark h-10 placeholder:text-gray-500 pl-10 pr-4 text-sm font-normal"
           />
         </div>
 
         {/* 검색 버튼 */}
         <button
           onClick={handleSearch}
-          className="w-full h-10 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="w-full h-10 bg-brand text-brand-ink rounded-lg font-medium hover:bg-brand-hover transition-colors"
         >
           검색
         </button>
@@ -123,7 +123,7 @@ export default function ProductFilterSidebar({
               onClick={() => handleCategoryClick(undefined)}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
                 !filters.categoryId
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-brand/20 text-brand-accent'
                   : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
               }`}
             >
@@ -145,7 +145,7 @@ export default function ProductFilterSidebar({
                     onClick={() => handleCategoryClick(category.id)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
                       filters.categoryId === category.id
-                        ? 'bg-primary/20 text-primary'
+                        ? 'bg-brand/20 text-brand-accent'
                         : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
                     }`}
                   >
@@ -175,7 +175,7 @@ export default function ProductFilterSidebar({
               type="checkbox"
               checked={filters.inStockOnly || false}
               onChange={(e) => handleStockFilter(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+              className="w-4 h-4 rounded border-gray-300 text-brand-ink focus:ring-brand-focus"
             />
             <span className="text-sm">재고 있는 상품만</span>
           </label>

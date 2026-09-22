@@ -72,7 +72,7 @@ export default function MyPageInfoState(props: MyPageInfoStateProps) {
                 type="button"
                 onClick={props.onRetry}
                 disabled={props.isRetrying}
-                className="mt-7 min-h-12 rounded-lg bg-primary px-7 text-sm font-bold text-primary-content transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+                className="mt-7 min-h-12 rounded-lg bg-brand px-7 text-sm font-bold text-brand-ink transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus disabled:cursor-wait disabled:opacity-60"
               >
                 {props.isRetrying ? '다시 불러오는 중...' : '다시 시도'}
               </button>

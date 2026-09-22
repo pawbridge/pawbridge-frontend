@@ -35,7 +35,7 @@ export default function Travel() {
           <select id="travel-region" value={region?.code ?? ''}
             disabled={!regions.data?.items.length}
             onChange={(event) => setParams(event.target.value ? { areaCode: event.target.value } : {})}
-            className="h-12 w-full rounded-lg border-border-light bg-white text-base leading-6 focus:border-emerald-700 focus:ring-emerald-700 disabled:bg-gray-100 dark:border-border-dark dark:bg-card-dark dark:disabled:bg-gray-800">
+            className="h-12 w-full rounded-lg border-border-light bg-white text-base leading-6 focus:border-brand-focus focus:ring-brand-focus disabled:bg-gray-100 dark:border-border-dark dark:bg-card-dark dark:disabled:bg-gray-800">
             <option value="">지역을 선택해 주세요</option>
             {regions.data?.items.map((item) => <option key={item.code} value={item.code}>{item.name}</option>)}
           </select>

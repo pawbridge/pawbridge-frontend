@@ -75,29 +75,29 @@ export default function CustomSelect({
         onClick={handleToggle}
         disabled={disabled}
         className={`
-          w-full appearance-none rounded-lg border border-[#dbe6e3] dark:border-[#2a453d] 
-          bg-white dark:bg-[#0f231e] px-4 py-3 pr-10 text-left relative
-          text-[#111816] dark:text-white 
-          focus:border-primary focus:ring-1 focus:ring-primary 
+          w-full appearance-none rounded-lg border border-brand-border dark:border-stone-700
+          bg-white dark:bg-card-dark px-4 py-3 pr-10 text-left relative
+          text-brand-ink dark:text-white
+          focus:border-brand-focus focus:ring-1 focus:ring-brand-focus
           outline-none transition-all
           disabled:opacity-50 disabled:cursor-not-allowed
-          ${isOpen ? 'border-primary ring-1 ring-primary' : ''}
+          ${isOpen ? 'border-brand-focus ring-1 ring-brand-focus' : ''}
         `}
         style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
       >
-        <span className={selectedOption ? '' : 'text-[#5f8c80]'}>
+        <span className={selectedOption ? '' : 'text-brand-muted'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#5f8c80] dark:text-gray-400 pointer-events-none transition-transform z-10">
+        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted dark:text-gray-400 pointer-events-none transition-transform z-10">
           {isOpen ? 'expand_less' : 'expand_more'}
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute z-[9999] w-full mt-1 bg-white dark:bg-[#0f231e] border border-[#dbe6e3] dark:border-[#2a453d] rounded-lg shadow-xl overflow-hidden" style={{ position: 'absolute', zIndex: 9999 }}>
+        <div className="absolute z-[9999] w-full mt-1 bg-white dark:bg-card-dark border border-brand-border dark:border-stone-700 rounded-lg shadow-xl overflow-hidden" style={{ position: 'absolute', zIndex: 9999 }}>
           <div className="max-h-60 overflow-y-auto">
             {options.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-[#5f8c80] text-center">
+              <div className="px-4 py-3 text-sm text-brand-muted text-center">
                 옵션이 없습니다
               </div>
             ) : (
@@ -122,8 +122,8 @@ export default function CustomSelect({
                     transition-colors
                     ${
                       value === option.value
-                        ? 'bg-primary/10 text-primary font-medium'
-                        : 'text-[#111816] dark:text-white hover:bg-[#f0f5f3] dark:hover:bg-[#1a2e29]'
+                        ? 'bg-brand/10 text-brand-accent font-medium'
+                        : 'text-brand-ink dark:text-white hover:bg-brand-soft dark:hover:bg-stone-800'
                     }
                     ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                   `}
@@ -131,7 +131,7 @@ export default function CustomSelect({
                   <div className="flex items-center justify-between">
                     <span>{option.label}</span>
                     {value === option.value && (
-                      <span className="material-symbols-outlined text-[18px] text-primary">
+                      <span className="material-symbols-outlined text-[18px] text-brand-accent">
                         check
                       </span>
                     )}

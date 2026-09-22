@@ -1,3 +1,13 @@
+// Approved Figma: PawBridge Yellow v1 (main v2.3).
+const brand = {
+  DEFAULT: '#FFF2A6',
+  hover: '#F7E58C',
+  soft: '#FFFCE9',
+  ink: '#30302E',
+  muted: '#646460',
+  border: '#DDDDD8',
+};
+
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -9,25 +19,29 @@ export default {
       extend: {
         colors: {
           brand: {
-            DEFAULT: '#FFF2A6',
-            hover: '#F7E58C',
-            soft: '#FFFCE9',
-            ink: '#30302E',
-            muted: '#646460',
-            border: '#DDDDD8',
+            ...brand,
+            accent: 'rgb(var(--brand-accent) / <alpha-value>)',
+            focus: 'rgb(var(--brand-focus) / <alpha-value>)',
           },
-          "primary": "#34d399",
+          // Compatibility names for existing page contracts; all point to the same brand.
+          primary: brand.DEFAULT,
           "background-light": "#ffffff",
           "background-dark": "#0f0f0f",
-          "text-light": "#052e16",
-          "text-dark": "#d1fae5",
+          "text-light": brand.ink,
+          "text-dark": "#e7e5e4",
           "card-light": "#ffffff",
           "card-dark": "#1a1a1a",
           "border-light": "#e5e7eb",
           "border-dark": "#374151",
+          'text-main': brand.ink,
+          'text-secondary': brand.muted,
+          'subtext-light': brand.muted,
+          'subtext-dark': '#d6d3d1',
+          'surface-light': '#ffffff',
+          'surface-dark': '#1a1a1a',
           // 기존 색상 호환성 유지
-          "primary-content": "#0d1b14",
-          "secondary-content": "#4c9a73"
+          "primary-content": brand.ink,
+          "secondary-content": brand.muted
         },
         fontFamily: {
           "display": ["Inter", "Noto Sans KR", "sans-serif"]

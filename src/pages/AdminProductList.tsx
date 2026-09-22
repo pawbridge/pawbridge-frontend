@@ -108,7 +108,7 @@ export default function AdminProductList() {
             <h2 className="text-xl font-bold text-text-main dark:text-white">상품 목록</h2>
           </div>
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-primary transition-colors">
+            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
               <span className="material-symbols-outlined text-text-secondary">search</span>
               <input
                 className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
@@ -123,7 +123,7 @@ export default function AdminProductList() {
               </button>
               <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-primary/20 flex items-center justify-center"
+                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
                 >
                   <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
                     {user?.name?.charAt(0) || '관'}
@@ -148,7 +148,7 @@ export default function AdminProductList() {
             <div className="flex justify-end">
               <Link
                 to="/products/new"
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg font-bold text-sm transition-all shadow-sm hover:shadow-md"
+                className="flex items-center justify-center gap-2 bg-brand hover:bg-brand-hover text-brand-ink px-5 py-2.5 rounded-lg font-bold text-sm transition-all shadow-sm hover:shadow-md"
               >
                 <span className="material-symbols-outlined text-[20px]">add</span>
                 <span>상품 등록</span>
@@ -156,7 +156,7 @@ export default function AdminProductList() {
             </div>
 
             {/* Filter & Search Bar */}
-            <div className="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-[#dbe6e3] dark:border-[#2a3c38] flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
+            <div className="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-brand-border dark:border-stone-700 flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
               {/* Search */}
               <div className="relative w-full lg:w-96 group">
                 <input
@@ -164,9 +164,9 @@ export default function AdminProductList() {
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   placeholder="상품명으로 검색하세요"
-                  className="w-full h-11 pl-11 pr-4 rounded-lg bg-background-light dark:bg-background-dark border-[#dbe6e3] dark:border-[#2a3c38] focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm text-text-main dark:text-white placeholder:text-text-sub"
+                  className="w-full h-11 pl-11 pr-4 rounded-lg bg-background-light dark:bg-background-dark border-brand-border dark:border-stone-700 focus:ring-2 focus:ring-brand-focus focus:border-transparent outline-none transition-all text-sm text-text-main dark:text-white placeholder:text-text-sub"
                 />
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-sub group-focus-within:text-primary transition-colors">search</span>
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-sub group-focus-within:text-brand-accent transition-colors">search</span>
               </div>
               {/* Filters */}
               <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
@@ -175,8 +175,8 @@ export default function AdminProductList() {
                   onClick={() => handleStatusFilter('ALL')}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                     statusFilter === 'ALL'
-                      ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                      : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-[#2a3c38] hover:border-primary dark:hover:border-primary'
+                      ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                      : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-stone-700 hover:border-brand-focus dark:hover:border-brand-focus'
                   }`}
                 >
                   전체
@@ -185,8 +185,8 @@ export default function AdminProductList() {
                   onClick={() => handleStatusFilter('ACTIVE')}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                     statusFilter === 'ACTIVE'
-                      ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                      : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-[#2a3c38] hover:border-primary dark:hover:border-primary'
+                      ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                      : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-stone-700 hover:border-brand-focus dark:hover:border-brand-focus'
                   }`}
                 >
                   판매중
@@ -195,8 +195,8 @@ export default function AdminProductList() {
                   onClick={() => handleStatusFilter('SOLD_OUT')}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                     statusFilter === 'SOLD_OUT'
-                      ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                      : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-[#2a3c38] hover:border-primary dark:hover:border-primary'
+                      ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                      : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-stone-700 hover:border-brand-focus dark:hover:border-brand-focus'
                   }`}
                 >
                   품절
@@ -205,8 +205,8 @@ export default function AdminProductList() {
                   onClick={() => handleStatusFilter('HIDDEN')}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                     statusFilter === 'HIDDEN'
-                      ? 'bg-primary text-primary-content border-transparent shadow-sm'
-                      : 'bg-white dark:bg-background-dark text-text-sub border-[#dbe6e3] dark:border-[#2a3c38] hover:border-primary dark:hover:border-primary'
+                      ? 'bg-brand text-brand-ink border-transparent shadow-sm'
+                      : 'bg-white dark:bg-background-dark text-text-sub border-brand-border dark:border-stone-700 hover:border-brand-focus dark:hover:border-brand-focus'
                   }`}
                 >
                   숨김
@@ -215,7 +215,7 @@ export default function AdminProductList() {
             </div>
 
             {/* Data Table */}
-            <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-[#dbe6e3] dark:border-[#2a3c38] overflow-hidden">
+            <div className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-700 overflow-hidden">
               <div className="overflow-x-auto">
                 {isLoading ? (
                   <div className="p-8 text-center text-text-sub">로딩 중...</div>
@@ -232,7 +232,7 @@ export default function AdminProductList() {
                 ) : (
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-background-light dark:bg-background-dark border-b border-[#dbe6e3] dark:border-[#2a3c38]">
+                      <tr className="bg-background-light dark:bg-background-dark border-b border-brand-border dark:border-stone-700">
                         <th className="py-4 px-6 text-xs font-bold text-text-sub dark:text-gray-400 uppercase tracking-wider w-16">번호</th>
                         <th className="py-4 px-6 text-xs font-bold text-text-sub dark:text-gray-400 uppercase tracking-wider min-w-[240px]">상품명</th>
                         <th className="py-4 px-6 text-xs font-bold text-text-sub dark:text-gray-400 uppercase tracking-wider w-32">가격</th>
@@ -242,7 +242,7 @@ export default function AdminProductList() {
                         <th className="py-4 px-6 text-xs font-bold text-text-sub dark:text-gray-400 uppercase tracking-wider w-28 text-right">관리</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#dbe6e3] dark:divide-[#2a3c38]">
+                    <tbody className="divide-y divide-brand-border dark:divide-stone-700">
                       {data.items.map((item, index) => {
                         const statusBadge = getStatusBadge(item.status || 'HIDDEN');
                         return (
@@ -252,12 +252,12 @@ export default function AdminProductList() {
                               <div className="flex items-center gap-3">
                                 {item.imageUrl && (
                                   <div
-                                    className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center border border-[#dbe6e3] dark:border-[#2a3c38]"
+                                    className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 bg-cover bg-center border border-brand-border dark:border-stone-700"
                                     style={{ backgroundImage: `url(${item.imageUrl})` }}
                                   />
                                 )}
                                 <div className="flex flex-col">
-                                  <span className="text-sm font-bold text-text-main dark:text-gray-200 group-hover:text-primary transition-colors">
+                                  <span className="text-sm font-bold text-text-main dark:text-gray-200 group-hover:text-brand-accent transition-colors">
                                     {item.name}
                                   </span>
                                   {item.optionName && (
@@ -284,7 +284,7 @@ export default function AdminProductList() {
                               <div className="flex items-center justify-end gap-2">
                                 <Link
                                   to={`/admin/products/${item.id}/edit`}
-                                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-text-sub hover:text-primary transition-colors"
+                                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-text-sub hover:text-brand-accent transition-colors"
                                   title="수정"
                                 >
                                   <span className="material-symbols-outlined text-[20px]">edit</span>
