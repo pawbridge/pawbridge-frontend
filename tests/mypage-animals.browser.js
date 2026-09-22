@@ -47,7 +47,6 @@ async page => {
     await page.goto(`${origin}/mypage`);
     await profile().waitFor();
   };
-  await page.addInitScript(() => localStorage.setItem('pawbridge.analytics-consent.v1', 'denied'));
   page.on('pageerror', onError);
   await page.route('**/api/**', handler);
   try {

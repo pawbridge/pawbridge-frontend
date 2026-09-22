@@ -57,7 +57,6 @@ async page => {
     await page.locator('aside').getByText(`member${id}@example.invalid`, { exact: true }).waitFor();
   };
   await page.addInitScript(() => {
-    localStorage.setItem('pawbridge.analytics-consent.v1', 'denied');
     window.alert = () => {}; window.__allowLogout = true; window.confirm = () => window.__allowLogout;
     window.__documentMarker = Math.random();
   });
