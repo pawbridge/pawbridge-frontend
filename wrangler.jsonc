@@ -11,17 +11,6 @@
     "DEPLOYMENT_ENVIRONMENT": "prod"
   },
   "env": {
-    "dev": {
-      "name": "pawbridge-frontend-dev",
-      "routes": [],
-      "vars": {
-        "DEPLOYMENT_ENVIRONMENT": "dev"
-      },
-      "assets": {
-        "directory": "./dist/dev",
-        "binding": "ASSETS"
-      }
-    },
     "prod": {
       "name": "pawbridge-frontend",
       "vars": {
