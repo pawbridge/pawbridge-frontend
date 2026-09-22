@@ -40,7 +40,6 @@ async page => {
     unexpected.push(`${request.method()} ${path}`);
     return route.abort();
   };
-  await page.addInitScript(() => localStorage.setItem('pawbridge.analytics-consent.v1', 'denied'));
   page.on('pageerror', onError);
   await page.route('**/api/**', handler);
   const cards = () => page.locator('main a[href^="/animals/"]').filter({ has: page.locator('h3') });

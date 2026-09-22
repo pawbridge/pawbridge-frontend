@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import AnalyticsSettingsButton from '../analytics/AnalyticsSettingsButton';
 
 interface FooterProps {
   colorScheme?: 'default' | 'warm';
@@ -43,7 +42,6 @@ export default function Footer({ colorScheme = 'default' }: FooterProps) {
             <div className="flex flex-wrap gap-x-5 gap-y-3">
               <Link to="/terms" className={hoverColor}>이용약관</Link>
               <Link to="/privacy" className={hoverColor}>개인정보처리방침</Link>
-              <AnalyticsSettingsButton colorScheme={colorScheme} className="min-h-0 border-0 p-0 text-xs font-normal hover:bg-transparent" />
               <a href="https://api.visitkorea.or.kr/#/useServiceGuide/2" target="_blank" rel="noopener noreferrer" className={hoverColor}>여행정보 저작권 정책</a>
             </div>
           </div>
