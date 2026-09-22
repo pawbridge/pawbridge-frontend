@@ -13,7 +13,6 @@ async page => {
   const onError = error => errors.push(error.message);
   const dialogs = () => page.evaluate(() => window.__accountDialogs);
   await page.addInitScript(() => {
-    localStorage.setItem('pawbridge.analytics-consent.v1', 'denied');
     window.__accountDialogs = [];
     window.__acceptAccountLogout = false;
     window.alert = message => { window.__accountDialogs.push(message); };
