@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { queryClient } from '../lib/queryClient.ts';
-import type { User } from '../types/api.types';
+import type { User } from '../types/user.types';
 
 // Store 타입 정의
 interface AuthState {

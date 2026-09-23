@@ -1,5 +1,5 @@
 import type { FormEventHandler } from 'react';
-import type { UserInfoResponse } from '../../types/api.types';
+import type { UserInfoResponse } from '../../types/user.types';
 
 interface MyProfilePanelProps {
   userInfo: Pick<UserInfoResponse, 'email' | 'name' | 'nickname'>;

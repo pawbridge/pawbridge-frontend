@@ -1,6 +1,6 @@
 import apiClient from './client';
+import type { ApiResponse } from '../types/response.types.ts';
 import type {
-  ApiResponse,
   LoginRequest,
   LoginResponse,
   SignupRequest,
@@ -10,26 +10,17 @@ import type {
   SendVerificationCodeRequest,
   VerifyCodeRequest,
   EmailVerifiedResponse,
-  User
-} from '../types/api.types.ts';
+} from '../types/auth.types.ts';
 
 // 로그인
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post<{
-    code: number;
-    message: string;
-    data: LoginResponse;
-  }>('/api/auth/login', credentials);
+  const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/auth/login', credentials);
   return response.data.data;
 };
 
 // 회원가입
 export const signup = async (userData: SignupRequest): Promise<SignupResponse> => {
-  const response = await apiClient.post<{
-    code: number;
-    message: string;
-    data: SignupResponse;
-  }>(
+  const response = await apiClient.post<ApiResponse<SignupResponse>>(
     '/api/users/signup',
     userData
   );
@@ -46,34 +37,20 @@ export const logout = async (): Promise<void> => {
   localStorage.removeItem('auth-storage');
 };
 
-// 내 정보 조회
-export const getMyInfo = async (): Promise<User> => {
-  const response = await apiClient.get<ApiResponse<User>>('/users/me');
-  return response.data.data;
-};
-
 // 비밀번호 재설정 - 1단계: 인증 코드 발송
 export const sendResetCode = async (data: SendResetCodeRequest): Promise<void> => {
-  await apiClient.post<{
-    code: number;
-    message: string;
-    data: null;
-  }>(
+  await apiClient.post<ApiResponse<null>>(
     '/api/auth/password/reset-request',
-      data,
-      {
-        timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
-      }
+    data,
+    {
+      timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
+    }
   );
 };
 
 // 비밀번호 재설정 - 2단계: 인증 및 비밀번호 변경
 export const resetPassword = async (data: ResetPasswordRequest): Promise<void> => {
-  await apiClient.post<{
-    code: number;
-    message: string;
-    data: null;
-  }>(
+  await apiClient.post<ApiResponse<null>>(
     '/api/auth/password/reset',
     data
   );
@@ -81,26 +58,18 @@ export const resetPassword = async (data: ResetPasswordRequest): Promise<void> =
 
 // 이메일 인증 코드 발송
 export const sendEmailVerificationCode = async (data: SendVerificationCodeRequest): Promise<void> => {
-  await apiClient.post<{
-    code: number;
-    message: string;
-    data: null;
-  }>(
+  await apiClient.post<ApiResponse<null>>(
     '/api/v1/email/send',
-      data,
-      {
-        timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
-      }
+    data,
+    {
+      timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
+    }
   );
 };
 
 // 이메일 인증 코드 검증
 export const verifyEmailCode = async (data: VerifyCodeRequest): Promise<EmailVerifiedResponse> => {
-  const response = await apiClient.post<{
-    code: number;
-    message: string;
-    data: EmailVerifiedResponse;
-  }>(
+  const response = await apiClient.post<ApiResponse<EmailVerifiedResponse>>(
     '/api/v1/email/verify',
     data
   );

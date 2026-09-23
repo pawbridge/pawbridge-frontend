@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../lib/apiError';
 import MyWishlistPanel, { type WishlistSortOption } from '../components/mypage/MyWishlistPanel';
 import MyCartPanel from '../components/mypage/MyCartPanel';
 import MyOrdersPanel from '../components/mypage/MyOrdersPanel';
@@ -18,7 +19,8 @@ import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { canSeePetMarket } from '../lib/petMarket';
-import type { UpdateNicknameRequest, PasswordUpdateRequest, OrderStatus } from '../types/api.types';
+import type { UpdateNicknameRequest, PasswordUpdateRequest } from '../types/user.types';
+import type { OrderStatus } from '../types/api.types';
 
 export default function MyPage() {
   const navigate = useNavigate();
@@ -151,8 +153,8 @@ export default function MyPage() {
       alert('닉네임이 변경되었습니다.');
       setNicknameInput('');
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '닉네임 변경에 실패했습니다.');
+    onError: (error) => {
+      alert(getApiErrorMessage(error, '닉네임 변경에 실패했습니다.'));
     },
   });
 
@@ -163,8 +165,8 @@ export default function MyPage() {
       alert('비밀번호가 변경되었습니다.');
       setPasswordData({ currentPassword: '', newPassword: '' });
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '비밀번호 변경에 실패했습니다.');
+    onError: (error) => {
+      alert(getApiErrorMessage(error, '비밀번호 변경에 실패했습니다.'));
     },
   });
 
