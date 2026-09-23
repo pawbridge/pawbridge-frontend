@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { getAdminUserById, updateUser } from '../api/user.api';
 import { useAuthStore } from '../store/authStore';
 import AdminSidebar from '../components/layout/AdminSidebar';
-import type { UpdateUserRequest } from '../types/api.types';
+import type { UpdateUserRequest } from '../types/user.types';
 
 export default function AdminUserDetail() {
   const { userId } = useParams<{ userId: string }>();

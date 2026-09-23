@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../lib/apiError';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -36,8 +37,8 @@ export default function Login() {
       // 로그인 성공 시 알림 없이 바로 이동
       navigate('/');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '이메일 또는 비밀번호가 일치하지 않습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '이메일 또는 비밀번호가 일치하지 않습니다.');
       setErrorMessage(message);
       setToast({
         message,

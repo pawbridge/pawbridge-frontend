@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAdminUsers, deleteUser, updateUser } from '../api/user.api';
 import { useAuthStore } from '../store/authStore';
 import AdminSidebar from '../components/layout/AdminSidebar';
-import type { AdminUserListItem, UpdateUserRequest } from '../types/api.types';
+import type { AdminUserListItem, UpdateUserRequest } from '../types/user.types';
 
 export default function AdminUserManagement() {
   const navigate = useNavigate();
