@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 import { isCancelledError } from '@tanstack/react-query';
-import type { User } from '../src/types/api.types.ts';
+import type { User } from '../src/types/user.types.ts';
 
 const values = new Map<string, string>();
 Object.defineProperty(globalThis, 'localStorage', { value: {

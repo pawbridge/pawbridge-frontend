@@ -1,4 +1,4 @@
-import type { UserInfoResponse } from '../../types/api.types';
+import type { UserInfoResponse } from '../../types/user.types';
 
 export type MyPageTab = 'shelter' | 'profile' | 'password' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
 
