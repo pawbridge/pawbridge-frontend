@@ -62,4 +62,3 @@ export interface VerifyCodeRequest {
 export interface EmailVerifiedResponse {
   verified: boolean;
 }
-
