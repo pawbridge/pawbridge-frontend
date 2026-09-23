@@ -1,0 +1,26 @@
+name: Environment build verification
+on:
+  pull_request:
+    branches: [dev, main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:environment
+      - run: npm run build:dev
+        env:
+          VITE_API_BASE_URL: http://localhost:28080
+      - run: npm run build:prod
+        env:
+          VITE_API_BASE_URL: https://api.pawbridge.kr
