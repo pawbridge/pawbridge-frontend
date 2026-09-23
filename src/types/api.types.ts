@@ -1,93 +1,3 @@
-// 공통 API 응답 구조
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message: string;
-}
-
-// 사용자 정보
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-  nickname?: string;           // 닉네임 (선택적)
-  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드 JWT에 포함되는 역할
-  careRegNo?: string;          // 보호소 직원일 때만 존재
-  createdAt: string;
-}
-
-// 로그인 요청
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-// 로그인 응답
-export interface LoginResponse {
-  userId: number;
-  email: string;
-  name: string;
-  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER'; // 백엔드가 내려줄 경우 반영
-  careRegNo?: string;           // 보호소 직원일 때만 존재
-  accessToken: string;
-  refreshToken: string;
-}
-
-// 회원가입 요청
-export interface SignupRequest {
-  email: string;
-  name: string;
-  password: string;
-  rePassword: string;
-  role: 'ROLE_USER' | 'ROLE_SHELTER';  // 백엔드 요구사항에 맞춤
-  careRegNo?: string;  // 보호소 등록번호 (ROLE_SHELTER인 경우 필수)
-}
-
-// 회원가입 응답
-export interface SignupResponse {
-  userId: number;
-  email: string;
-  name: string;
-  nickname: string;
-  role: 'ROLE_USER' | 'ROLE_SHELTER';
-  careRegNo?: string;
-  createdAt: string;
-}
-
-// 비밀번호 재설정 코드 발송 요청
-export interface SendResetCodeRequest {
-  email: string;
-}
-
-// 비밀번호 재설정 요청
-export interface ResetPasswordRequest {
-  email: string;
-  code: string;
-  newPassword: string;
-}
-
-// 비밀번호 재설정 응답
-export interface ResetPasswordResponse {
-  message: string;
-}
-
-// 이메일 인증 코드 발송 요청
-export interface SendVerificationCodeRequest {
-  email: string;
-}
-
-// 이메일 인증 코드 확인 요청
-export interface VerifyCodeRequest {
-  email: string;
-  code: string;
-}
-
-// 이메일 인증 완료 응답
-export interface EmailVerifiedResponse {
-  verified: boolean;
-  message?: string;
-}
-
 // ========== 동물(Animal) 관련 타입 ==========
 
 // 동물 정보
@@ -596,40 +506,6 @@ export interface WishlistSearchParams {
 // 위시리스트 검색 응답
 export interface WishlistSearchResponse extends PageResponse<WishlistItem> {}
 
-// ========== 회원 관리(Admin User) 관련 타입 ==========
-
-// 관리자용 회원 목록 항목
-export interface AdminUserListItem {
-  userId: number;
-  email: string;
-  name: string;
-  nickname?: string;
-  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';
-  provider?: string;
-  careRegNo?: string;
-  createdAt: string;
-}
-
-// 관리자용 회원 목록 조회 파라미터
-export interface AdminUserListParams {
-  keyword?: string;              // 검색어 (이메일 또는 닉네임)
-  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';  // 역할 필터
-  page?: number;                 // 페이지 번호 (기본 0)
-  size?: number;                 // 페이지 크기 (기본 20)
-  sortBy?: 'createdAt' | 'email' | 'name';  // 정렬 기준
-  sortOrder?: 'asc' | 'desc';    // 정렬 순서
-}
-
-// 관리자용 회원 목록 응답
-export interface AdminUserListResponse extends PageResponse<AdminUserListItem> {}
-
-// 회원 수정 요청 (관리자용)
-export interface UpdateUserRequest {
-  nickname?: string;  // 닉네임 (2~10자)
-  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';  // 역할
-  careRegNo?: string;  // 보호소 등록번호 (ROLE_SHELTER인 경우)
-}
-
 // ========== 관리자 통계 관련 타입 ==========
 
 // 일별 가입자 수 통계
@@ -667,29 +543,6 @@ export interface AdminPostListParams {
 export interface AdminPostListResponse extends PageResponse<PostResponse> {}
 
 // ========== 마이페이지 관련 타입 ==========
-
-// 사용자 정보 응답
-export interface UserInfoResponse {
-  userId: number;
-  email: string;
-  name: string;
-  nickname: string | null;
-  provider: string | null;  // 'EMAIL' | 'GOOGLE' | 'KAKAO' | null
-  role: 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_SHELTER';
-  careRegNo?: string; // 보호소 등록번호 (ROLE_SHELTER인 경우)
-  createdAt: string;
-}
-
-// 닉네임 변경 요청
-export interface UpdateNicknameRequest {
-  nickname: string;
-}
-
-// 비밀번호 변경 요청
-export interface PasswordUpdateRequest {
-  currentPassword: string;
-  newPassword: string;
-}
 
 // 찜한 동물 정보
 export interface FavoriteWithAnimalDto {

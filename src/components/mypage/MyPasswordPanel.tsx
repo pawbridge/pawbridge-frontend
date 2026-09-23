@@ -1,5 +1,5 @@
 import type { FormEventHandler } from 'react';
-import type { PasswordUpdateRequest } from '../../types/api.types';
+import type { PasswordUpdateRequest } from '../../types/user.types';
 
 interface MyPasswordPanelProps {
   provider: string | null;

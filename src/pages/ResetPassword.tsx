@@ -1,3 +1,4 @@
+import { getApiErrorMessage } from '../lib/apiError';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -21,8 +22,8 @@ export default function ResetPassword() {
       alert('인증 코드가 이메일로 발송되었습니다.');
       setStep(2);
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '인증 코드 발송에 실패했습니다';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '인증 코드 발송에 실패했습니다');
       alert(message);
     },
   });
@@ -34,8 +35,8 @@ export default function ResetPassword() {
       alert('비밀번호가 재설정되었습니다. 새로운 비밀번호로 로그인해주세요.');
       navigate('/login');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '비밀번호 재설정에 실패했습니다';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '비밀번호 재설정에 실패했습니다');
       alert(message);
     },
   });

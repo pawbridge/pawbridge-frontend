@@ -1,8 +1,9 @@
+import { getApiErrorMessage } from '../lib/apiError';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { signup, sendEmailVerificationCode, verifyEmailCode } from '../api/auth.api';
-import type { SignupRequest } from '../types/api.types';
+import type { SignupRequest } from '../types/auth.types';
 
 // 회원가입 입력
 interface SignupFormData {
@@ -34,8 +35,8 @@ export default function Signup() {
       alert('인증 코드가 이메일로 발송되었습니다.');
       setCodeSent(true);
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '인증 코드 발송에 실패했습니다';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '인증 코드 발송에 실패했습니다');
       alert(message);
     },
   });
@@ -51,8 +52,8 @@ export default function Signup() {
         alert('인증 코드가 올바르지 않습니다.');
       }
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '인증 코드 검증에 실패했습니다';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '인증 코드 검증에 실패했습니다');
       alert(message);
     },
   });
@@ -64,8 +65,8 @@ export default function Signup() {
       alert(`회원가입 성공!\n환영합니다, ${data.name}님!`);
       navigate('/login');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '회원가입에 실패했습니다';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '회원가입에 실패했습니다');
       alert(message);
     },
   });
