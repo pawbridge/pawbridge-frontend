@@ -2,7 +2,7 @@
 // Vite 127.0.0.1:5201. 모든 API는 모의 응답이며 실제 계정은 변경하지 않는다.
 async page => {
   const origin = 'http://127.0.0.1:5201';
-  const checks = [], errors = [], writes = [];
+  const checks = [], errors = [], writes = [], unexpected = [], seen = [];
   let mode = 'error';
   const assert = (ok, message) => { if (!ok) throw new Error(message); };
   const onError = e => errors.push(e.message);
@@ -10,11 +10,16 @@ async page => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
     if (!path.startsWith('/api/')) return route.continue();
+    seen.push(`${request.method()} ${path}`);
     if (request.method() === 'GET') {
-      if (path.endsWith('/stats/status')) return route.fulfill({ json: [] });
+      if (path.endsWith('/stats/status')) return route.fulfill({ json: [{ status: 'ADOPTED', label: '입양', count: 1 }] });
       if (path.endsWith('/stats/today')) return route.fulfill({ json: { date: '2026-09-23', rescuedToday: 0, adoptedToday: 0 } });
-      return route.fulfill({ json: { content: [], totalElements: 0, totalPages: 0, code: 200, data: [] } });
+      if (path === '/api/animals') return route.fulfill({ json: { content: [], totalElements: 0, totalPages: 0 } });
+      if (path === '/api/posts/read') return route.fulfill({ json: { code: 200, message: '성공', data: [] } });
+      unexpected.push(`GET ${path}`);
+      return route.fulfill({ status: 404, json: { message: '테스트에 정의되지 않은 요청' } });
     }
+    if (!['/api/auth/login', '/api/users/signup', '/api/v1/email/send', '/api/v1/email/verify', '/api/auth/password/reset-request', '/api/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
     writes.push({ path, body: request.postDataJSON() });
     if (mode === 'network') return route.abort();
     if (mode !== 'success') return route.fulfill({ status: 400, json: { code: 400, message: mode === 'malformed' ? { detail: 'not a string' } : '서버 테스트 안내', data: null } });
@@ -58,6 +63,7 @@ async page => {
       mode = 'success';
       await page.locator('button[type="submit"]').click();
       await page.waitForURL(`${origin}/`);
+      await page.getByText('100.0%', { exact: true }).waitFor();
       const state = await page.evaluate(() => JSON.parse(localStorage.getItem('auth-storage')).state);
       assert(state.user.id === 321 && state.user.role === 'ROLE_SHELTER' && state.user.careRegNo === null && state.accessToken === 'test-only-token', 'Login mapping changed');
       await page.evaluate(() => localStorage.clear());
@@ -107,8 +113,9 @@ async page => {
       lastWrite('/api/auth/password/reset', { email: 'member@example.invalid', code: '123456', newPassword: 'New-test1!' });
       checks.push(`reset/send/errors/payload ${width}`);
     }
-    assert(errors.length === 0, errors.join(', '));
-    return { checks, mutations: writes.length, pageErrors: errors };
+    assert(errors.length === 0, JSON.stringify({ errors, seen }));
+    assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected.join(', ')}`);
+    return { checks, mutations: writes.length, pageErrors: errors, unexpectedRequests: unexpected };
   } finally {
     page.off('pageerror', onError);
     await page.unroute('**/api/**', handler);
