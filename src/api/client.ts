@@ -69,9 +69,10 @@ apiClient.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401: {
-          // 공개 API는 401 에러 발생 시에도 로그인 리다이렉트하지 않음
           const requestUrl = error.config?.url || '';
-          
+          // 로그인 실패는 Login의 오류 안내로 전달하고 현재 입력을 유지한다.
+          if (requestUrl === '/api/auth/login' && error.config?.method?.toLowerCase() === 'post') break;
+
           // 공개 API 경로 패턴: /api/animals 또는 /api/animals/{id}
           const isPublicAnimalApi = /^\/api\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
           
