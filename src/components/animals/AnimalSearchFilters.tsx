@@ -10,6 +10,7 @@ interface AnimalSearchFiltersProps {
   filters: AnimalSearchParams;
   onApply: (filters: AnimalSearchParams) => void;
   onReset: () => void;
+  shelterContext?: boolean;
 }
 
 const fieldClass = 'h-12 w-full rounded-xl border border-brand-border bg-white dark:bg-card-dark px-4 text-sm text-brand-ink dark:text-text-dark placeholder:text-brand-muted dark:placeholder:text-gray-400 focus:border-brand-focus focus:outline-none focus:ring-2 focus:ring-brand-focus';
@@ -28,7 +29,7 @@ function selectedSummary(filters: AnimalSearchParams): string[] {
   return values;
 }
 
-export default function AnimalSearchFilters({ filters, onApply, onReset }: AnimalSearchFiltersProps) {
+export default function AnimalSearchFilters({ filters, onApply, onReset, shelterContext = false }: AnimalSearchFiltersProps) {
   const [mode, setMode] = useState<SearchMode>(filters.noticeNo ? 'notice' : 'feature');
   const [searchText, setSearchText] = useState(filters.noticeNo || filters.keyword || '');
   const [picker, setPicker] = useState<Picker>(null);
@@ -148,7 +149,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset }: Anima
 
       {mode === 'notice' ? (
         <p className="rounded-xl bg-stone-50 dark:bg-stone-900 px-4 py-3 text-xs leading-5 text-brand-muted dark:text-gray-300">
-          공고번호는 다른 검색 조건과 관계없이 정확히 일치하는 공고를 조회합니다.
+          {shelterContext ? '선택한 보호소·접수일·보호중 조건 안에서 공고번호가 정확히 일치하는 동물을 조회합니다.' : '공고번호는 다른 검색 조건과 관계없이 정확히 일치하는 공고를 조회합니다.'}
         </p>
       ) : (
       <div className="relative rounded-2xl bg-stone-50 dark:bg-stone-900 px-4 py-4 md:px-5">
@@ -163,7 +164,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset }: Anima
           <button type="button" onClick={() => openPicker('region')} className={`${chipClass} ${filters.region ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {filters.city || filters.region || '지역'}
           </button>
-          <button type="button" onClick={() => onApply({ ...filters, status: filters.status === 'PROTECT' ? undefined : 'PROTECT' })} className={`${chipClass} ${filters.status === 'PROTECT' ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" disabled={shelterContext} title={shelterContext ? '보호소 목록에서 선택한 보호중 조건입니다.' : undefined} onClick={() => onApply({ ...filters, status: filters.status === 'PROTECT' ? undefined : 'PROTECT' })} className={`${chipClass} ${filters.status === 'PROTECT' ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {filters.status === 'PROTECT' && <span aria-hidden="true" className="mr-1">✓</span>}보호중
           </button>
           <button type="button" onClick={() => setDetailsOpen(true)} className={`${chipClass} ${filters.gender ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>

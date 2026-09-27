@@ -1,12 +1,13 @@
 import type { AnimalSearchParams } from '../types/api.types';
 import { normalizeAnimalRegion } from './animalRegions.ts';
+import { validIntakeRange } from './shelterDiscovery.ts';
 
 export const defaultAnimalSearch = { page: 0, size: 20, sort: 'createdAt,desc', status: 'PROTECT' as const };
 export const maxAnimalSearchResults = 10_000;
 export const relevanceAnimalSearchSort = 'relevance,desc';
 const textKeys = ['keyword', 'noticeNo', 'species', 'breed', 'gender', 'neuterStatus', 'status', 'region', 'city'] as const;
 const numberKeys = ['page', 'size', 'minAge', 'maxAge', 'shelterId'] as const;
-const sorts = [relevanceAnimalSearchSort, 'createdAt,desc', 'noticeEndDate,asc', 'age,asc'];
+const sorts = [relevanceAnimalSearchSort, 'createdAt,desc', 'happenDate,desc', 'noticeEndDate,asc', 'age,asc'];
 
 export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
   const fields: Record<string, string | number> = {};
@@ -23,7 +24,10 @@ export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
     if (key === 'size' && value > 100) continue;
     fields[key] = value;
   }
-  if (typeof fields.noticeNo === 'string') {
+  const intakeFrom = params.get('intakeFrom') || '';
+  const intakeTo = params.get('intakeTo') || '';
+  if (validIntakeRange(intakeFrom, intakeTo)) Object.assign(fields, { intakeFrom, intakeTo });
+  if (typeof fields.noticeNo === 'string' && !fields.shelterId) {
     return {
       ...defaultAnimalSearch,
       status: undefined,
@@ -39,7 +43,8 @@ export function readAnimalSearch(params: URLSearchParams): AnimalSearchParams {
   } else if (hasRelevanceTerms) {
     fields.sort = relevanceAnimalSearchSort;
   }
-  return { ...defaultAnimalSearch, ...fields };
+  return { ...defaultAnimalSearch, ...fields,
+    ...(fields.shelterId && fields.intakeFrom ? { status: 'PROTECT' as const } : {}) };
 }
 
 export function applyAnimalSearchFilters(
@@ -85,7 +90,7 @@ export function hasAnimalRelevanceSearch(filters: AnimalSearchParams): boolean {
 
 export function writeAnimalSearch(filters: AnimalSearchParams): URLSearchParams {
   const params = new URLSearchParams();
-  for (const key of [...textKeys, ...numberKeys, 'sort'] as const) {
+  for (const key of [...textKeys, ...numberKeys, 'sort', 'intakeFrom', 'intakeTo'] as const) {
     const value = filters[key];
     if (value === undefined || value === '') continue;
     if (key in defaultAnimalSearch && value === defaultAnimalSearch[key as keyof typeof defaultAnimalSearch]) continue;
