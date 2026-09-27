@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { publicShelterById } from '../api/publicShelters.api';
+import { shelterListReturnTo } from '../utils/shelterDiscovery';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
 import {
@@ -22,7 +24,17 @@ import Header from '../components/layout/Header';
 export default function Animals() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = useMemo(() => readAnimalSearch(searchParams), [searchParams]);
-  const setFilters = (next: AnimalSearchParams) => setSearchParams(writeAnimalSearch(next));
+  const shelterContext = Boolean(filters.shelterId && filters.intakeFrom && filters.intakeTo);
+  const shelterReturnTo = shelterListReturnTo(searchParams.get('shelterReturnTo'));
+  const shelter = useQuery({ queryKey: ['public-shelter-id', filters.shelterId],
+    queryFn: ({ signal }) => publicShelterById(filters.shelterId!, signal), enabled: shelterContext, retry: false });
+  const setFilters = (next: AnimalSearchParams) => {
+    const params = writeAnimalSearch(shelterContext ? { ...next, shelterId: filters.shelterId,
+      intakeFrom: filters.intakeFrom, intakeTo: filters.intakeTo, status: 'PROTECT' } : next);
+    if (shelterContext) params.set('shelterReturnTo', shelterReturnTo);
+    setSearchParams(params);
+  };
+  const resetFilters = () => setFilters({ ...defaultAnimalSearch, ...(shelterContext ? { sort: 'happenDate,desc' } : {}) });
   const searchReturnTo = `/animals${searchParams.size ? `?${searchParams.toString()}` : ''}`;
 
   const { data, isLoading, error, refetch } = useQuery({
@@ -45,14 +57,24 @@ export default function Animals() {
   return (
     <div className="min-h-screen bg-white font-display text-brand-ink dark:bg-background-dark dark:text-text-dark">
       <Header />
+      {shelterContext && <section aria-label="선택한 보호소와 접수일" className="bg-brand-soft text-brand-ink">
+        <div className="mx-auto max-w-[1504px] space-y-3 px-4 py-6 md:px-6">
+          <Link to={shelterReturnTo} className="inline-flex min-h-11 items-center rounded-lg border border-brand-border bg-white px-4 text-sm font-medium">← 보호소 목록으로</Link>
+          <h2 className="text-xl font-bold">{shelter.data?.name || (shelter.isError ? '선택한 보호소' : '보호소 이름 확인 중…')}</h2>
+          {shelter.isError && <p role="alert" className="text-sm">보호소 정보를 불러오지 못했어요. <button type="button" onClick={() => void shelter.refetch()} className="min-h-11 underline">다시 시도</button></p>}
+          <div className="flex flex-wrap gap-2 text-xs font-medium">{['이 보호소만', '보호중'].map(label => <span key={label} className="rounded-full bg-brand px-4 py-2">✓ {label}</span>)}</div>
+          <p className="text-sm">접수일 {filters.intakeFrom} – {filters.intakeTo}</p>
+          <p className="text-xs leading-5 text-brand-muted">기간·보호소 변경은 목록에서 할 수 있어요. 수집 정보와 실제 보호 상태는 다를 수 있어요.</p>
+        </div>
+      </section>}
       <main className="mx-auto w-full max-w-[1504px] px-4 pb-14 pt-10 md:px-6 md:pb-20 md:pt-14">
         <header className="mb-6">
           <p className="text-sm font-bold text-brand-accent">동물 검색</p>
-          <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-[-0.025em] text-brand-ink dark:text-text-dark md:text-[38px]">기억나는 특징으로 빠르게 찾아보세요</h1>
-          <p className="mt-3 max-w-5xl text-sm leading-6 text-brand-muted dark:text-gray-300 md:text-base">털색, 무늬, 착용 물품, 발견 장소처럼 기억나는 정보를 함께 입력할수록 가까운 결과를 먼저 보여드립니다.</p>
+          <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-[-0.025em] text-brand-ink dark:text-text-dark md:text-[38px]">{shelterContext ? '이 보호소의 동물을 만나보세요' : '기억나는 특징으로 빠르게 찾아보세요'}</h1>
+          <p className="mt-3 max-w-5xl text-sm leading-6 text-brand-muted dark:text-gray-300 md:text-base">{shelterContext ? '선택한 보호소와 접수일 범위 안에서 동물의 특징으로 더 좁혀보세요.' : '털색, 무늬, 착용 물품, 발견 장소처럼 기억나는 정보를 함께 입력할수록 가까운 결과를 먼저 보여드립니다.'}</p>
         </header>
 
-        <AnimalSearchFilters filters={filters} onApply={handleFilterChange} onReset={() => setFilters(defaultAnimalSearch)} />
+        <AnimalSearchFilters filters={filters} onApply={handleFilterChange} onReset={resetFilters} shelterContext={shelterContext} />
 
         <section aria-labelledby="animal-search-results" className="mt-10">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -64,7 +86,8 @@ export default function Animals() {
               <span className="sr-only">검색 결과 정렬</span>
               <select value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.target.value, page: 0 })} className="h-10 min-w-[168px] rounded-xl border border-brand-border bg-white dark:bg-card-dark px-3 text-sm font-medium text-brand-ink dark:text-text-dark focus:border-brand-focus focus:outline-none focus:ring-2 focus:ring-brand-focus">
                 {relevanceSearch && <option value={relevanceAnimalSearchSort}>관련도순</option>}
-                <option value="createdAt,desc">최근 접수순</option>
+                {shelterContext && <option value="happenDate,desc">최근 접수순</option>}
+                <option value="createdAt,desc">{shelterContext ? '최근 등록순' : '최근 접수순'}</option>
                 <option value="noticeEndDate,asc">마감 임박순</option>
                 <option value="age,asc">나이 어린순</option>
               </select>
@@ -85,7 +108,7 @@ export default function Animals() {
             <div className="rounded-2xl border border-brand-border bg-stone-50 dark:bg-stone-900 px-6 py-14 text-center">
               <h3 className="text-lg font-bold text-brand-ink dark:text-text-dark">조건에 맞는 동물을 찾지 못했습니다</h3>
               <p className="mt-2 text-sm text-brand-muted dark:text-gray-300">검색어를 줄이거나 지역과 품종 조건을 바꿔 보세요.</p>
-              <button type="button" onClick={() => setFilters(defaultAnimalSearch)} className="mt-5 h-11 rounded-xl border border-brand-border bg-white dark:bg-card-dark px-6 text-sm font-bold text-brand-accent">조건 초기화</button>
+              <button type="button" onClick={resetFilters} className="mt-5 h-11 rounded-xl border border-brand-border bg-white dark:bg-card-dark px-6 text-sm font-bold text-brand-accent">조건 초기화</button>
             </div>
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
