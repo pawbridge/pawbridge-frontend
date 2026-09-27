@@ -19,5 +19,5 @@ export function shelterTelephone(phone?: string) {
 }
 
 export function isPublicShelterRequest(url: string, method?: string) {
-  return (!method || method.toUpperCase() === 'GET') && /^\/api\/shelters(?:\/by-care-reg-no\/\d{15}|\/\d+)?(?:\?.*)?$/.test(url);
+  return (!method || method.toUpperCase() === 'GET') && /^\/api\/shelters(?:\/discovery|\/by-care-reg-no\/\d{15}|\/\d+(?:\/observations)?)?(?:\?.*)?$/.test(url);
 }

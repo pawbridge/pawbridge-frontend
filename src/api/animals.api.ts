@@ -53,6 +53,8 @@ export const getAnimals = async (params?: AnimalSearchParams): Promise<PageRespo
       ...(params?.keyword && { keyword: params.keyword }),
       ...(params?.noticeNo && { noticeNo: params.noticeNo }),
       ...(params?.shelterId && { shelterId: params.shelterId }),
+      ...(params?.intakeFrom && { intakeFrom: params.intakeFrom }),
+      ...(params?.intakeTo && { intakeTo: params.intakeTo }),
     },
   });
   return response.data;
