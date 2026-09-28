@@ -6,6 +6,7 @@ import { getMyInfo } from '../api/user.api';
 import type { CreateAnimalRequest } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
 import CustomSelect from '../components/common/CustomSelect';
+import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
@@ -223,7 +224,7 @@ export default function AnimalCreate() {
   return (
     <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex overflow-hidden">
       {/* 사이드바 */}
-      <aside className="w-64 bg-surface-light dark:bg-surface-dark border-r border-brand-border dark:border-stone-800 flex flex-col flex-shrink-0 z-50">
+      <aside className="hidden md:flex w-64 bg-surface-light dark:bg-surface-dark border-r border-brand-border dark:border-stone-800 flex-col flex-shrink-0 z-50">
         {/* 로고 */}
         <div className="h-16 flex items-center gap-3 px-6 border-b border-brand-border dark:border-stone-800">
           <div className="size-8 text-brand-accent">
@@ -281,7 +282,8 @@ export default function AnimalCreate() {
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* 상단 헤더 */}
-        <header className="flex items-center justify-end h-16 px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
+        <header className="flex items-center justify-between md:justify-end h-16 px-4 md:px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
+          <Link to="/" className="md:hidden text-lg font-display font-bold text-brand-ink dark:text-white">PawBridge</Link>
           <div className="flex items-center gap-6">
             <button className="relative flex items-center gap-2 text-brand-muted hover:text-brand-accent transition-colors">
               <span className="material-symbols-outlined text-[24px]">notifications</span>
@@ -307,20 +309,9 @@ export default function AnimalCreate() {
         </header>
 
         {/* 메인 컨텐츠 */}
-        <main className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6 md:p-10 pb-24">
+        <main className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-4 md:p-10 pb-24">
         <div className="max-w-5xl mx-auto flex flex-col gap-6">
-          {/* 브레드크럼 */}
-          <nav className="flex flex-wrap gap-2 text-sm font-medium">
-            <Link to="/" className="text-brand-muted hover:text-brand-accent transition-colors">
-              홈
-            </Link>
-            <span className="text-brand-muted material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-            <Link to="/mypage" className="text-brand-muted hover:text-brand-accent transition-colors">
-              마이페이지
-            </Link>
-            <span className="text-brand-muted material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-            <span className="text-brand-ink dark:text-white font-bold">동물 등록</span>
-          </nav>
+          <ManagementBreadcrumb current="동물 등록" />
 
           {/* 페이지 제목 */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 pb-2">
