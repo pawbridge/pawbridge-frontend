@@ -44,6 +44,7 @@ import NotFound from './pages/NotFound.tsx';
 import CommunityList from './pages/CommunityList.tsx';
 import CommunityDetail from './pages/CommunityDetail.tsx';
 import CommunityCreate from './pages/CommunityCreate.tsx';
+import AnimalReportForm from './pages/AnimalReportForm.tsx';
 import CommunityEdit from './pages/CommunityEdit.tsx';
 import AdoptionList from './pages/AdoptionList.tsx';
 import AdoptionDetail from './pages/AdoptionDetail.tsx';
@@ -397,6 +398,8 @@ function App() {
       />
       {/* 커뮤니티 (실종/보호/제보) */}
       <Route path="/community" element={<CommunityList />} />
+      <Route path="/community/reports/new" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
+      <Route path="/community/reports/:id/edit" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
       <Route path="/community/:id" element={<CommunityDetail />} />
       <Route
         path="/community/new"

@@ -5,6 +5,7 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { getPost, updatePost } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
+import { getAnimalReport } from '../api/animalReports.api';
 
 export default function CommunityEdit() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,17 @@ export default function CommunityEdit() {
     queryFn: () => getPost(postId),
     enabled: !!postId,
   });
+
+  const reportBoard = post?.boardType === 'MISSING' || post?.boardType === 'REPORT';
+  const { data: report, isLoading: reportLoading, isError: reportError } = useQuery({
+    queryKey: ['animal-report', postId],
+    queryFn: () => getAnimalReport(postId),
+    enabled: !!postId && reportBoard,
+  });
+
+  useEffect(() => {
+    if (report?.detail) navigate(`/community/reports/${postId}/edit`, { replace: true });
+  }, [navigate, postId, report]);
 
   // 게시글 데이터로 폼 초기화
   useEffect(() => {
@@ -85,7 +97,7 @@ export default function CommunityEdit() {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || (reportBoard && (reportLoading || report?.detail))) {
     return (
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display">
         <Header />
@@ -97,7 +109,7 @@ export default function CommunityEdit() {
     );
   }
 
-  if (error || !post) {
+  if (error || reportError || !post) {
     return (
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display">
         <Header />

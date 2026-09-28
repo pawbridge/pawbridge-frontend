@@ -3,16 +3,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import { getAllPosts, searchPosts } from '../api/community.api';
-import type { BoardType } from '../types/api.types';
+import type { AnimalReportDetail, BoardType, PostResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
 import Pagination from '../components/common/Pagination';
+import { getAnimalReports } from '../api/animalReports.api';
 
 const boardTabs: { key: BoardType; label: string }[] = [
-  { key: 'MISSING', label: '실종 동물' },
+  { key: 'MISSING', label: '실종 알림' },
   { key: 'PROTECTION', label: '보호 동물' },
-  { key: 'REPORT', label: '제보' },
+  { key: 'REPORT', label: '목격 제보' },
   { key: 'COMMUNICATION', label: '소통 게시판' },
 ];
+
+type ListPost = PostResponse & { reportDetail?: AnimalReportDetail | null; legacy?: boolean };
+const EMPTY_POSTS: ListPost[] = [];
 
 export default function CommunityList() {
   const navigate = useNavigate();
@@ -22,17 +26,28 @@ export default function CommunityList() {
   const [searchKeyword, setSearchKeyword] = useState(''); // 실제 검색 키워드
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 12; // 페이지당 게시글 수
+  const reportPage = (activeTab === 'MISSING' || activeTab === 'REPORT') && !searchKeyword.trim();
 
   // 게시글 목록 조회 (검색어가 있으면 검색, 없으면 전체 조회)
-  const { data: posts = [], isLoading, error } = useQuery({
-    queryKey: ['posts', searchKeyword],
-    queryFn: () => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['posts', activeTab, searchKeyword, reportPage ? currentPage : 'all'],
+    queryFn: async (): Promise<{ items: ListPost[]; totalPages: number }> => {
       if (searchKeyword.trim()) {
-        return searchPosts(searchKeyword.trim());
+        return { items: await searchPosts(searchKeyword.trim()), totalPages: 0 };
       }
-      return getAllPosts();
+      if (reportPage) {
+        const page = await getAnimalReports(currentPage, pageSize);
+        return { items: page.content.map((report) => ({
+          ...report.post,
+          authorName: report.post.authorNickname || `작성자 ${report.post.authorId}`,
+          reportDetail: report.detail,
+          legacy: report.legacy,
+        })), totalPages: page.totalPages };
+      }
+      return { items: await getAllPosts(), totalPages: 0 };
     },
   });
+  const posts = data?.items ?? EMPTY_POSTS;
 
   // 탭에 따라 필터링된 게시글 (전체)
   const allFiltered = useMemo(
@@ -41,10 +56,10 @@ export default function CommunityList() {
   );
 
   // 페이지네이션 계산
-  const totalPages = Math.ceil(allFiltered.length / pageSize);
+  const totalPages = reportPage ? (data?.totalPages ?? 0) : Math.ceil(allFiltered.length / pageSize);
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
-  const filtered = allFiltered.slice(startIndex, endIndex);
+  const filtered = reportPage ? allFiltered : allFiltered.slice(startIndex, endIndex);
 
   // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
@@ -61,6 +76,7 @@ export default function CommunityList() {
   // 검색 실행
   const handleSearchSubmit = () => {
     setSearchKeyword(inputValue);
+    setCurrentPage(0);
   };
 
   // 엔터 키 핸들러
@@ -75,6 +91,10 @@ export default function CommunityList() {
     if (!user) {
       alert('로그인이 필요합니다.');
       navigate('/login');
+      return;
+    }
+    if (activeTab === 'MISSING' || activeTab === 'REPORT') {
+      navigate(`/community/reports/new?kind=${activeTab === 'MISSING' ? 'MISSING' : 'SIGHTING'}`);
       return;
     }
     navigate(`/community/new?boardType=${activeTab}`);
@@ -169,14 +189,14 @@ export default function CommunityList() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
                 <span className="material-symbols-outlined text-lg">lock</span>
-                <span>로그인이 필요한 서비스입니다.</span>
+                <span>열람은 누구나 · 작성은 로그인 후</span>
               </div>
               <button
                 onClick={handleWriteClick}
                 className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
               >
                 <span className="material-symbols-outlined text-base">edit</span>
-                <span>글쓰기</span>
+                <span>{activeTab === 'MISSING' ? '실종 알리기' : activeTab === 'REPORT' ? '목격 제보하기' : '글쓰기'}</span>
               </button>
             </div>
           </div>
@@ -243,6 +263,10 @@ export default function CommunityList() {
                       <p className="text-base font-medium leading-normal text-brand-ink dark:text-white truncate">
                         {post.title}
                       </p>
+                      {post.reportDetail && <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        {post.reportDetail.occurredOn} · {post.reportDetail.region}
+                      </p>}
+                      {post.legacy && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">기존 형식의 글</p>}
                       <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
                         {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                       </p>
