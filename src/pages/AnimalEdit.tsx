@@ -5,6 +5,7 @@ import { getAnimalById, updateAnimal, uploadAnimalImage } from '../api/animals.a
 import type { UpdateAnimalRequest } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
 import CustomSelect from '../components/common/CustomSelect';
+import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import AdminSidebar from '../components/layout/AdminSidebar';
 
 export default function AnimalEdit() {
@@ -243,9 +244,10 @@ export default function AnimalEdit() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex overflow-hidden">
-      <AdminSidebar />
+      <div className="hidden md:block"><AdminSidebar /></div>
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-        <header className="flex items-center justify-end h-16 px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
+        <header className="flex items-center justify-between md:justify-end h-16 px-4 md:px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
+          <Link to="/" className="md:hidden text-lg font-display font-bold text-brand-ink dark:text-white">PawBridge</Link>
           <div className="flex items-center gap-6">
             <button className="relative flex items-center gap-2 text-brand-muted hover:text-brand-accent transition-colors">
               <span className="material-symbols-outlined text-[24px]">notifications</span>
@@ -270,19 +272,9 @@ export default function AnimalEdit() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6 md:p-10 pb-24">
+        <main className="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-4 md:p-10 pb-24">
           <div className="max-w-5xl mx-auto flex flex-col gap-6">
-            <nav className="flex flex-wrap gap-2 text-sm font-medium">
-              <Link to="/" className="text-brand-muted hover:text-brand-accent transition-colors">
-                홈
-              </Link>
-              <span className="text-brand-muted material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-              <Link to="/mypage" className="text-brand-muted hover:text-brand-accent transition-colors">
-                마이페이지
-              </Link>
-              <span className="text-brand-muted material-symbols-outlined text-[16px] pt-0.5">chevron_right</span>
-              <span className="text-brand-ink dark:text-white font-bold">동물 수정</span>
-            </nav>
+            <ManagementBreadcrumb current="동물 수정" />
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 pb-2">
               <div className="flex flex-col gap-2">
