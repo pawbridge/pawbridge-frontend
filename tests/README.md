@@ -142,3 +142,16 @@ playwright-cli -s=mypage-list-feedback close
 스크린샷은 `/tmp/mypage-list-*.png`에 저장한다. 기존 설치된 브라우저를 사용한다.
 기존 역할 제한·정렬·선택·탭 전환·상세 복귀는 `mypage-animals.browser.js`(5205),
 `mypage-market.browser.js`(5207)로 회귀 검증한다.
+
+## 보호동물 내비게이션
+
+`protected-animal-navigation.browser.js`는 모의 API만 사용한다. 데스크톱의 호버·클릭·키보드·Escape·바깥 클릭, 보호소/현황/검색 이동, 모바일 펼침과 44px 버튼, 390px/320px 넘침과 작은 화면의 메뉴 스크롤을 확인한다.
+
+```sh
+npm run dev -- --host 127.0.0.1 --port 5198 --strictPort
+playwright-cli -s=protected-nav open http://127.0.0.1:5198 --browser=firefox
+playwright-cli -s=protected-nav run-code --filename=tests/protected-animal-navigation.browser.js
+playwright-cli -s=protected-nav close
+```
+
+운영 화면이나 실제 API 연결 검증을 대신하지 않는다.
