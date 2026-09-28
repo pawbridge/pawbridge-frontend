@@ -25,6 +25,7 @@ async page => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('http://127.0.0.1:5198/shelters');
   await page.getByRole('heading', { name: sample.name, exact: true }).waitFor();
+  await page.getByText('보호중 동물 많은 순', { exact: false }).waitFor();
   if (requests.some(url => url.includes('/observations'))) throw Error('History eagerly fetched');
   await page.getByRole('button', { name: '보호 현황 펼치기 +' }).first().click();
   await page.getByRole('img', { name: /최근 30일 일별/ }).waitFor();
