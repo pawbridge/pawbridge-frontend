@@ -170,6 +170,7 @@ async page => {
     await page.setViewportSize({ width: 390, height: 844 });
     await menuButton.click();
     await page.setViewportSize({ width: 1440, height: 900 });
+    await mobile.waitFor({ state: 'detached' }); // Wait for the breakpoint event before resizing again.
     await hidden(panel);
     await page.setViewportSize({ width: 390, height: 844 });
     await hidden(mobile);
