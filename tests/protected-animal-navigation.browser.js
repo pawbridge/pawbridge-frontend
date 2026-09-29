@@ -169,8 +169,9 @@ async page => {
     }
     await page.setViewportSize({ width: 390, height: 844 });
     await menuButton.click();
+    await shown(mobile);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await mobile.waitFor({ state: 'detached' }); // Wait for the breakpoint event before resizing again.
+    await page.locator('#mobile-navigation').waitFor({ state: 'detached' }); // CSS-hidden is not state reset.
     await hidden(panel);
     await page.setViewportSize({ width: 390, height: 844 });
     await hidden(mobile);
@@ -178,7 +179,7 @@ async page => {
     check(errors.length === 0, errors.join('\n'));
     return { checks, pageErrors: errors, scope: 'mocked local API; no production data changed' };
   } catch (error) {
-    throw new Error('Completed: ' + checks.join('; ') + '\n' + error.message);
+    throw new Error('Completed: ' + checks.join('; ') + '\n' + error.stack);
   } finally {
     page.off('pageerror', onError);
     await page.unroute('**/api/**');
