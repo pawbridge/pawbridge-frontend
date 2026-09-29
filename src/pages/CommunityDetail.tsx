@@ -12,7 +12,6 @@ import {
   deletePost
 } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
-import { getAnimalReport } from '../api/animalReports.api';
 
 const boardLabel: Record<string, string> = {
   MISSING: '실종',
@@ -36,13 +35,6 @@ export default function CommunityDetail() {
     queryKey: ['post', postId],
     queryFn: () => getPost(postId),
     enabled: !!postId,
-  });
-
-  const reportBoard = post?.boardType === 'MISSING' || post?.boardType === 'REPORT';
-  const { data: report } = useQuery({
-    queryKey: ['animal-report', postId],
-    queryFn: () => getAnimalReport(postId),
-    enabled: !!postId && reportBoard,
   });
 
   // 댓글 목록 조회
@@ -180,10 +172,10 @@ export default function CommunityDetail() {
                   {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                 </p>
               </div>
-              {isAuthor && (!reportBoard || report) && (
+              {isAuthor && (
                 <div className="flex gap-2">
                   <Link
-                    to={report?.detail ? `/community/reports/${postId}/edit` : `/community/${postId}/edit`}
+                    to={`/community/${postId}/edit`}
                     className="px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
                   >
                     수정
@@ -229,20 +221,6 @@ export default function CommunityDetail() {
             )}
 
             {/* 본문 */}
-            {report?.detail && (
-              <section className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-900" aria-label="동물 제보 정보">
-                <h2 className="text-lg font-bold">{report.detail.kind === 'MISSING' ? '실종 정보' : '목격 정보'}</h2>
-                <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
-                  <div><dt className="font-semibold text-gray-500 dark:text-gray-400">날짜</dt><dd className="mt-1">{report.detail.occurredOn}{report.detail.approximateTime ? ` · ${report.detail.approximateTime}` : ''}</dd></div>
-                  <div><dt className="font-semibold text-gray-500 dark:text-gray-400">지역</dt><dd className="mt-1">{report.detail.region}{report.detail.landmark ? ` · ${report.detail.landmark}` : ''}</dd></div>
-                  <div><dt className="font-semibold text-gray-500 dark:text-gray-400">동물</dt><dd className="mt-1">{report.detail.species}{report.detail.animalName ? ` · ${report.detail.animalName}` : ''}</dd></div>
-                  {(report.detail.coatColor || report.detail.animalSize) && <div><dt className="font-semibold text-gray-500 dark:text-gray-400">털색·크기</dt><dd className="mt-1">{[report.detail.coatColor, report.detail.animalSize].filter(Boolean).join(' · ')}</dd></div>}
-                  {report.detail.distinguishingFeatures && <div className="sm:col-span-2"><dt className="font-semibold text-gray-500 dark:text-gray-400">구별되는 특징</dt><dd className="mt-1 whitespace-pre-wrap">{report.detail.distinguishingFeatures}</dd></div>}
-                  {report.detail.direction && <div className="sm:col-span-2"><dt className="font-semibold text-gray-500 dark:text-gray-400">이동 방향</dt><dd className="mt-1">{report.detail.direction}</dd></div>}
-                </dl>
-              </section>
-            )}
-            {report?.legacy && <p className="mb-6 rounded-lg bg-gray-50 p-4 text-sm text-gray-600 dark:bg-gray-900 dark:text-gray-300">기존 형식으로 작성된 글입니다. 아래 원문을 확인해 주세요.</p>}
             <div className="prose dark:prose-invert max-w-none">
               <p className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">
                 {post.content}

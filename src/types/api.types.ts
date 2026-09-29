@@ -446,14 +446,14 @@ export interface AnimalReportInput {
   description: string;
 }
 
-export interface AnimalReportDetail extends Omit<AnimalReportInput, 'description'> {
-  postId: number;
-}
-
-export interface AnimalReportResponse {
-  post: PostResponse & { postId: number };
-  detail: AnimalReportDetail | null;
-  legacy: boolean;
+export interface AnimalReportResponse extends AnimalReportInput {
+  reportId: number;
+  authorId: number;
+  authorNickname: string;
+  title: string;
+  imageUrls: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 // 게시글 생성 요청

@@ -29,7 +29,7 @@ function localToday() {
 
 export default function AnimalReportForm() {
   const { id } = useParams<{ id: string }>();
-  const postId = id ? Number(id) : null;
+  const reportId = id ? Number(id) : null;
   const [params] = useSearchParams();
   const initialKind: AnimalReportKind = params.get('kind') === 'SIGHTING' ? 'SIGHTING' : 'MISSING';
   const [form, setForm] = useState<AnimalReportInput>(() => initialForm(initialKind));
@@ -42,32 +42,27 @@ export default function AnimalReportForm() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const { data: existing, isLoading, isError } = useQuery({
-    queryKey: ['animal-report', postId],
-    queryFn: () => getAnimalReport(postId!),
-    enabled: postId !== null,
+    queryKey: ['animal-report', reportId],
+    queryFn: () => getAnimalReport(reportId!),
+    enabled: reportId !== null,
   });
 
   useEffect(() => {
-    if (!existing || postId === null || loadedId === postId) return;
-    if (existing.legacy || !existing.detail) {
-      navigate(`/community/${postId}/edit`, { replace: true });
+    if (!existing || reportId === null || loadedId === reportId) return;
+    if (existing.authorId !== user?.id) {
+      navigate(`/community/reports/${reportId}`, { replace: true });
       return;
     }
-    if (existing.post.authorId !== user?.id) {
-      navigate(`/community/${postId}`, { replace: true });
-      return;
-    }
-    const { detail } = existing;
     setForm({
-      kind: detail.kind, occurredOn: detail.occurredOn,
-      approximateTime: detail.approximateTime, region: detail.region,
-      landmark: detail.landmark, species: detail.species,
-      animalName: detail.animalName, coatColor: detail.coatColor,
-      animalSize: detail.animalSize, distinguishingFeatures: detail.distinguishingFeatures,
-      direction: detail.direction, description: existing.post.content,
+      kind: existing.kind, occurredOn: existing.occurredOn,
+      approximateTime: existing.approximateTime, region: existing.region,
+      landmark: existing.landmark, species: existing.species,
+      animalName: existing.animalName, coatColor: existing.coatColor,
+      animalSize: existing.animalSize, distinguishingFeatures: existing.distinguishingFeatures,
+      direction: existing.direction, description: existing.description,
     });
-    setLoadedId(postId);
-  }, [existing, loadedId, navigate, postId, user?.id]);
+    setLoadedId(reportId);
+  }, [existing, loadedId, navigate, reportId, user?.id]);
 
   useEffect(() => {
     const urls = photos.map((photo) => URL.createObjectURL(photo));
@@ -76,14 +71,13 @@ export default function AnimalReportForm() {
   }, [photos]);
 
   const mutation = useMutation({
-    mutationFn: () => postId === null
+    mutationFn: () => reportId === null
       ? createAnimalReport(form, photos)
-      : updateAnimalReport(postId, form, []),
+      : updateAnimalReport(reportId, form, []),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['post', result.post.postId] });
-      queryClient.invalidateQueries({ queryKey: ['animal-report', result.post.postId] });
-      navigate(`/community/${result.post.postId}`);
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['animal-report', result.reportId] });
+      navigate(`/community/reports/${result.reportId}`);
     },
     onError: (cause: unknown) => {
       const message = isAxiosError<{ message?: string }>(cause) ? cause.response?.data?.message : null;
@@ -131,10 +125,10 @@ export default function AnimalReportForm() {
     mutation.mutate();
   }
 
-  if (postId !== null && (isLoading || (existing && loadedId !== postId))) {
+  if (reportId !== null && (isLoading || (existing && loadedId !== reportId))) {
     return <div className="min-h-screen bg-background-light dark:bg-background-dark"><Header /><main className="mx-auto max-w-3xl px-4 py-16" role="status">제보를 불러오는 중입니다.</main><Footer /></div>;
   }
-  if (postId !== null && isError) {
+  if (reportId !== null && isError) {
     return <div className="min-h-screen bg-background-light dark:bg-background-dark"><Header /><main className="mx-auto max-w-3xl px-4 py-16">제보를 불러오지 못했습니다. <Link className="underline" to="/community">목록으로</Link></main><Footer /></div>;
   }
 
@@ -146,7 +140,7 @@ export default function AnimalReportForm() {
         <Link to="/community" className="text-sm font-semibold underline underline-offset-4">제보 목록으로</Link>
         <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-9">
           <p className="text-sm font-bold text-brand-accent">동물을 다시 만날 수 있도록</p>
-          <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{postId === null ? (missing ? '실종 동물 알리기' : '목격 제보하기') : '제보 수정'}</h1>
+          <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{reportId === null ? (missing ? '실종 동물 알리기' : '목격 제보하기') : '제보 수정'}</h1>
           <p className="mt-3 text-base leading-7 text-gray-600 dark:text-gray-300">정확히 아는 정보만 적어 주세요. 위치와 특징은 공개되지만 개인 연락처는 적지 않는 편이 안전합니다.</p>
           {error && <div role="alert" className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-700 dark:bg-red-950 dark:text-red-200">{error}</div>}
           <form onSubmit={submit} className="mt-8 space-y-9">
@@ -154,7 +148,7 @@ export default function AnimalReportForm() {
               <h2 id="kind-heading" className="text-xl font-bold">어떤 상황인가요?</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {([{ kind: 'MISSING', label: '동물을 잃어버렸어요', hint: '보호자가 실종 사실을 알립니다.' }, { kind: 'SIGHTING', label: '동물을 목격했어요', hint: '지나가다 본 동물의 위치를 공유합니다.' }] as const).map((option) => (
-                  <button key={option.kind} type="button" disabled={postId !== null}
+                  <button key={option.kind} type="button" disabled={reportId !== null}
                     aria-pressed={form.kind === option.kind}
                     onClick={() => update('kind', option.kind)}
                     className={`min-h-24 rounded-xl border p-4 text-left transition-colors disabled:cursor-not-allowed ${form.kind === option.kind ? 'border-brand-ink bg-brand/20 dark:border-brand' : 'border-gray-300 hover:border-brand-ink dark:border-gray-600'}`}>
@@ -213,9 +207,9 @@ export default function AnimalReportForm() {
             <section aria-labelledby="photo-heading">
               <h2 id="photo-heading" className="text-xl font-bold">사진 첨부 <span className="text-base font-normal text-gray-500">(선택)</span></h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">JPG·PNG·WebP, 최대 5장, 한 장당 10MB. 위치 정보가 담긴 사진은 공개 전 확인해 주세요.</p>
-              {postId !== null ? <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">등록 후 사진 교체는 아직 지원하지 않습니다. 기존 사진은 유지됩니다.</p> :
+              {reportId !== null ? <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">등록 후 사진 교체는 아직 지원하지 않습니다. 기존 사진은 유지됩니다.</p> :
                 <input className="mt-4 block w-full rounded-lg border border-gray-300 p-3 text-sm dark:border-gray-600" type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={choosePhotos} aria-label="제보 사진 선택" />}
-              {postId === null && previewUrls.length > 0 && <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+              {reportId === null && previewUrls.length > 0 && <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
                 {previewUrls.map((url, index) => <div key={url} className="relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                   <img src={url} alt={`첨부할 사진 ${index + 1}`} className="aspect-square w-full object-cover" />
                   <button type="button" onClick={() => setPhotos((current) => current.filter((_, at) => at !== index))}
@@ -235,7 +229,7 @@ export default function AnimalReportForm() {
             <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:justify-end">
               <Link className="inline-flex min-h-12 items-center justify-center rounded-lg bg-gray-100 px-6 font-bold hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600" to="/community">취소</Link>
               <button className="min-h-12 rounded-lg bg-brand px-8 font-bold text-brand-ink hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={mutation.isPending}>
-                {mutation.isPending ? '저장 중...' : postId === null ? '제보 등록' : '수정 완료'}
+                {mutation.isPending ? '저장 중...' : reportId === null ? '제보 등록' : '수정 완료'}
               </button>
             </div>
           </form>

@@ -45,6 +45,7 @@ import CommunityList from './pages/CommunityList.tsx';
 import CommunityDetail from './pages/CommunityDetail.tsx';
 import CommunityCreate from './pages/CommunityCreate.tsx';
 import AnimalReportForm from './pages/AnimalReportForm.tsx';
+import AnimalReportDetail from './pages/AnimalReportDetail.tsx';
 import CommunityEdit from './pages/CommunityEdit.tsx';
 import AdoptionList from './pages/AdoptionList.tsx';
 import AdoptionDetail from './pages/AdoptionDetail.tsx';
@@ -400,6 +401,7 @@ function App() {
       <Route path="/community" element={<CommunityList />} />
       <Route path="/community/reports/new" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
       <Route path="/community/reports/:id/edit" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
+      <Route path="/community/reports/:id" element={<AnimalReportDetail />} />
       <Route path="/community/:id" element={<CommunityDetail />} />
       <Route
         path="/community/new"

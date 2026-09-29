@@ -15,21 +15,25 @@ export async function createAnimalReport(report: AnimalReportInput, photos: File
   return response.data.data;
 }
 
-export async function updateAnimalReport(postId: number, report: AnimalReportInput, photos: File[]) {
+export async function updateAnimalReport(reportId: number, report: AnimalReportInput, photos: File[]) {
   const response = await apiClient.put<{ data: AnimalReportResponse }>(
-    `/api/reports/${postId}`, payload(report, photos), { headers: { 'Content-Type': 'multipart/form-data' } },
+    `/api/reports/${reportId}`, payload(report, photos), { headers: { 'Content-Type': 'multipart/form-data' } },
   );
   return response.data.data;
 }
 
-export async function getAnimalReport(postId: number) {
-  const response = await apiClient.get<{ data: AnimalReportResponse }>(`/api/reports/${postId}`);
+export async function getAnimalReport(reportId: number) {
+  const response = await apiClient.get<{ data: AnimalReportResponse }>(`/api/reports/${reportId}`);
   return response.data.data;
 }
 
-export async function getAnimalReports(page: number, size: number) {
+export async function deleteAnimalReport(reportId: number) {
+  await apiClient.delete(`/api/reports/${reportId}`);
+}
+
+export async function getAnimalReports(page: number, size: number, kind: 'MISSING' | 'SIGHTING', keyword?: string) {
   const response = await apiClient.get<{ data: { content: AnimalReportResponse[]; totalPages: number } }>(
-    '/api/reports', { params: { page, size } },
+    '/api/reports', { params: { page, size, kind, keyword: keyword || undefined } },
   );
   return response.data.data;
 }
