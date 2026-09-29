@@ -57,8 +57,18 @@ export default function ProtectedAnimalNavigation() {
     const onOutside = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) changeMode(null);
     };
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      changeMode(null);
+      triggerRef.current?.focus();
+    };
     document.addEventListener('pointerdown', onOutside);
-    return () => document.removeEventListener('pointerdown', onOutside);
+    document.addEventListener('keydown', onEscape);
+    return () => {
+      document.removeEventListener('pointerdown', onOutside);
+      document.removeEventListener('keydown', onEscape);
+    };
   }, [mode, changeMode]);
 
   return (
@@ -76,13 +86,6 @@ export default function ProtectedAnimalNavigation() {
         }, 300);
       }}
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) changeMode(null); }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          changeMode(null);
-          triggerRef.current?.focus();
-        }
-      }}
     >
       <button ref={triggerRef} type="button" aria-expanded={!!mode} aria-controls="protected-animal-navigation"
         className="relative flex h-16 items-center px-3 text-sm font-medium text-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-focus dark:text-gray-200"
