@@ -145,7 +145,7 @@ playwright-cli -s=mypage-list-feedback close
 
 ## 보호동물 내비게이션
 
-`protected-animal-navigation.browser.js`는 모의 API만 사용한다. v3.1의 단일 범주 버튼, 300ms 호버 대기·취소와 대각선 이동, 클릭으로 연 메뉴 유지, Enter·Space·Tab·Shift+Tab·Escape와 포커스, 바깥 클릭, 경로 이동·현재 위치를 확인한다. 데스크톱 1920/1440/1280px와 모바일 390/320px, 640px 재배치, reduced motion, 44px 터치 영역과 작은 화면의 내부 스크롤도 검사한다. 모바일 그룹은 접지 않고 세 목적지를 바로 표시한다.
+`protected-animal-navigation.browser.js`는 모의 API만 사용한다. v3.1의 단일 범주 버튼, 즉시 호버 열림과 300ms 닫힘 여유·재진입 취소·대각선 이동, 클릭으로 연 메뉴 유지, Enter·Space·Tab·Shift+Tab·Escape와 포커스, 바깥 클릭, 경로 이동·현재 위치를 확인한다. 데스크톱 1920/1440/1280px와 모바일 390/320px, 640px 재배치, reduced motion, 44px 터치 영역과 작은 화면의 내부 스크롤도 검사한다. 모바일 그룹은 접지 않고 세 목적지를 바로 표시한다.
 
 ```sh
 VITE_API_BASE_URL=http://localhost:28080 npm run dev -- --host 127.0.0.1 --port 5198 --strictPort
