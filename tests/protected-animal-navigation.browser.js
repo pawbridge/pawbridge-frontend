@@ -41,14 +41,14 @@ async page => {
     checks.push('category button without split link or icon');
 
     await button.hover();
-    await page.waitForTimeout(100); // Deliberately verify the 300ms hover intent boundary.
-    check(!await panel.isVisible(), 'Menu opened before hover intent delay');
-    await page.mouse.move(0, 0);
-    await page.waitForTimeout(350);
-    check(!await panel.isVisible(), 'Canceled hover timer reopened menu');
-    await button.hover();
     await shown(panel);
-    check(await button.getAttribute('aria-expanded') === 'true', 'aria-expanded must reflect open state');
+    check(await button.getAttribute('aria-expanded') === 'true', 'Hover must open menu immediately');
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(100); // Deliberately verify the 300ms close grace period.
+    check(await panel.isVisible(), 'Menu closed before pointer leave grace period');
+    await button.hover();
+    await page.waitForTimeout(350);
+    check(await panel.isVisible(), 'Returning to trigger must cancel pending close');
     const first = await links.nth(0).boundingBox();
     const last = await links.nth(2).boundingBox();
     check(first && last && Math.abs(first.y - last.y) < 1 && last.x > first.x, 'Desktop links must be three columns');
@@ -63,7 +63,7 @@ async page => {
     await page.keyboard.press('Escape');
     await hidden(panel);
     check(await button.evaluate(el => el === document.activeElement), 'Hover-open Escape should close and restore focus from outside the group');
-    checks.push('hover intent, canceled timer, horizontal layout, diagonal movement and hover close');
+    checks.push('immediate hover open, close grace, horizontal layout, diagonal movement and hover close');
 
     await button.focus();
     await page.keyboard.press('Enter');
