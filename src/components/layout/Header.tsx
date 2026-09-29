@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { logout } from '../../api/auth.api';
 import { canSeePetMarket } from '../../lib/petMarket';
+import ProtectedAnimalNavigation, { ProtectedAnimalLinks } from './ProtectedAnimalNavigation';
 
 const palette = {
   text: 'text-brand-ink',
@@ -17,28 +18,43 @@ const palette = {
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProtectedMenuOpen, setIsProtectedMenuOpen] = useState(false);
-  const [isProtectedMobileOpen, setIsProtectedMobileOpen] = useState(true);
-  const protectedMenuRef = useRef<HTMLDivElement>(null);
-  const protectedMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const mobileButtonRef = useRef<HTMLButtonElement>(null);
   const { pathname } = useLocation();
-  const isProtectedSection = pathname === '/animals' || pathname === '/shelters' || pathname === '/animals/stats';
   const user = useAuthStore((state) => state.user);
   const showPetMarket = canSeePetMarket(user?.role);
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
 
+  useEffect(() => { setIsMobileMenuOpen(false); }, [pathname]);
+
   useEffect(() => {
-    if (!isProtectedMenuOpen) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (!protectedMenuRef.current?.contains(event.target as Node)) setIsProtectedMenuOpen(false);
+    const desktop = window.matchMedia('(min-width: 1280px)');
+    const resize = () => { if (desktop.matches) setIsMobileMenuOpen(false); };
+    desktop.addEventListener('change', resize);
+    return () => desktop.removeEventListener('change', resize);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const outside = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) setIsMobileMenuOpen(false);
     };
-    document.addEventListener('pointerdown', closeOutside);
-    return () => document.removeEventListener('pointerdown', closeOutside);
-  }, [isProtectedMenuOpen]);
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        mobileButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', outside);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', outside);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [isMobileMenuOpen]);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
-  const closeProtectedMenu = () => setIsProtectedMenuOpen(false);
 
   const handleLogout = async () => {
     const sessionVersion = getAuthSessionVersion();
@@ -57,11 +73,11 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+    <header ref={headerRef} className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className={`flex items-center justify-between whitespace-nowrap border-b border-solid ${palette.border} h-16`}>
           {/* 로고 */}
-          <Link to="/" className={`flex items-center gap-2 sm:gap-4 ${palette.text} dark:text-white`}>
+          <Link to="/" onClick={closeMobileMenu} className={`flex items-center gap-2 sm:gap-4 ${palette.text} dark:text-white`}>
             <div className={`${palette.icon} text-2xl`}>
               <span className="material-symbols-outlined">pets</span>
             </div>
@@ -72,66 +88,7 @@ export default function Header() {
 
           {/* 데스크톱 네비게이션 */}
           <nav aria-label="주 메뉴" className="hidden xl:flex items-center gap-5">
-            <div
-              ref={protectedMenuRef}
-              className={`relative flex h-11 items-center rounded-full ${isProtectedSection ? 'bg-brand' : ''}`}
-              onMouseLeave={() => {
-                if (!protectedMenuRef.current?.contains(document.activeElement)) closeProtectedMenu();
-              }}
-              onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) closeProtectedMenu();
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Escape' && isProtectedMenuOpen) {
-                  event.preventDefault();
-                  closeProtectedMenu();
-                  protectedMenuButtonRef.current?.focus();
-                }
-              }}
-            >
-              <NavLink
-                to="/animals"
-                end
-                onClick={closeProtectedMenu}
-                onMouseEnter={() => setIsProtectedMenuOpen(true)}
-                className={`flex h-11 items-center rounded-l-full pl-4 pr-1 text-sm font-semibold ${palette.text} dark:text-gray-200 ${palette.focus}`}
-              >
-                보호동물 검색
-              </NavLink>
-              <button
-                ref={protectedMenuButtonRef}
-                type="button"
-                aria-label="보호동물 관련 메뉴"
-                aria-expanded={isProtectedMenuOpen}
-                aria-controls="protected-animal-navigation"
-                className={`flex h-11 w-7 items-center justify-center rounded-r-full ${palette.text} dark:text-gray-200 ${palette.focus}`}
-                onClick={() => setIsProtectedMenuOpen((open) => !open)}
-              >
-                <svg aria-hidden="true" viewBox="0 0 12 12" fill="none" className={`h-3 w-3 motion-safe:transition-transform ${isProtectedMenuOpen ? 'rotate-180' : ''}`}>
-                  <path d="m2.5 4.5 3.5 3 3.5-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-              <div id="protected-animal-navigation" className={`absolute left-0 top-full z-50 w-[352px] pt-2 ${isProtectedMenuOpen ? '' : 'hidden'}`}>
-                <div className={`rounded-2xl border ${palette.border} bg-white p-2 shadow-xl dark:bg-background-dark`}>
-                  {[
-                    { to: '/animals', title: '보호동물 검색', description: '새로운 가족을 기다리는 동물' },
-                    { to: '/shelters', title: '보호소 찾기', description: '지역별 보호소와 보호 중인 동물' },
-                    { to: '/animals/stats', title: '유기동물 현황', description: '전국 구조·보호·입양 현황' },
-                  ].map((item) => (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      end
-                      onClick={closeProtectedMenu}
-                      className={({ isActive }) => `flex min-h-16 flex-col justify-center rounded-xl px-4 py-2 hover:bg-brand-soft dark:hover:bg-gray-800 ${isActive ? 'bg-brand-soft dark:bg-gray-800' : ''} ${palette.focus}`}
-                    >
-                      <span className={`text-sm font-semibold ${palette.text} dark:text-white`}>{item.title}</span>
-                      <span className="mt-1 text-xs text-brand-muted dark:text-gray-400">{item.description}</span>
-                    </NavLink>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <ProtectedAnimalNavigation />
             <NavLink to="/animals/lost" className={`${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} ${palette.active} ${palette.focus}`}>실종동물 찾기</NavLink>
 
             <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
@@ -216,14 +173,12 @@ export default function Header() {
             )}
             <button
               type="button"
+              ref={mobileButtonRef}
               aria-label={isMobileMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-navigation"
               className={`flex h-11 w-11 shrink-0 items-center justify-center xl:hidden ${palette.text} dark:text-white`}
-              onClick={() => {
-                setIsMobileMenuOpen((open) => !open);
-                setIsProtectedMobileOpen(true);
-              }}
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
             >
               <span className="material-symbols-outlined">
                 {isMobileMenuOpen ? 'close' : 'menu'}
@@ -233,57 +188,38 @@ export default function Header() {
         </div>
 
         {/* 모바일 메뉴 */}
+        {isMobileMenuOpen && <div aria-hidden="true" onPointerDown={closeMobileMenu} className="absolute inset-x-0 top-full z-40 h-[calc(100dvh-4rem)] bg-black/15 xl:hidden" />}
         {isMobileMenuOpen && (
-          <nav id="mobile-navigation" aria-label="모바일 메뉴" className={`max-h-[calc(100dvh-4rem)] overflow-y-auto border-b py-4 xl:hidden ${palette.border}`}>
-            <div className="flex flex-col gap-1">
-              <div className={`flex min-h-11 items-center rounded-xl ${isProtectedSection ? 'bg-brand' : 'bg-brand-soft dark:bg-gray-800'}`}>
-                <NavLink to="/animals" end onClick={closeMobileMenu} className={`flex min-h-11 flex-1 items-center rounded-l-xl px-4 text-sm font-semibold ${palette.text} dark:text-white ${palette.focus}`}>보호동물 검색</NavLink>
-                <button
-                  type="button"
-                  aria-label="보호동물 관련 메뉴"
-                  aria-expanded={isProtectedMobileOpen}
-                  aria-controls="protected-animal-mobile-navigation"
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-r-xl ${palette.text} dark:text-white ${palette.focus}`}
-                  onClick={() => setIsProtectedMobileOpen((open) => !open)}
-                >
-                  <svg aria-hidden="true" viewBox="0 0 12 12" fill="none" className={`h-3 w-3 motion-safe:transition-transform ${isProtectedMobileOpen ? 'rotate-180' : ''}`}>
-                    <path d="m2.5 4.5 3.5 3 3.5-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
-              <div id="protected-animal-mobile-navigation" className={`pb-2 pl-3 ${isProtectedMobileOpen ? '' : 'hidden'}`}>
-                {[
-                  { to: '/shelters', title: '보호소 찾기', description: '지역별 보호소와 보호 중인 동물' },
-                  { to: '/animals/stats', title: '유기동물 현황', description: '전국 구조·보호·입양 현황' },
-                ].map((item) => (
-                  <NavLink key={item.to} to={item.to} end onClick={closeMobileMenu} className={({ isActive }) => `flex min-h-14 flex-col justify-center rounded-xl px-4 py-2 hover:bg-brand-soft dark:hover:bg-gray-800 ${isActive ? 'bg-brand-soft dark:bg-gray-800' : ''} ${palette.focus}`}>
-                    <span className={`text-sm font-medium ${palette.text} dark:text-white`}>{item.title}</span>
-                    <span className="mt-0.5 text-xs text-brand-muted dark:text-gray-400">{item.description}</span>
-                  </NavLink>
-                ))}
-              </div>
-              <NavLink to="/animals/lost" onClick={closeMobileMenu} className={`flex min-h-11 items-center px-4 text-sm font-medium ${palette.text} dark:text-gray-300 ${palette.active} ${palette.focus}`}>실종동물 찾기</NavLink>
+          <nav id="mobile-navigation" aria-label="모바일 메뉴" onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget) && event.relatedTarget !== mobileButtonRef.current) closeMobileMenu(); }} className={`absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-b bg-white p-6 dark:bg-background-dark xl:hidden ${palette.border}`}>
+            <div className="flex flex-col gap-6">
+              <section aria-labelledby="protected-mobile-heading" className="flex flex-col gap-2">
+                <h2 id="protected-mobile-heading" className="flex min-h-12 items-center text-lg font-normal text-brand-ink dark:text-white">보호동물</h2>
+                <div id="protected-animal-mobile-navigation" className="flex flex-col gap-2">
+                  <ProtectedAnimalLinks mobile onNavigate={closeMobileMenu} />
+                </div>
+              </section>
+              <NavLink to="/animals/lost" onClick={closeMobileMenu} className={`flex min-h-12 items-center px-0 text-lg font-normal ${palette.text} dark:text-gray-300 ${palette.active} ${palette.focus}`}>실종동물 찾기</NavLink>
 
-              <NavLink to="/travel" onClick={closeMobileMenu} className={`flex min-h-11 items-center px-4 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
+              <NavLink to="/travel" onClick={closeMobileMenu} className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
                 동반여행
               </NavLink>
               <Link
                 to="/adoption"
-                className={`flex min-h-11 items-center px-4 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
+                className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 입양후기
               </Link>
               <Link
                 to="/community"
-                className={`flex min-h-11 items-center px-4 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
+                className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 커뮤니티
               </Link>
               {showPetMarket && <Link
                 to="/products"
-                className={`flex min-h-11 items-center px-4 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
+                className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 펫마켓
