@@ -562,6 +562,8 @@ export interface FavoriteWithAnimalDto {
   imageUrl: string | null;
   shelterName: string | null;
   status: string | null;
+  apmsNoticeNo?: string | null;
+  specialMark?: string | null;
 }
 
 // 찜한 동물 목록 응답
