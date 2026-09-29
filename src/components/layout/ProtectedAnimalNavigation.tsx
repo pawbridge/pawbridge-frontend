@@ -76,7 +76,7 @@ export default function ProtectedAnimalNavigation() {
       onPointerEnter={(event) => {
         if (event.pointerType !== 'mouse') return;
         clearTimer();
-        if (!modeRef.current) timer.current = setTimeout(() => changeMode('hover'), 300);
+        if (!modeRef.current) changeMode('hover');
       }}
       onPointerLeave={() => {
         clearTimer();
