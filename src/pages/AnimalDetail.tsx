@@ -1,686 +1,235 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAnimals } from '../api/animals.api';
+import { publicShelterById } from '../api/publicShelters.api';
+import { shelterTelephone } from '../lib/shelters';
+import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel } from '../lib/animalDisplay';
 import { readLostSearchSession } from '../utils/lostSearchSession';
 import { animalSearchReturnTo } from '../utils/animalSearch';
-import axios from 'axios';
-import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAnimals } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
 import AnimalChatbot from '../components/common/AnimalChatbot';
-import { useState, useEffect } from 'react';
 
-const getErrorMessage = (error: unknown, fallbackMessage: string) => {
-  if (axios.isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message || fallbackMessage;
-  }
-
-  return fallbackMessage;
-};
+const dateLabel = (date?: string) => date ? date.slice(0, 10).replace(/-/g, '.') : null;
+const errorMessage = (error: unknown, fallback: string) =>
+  axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || fallback : fallback;
 
 export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
+  const animalId = Number(id);
   const navigate = useNavigate();
   const location = useLocation();
-  const searchReturnTo = animalSearchReturnTo(location.state?.searchReturnTo);
-  const fromLostSearch = location.state?.from === 'lost-search';
-  const returnToSearch = () => {
-    if (fromLostSearch && readLostSearchSession(location.state?.lostSearchEntryKey)) {
-      navigate(-1);
-    } else {
-      navigate(fromLostSearch ? '/animals/lost' : searchReturnTo);
-    }
-  };
   const queryClient = useQueryClient();
-  const user = useAuthStore((state) => state.user);
-  const [selectedImage, setSelectedImage] = useState<string>('');
+  const user = useAuthStore(state => state.user);
+  const [selectedImage, setSelectedImage] = useState('');
+  const [imageFailed, setImageFailed] = useState(false);
+  const [actionMessage, setActionMessage] = useState('');
+  const fromMyPage = location.state?.from === 'mypage';
+  const fromFavorites = location.state?.from === 'favorites';
+  const previousTab = location.state?.tab || sessionStorage.getItem('mypageActiveTab') || 'registeredAnimals';
+  const fromLostSearch = location.state?.from === 'lost-search';
+  const searchReturnTo = animalSearchReturnTo(location.state?.searchReturnTo);
+  const returnToSearch = () => {
+    if (fromMyPage) navigate('/mypage', { state: { tab: previousTab } });
+    else if (fromFavorites) navigate('/favorite-animals');
+    else if (fromLostSearch && readLostSearchSession(location.state?.lostSearchEntryKey)) navigate(-1);
+    else navigate(fromLostSearch ? '/animals/lost' : searchReturnTo);
+  };
 
-  // 상세 페이지 전환 시 스크롤 초기화 및 이미지 선택 리셋
   useEffect(() => {
     window.scrollTo(0, 0);
     setSelectedImage('');
-  }, [id]);
+    setImageFailed(false);
+    if (fromMyPage) sessionStorage.setItem('mypageActiveTab', previousTab);
+  }, [id, fromMyPage, previousTab]);
 
-  // 이전 페이지 정보 확인 (마이페이지에서 온 경우)
-  const fromMyPage = location.state?.from === 'mypage';
-  const previousTab = location.state?.tab || sessionStorage.getItem('mypageActiveTab') || 'registeredAnimals';
-  
-  // 마이페이지에서 온 경우 sessionStorage에 탭 정보 저장
-  useEffect(() => {
-    if (fromMyPage && previousTab) {
-      sessionStorage.setItem('mypageActiveTab', previousTab);
-    }
-  }, [fromMyPage, previousTab]);
-
-  // 브라우저 뒤로가기 감지 및 처리
-  useEffect(() => {
-    const handlePopState = () => {
-      // 뒤로가기 시 sessionStorage의 탭 정보를 유지
-      if (fromMyPage && previousTab) {
-        sessionStorage.setItem('mypageActiveTab', previousTab);
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [fromMyPage, previousTab]);
-
-  const { data: animal, isLoading, error } = useQuery({
-    queryKey: ['animal', id],
-    queryFn: () => getAnimalById(Number(id)),
-    enabled: !!id,
+  const { data: animal, isLoading, isError, refetch } = useQuery({
+    queryKey: ['animal', id], queryFn: () => getAnimalById(animalId), enabled: Number.isInteger(animalId) && animalId > 0,
   });
-
-  // 본인이 등록한 동물인지 확인 (보호소가 직접 등록한 동물만 수정 가능)
-  // apiSource가 MANUAL이거나 apmsNoticeNo가 MAN-으로 시작하고 careRegNo가 일치하는 경우만
-  const isManualAnimal = animal && (
-    animal.apiSource === 'MANUAL' || 
-    (animal.apmsNoticeNo && animal.apmsNoticeNo.startsWith('MAN-'))
-  );
-  
-  // careRegNo는 로그인할 때 주어지므로 무조건 비교해야 함 (등록한 것만 수정 가능)
-  // 하지만 API 응답에 careRegNo가 없을 수 있으므로, shelterId로도 비교
-  const isMyShelter = user?.role === 'ROLE_SHELTER' && (
-    (user?.careRegNo && animal?.careRegNo && user.careRegNo === animal.careRegNo) ||
-    (user?.id && animal?.shelterId && Number(user.id) === Number(animal.shelterId))
-  );
-  
-  const isMyAnimal = animal && 
-    isMyShelter &&
-    isManualAnimal;
-
-  // 디버깅: 수정 버튼 표시 조건 확인
-  useEffect(() => {
-    if (animal && user) {
-      console.log('=== 수정 버튼 표시 조건 확인 ===');
-      console.log('전체 animal 객체:', animal);
-      console.log('전체 user 객체:', user);
-      console.log('user.role:', user.role);
-      console.log('animal.apiSource:', animal.apiSource);
-      console.log('animal.apmsNoticeNo:', animal.apmsNoticeNo);
-      console.log('isManualAnimal:', isManualAnimal);
-      console.log('user.careRegNo:', user.careRegNo);
-      console.log('animal.careRegNo:', animal.careRegNo);
-      console.log('user.id:', user.id);
-      console.log('animal.shelterId:', animal.shelterId);
-      console.log('careRegNo 비교:', user.careRegNo, '===', animal.careRegNo, '?', user.careRegNo === animal.careRegNo);
-      console.log('shelterId 비교:', Number(user.id), '===', Number(animal.shelterId), '?', Number(user.id) === Number(animal.shelterId));
-      console.log('isMyShelter:', isMyShelter);
-      console.log('isMyAnimal:', isMyAnimal);
-      console.log('조건 체크:', {
-        hasAnimal: !!animal,
-        isShelter: user?.role === 'ROLE_SHELTER',
-        isManual: isManualAnimal,
-        hasUserCareRegNo: !!user?.careRegNo,
-        hasAnimalCareRegNo: !!animal.careRegNo,
-        careRegNoMatch: user?.careRegNo === animal.careRegNo,
-      });
-    }
-  }, [animal, user, isManualAnimal, isMyShelter, isMyAnimal]);
-
-  // 유사 동물 목록 조회
+  const { data: shelter } = useQuery({
+    queryKey: ['publicShelter', animal?.shelterId],
+    queryFn: ({ signal }) => publicShelterById(animal!.shelterId, signal),
+    enabled: !!animal?.shelterId,
+    retry: 1,
+  });
   const { data: similarAnimals } = useQuery({
-    queryKey: ['similarAnimals', id],
-    queryFn: () => getSimilarAnimals(Number(id)),
-    enabled: !!id,
+    queryKey: ['similarAnimals', id], queryFn: () => getSimilarAnimals(animalId),
+    enabled: !!animal, retry: 1,
   });
-
-  // 찜 여부 확인
-  const { data: isFavorited } = useQuery({
+  const favoriteQuery = useQuery({
     queryKey: ['favorite', id, user?.id],
-    queryFn: ({ signal }) => checkFavorite(Number(id), signal),
-    enabled: !!id && !!user,
+    queryFn: ({ signal }) => checkFavorite(animalId, signal),
+    enabled: !!animal && !!user,
   });
-
-  // 찜 추가 mutation
-  const addFavoriteMutation = useMutation({
-    mutationFn: () => addFavorite(Number(id)),
+  const favoriteMutation = useMutation({
+    mutationFn: async () => {
+      if (favoriteQuery.data) await removeFavorite(animalId);
+      else await addFavorite(animalId);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorite', id, user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['animal', id] });
-      queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
+      setActionMessage('');
+      void queryClient.invalidateQueries({ queryKey: ['favorite', id, user?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['favoriteAnimals', user?.id] });
+      void queryClient.invalidateQueries({ queryKey: ['animal', id] });
     },
-    onError: (error: unknown) => {
-      alert(getErrorMessage(error, '찜 추가에 실패했습니다.'));
-    },
+    onError: error => setActionMessage(errorMessage(error, '관심 동물 변경에 실패했습니다. 다시 시도해 주세요.')),
   });
-
-  // 찜 제거 mutation
-  const removeFavoriteMutation = useMutation({
-    mutationFn: () => removeFavorite(Number(id)),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favorite', id, user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['animal', id] });
-      queryClient.invalidateQueries({ queryKey: ['favoriteAnimals'] });
-    },
-    onError: (error: unknown) => {
-      alert(getErrorMessage(error, '찜 제거에 실패했습니다.'));
-    },
-  });
-
-  // 찜 토글 핸들러
-  const handleFavoriteToggle = () => {
+  const handleFavorite = () => {
     if (!user) {
-      alert('로그인이 필요합니다.');
-      navigate('/login');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
-
-    if (isFavorited) {
-      removeFavoriteMutation.mutate();
-    } else {
-      addFavoriteMutation.mutate();
+    if (favoriteQuery.isError) {
+      void favoriteQuery.refetch();
+      return;
+    }
+    if (!favoriteQuery.isLoading) favoriteMutation.mutate();
+  };
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) await navigator.share({ title: animal?.breed || '동물 정보', url });
+      else {
+        await navigator.clipboard.writeText(url);
+        setActionMessage('링크를 복사했습니다.');
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      setActionMessage('링크를 복사하지 못했습니다.');
     }
   };
 
-  // 로딩 상태
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background-light dark:bg-background-dark">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center justify-center min-h-[400px]">
-            <div className="w-20 h-20 border-4 border-brand-focus border-t-brand-focus rounded-full animate-spin"></div>
-            <p className="mt-8 text-xl text-text-light dark:text-text-dark font-semibold animate-pulse">
-              정보를 불러오고 있어요...
-            </p>
-          </div>
+  if (isLoading) return (
+    <div className="flex min-h-screen flex-col bg-white dark:bg-background-dark"><Header />
+      <main role="status" className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-20 text-center text-brand-ink dark:text-text-dark">동물 정보를 불러오는 중입니다…</main><Footer />
+    </div>
+  );
+  if (isError || !animal) return (
+    <div className="flex min-h-screen flex-col bg-white dark:bg-background-dark"><Header />
+      <main className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-20 text-center text-brand-ink dark:text-text-dark">
+        <h1 className="text-2xl font-bold">동물 정보를 볼 수 없습니다</h1>
+        <p className="mt-3 text-gray-600 dark:text-gray-300">잠시 후 다시 시도하거나 목록으로 돌아가 주세요.</p>
+        <div className="mt-6 flex justify-center gap-3">
+          <button onClick={() => void refetch()} className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-brand-ink">다시 시도</button>
+          <button onClick={returnToSearch} className="min-h-11 rounded-lg border border-border-light px-5">목록으로</button>
         </div>
-        <Footer />
-      </div>
-    );
-  }
+      </main><Footer />
+    </div>
+  );
 
-  // 에러 상태
-  if (error || !animal) {
-    return (
-      <div className="min-h-screen bg-background-light dark:bg-background-dark">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl p-8 max-w-md text-center border border-border-light dark:border-border-dark">
-              <div className="text-7xl mb-6">😢</div>
-              <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-3">
-                동물 정보를 찾을 수 없습니다
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                존재하지 않거나 삭제된 동물입니다
-              </p>
-              <button
-                onClick={returnToSearch}
-                className="px-6 py-3 bg-brand text-brand-ink font-semibold rounded-lg hover:opacity-90 transition-opacity"
-              >
-                목록으로 돌아가기
-              </button>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  // 종 레이블
-  const speciesLabel = animal.species === 'DOG' ? '개' : animal.species === 'CAT' ? '고양이' : '기타';
-  
-  // 메인 이미지 (선택된 이미지 또는 기본 이미지)
-  const mainImage = selectedImage || animal.imageUrl || '';
-  
-  // 이미지 목록 (메인 + 추가 이미지)
-  const images = [animal.imageUrl, animal.imageUrl2].filter(Boolean) as string[];
-  
-  // 상태 레이블
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'PROTECT': return '보호중';
-      case 'ADOPTION_PENDING': return '입양대기중';
-      case 'ADOPTED': return '종료(입양)';
-      case 'EUTHANIZED': return '종료(안락사)';
-      case 'NATURAL_DEATH': return '종료(자연사)';
-      case 'RETURNED': return '종료(반환)';
-      case 'DONATED': return '종료(기증)';
-      case 'RELEASED': return '종료(방사)';
-      case 'ESCAPED': return '탈출';
-      case 'UNKNOWN': return '미상';
-      default: return status;
-    }
-  };
-
-  // D-Day 계산
-  const calculateDday = () => {
-    if (!animal.noticeEndDate) return null;
-    const today = new Date();
-    const endDate = new Date(animal.noticeEndDate);
-    const diffTime = endDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const dDay = calculateDday();
-
-  // 날짜 포맷
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    return dateStr.split('T')[0].replace(/-/g, '.');
-  };
+  const images = [animal.imageUrl, animal.imageUrl2].filter((image): image is string => !!image);
+  const photo = selectedImage || images[0];
+  const noticeNo = animal.apmsNoticeNo || animal.noticeNo;
+  const phone = shelter?.phone || shelter?.publicInformation?.phone || animal.shelter?.phone;
+  const telephone = shelterTelephone(phone);
+  const shelterName = shelter?.name || animal.shelterName || animal.shelter?.name;
+  const isManualAnimal = animal.apiSource === 'MANUAL' || noticeNo?.startsWith('MAN-');
+  const isMyShelter = user?.role === 'ROLE_SHELTER' && !!user.careRegNo &&
+    user.careRegNo === (animal.careRegNo || shelter?.careRegNo);
+  const isMyAnimal = isManualAnimal && isMyShelter;
+  const daysLeft = animal.noticeEndDate
+    ? Math.ceil((new Date(animal.noticeEndDate.slice(0, 10) + 'T23:59:59').getTime() - Date.now()) / 86400000)
+    : null;
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark">
+    <div className="flex min-h-screen flex-col bg-white text-brand-ink dark:bg-background-dark dark:text-text-dark">
       <Header />
-
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2 text-sm">
-            <button onClick={() => navigate('/')} className="text-secondary dark:text-brand-accent hover:underline">
-              홈
-            </button>
-            <span className="text-secondary dark:text-brand-accent">/</span>
-            {fromMyPage ? (
-              <>
-                <button 
-                  onClick={() => navigate('/mypage', { state: { tab: previousTab } })}
-                  className="text-secondary dark:text-brand-accent hover:underline"
-                >
-                  마이페이지
-                </button>
-                <span className="text-secondary dark:text-brand-accent">/</span>
-                <button 
-                  onClick={() => navigate('/mypage', { state: { tab: previousTab } })}
-                  className="text-secondary dark:text-brand-accent hover:underline"
-                >
-                  내 보호소가 등록한 동물
-                </button>
-              </>
-            ) : (
-              <button onClick={returnToSearch} className="text-secondary dark:text-brand-accent hover:underline">
-                {fromLostSearch ? '실종 검색 결과' : '동물 검색'}
+      <main className="mx-auto w-full max-w-[1568px] flex-1 px-4 pb-16 pt-7 sm:px-6">
+        <nav aria-label="현재 위치" className="mb-7 flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+          <Link to="/" className="hover:underline">홈</Link><span aria-hidden="true">/</span>
+          <button type="button" onClick={returnToSearch} className="hover:underline">
+            {fromMyPage || fromFavorites ? '관심 동물' : fromLostSearch ? '실종 검색 결과' : '동물 검색'}
+          </button>
+          <span aria-hidden="true">/</span><span className="font-medium text-brand-ink dark:text-white">{animal.breed || '동물 상세'}</span>
+        </nav>
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,680fr)_minmax(0,808fr)]">
+          <div className="min-w-0">
+            <div className="flex h-[360px] items-center justify-center overflow-hidden rounded-2xl border border-border-light bg-gray-50 sm:h-[500px] lg:h-[620px] dark:border-border-dark dark:bg-gray-800">
+              {photo && !imageFailed ? (
+                <img key={photo} src={photo} alt={`${animal.breed || '동물'} 사진`} className="h-full w-full object-contain" onError={() => setImageFailed(true)} />
+              ) : <span className="text-sm text-gray-500">사진이 없습니다</span>}
+            </div>
+            {images.length > 1 && <div className="mt-3 flex gap-3">
+              {images.map((image, index) => <button type="button" key={image} onClick={() => { setSelectedImage(image); setImageFailed(false); }} aria-label={`${index + 1}번째 사진 보기`} aria-pressed={photo === image} className={`h-20 w-20 overflow-hidden rounded-lg border-2 ${photo === image ? 'border-brand-ink' : 'border-border-light'}`}>
+                <img src={image} alt="" className="h-full w-full object-cover" />
+              </button>)}
+            </div>}
+          </div>
+          <div className="min-w-0">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-brand-soft px-4 py-2 text-sm font-semibold text-brand-ink">{animalStatusLabel(animal.status)}</span>
+              {daysLeft !== null && daysLeft >= 0 && <span className="rounded-full border border-border-light px-3 py-2 text-sm font-medium">공고 D-{daysLeft}</span>}
+            </div>
+            <h1 className="break-words text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">{animal.breed || '품종 정보 없음'}</h1>
+            {noticeNo && <p className="mt-3 break-all text-sm text-gray-600 dark:text-gray-300">공고번호 {noticeNo}</p>}
+            <div className="mt-7 grid grid-cols-2 gap-3">
+              <button type="button" onClick={handleFavorite} disabled={favoriteMutation.isPending || (!!user && favoriteQuery.isLoading)} aria-pressed={!!favoriteQuery.data} className="min-h-12 rounded-lg border border-border-light px-3 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
+                {favoriteMutation.isPending ? '변경 중…' : favoriteQuery.isError ? '관심 상태 다시 확인' : favoriteQuery.data ? '관심 동물에서 삭제' : '관심 동물에 추가'}
               </button>
-            )}
-            <span className="text-secondary dark:text-brand-accent">/</span>
-            <span className="font-medium text-text-light dark:text-text-dark">[{speciesLabel}] {animal.breed}</span>
+              <button type="button" onClick={() => void handleShare()} className="min-h-12 rounded-lg border border-border-light px-3 text-sm font-semibold hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800">공유하기</button>
+            </div>
+            {actionMessage && <p role="status" className="mt-3 text-sm">{actionMessage}</p>}
+            {isMyAnimal && <Link to={`/animals/${id}/edit`} state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }} className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border-light px-4 text-sm font-semibold">등록 정보 수정</Link>}
+            <section className="mt-8 rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
+              <h2 className="text-lg font-bold">기본 정보</h2>
+              <dl className="mt-5 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+                <Info label="종" value={animalSpeciesLabel(animal.species)} />
+                <Info label="성별" value={animalGenderLabel(animal.gender)} />
+                <Info label="나이" value={animalAgeLabel(animal.age)} />
+                {animal.weight != null && <Info label="체중" value={/(?:kg|㎏)/i.test(String(animal.weight)) ? String(animal.weight) : `${animal.weight}kg`} />}
+                {animal.color && <Info label="색상" value={animal.color} />}
+                {animal.neuterStatus && <Info label="중성화" value={animal.neuterStatus === 'YES' ? '완료' : animal.neuterStatus === 'NO' ? '미완료' : '미상'} />}
+              </dl>
+            </section>
+            {(animal.specialMark || animal.description) && <section className="mt-4 rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
+              <h2 className="text-lg font-bold">특징</h2>
+              {animal.specialMark && <p className="mt-4 break-words text-sm leading-7">{animal.specialMark}</p>}
+              {animal.description && <p className="mt-3 break-words text-sm leading-7 text-gray-700 dark:text-gray-200">{animal.description}</p>}
+            </section>}
+            <section className="mt-4 rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
+              <h2 className="text-lg font-bold">보호소 연락처</h2>
+              <p className="mt-4 break-words text-sm">{shelterName || '보호소 정보 없음'}</p>
+              {phone && <p className="mt-2 text-sm">전화 {telephone ? <a href={telephone} className="underline underline-offset-4">{phone}</a> : phone}</p>}
+              {shelter?.careRegNo && <Link to={`/shelters/${shelter.careRegNo}`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">보호소 상세 보기</Link>}
+              {!phone && <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">등록된 연락처가 없습니다.</p>}
+            </section>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Left Column: Image Gallery & Basic Info */}
-          <div className="lg:col-span-3">
-            {/* Main Image */}
-            <div className="w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden rounded-xl min-h-[480px] shadow-lg">
-              <img
-                src={mainImage}
-                alt={`${animal.breed} 메인 사진`}
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </div>
-            
-            {/* Image Thumbnails */}
-            {images.length > 1 && (
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 mt-4">
-                {images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img}
-                    alt={`${animal.breed} 사진 ${index + 1}`}
-                    className={`w-full h-24 object-cover rounded-lg cursor-pointer transition-all ${
-                      selectedImage === img || (!selectedImage && index === 0)
-                        ? 'border-2 border-brand-focus ring-2 ring-brand-focus dark:border-brand-focus dark:ring-brand-focus shadow-md'
-                        : 'hover:opacity-80'
-                    }`}
-                    onClick={() => setSelectedImage(img)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Right Column: Details, Shelter Info, CTA */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            {/* Basic Info Card */}
-            <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
-              {/* 이름과 공고번호 영역 */}
-              <div className="mb-4">
-                <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-text-light dark:text-text-dark">
-                  [{speciesLabel}] {animal.breed}
-                </p>
-                <p className="text-sm text-secondary dark:text-gray-400 mt-1">
-                  공고번호: {animal.apmsNoticeNo || animal.noticeNo || 'N/A'}
-                </p>
-              </div>
-
-              {/* 상태 태그, 찜 버튼, 수정 버튼 영역 */}
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-brand/20 dark:bg-brand/30 px-4">
-                    <p className="text-brand-accent dark:text-brand-accent text-sm font-bold">
-                      {getStatusLabel(animal.status)}
-                    </p>
-                  </div>
-                  {dDay !== null && dDay >= 0 && (
-                    <div className={`flex h-8 shrink-0 items-center justify-center rounded-full px-3 ${
-                      dDay <= 3 ? 'bg-red-100 dark:bg-red-900/30' : 'bg-blue-100 dark:bg-blue-900/30'
-                    }`}>
-                      <p className={`text-sm font-bold ${
-                        dDay <= 3 ? 'text-red-600 dark:text-red-400' : 'text-blue-600 dark:text-blue-400'
-                      }`}>
-                        D-{dDay}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {/* 찜 버튼 */}
-                  <button
-                    onClick={handleFavoriteToggle}
-                    disabled={addFavoriteMutation.isPending || removeFavoriteMutation.isPending}
-                    className={`flex items-center justify-center w-12 h-12 rounded-full transition-all ${
-                      isFavorited
-                        ? 'bg-red-500 hover:bg-red-600 text-white'
-                        : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                    title={isFavorited ? '찜 해제' : '찜하기'}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: isFavorited ? "'FILL' 1" : "'FILL' 0" }}>
-                      favorite
-                    </span>
-                  </button>
-                  {/* 수정 버튼 (본인이 등록한 동물인 경우만) */}
-                  {isMyAnimal && (
-                    <Link
-                      to={`/animals/${id}/edit`}
-                      state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }}
-                      className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">edit</span>
-                      수정하기
-                    </Link>
-                  )}
-                </div>
-              </div>
-
-              {/* 신체 정보 */}
-              <div className="grid grid-cols-2 gap-4 text-sm mt-6">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-secondary dark:text-gray-400">pets</span>
-                  <span className="text-text-light dark:text-text-dark">품종: {animal.breed}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-secondary dark:text-gray-400">cake</span>
-                  <span className="text-text-light dark:text-text-dark">
-                    나이: {animal.age}살 {animal.birthYear && `(${animal.birthYear}년생)`}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-secondary dark:text-gray-400">
-                    {animal.gender === 'MALE' ? 'male' : 'female'}
-                  </span>
-                  <span className="text-text-light dark:text-text-dark">
-                    성별: {animal.gender === 'MALE' ? '수컷' : animal.gender === 'FEMALE' ? '암컷' : '미상'}
-                  </span>
-                </div>
-                {animal.weight && (
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-secondary dark:text-gray-400">scale</span>
-                    <span className="text-text-light dark:text-text-dark">체중: {animal.weight}kg</span>
-                  </div>
-                )}
-                {animal.color && (
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-secondary dark:text-gray-400">palette</span>
-                    <span className="text-text-light dark:text-text-dark">색상: {animal.color}</span>
-                  </div>
-                )}
-                {animal.neuterStatus && (
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-secondary dark:text-gray-400">cut</span>
-                    <span className="text-text-light dark:text-text-dark">
-                      중성화: {animal.neuterStatus === 'YES' ? '완료' : animal.neuterStatus === 'NO' ? '미완료' : '미상'}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 공고 정보 */}
-            {(animal.noticeStartDate || animal.noticeEndDate || animal.createdAt) && (
-              <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">공고 정보</h3>
-                <div className="space-y-3 text-sm text-text-light dark:text-text-dark">
-                  {animal.apmsNoticeNo && (
-                    <p><strong>공고번호:</strong> {animal.apmsNoticeNo}</p>
-                  )}
-                  {animal.noticeStartDate && animal.noticeEndDate && (
-                    <p>
-                      <strong>공고기간:</strong> {formatDate(animal.noticeStartDate)} ~ {formatDate(animal.noticeEndDate)}
-                      {dDay !== null && dDay >= 0 && (
-                        <span className={`ml-2 font-bold ${dDay <= 3 ? 'text-red-600' : 'text-blue-600'}`}>
-                          (D-{dDay})
-                        </span>
-                      )}
-                    </p>
-                  )}
-                  {animal.createdAt && (
-                    <p><strong>등록일:</strong> {formatDate(animal.createdAt)}</p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* 발견 정보 */}
-            {(animal.happenPlace || animal.happenDate) && (
-              <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">발견 정보</h3>
-                <div className="space-y-3 text-sm text-text-light dark:text-text-dark">
-                  {animal.happenPlace && (
-                    <p><strong>발견 장소:</strong> {animal.happenPlace}</p>
-                  )}
-                  {animal.happenDate && (
-                    <p><strong>발견 날짜:</strong> {formatDate(animal.happenDate)}</p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* 보호소 정보 */}
-            <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
-              <h3 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">보호소 정보</h3>
-              <div className="space-y-3 text-sm text-text-light dark:text-text-dark">
-                <p className="flex items-start gap-2">
-                  <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">home</span>
-                  <span><strong>보호소명:</strong> {animal.shelterName || animal.shelter?.name || '정보 없음'}</span>
-                </p>
-                
-                {animal.shelter?.phone && (
-                  <p className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">call</span>
-                    <span>
-                      <strong>연락처:</strong>{' '}
-                      <button
-                        onClick={() => {
-                          const phone = animal.shelter?.phone || '';
-                          if (phone) {
-                            navigator.clipboard.writeText(phone).then(() => {
-                              alert(`전화번호가 복사되었습니다!\n${phone}`);
-                            });
-                          }
-                        }}
-                        className="text-brand-accent hover:underline font-medium cursor-pointer"
-                      >
-                        {animal.shelter.phone}
-                      </button>
-                      <span className="text-xs text-gray-500 ml-1">(클릭하면 복사)</span>
-                    </span>
-                  </p>
-                )}
-                
-                {animal.shelter?.address && (
-                  <p className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">location_on</span>
-                    <span><strong>주소:</strong> {animal.shelter.address}</span>
-                  </p>
-                )}
-                
-                {animal.shelter?.operatingHours && (
-                  <p className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-brand-accent dark:text-brand-accent">schedule</span>
-                    <span><strong>운영시간:</strong> {animal.shelter.operatingHours}</span>
-                  </p>
-                )}
-                
-                {animal.favoriteCount !== undefined && (
-                  <p className="flex items-start gap-2 pt-2 border-t border-border-light dark:border-border-dark">
-                    <span className="material-symbols-outlined text-base text-red-500">favorite</span>
-                    <span><strong>관심:</strong> {animal.favoriteCount}명이 찜했어요</span>
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* 특징 및 설명 */}
-            {(animal.specialMark || animal.description) && (
-              <div className="bg-white/50 dark:bg-card-dark/50 p-6 rounded-xl shadow-md">
-                <h3 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">성격 및 특징</h3>
-                <div className="space-y-3 text-sm text-text-light/80 dark:text-text-dark/80">
-                  {animal.specialMark && (
-                    <p><strong>특징:</strong> {animal.specialMark}</p>
-                  )}
-                  {animal.description && (
-                    <p><strong>상세 설명:</strong> {animal.description}</p>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-3 mt-auto">
-              {/* 메인 버튼: 보호소 연락하기 */}
-              {animal.shelter?.phone ? (
-                // 전화번호가 있으면 전화/복사 옵션 제공
-                <button
-                  onClick={() => {
-                    const phone = animal.shelter?.phone || '';
-                    const message = `입양 문의\n\n보호소: ${animal.shelterName}\n전화: ${phone}\n\n공고번호: ${animal.apmsNoticeNo || 'N/A'}\n\n※ 공고번호를 먼저 말씀해주시면\n   빠른 상담이 가능합니다.`;
-                    
-                    if (!phone) {
-                      alert('보호소 연락처 정보가 없습니다.');
-                      return;
-                    }
-                    
-                    // 모바일 환경 체크
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                    
-                    if (isMobile) {
-                      // 모바일: 전화 확인 후 연결
-                      if (confirm(`${phone}\n\n보호소로 전화를 거시겠습니까?`)) {
-                        window.location.href = `tel:${phone}`;
-                      }
-                    } else {
-                      // PC: 전화번호 복사
-                      navigator.clipboard.writeText(phone).then(() => {
-                        alert(`${message}\n\n전화번호가 복사되었습니다!`);
-                      }).catch(() => {
-                        alert(message);
-                      });
-                    }
-                  }}
-                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-brand text-brand-ink text-base font-bold tracking-wide hover:bg-brand-hover transition-colors shadow-lg"
-                >
-                  <span className="material-symbols-outlined mr-2">call</span>
-                  <span className="truncate">입양 문의하기</span>
-                </button>
-              ) : (
-                // 전화번호가 없으면 안내 메시지
-                <button 
-                  onClick={() => {
-                    alert(`입양 문의는 보호소에 직접 연락해주세요!\n\n보호소: ${animal.shelterName}\n\n※ Tip: 공고번호를 말씀해주시면 빠른 상담이 가능합니다.\n공고번호: ${animal.apmsNoticeNo || 'N/A'}`);
-                  }}
-                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-brand text-brand-ink text-base font-bold tracking-wide hover:bg-brand-hover transition-colors shadow-lg"
-                >
-                  <span className="material-symbols-outlined mr-2">call</span>
-                  <span className="truncate">입양 문의하기</span>
-                </button>
-              )}
-              
-              <div className="grid grid-cols-2 gap-3">
-                {/* 찜하기 버튼 */}
-                <button 
-                  onClick={() => {
-                    alert('찜하기 기능은 로그인 후 이용 가능합니다!');
-                  }}
-                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-secondary/80 hover:bg-secondary text-white text-sm font-bold tracking-wide transition-colors"
-                >
-                  <span className="material-symbols-outlined mr-2 text-base">favorite</span>
-                  <span className="truncate">찜하기</span>
-                </button>
-                
-                {/* 공유하기 버튼 */}
-                <button 
-                  onClick={() => {
-                    const url = window.location.href;
-                    if (navigator.share) {
-                      navigator.share({
-                        title: `[${speciesLabel}] ${animal.breed}`,
-                        text: `${animal.specialMark || '귀여운 친구를 만나보세요!'}`,
-                        url: url,
-                      }).catch(() => {
-                        // 공유 취소 시 아무것도 안 함
-                      });
-                    } else {
-                      // Web Share API 미지원 시 URL 복사
-                      navigator.clipboard.writeText(url).then(() => {
-                        alert('링크가 복사되었습니다!');
-                      });
-                    }
-                  }}
-                  className="w-full flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-secondary/80 hover:bg-secondary text-white text-sm font-bold tracking-wide transition-colors"
-                >
-                  <span className="material-symbols-outlined mr-2 text-base">share</span>
-                  <span className="truncate">공유하기</span>
-                </button>
-              </div>
-              
-              {/* 안내 메시지 */}
-              <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p className="text-xs text-blue-800 dark:text-blue-300 flex items-start gap-2">
-                  <span className="material-symbols-outlined text-sm mt-0.5">info</span>
-                  <span>
-                    입양은 보호소와의 직접 상담을 통해 진행됩니다. 
-                    보호소 연락처는 공고번호와 함께 문의해주세요.
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 유사 동물 추천 */}
-        {similarAnimals && similarAnimals.length > 0 && (
-          <section className="mt-12">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="material-symbols-outlined text-2xl text-brand-accent">pets</span>
-              <h2 className="text-2xl font-bold text-text-light dark:text-text-dark">
-                이 동물과 비슷한 친구들
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {similarAnimals.slice(0, 6).map((similarAnimal) => (
-                <AnimalCardSimple key={similarAnimal.id} animal={similarAnimal} searchReturnTo={searchReturnTo} />
-              ))}
-            </div>
+        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,680fr)_minmax(0,808fr)]">
+          <section className="rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
+            <h2 className="text-lg font-bold">발견 정보</h2>
+            <dl className="mt-5 space-y-4">
+              {animal.happenDate && <Info label="발견 날짜" value={dateLabel(animal.happenDate) || ''} />}
+              {animal.happenPlace && <Info label="발견 장소" value={animal.happenPlace} />}
+              {!animal.happenDate && !animal.happenPlace && <p className="text-sm text-gray-600">등록된 정보가 없습니다.</p>}
+            </dl>
           </section>
-        )}
+          <section className="rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
+            <h2 className="text-lg font-bold">공고 정보</h2>
+            <dl className="mt-5 space-y-4">
+              {noticeNo && <Info label="공고번호" value={noticeNo} />}
+              {animal.noticeStartDate && <Info label="시작일" value={dateLabel(animal.noticeStartDate) || ''} />}
+              {animal.noticeEndDate && <Info label="종료일" value={dateLabel(animal.noticeEndDate) || ''} />}
+              {animal.createdAt && <Info label="등록일" value={dateLabel(animal.createdAt) || ''} />}
+            </dl>
+          </section>
+        </div>
+        <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-ink sm:w-auto">동물 목록으로</button>
+        {!!similarAnimals?.length && <section className="mt-14 border-t border-border-light pt-10 dark:border-border-dark">
+          <h2 className="mb-6 text-xl font-bold">비슷한 동물</h2>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">{similarAnimals.slice(0, 6).map(item => <AnimalCardSimple key={item.id} animal={item} searchReturnTo={searchReturnTo} />)}</div>
+        </section>}
       </main>
-
-      <AnimalChatbot animalId={animal.id} animalName={animal.name || animal.breed || '보호동물'} />
-
+      <AnimalChatbot animalId={animal.id} animalName={animal.name || animal.breed || '보호 동물'} />
       <Footer />
     </div>
   );
 }
 
+function Info({ label, value }: { label: string; value: string }) {
+  return <div className="grid min-w-0 grid-cols-[5rem_minmax(0,1fr)] gap-3 text-sm"><dt className="text-gray-600 dark:text-gray-300">{label}</dt><dd className="break-words font-medium">{value}</dd></div>;
+}
