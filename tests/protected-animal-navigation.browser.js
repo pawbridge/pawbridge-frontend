@@ -57,6 +57,12 @@ async page => {
     check(await panel.isVisible(), 'Menu closed during diagonal movement into panel');
     await page.mouse.move(5, 700);
     await hidden(panel);
+    await page.locator('header a[href="/"]').focus();
+    await button.hover();
+    await shown(panel);
+    await page.keyboard.press('Escape');
+    await hidden(panel);
+    check(await button.evaluate(el => el === document.activeElement), 'Hover-open Escape should close and restore focus from outside the group');
     checks.push('hover intent, canceled timer, horizontal layout, diagonal movement and hover close');
 
     await button.focus();
