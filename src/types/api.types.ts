@@ -429,6 +429,33 @@ export interface DirectOrderRequest {
 // 게시판 타입
 export type BoardType = 'MISSING' | 'COMMUNICATION' | 'ADOPTION' | 'PROTECTION' | 'REPORT';
 
+export type AnimalReportKind = 'MISSING' | 'SIGHTING';
+
+export interface AnimalReportInput {
+  kind: AnimalReportKind;
+  occurredOn: string;
+  approximateTime: string | null;
+  region: string;
+  landmark: string | null;
+  species: string;
+  animalName: string | null;
+  coatColor: string | null;
+  animalSize: string | null;
+  distinguishingFeatures: string | null;
+  direction: string | null;
+  description: string;
+}
+
+export interface AnimalReportResponse extends AnimalReportInput {
+  reportId: number;
+  authorId: number;
+  authorNickname: string;
+  title: string;
+  imageUrls: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 // 게시글 생성 요청
 export interface CreatePostRequest {
   title: string;
