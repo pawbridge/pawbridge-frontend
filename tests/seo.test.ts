@@ -46,3 +46,16 @@ test('알 수 없는 경로는 실제 404 응답에 사용할 수 있도록 구�
   assert.equal(metadata.robots, 'noindex,nofollow');
   assert.match(metadata.title, /찾을 수 없습니다/);
 });
+
+test('실종 제보 상세는 알려진 경로지만 출시 전에는 색인하지 않는다', () => {
+  const detail = resolveSeoMetadata('/community/reports/42');
+  assert.equal(detail.knownRoute, true);
+  assert.equal(detail.robots, 'noindex,follow');
+  assert.equal(detail.canonicalUrl, 'https://www.pawbridge.kr/community/reports/42');
+
+  for (const path of ['/community/reports/new', '/community/reports/42/edit']) {
+    const privatePage = resolveSeoMetadata(path);
+    assert.equal(privatePage.knownRoute, true);
+    assert.equal(privatePage.robots, 'noindex,nofollow');
+  }
+});
