@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
@@ -6,6 +6,8 @@ import Footer from '../components/layout/Footer';
 import Pagination from '../components/common/Pagination';
 import { getAnimalReports } from '../api/animalReports.api';
 import { reportListPath } from '../lib/reportNavigation';
+import ReportSearchFilters from '../components/reports/ReportSearchFilters';
+import { readReportSearch, reportSearchParams, reportSearchError, type ReportSearch } from '../lib/reportSearch';
 import type { AnimalReportKind, AnimalReportResponse } from '../types/api.types';
 
 function ReportPhoto({ src, title }: { src?: string; title: string }) {
@@ -36,41 +38,27 @@ function ReportCard({ report }: { report: AnimalReportResponse }) {
   </Link>;
 }
 
-function KeywordSearch({ keyword, onSearch }: { keyword: string; onSearch: (keyword: string) => void }) {
-  const [input, setInput] = useState(keyword);
-  const submit = (event: FormEvent) => { event.preventDefault(); onSearch(input.trim()); };
-  return <form onSubmit={submit} role="search" aria-label="제보 검색" className="flex flex-col gap-4 rounded-2xl border border-brand-border p-5 dark:border-gray-700 sm:flex-row sm:items-end sm:p-6">
-    <label className="flex min-w-0 flex-1 flex-col gap-2 text-sm font-bold">검색어
-      <input type="search" value={input} onChange={event => setInput(event.target.value)}
-        placeholder="지역, 동물 종류, 특징으로 검색" maxLength={200}
-        className="h-12 w-full rounded-lg border border-brand-border bg-white px-4 text-base font-normal placeholder:text-brand-muted dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-400" />
-    </label>
-    <div className="grid grid-cols-2 gap-3 sm:flex">
-      <button type="button" className="min-h-12 rounded-lg border border-brand-border px-6 text-sm font-bold hover:bg-neutral-100 dark:hover:bg-gray-800" onClick={() => { setInput(''); onSearch(''); }}>초기화</button>
-      <button type="submit" className="min-h-12 rounded-lg bg-brand px-8 text-sm font-bold text-brand-ink hover:bg-brand-hover">검색</button>
-    </div>
-  </form>;
-}
-
 export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
   const [params, setParams] = useSearchParams();
-  const keyword = params.get('keyword')?.trim() || '';
+  const filters = readReportSearch(params);
+  const { keyword } = filters;
+  const filterError = reportSearchError(filters);
+  const hasFilters = Boolean(keyword || filters.province || filters.district || filters.animalType || filters.from || filters.to);
   const pageValue = Number(params.get('page') || '1');
   const page = Number.isSafeInteger(pageValue) && pageValue > 0 && pageValue <= 2147483647 ? pageValue - 1 : 0;
   const missing = kind === 'MISSING';
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['reports', kind, keyword, page],
-    queryFn: () => getAnimalReports(page, 12, kind, keyword),
+    queryKey: ['reports', kind, filters, page],
+    queryFn: () => getAnimalReports(page, 12, kind, filters),
+    enabled: !filterError,
     retry: false,
     staleTime: 30_000,
   });
-  function changeSearch(nextKeyword: string, nextPage = 0) {
-    const next = new URLSearchParams();
-    if (nextKeyword) next.set('keyword', nextKeyword);
-    if (nextPage) next.set('page', String(nextPage + 1));
-    setParams(next);
+  function changeSearch(nextFilters: ReportSearch, nextPage = 0) {
+    setParams(reportSearchParams(nextFilters, nextPage));
   }
-  const query = keyword ? `?${new URLSearchParams({ keyword })}` : '';
+  const tabParams = reportSearchParams(filters).toString();
+  const query = tabParams ? `?${tabParams}` : '';
   return <div className="flex min-h-screen flex-col bg-background-light font-display text-brand-ink dark:bg-background-dark dark:text-white">
     <Header />
     <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-6 px-4 py-8 sm:px-6 sm:py-16">
@@ -84,7 +72,9 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
           {tab === 'MISSING' ? '실종 알림' : '목격 제보'}
         </Link>)}
       </nav>
-      <KeywordSearch key={`${kind}:${keyword}`} keyword={keyword} onSearch={value => changeSearch(value)} />
+      <ReportSearchFilters key={`${kind}:${params.toString()}`} filters={filters} onSearch={value => changeSearch(value)} />
+      {filterError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{filterError}</p>}
+      <p className="text-xs leading-5 text-brand-muted dark:text-gray-300">지역·종류 필터는 해당 항목이 선택된 제보를 조회합니다. 분류되지 않은 기존 글은 전체 또는 키워드 검색으로 확인해 주세요.</p>
       <p className="rounded-xl bg-brand-soft p-4 text-sm leading-6 dark:bg-gray-800">
         {missing ? '우리 동물을 잃어버렸다면 실종 알림을, 다른 동물을 봤다면 목격 제보를 남겨 주세요.' : '목격 제보는 발견 당시의 정보입니다. 지금도 같은 장소에 있다는 뜻은 아니에요.'}
       </p>
@@ -105,11 +95,11 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
           </div>
           : data?.content.length ? <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{data.content.map(report => <ReportCard key={report.reportId} report={report} />)}</div>
           : <div role="status" className="rounded-xl border border-brand-border px-6 py-16 text-center dark:border-gray-700">
-            <p>{keyword ? '검색 조건에 맞는 제보가 없습니다.' : page ? '이 페이지에는 제보가 없습니다.' : '아직 등록된 제보가 없습니다.'}</p>
-            <p className="mt-2 text-sm text-brand-muted dark:text-gray-300">{keyword ? '검색어를 바꾸거나 초기화해 보세요.' : '실종·목격 정보를 알고 있다면 제보를 남겨 주세요.'}</p>
-            {page > 0 && <button type="button" onClick={() => changeSearch(keyword)} className="mt-4 min-h-11 rounded-lg border border-brand-border px-5 font-bold">첫 페이지로</button>}
+            <p>{filterError ? '검색 조건을 확인해 주세요.' : hasFilters ? '검색 조건에 맞는 제보가 없습니다.' : page ? '이 페이지에는 제보가 없습니다.' : '아직 등록된 제보가 없습니다.'}</p>
+            <p className="mt-2 text-sm text-brand-muted dark:text-gray-300">{hasFilters ? '조건을 바꾸거나 초기화해 보세요.' : '실종·목격 정보를 알고 있다면 제보를 남겨 주세요.'}</p>
+            {page > 0 && <button type="button" onClick={() => changeSearch(filters)} className="mt-4 min-h-11 rounded-lg border border-brand-border px-5 font-bold">첫 페이지로</button>}
           </div>}
-        {!isError && !isLoading && <Pagination currentPage={page} totalPages={data?.totalPages || 0} separated onPageChange={next => { changeSearch(keyword, next); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />}
+        {!filterError && !isError && !isLoading && <Pagination currentPage={page} totalPages={data?.totalPages || 0} separated onPageChange={next => { changeSearch(filters, next); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />}
       </section>
     </main>
     <Footer />

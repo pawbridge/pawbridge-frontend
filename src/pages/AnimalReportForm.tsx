@@ -7,6 +7,9 @@ import Footer from '../components/layout/Footer';
 import { reportListPath } from '../lib/reportNavigation';
 import { createAnimalReport, getAnimalReport, updateAnimalReport } from '../api/animalReports.api';
 import { useAuthStore } from '../store/authStore';
+import ReportClassificationFields from '../components/reports/ReportClassificationFields';
+import { reportAnimalLabels } from '../lib/reportFields';
+import { koreaToday } from '../lib/reportSearch';
 import type { AnimalReportInput, AnimalReportKind } from '../types/api.types';
 
 const MAX_PHOTOS = 5;
@@ -19,13 +22,8 @@ function initialForm(kind: AnimalReportKind): AnimalReportInput {
   return {
     kind, occurredOn: '', approximateTime: null, region: '', landmark: null,
     species: '', animalName: null, coatColor: null, animalSize: null,
-    distinguishingFeatures: null, direction: null, description: '',
+    distinguishingFeatures: null, direction: null, description: '', province: null, district: null, animalType: null,
   };
-}
-
-function localToday() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 }
 
 export default function AnimalReportForm() {
@@ -61,6 +59,7 @@ export default function AnimalReportForm() {
       animalName: existing.animalName, coatColor: existing.coatColor,
       animalSize: existing.animalSize, distinguishingFeatures: existing.distinguishingFeatures,
       direction: existing.direction, description: existing.description,
+      province: existing.province || null, district: existing.district || null, animalType: existing.animalType || null,
     });
     setLoadedId(reportId);
   }, [existing, loadedId, navigate, reportId, user?.id]);
@@ -72,9 +71,10 @@ export default function AnimalReportForm() {
   }, [photos]);
 
   const mutation = useMutation({
-    mutationFn: () => reportId === null
-      ? createAnimalReport(form, photos)
-      : updateAnimalReport(reportId, form, []),
+    mutationFn: () => {
+      const payload = { ...form, species: form.species.trim() || (form.animalType ? reportAnimalLabels[form.animalType] : '') };
+      return reportId === null ? createAnimalReport(payload, photos) : updateAnimalReport(reportId, payload, []);
+    },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['animal-report', result.reportId] });
@@ -113,8 +113,8 @@ export default function AnimalReportForm() {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!form.occurredOn || form.occurredOn > localToday()
-      || !form.region.trim() || !form.species.trim() || !form.description.trim()) {
+    if (!form.occurredOn || form.occurredOn > koreaToday()
+      || !form.province || !form.animalType || !form.region.trim() || !form.description.trim()) {
       setError('날짜, 지역, 동물 종류, 상황 설명을 확인해 주세요.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -164,13 +164,15 @@ export default function AnimalReportForm() {
               <h2 id="when-where-heading" className="text-xl font-bold">언제, 어디에서 {missing ? '잃어버렸나요' : '보셨나요'}?</h2>
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="block font-semibold">날짜 <span aria-hidden="true">*</span>
-                  <input className={fieldClass} type="date" max={localToday()} required value={form.occurredOn} onChange={(e) => update('occurredOn', e.target.value)} />
+                  <input className={fieldClass} type="date" max={koreaToday()} required value={form.occurredOn} onChange={(e) => update('occurredOn', e.target.value)} />
                 </label>
                 <label className="block font-semibold">대략적인 시간 <span className="text-sm font-normal text-gray-500">(선택)</span>
                   <input className={fieldClass} maxLength={40} placeholder="예: 오후 3시 무렵 / 모름" value={form.approximateTime || ''} onChange={(e) => update('approximateTime', e.target.value || null)} />
                 </label>
               </div>
-              <label className="block font-semibold">지역 <span aria-hidden="true">*</span>
+              <ReportClassificationFields required province={form.province || ''} district={form.district || ''} animalType={form.animalType || ''}
+                onChange={value => { setForm(current => ({ ...current, province: value.province || null, district: value.district || null, animalType: value.animalType || null })); setError(''); }} />
+              <label className="block font-semibold">지역 설명 <span aria-hidden="true">*</span>
                 <input className={fieldClass} maxLength={120} required placeholder="예: 서울 마포구 상암동" value={form.region} onChange={(e) => update('region', e.target.value)} />
               </label>
               <label className="block font-semibold">가까운 장소 <span className="text-sm font-normal text-gray-500">(선택)</span>
@@ -181,8 +183,8 @@ export default function AnimalReportForm() {
             <section className="space-y-5" aria-labelledby="animal-heading">
               <h2 id="animal-heading" className="text-xl font-bold">동물의 특징을 알려주세요</h2>
               <div className="grid gap-5 sm:grid-cols-2">
-                <label className="block font-semibold">동물 종류 <span aria-hidden="true">*</span>
-                  <input className={fieldClass} maxLength={40} required placeholder="예: 개, 고양이" value={form.species} onChange={(e) => update('species', e.target.value)} />
+                <label className="block font-semibold">품종·세부 종류 <span className="text-sm font-normal text-gray-500">(선택)</span>
+                  <input className={fieldClass} maxLength={40} placeholder="예: 푸들, 코리안숏헤어 / 모르면 비워두세요" value={form.species} onChange={(e) => update('species', e.target.value)} />
                 </label>
                 {missing && <label className="block font-semibold">이름 <span className="text-sm font-normal text-gray-500">(선택)</span>
                   <input className={fieldClass} maxLength={80} value={form.animalName || ''} onChange={(e) => update('animalName', e.target.value || null)} />
