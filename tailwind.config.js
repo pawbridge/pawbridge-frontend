@@ -8,6 +8,9 @@ const brand = {
   border: '#DDDDD8',
 };
 
+// SHYU typography: ordinary text and legacy display classes share one family.
+const fontSans = ["Noto Sans KR", "sans-serif"];
+
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -44,7 +47,8 @@ export default {
           "secondary-content": brand.muted
         },
         fontFamily: {
-          "display": ["Inter", "Noto Sans KR", "sans-serif"]
+          "sans": fontSans,
+          "display": fontSans,
         },
         borderRadius: {
           "DEFAULT": "0.5rem",
