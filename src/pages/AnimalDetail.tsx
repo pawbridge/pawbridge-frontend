@@ -56,7 +56,7 @@ export default function AnimalDetail() {
     enabled: !!animal?.shelterId,
     retry: 1,
   });
-  const { data: similarAnimals } = useQuery({
+  const similarQuery = useQuery({
     queryKey: ['similarAnimals', id], queryFn: () => getSimilarAnimals(animalId),
     enabled: !!animal, retry: 1,
   });
@@ -138,7 +138,7 @@ export default function AnimalDetail() {
   return (
     <div className="flex min-h-screen flex-col bg-white text-brand-ink dark:bg-background-dark dark:text-text-dark">
       <Header />
-      <main className="mx-auto w-full max-w-[1568px] flex-1 px-4 pb-16 pt-7 sm:px-6">
+      <main className="mx-auto w-full max-w-[1368px] flex-1 px-4 pb-16 pt-7 sm:px-6">
         <nav aria-label="현재 위치" className="mb-7 flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
           <Link to="/" className="hover:underline">홈</Link><span aria-hidden="true">/</span>
           <button type="button" onClick={returnToSearch} className="hover:underline">
@@ -146,9 +146,9 @@ export default function AnimalDetail() {
           </button>
           <span aria-hidden="true">/</span><span className="font-medium text-brand-ink dark:text-white">{animal.breed || '동물 상세'}</span>
         </nav>
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,680fr)_minmax(0,808fr)]">
+        <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,680fr)_minmax(0,608fr)]">
           <div className="min-w-0">
-            <div className="flex h-[360px] items-center justify-center overflow-hidden rounded-2xl border border-border-light bg-gray-50 sm:h-[500px] lg:h-[620px] dark:border-border-dark dark:bg-gray-800">
+            <div className="flex h-[360px] items-center justify-center overflow-hidden rounded-2xl border border-border-light bg-gray-50 sm:h-[500px] xl:h-[620px] dark:border-border-dark dark:bg-gray-800">
               {photo && !imageFailed ? (
                 <img key={photo} src={photo} alt={`${animal.breed || '동물'} 사진`} className="h-full w-full object-contain" onError={() => setImageFailed(true)} />
               ) : <span className="text-sm text-gray-500">사진이 없습니다</span>}
@@ -166,11 +166,11 @@ export default function AnimalDetail() {
             </div>
             <h1 className="break-words text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">{animal.breed || '품종 정보 없음'}</h1>
             {noticeNo && <p className="mt-3 break-all text-sm text-gray-600 dark:text-gray-300">공고번호 {noticeNo}</p>}
-            <div className="mt-7 grid grid-cols-2 gap-3">
-              <button type="button" onClick={handleFavorite} disabled={favoriteMutation.isPending || (!!user && favoriteQuery.isLoading)} aria-pressed={!!favoriteQuery.data} className="min-h-12 rounded-lg border border-border-light px-3 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button type="button" onClick={handleFavorite} disabled={favoriteMutation.isPending || (!!user && favoriteQuery.isLoading)} aria-pressed={!!favoriteQuery.data} className="min-h-12 flex-1 rounded-lg border border-border-light px-5 text-sm font-semibold sm:flex-none hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
                 {favoriteMutation.isPending ? '변경 중…' : favoriteQuery.isError ? '관심 상태 다시 확인' : favoriteQuery.data ? '관심 동물에서 삭제' : '관심 동물에 추가'}
               </button>
-              <button type="button" onClick={() => void handleShare()} className="min-h-12 rounded-lg border border-border-light px-3 text-sm font-semibold hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800">공유하기</button>
+              <button type="button" onClick={() => void handleShare()} className="min-h-12 flex-1 rounded-lg border border-border-light px-5 text-sm font-semibold sm:flex-none hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800">공유하기</button>
             </div>
             {actionMessage && <p role="status" className="mt-3 text-sm">{actionMessage}</p>}
             {isMyAnimal && <Link to={`/animals/${id}/edit`} state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }} className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border-light px-4 text-sm font-semibold">등록 정보 수정</Link>}
@@ -199,11 +199,11 @@ export default function AnimalDetail() {
             </section>
           </div>
         </div>
-        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,680fr)_minmax(0,808fr)]">
+        <div className="mt-8 grid items-stretch gap-8 xl:grid-cols-[minmax(0,680fr)_minmax(0,608fr)]">
           <section className="rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
             <h2 className="text-lg font-bold">발견 정보</h2>
             <dl className="mt-5 space-y-4">
-              {animal.happenDate && <Info label="발견 날짜" value={dateLabel(animal.happenDate) || ''} />}
+              {animal.happenDate && <Info label="발견일" value={dateLabel(animal.happenDate) || ''} />}
               {animal.happenPlace && <Info label="발견 장소" value={animal.happenPlace} />}
               {!animal.happenDate && !animal.happenPlace && <p className="text-sm text-gray-600">등록된 정보가 없습니다.</p>}
             </dl>
@@ -211,18 +211,37 @@ export default function AnimalDetail() {
           <section className="rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
             <h2 className="text-lg font-bold">공고 정보</h2>
             <dl className="mt-5 space-y-4">
+              {animal.noticeStartDate && animal.noticeEndDate ? (
+                <Info label="공고 기간" value={`${dateLabel(animal.noticeStartDate)} ~ ${dateLabel(animal.noticeEndDate)}`} />
+              ) : (
+                <>
+                  {animal.noticeStartDate && <Info label="시작일" value={dateLabel(animal.noticeStartDate) || ''} />}
+                  {animal.noticeEndDate && <Info label="종료일" value={dateLabel(animal.noticeEndDate) || ''} />}
+                </>
+              )}
               {noticeNo && <Info label="공고번호" value={noticeNo} />}
-              {animal.noticeStartDate && <Info label="시작일" value={dateLabel(animal.noticeStartDate) || ''} />}
-              {animal.noticeEndDate && <Info label="종료일" value={dateLabel(animal.noticeEndDate) || ''} />}
               {animal.createdAt && <Info label="등록일" value={dateLabel(animal.createdAt) || ''} />}
             </dl>
           </section>
         </div>
         <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-ink sm:w-auto">동물 목록으로</button>
-        {!!similarAnimals?.length && <section className="mt-14 border-t border-border-light pt-10 dark:border-border-dark">
-          <h2 className="mb-6 text-xl font-bold">비슷한 동물</h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">{similarAnimals.slice(0, 6).map(item => <AnimalCardSimple key={item.id} animal={item} searchReturnTo={searchReturnTo} />)}</div>
-        </section>}
+        <section aria-labelledby="similar-animals-title" className="mt-14 border-t border-border-light pt-10 dark:border-border-dark">
+          <h2 id="similar-animals-title" className="mb-6 text-xl font-bold">비슷한 동물</h2>
+          {similarQuery.isPending && <p role="status" className="rounded-2xl border border-border-light p-6 text-sm text-brand-muted dark:border-border-dark dark:text-gray-300">비슷한 동물을 불러오는 중입니다…</p>}
+          {similarQuery.isError && <div className="mb-4 rounded-2xl border border-border-light p-6 dark:border-border-dark">
+            <p role="alert" className="text-sm">비슷한 동물을 불러오지 못했습니다.</p>
+            <button type="button" onClick={() => void similarQuery.refetch()} disabled={similarQuery.isFetching} className="mt-4 min-h-11 rounded-lg border border-border-light px-5 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
+              {similarQuery.isFetching ? '다시 불러오는 중…' : '다시 시도'}
+            </button>
+          </div>}
+          {!similarQuery.isPending && !similarQuery.isError && !similarQuery.data?.length && <div className="rounded-2xl border border-border-light p-6 dark:border-border-dark">
+            <p className="text-sm text-brand-muted dark:text-gray-300">비슷한 동물이 없습니다.</p>
+            <Link to={searchReturnTo} className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-border-light px-5 text-sm font-semibold hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800">동물 검색</Link>
+          </div>}
+          {!!similarQuery.data?.length && <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {similarQuery.data.slice(0, 6).map(item => <AnimalCardSimple key={item.id} animal={item} searchReturnTo={searchReturnTo} />)}
+          </div>}
+        </section>
       </main>
       <AnimalChatbot animalId={animal.id} animalName={animal.name || animal.breed || '보호 동물'} />
       <Footer />
