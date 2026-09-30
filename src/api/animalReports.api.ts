@@ -1,5 +1,6 @@
 import apiClient from './client';
 import type { AnimalReportInput, AnimalReportResponse } from '../types/api.types';
+import type { ReportSearch } from '../lib/reportSearch';
 
 function payload(report: AnimalReportInput, photos: File[]) {
   const form = new FormData();
@@ -31,9 +32,11 @@ export async function deleteAnimalReport(reportId: number) {
   await apiClient.delete(`/api/reports/${reportId}`);
 }
 
-export async function getAnimalReports(page: number, size: number, kind: 'MISSING' | 'SIGHTING', keyword?: string) {
+export async function getAnimalReports(page: number, size: number, kind: 'MISSING' | 'SIGHTING', filters: ReportSearch) {
   const response = await apiClient.get<{ data: { content: AnimalReportResponse[]; totalPages: number } }>(
-    '/api/reports', { params: { page, size, kind, keyword: keyword || undefined } },
+    '/api/reports', { params: { page, size, kind, keyword: filters.keyword || undefined,
+      province: filters.province || undefined, district: filters.district || undefined,
+      animalType: filters.animalType || undefined, from: filters.from || undefined, to: filters.to || undefined } },
   );
   return response.data.data;
 }
