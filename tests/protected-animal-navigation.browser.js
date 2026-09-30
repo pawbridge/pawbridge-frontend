@@ -84,7 +84,7 @@ async page => {
     await shown(panel);
     for (let i = 0; i < 4; i++) await page.keyboard.press('Tab');
     await hidden(panel);
-    check(await desktop.getByRole('link', { name: '실종동물 찾기', exact: true }).evaluate(el => el === document.activeElement), 'Tab must exit into next top-level link');
+    check(await desktop.getByRole('button', { name: '실종동물 찾기', exact: true }).evaluate(el => el === document.activeElement), 'Tab must exit into next top-level group');
     await button.focus();
     await page.keyboard.press('Space');
     await shown(panel);
@@ -160,7 +160,9 @@ async page => {
     check(page.url() === origin + '/animals/stats', 'Mobile stats route failed');
     await hidden(mobile);
     await menuButton.click();
-    await page.mouse.click(5, 800);
+    // The expanded two-group menu fills this viewport; dispatch on the covered main
+    // to verify the outside handler independently of the menu's new content height.
+    await page.locator('main').dispatchEvent('pointerdown');
     await hidden(mobile);
     checks.push('mobile direct destinations, targets, Escape focus, outside click and route close');
 

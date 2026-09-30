@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { logout } from '../../api/auth.api';
 import { canSeePetMarket } from '../../lib/petMarket';
-import ProtectedAnimalNavigation, { ProtectedAnimalLinks } from './ProtectedAnimalNavigation';
+import { ProtectedAnimalLinks } from './ProtectedAnimalNavigation';
+import { LostAnimalLinks } from './LostAnimalNavigation';
+import { protectedAnimalDestinations, lostAnimalDestinations } from '../../lib/navigationDestinations';
+import NavigationGroup, { type OpenMode } from './NavigationGroup';
 
 const palette = {
   text: 'text-brand-ink',
   icon: 'text-brand-accent',
-  navigation: 'hover:text-brand-accent hover:underline',
-  active: 'aria-[current=page]:text-brand-accent aria-[current=page]:underline',
+  navigation: 'rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-gray-800',
+  active: 'aria-[current=page]:bg-brand aria-[current=page]:font-bold aria-[current=page]:text-brand-ink aria-[current=page]:hover:bg-brand-hover dark:aria-[current=page]:text-brand-ink dark:aria-[current=page]:hover:bg-brand-hover',
   filled: 'bg-brand text-brand-ink hover:bg-brand-hover',
   outline: 'text-brand-accent border-brand-border',
   border: 'border-brand-border dark:border-border-dark',
@@ -18,6 +21,10 @@ const palette = {
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openNavigation, setOpenNavigation] = useState<{ id: string; mode: OpenMode } | null>(null);
+  const changeNavigation = useCallback((id: string, mode: OpenMode) => {
+    setOpenNavigation(previous => mode ? { id, mode } : previous?.id === id ? null : previous);
+  }, []);
   const headerRef = useRef<HTMLElement>(null);
   const mobileButtonRef = useRef<HTMLButtonElement>(null);
   const { pathname } = useLocation();
@@ -74,7 +81,7 @@ export default function Header() {
 
   return (
     <header ref={headerRef} className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-[1504px] px-4 md:px-6">
         <div className={`flex items-center justify-between whitespace-nowrap border-b border-solid ${palette.border} h-16`}>
           {/* 로고 */}
           <Link to="/" onClick={closeMobileMenu} className={`flex items-center gap-2 sm:gap-4 ${palette.text} dark:text-white`}>
@@ -87,31 +94,35 @@ export default function Header() {
           </Link>
 
           {/* 데스크톱 네비게이션 */}
-          <nav aria-label="주 메뉴" className="hidden xl:flex items-center gap-5">
-            <ProtectedAnimalNavigation />
-            <NavLink to="/animals/lost" className={`${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} ${palette.active} ${palette.focus}`}>실종동물 찾기</NavLink>
+          <nav aria-label="주 메뉴" className="hidden xl:flex items-center gap-2">
+            <NavigationGroup id="protected" title="보호동물" destinations={protectedAnimalDestinations}
+              current={protectedAnimalDestinations.some(item => item.current(pathname))}
+              mode={openNavigation?.id === 'protected' ? openNavigation.mode : null} anotherOpen={!!openNavigation && openNavigation.id !== 'protected'} onModeChange={changeNavigation} />
+            <NavigationGroup id="lost" title="실종동물 찾기" destinations={lostAnimalDestinations}
+              current={pathname.startsWith('/reports/') || pathname === '/animals/lost'}
+              mode={openNavigation?.id === 'lost' ? openNavigation.mode : null} anotherOpen={!!openNavigation && openNavigation.id !== 'lost'} onModeChange={changeNavigation} />
 
             <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
               동반여행
             </NavLink>
-            <Link
+            <NavLink
               to="/adoption"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
             >
               입양후기
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/community"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
             >
               커뮤니티
-            </Link>
-            {showPetMarket && <Link
+            </NavLink>
+            {showPetMarket && <NavLink
               to="/products"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
             >
               펫마켓
-            </Link>}
+            </NavLink>}
 
           </nav>
 
@@ -198,32 +209,37 @@ export default function Header() {
                   <ProtectedAnimalLinks mobile onNavigate={closeMobileMenu} />
                 </div>
               </section>
-              <NavLink to="/animals/lost" onClick={closeMobileMenu} className={`flex min-h-12 items-center px-0 text-lg font-normal ${palette.text} dark:text-gray-300 ${palette.active} ${palette.focus}`}>실종동물 찾기</NavLink>
+              <section aria-labelledby="lost-mobile-heading" className="flex flex-col gap-2">
+                <h2 id="lost-mobile-heading" className="flex min-h-12 items-center text-lg font-normal text-brand-ink dark:text-white">실종동물 찾기</h2>
+                <div id="lost-animal-mobile-navigation" className="flex flex-col gap-2">
+                  <LostAnimalLinks mobile onNavigate={closeMobileMenu} />
+                </div>
+              </section>
 
               <NavLink to="/travel" onClick={closeMobileMenu} className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
                 동반여행
               </NavLink>
-              <Link
+              <NavLink
                 to="/adoption"
-                className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.focus}`}
+                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 입양후기
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/community"
-                className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.focus}`}
+                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 커뮤니티
-              </Link>
-              {showPetMarket && <Link
+              </NavLink>
+              {showPetMarket && <NavLink
                 to="/products"
-                className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.focus}`}
+                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 펫마켓
-              </Link>}
+              </NavLink>}
 
               <div className={`pt-2 border-t ${palette.border} sm:hidden`}>
                 {user ? (
