@@ -88,7 +88,7 @@ export default function MyPageSidebar({
                   : 'text-gray-500 dark:text-gray-400 font-medium'
               }`}
             >
-              내가 찜한 동물
+              관심 동물
             </p>
           </button>
 
