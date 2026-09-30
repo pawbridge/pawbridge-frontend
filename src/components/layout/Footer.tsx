@@ -26,6 +26,9 @@ export default function Footer() {
             <Link to="/shelters" className={linkClass}>보호소 찾기</Link>
           </FooterColumn>
           <FooterColumn titleClassName={titleColor} title="참여">
+            <Link to="/reports/missing" className={linkClass}>실종 알림</Link>
+            <Link to="/reports/sightings" className={linkClass}>목격 제보</Link>
+            <Link to="/animals/lost" className={linkClass}>사진으로 찾기</Link>
             <Link to="/community" className={linkClass}>커뮤니티</Link>
             <Link to="/travel" className={linkClass}>반려동물 동반여행</Link>
           </FooterColumn>

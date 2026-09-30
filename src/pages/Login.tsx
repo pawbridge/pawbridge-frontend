@@ -1,13 +1,15 @@
 import { getApiErrorMessage } from '../lib/apiError';
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../api/auth.api';
 import { useAuthStore } from '../store/authStore';
 import Toast from '../components/common/Toast';
+import { consumeReportLoginReturn, rememberReportLoginReturn } from '../lib/reportNavigation';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +37,8 @@ export default function Login() {
       };
       setAuth(user, data.accessToken, data.refreshToken);
       // 로그인 성공 시 알림 없이 바로 이동
-      navigate('/');
+      rememberReportLoginReturn(location.state?.from);
+      navigate(consumeReportLoginReturn());
     },
     onError: (error) => {
       const message = getApiErrorMessage(error, '이메일 또는 비밀번호가 일치하지 않습니다.');
@@ -88,6 +91,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
+    rememberReportLoginReturn(location.state?.from);
     // 백엔드 OAuth2 엔드포인트로 리다이렉트
     const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
     window.location.href = `${backendUrl}/oauth2/authorization/google`;

@@ -46,6 +46,8 @@ import CommunityDetail from './pages/CommunityDetail.tsx';
 import CommunityCreate from './pages/CommunityCreate.tsx';
 import AnimalReportForm from './pages/AnimalReportForm.tsx';
 import AnimalReportDetail from './pages/AnimalReportDetail.tsx';
+import AnimalReportList from './pages/AnimalReportList.tsx';
+import LegacyAnimalReportRedirect from './pages/LegacyAnimalReportRedirect.tsx';
 import CommunityEdit from './pages/CommunityEdit.tsx';
 import AdoptionList from './pages/AdoptionList.tsx';
 import AdoptionDetail from './pages/AdoptionDetail.tsx';
@@ -78,7 +80,7 @@ function ProtectedRoute({ children }: { children: ReactElement }) {
           <div className="flex flex-col gap-3">
             <Link
               to="/login"
-              state={{ from: location.pathname }}
+              state={{ from: location.pathname + location.search }}
               className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
             >
               로그인
@@ -397,11 +399,16 @@ function App() {
           </ProtectedRoute>
         }
       />
-      {/* 커뮤니티 (실종/보호/제보) */}
+      {/* 커뮤니티와 독립 실종·목격 제보 */}
       <Route path="/community" element={<CommunityList />} />
-      <Route path="/community/reports/new" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
-      <Route path="/community/reports/:id/edit" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
-      <Route path="/community/reports/:id" element={<AnimalReportDetail />} />
+      <Route path="/reports/missing" element={<AnimalReportList kind="MISSING" />} />
+      <Route path="/reports/sightings" element={<AnimalReportList kind="SIGHTING" />} />
+      <Route path="/reports/new" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
+      <Route path="/reports/:id/edit" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
+      <Route path="/reports/:id" element={<AnimalReportDetail />} />
+      <Route path="/community/reports/new" element={<LegacyAnimalReportRedirect />} />
+      <Route path="/community/reports/:id/edit" element={<LegacyAnimalReportRedirect />} />
+      <Route path="/community/reports/:id" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/:id" element={<CommunityDetail />} />
       <Route
         path="/community/new"

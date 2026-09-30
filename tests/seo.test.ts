@@ -59,3 +59,16 @@ test('실종 제보 상세는 알려진 경로지만 출시 전에는 색인하�
     assert.equal(privatePage.robots, 'noindex,nofollow');
   }
 });
+
+test('전용 제보 목록과 상세는 기존 색인 제한을 유지하고 작성·수정은 비공개로 취급한다', () => {
+  for (const path of ['/reports/missing', '/reports/sightings', '/reports/42']) {
+    const page = resolveSeoMetadata(path);
+    assert.equal(page.knownRoute, true, path);
+    assert.equal(page.robots, 'noindex,follow', path);
+    assert.equal(page.canonicalUrl, `https://www.pawbridge.kr${path}`);
+  }
+  for (const path of ['/reports/new', '/reports/42/edit']) {
+    assert.equal(resolveSeoMetadata(path).robots, 'noindex,nofollow', path);
+  }
+  assert.notEqual(resolveSeoMetadata('/reports/missing').title, resolveSeoMetadata('/reports/sightings').title);
+});
