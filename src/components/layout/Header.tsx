@@ -10,7 +10,6 @@ import NavigationGroup, { type OpenMode } from './NavigationGroup';
 
 const palette = {
   text: 'text-brand-ink',
-  icon: 'text-brand-accent',
   navigation: 'rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-gray-800',
   active: 'aria-[current=page]:bg-brand aria-[current=page]:font-bold aria-[current=page]:text-brand-ink aria-[current=page]:hover:bg-brand-hover dark:aria-[current=page]:text-brand-ink dark:aria-[current=page]:hover:bg-brand-hover',
   filled: 'bg-brand text-brand-ink hover:bg-brand-hover',
@@ -85,10 +84,8 @@ export default function Header() {
         <div className={`flex items-center justify-between whitespace-nowrap border-b border-solid ${palette.border} h-16`}>
           {/* 로고 */}
           <Link to="/" onClick={closeMobileMenu} className={`flex items-center gap-2 sm:gap-4 ${palette.text} dark:text-white`}>
-            <div className={`${palette.icon} text-2xl`}>
-              <span className="material-symbols-outlined">pets</span>
-            </div>
-            <h2 className={`${palette.text} dark:text-white text-lg font-normal leading-[30px] tracking-normal`}>
+            <img src="/favicon.svg" alt="" aria-hidden="true" width={28} height={28} className="h-7 w-7 shrink-0" />
+            <h2 className={`${palette.text} dark:text-white text-lg font-semibold leading-[30px] tracking-normal`}>
               PawBridge
             </h2>
           </Link>
