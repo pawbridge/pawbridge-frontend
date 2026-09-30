@@ -155,3 +155,25 @@ playwright-cli -s=protected-nav close
 ```
 
 운영 화면이나 실제 API 연결 검증을 대신하지 않는다.
+
+## 공통 글꼴 검증
+
+`font-consistency.browser.js`는 같은 5198 포트의 로컬 빌드를 검사한다. Chromium의
+DevTools Protocol로 실제 사용 글꼴을 확인하므로 Chrome/Chromium을 사용한다.
+API 요청은 모의 응답으로 처리하며 실제 로그인이나 데이터 변경은 하지 않는다.
+Google Fonts 다운로드는 실제 요청이므로 인터넷 연결이 필요하다.
+
+```sh
+npm run build
+npm run preview -- --host 127.0.0.1 --port 5198 --strictPort
+playwright-cli -s=font-consistency open about:blank --browser=chrome
+playwright-cli -s=font-consistency run-code --filename=tests/font-consistency.browser.js
+playwright-cli -s=font-consistency close
+```
+
+홈·동물검색·실종동물 찾기·보호소 찾기·동반여행·입양후기·커뮤니티·로그인의
+1440/390/320px, 밝은 모드·다크 모드에서 글꼴과 가로 넘침을 검사한다.
+헤더 로고와 버튼의 SHYU 굵기·행간, 관리자 상품 수정의 기존 `font-sans` 적용,
+500ms 지연된 폰트 스타일시트 이후 실제 Noto Sans KR 렌더링,
+폰트 다운로드 실패 시 읽을 수 있는 시스템 글꼴 유지까지 81개 단언으로 확인한다.
+전체 관리자 화면, 실제 백엔드 연결, 운영 배포나 모든 실기기 조합의 검증을 대신하지 않는다.
