@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { consumeReportLoginReturn } from '../lib/reportNavigation';
 
 // Base64 디코딩 시 UTF-8 문자 제대로 처리하는 함수
 function decodeBase64Unicode(str: string): string {
@@ -56,7 +57,7 @@ export default function OAuthCallback() {
         setAuth(user, accessToken, refreshToken);
 
         alert('구글 로그인 성공!');
-        navigate('/', { replace: true });
+        navigate(consumeReportLoginReturn(), { replace: true });
       } catch (error) {
         console.error('토큰 처리 실패:', error);
         alert('로그인 처리 중 오류가 발생했습니다');

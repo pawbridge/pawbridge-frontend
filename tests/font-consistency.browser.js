@@ -83,11 +83,15 @@ async page => {
           const header = await page.locator('header').first().evaluate(element => {
             const logo = getComputedStyle(element.querySelector('h2'));
             const action = getComputedStyle(element.querySelector('a[href="/signup"]'));
+            const mark = element.querySelector('img[src="/favicon.svg"]');
+            const bounds = mark?.getBoundingClientRect();
             return { logo: [logo.fontSize, logo.fontWeight, logo.lineHeight, logo.letterSpacing],
-              action: [action.fontSize, action.fontWeight, action.lineHeight, action.letterSpacing] };
+              action: [action.fontSize, action.fontWeight, action.lineHeight, action.letterSpacing],
+              mark: !!mark && mark.complete && mark.naturalWidth > 0 && bounds.width === 28 && bounds.height === 28
+                && mark.alt === '' && mark.getAttribute('aria-hidden') === 'true' };
           });
-          check(header.logo.join('|') === '18px|400|30px|normal' && header.action.join('|') === '14px|500|20px|normal',
-            `${path} ${width}px: SHYU logo and action typography`);
+          check(header.mark && header.logo.join('|') === '18px|600|30px|normal' && header.action.join('|') === '14px|500|20px|normal',
+            `${path} ${width}px: current SVG logo and action typography`);
         }
       }
     }

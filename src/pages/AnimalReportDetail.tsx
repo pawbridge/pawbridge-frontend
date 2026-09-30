@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import { reportListPath } from '../lib/reportNavigation';
 import placeholderImg from '../assets/image-placeholder.svg';
 import { deleteAnimalReport, getAnimalReport } from '../api/animalReports.api';
 import { useAuthStore } from '../store/authStore';
@@ -22,9 +23,9 @@ export default function AnimalReportDetail() {
   const deleteMutation = useMutation({
     mutationFn: () => deleteAnimalReport(reportId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['animal-report', reportId] });
-      navigate('/community');
+      navigate(reportListPath(report?.kind));
     },
   });
 
@@ -41,7 +42,7 @@ export default function AnimalReportDetail() {
     const missing = !Number.isSafeInteger(reportId) || reportId <= 0 || (isAxiosError(error) && error.response?.status === 404);
     return shell(<div className="mx-auto max-w-4xl px-4 py-16" role="alert">
       <h1 className="text-2xl font-bold">{missing ? '제보를 찾을 수 없습니다' : '제보를 불러오지 못했습니다'}</h1>
-      <Link to="/community" className="mt-4 inline-block text-brand-accent underline">목록으로 돌아가기</Link>
+      <Link to={reportListPath(report?.kind)} className="mt-4 inline-block text-brand-accent underline">목록으로 돌아가기</Link>
     </div>);
   }
 
@@ -61,8 +62,8 @@ export default function AnimalReportDetail() {
   }
 
   return shell(<div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 md:py-12">
-    <Link to="/community" className="mb-6 inline-flex items-center gap-1 text-gray-600 hover:text-brand-accent dark:text-gray-300">
-      <span className="material-symbols-outlined">arrow_back</span> 목록으로
+    <Link to={reportListPath(report?.kind)} className="mb-6 inline-flex items-center gap-1 text-gray-600 hover:text-brand-accent dark:text-gray-300">
+      <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span> 목록으로
     </Link>
     <article className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800 md:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -76,7 +77,7 @@ export default function AnimalReportDetail() {
           </p>
         </div>
         {user?.id === report.authorId && <div className="flex gap-2">
-          <Link to={`/community/reports/${reportId}/edit`} className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold dark:bg-gray-700">수정</Link>
+          <Link to={`/reports/${reportId}/edit`} className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold dark:bg-gray-700">수정</Link>
           <button type="button" onClick={handleDelete} disabled={deleteMutation.isPending} className="rounded-lg bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 disabled:opacity-50 dark:bg-red-900/30 dark:text-red-300">삭제</button>
         </div>}
       </div>
