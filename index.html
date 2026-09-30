@@ -27,11 +27,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- 
-      display=optional: 폰트가 로드되지 않으면 시스템 폰트 유지 (레이아웃 시프트 방지)
-      vs display=swap: 폰트 로드 전 시스템 폰트 → 로드 후 교체 (FOUT 발생)
-    -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Noto+Sans+KR:wght@100..900&display=optional" rel="stylesheet" />
+    <!-- 먼저 시스템 글꼴로 표시하고, 로딩이 완료되면 디자인 기준 글꼴로 교체합니다. -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet" />
     
     <!-- Material Symbols - display=block으로 아이콘 깜빡임 방지 -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet" />
