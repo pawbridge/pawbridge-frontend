@@ -3,15 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import { getAllPosts, searchPosts } from '../api/community.api';
-import type { AnimalReportResponse, BoardType, PostResponse } from '../types/api.types';
+import type { BoardType, PostResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
 import Pagination from '../components/common/Pagination';
-import { getAnimalReports } from '../api/animalReports.api';
 
 const boardTabs: { key: BoardType; label: string }[] = [
-  { key: 'MISSING', label: '실종 알림' },
   { key: 'PROTECTION', label: '보호 동물' },
-  { key: 'REPORT', label: '목격 제보' },
   { key: 'COMMUNICATION', label: '소통 게시판' },
 ];
 
@@ -23,7 +20,6 @@ type ListPost = {
   authorName: string;
   imageUrls: string[];
   createdAt: string;
-  report?: AnimalReportResponse;
 };
 const EMPTY_POSTS: ListPost[] = [];
 const mapPost = (post: PostResponse): ListPost => ({
@@ -39,31 +35,16 @@ const mapPost = (post: PostResponse): ListPost => ({
 export default function CommunityList() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const [activeTab, setActiveTab] = useState<BoardType>('MISSING');
+  const [activeTab, setActiveTab] = useState<BoardType>('COMMUNICATION');
   const [inputValue, setInputValue] = useState(''); // 입력 필드 값
   const [searchKeyword, setSearchKeyword] = useState(''); // 실제 검색 키워드
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 12; // 페이지당 게시글 수
-  const reportPage = activeTab === 'MISSING' || activeTab === 'REPORT';
 
   // 게시글 목록 조회 (검색어가 있으면 검색, 없으면 전체 조회)
   const { data, isLoading, error } = useQuery({
-    queryKey: ['posts', activeTab, searchKeyword, reportPage ? currentPage : 'all'],
+    queryKey: ['posts', activeTab, searchKeyword, 'all'],
     queryFn: async (): Promise<{ items: ListPost[]; totalPages: number }> => {
-      if (reportPage) {
-        const kind = activeTab === 'MISSING' ? 'MISSING' : 'SIGHTING';
-        const page = await getAnimalReports(currentPage, pageSize, kind, searchKeyword.trim());
-        return { items: page.content.map((report) => ({
-          id: report.reportId,
-          boardType: activeTab,
-          title: report.title,
-          authorId: report.authorId,
-          authorName: report.authorNickname || `작성자 ${report.authorId}`,
-          imageUrls: report.imageUrls,
-          createdAt: report.createdAt,
-          report,
-        })), totalPages: page.totalPages };
-      }
       const posts = searchKeyword.trim() ? await searchPosts(searchKeyword.trim()) : await getAllPosts();
       return { items: posts.map(mapPost), totalPages: 0 };
     },
@@ -77,10 +58,10 @@ export default function CommunityList() {
   );
 
   // 페이지네이션 계산
-  const totalPages = reportPage ? (data?.totalPages ?? 0) : Math.ceil(allFiltered.length / pageSize);
+  const totalPages = Math.ceil(allFiltered.length / pageSize);
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
-  const filtered = reportPage ? allFiltered : allFiltered.slice(startIndex, endIndex);
+  const filtered = allFiltered.slice(startIndex, endIndex);
 
   // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
@@ -112,10 +93,6 @@ export default function CommunityList() {
     if (!user) {
       alert('로그인이 필요합니다.');
       navigate('/login');
-      return;
-    }
-    if (activeTab === 'MISSING' || activeTab === 'REPORT') {
-      navigate(`/community/reports/new?kind=${activeTab === 'MISSING' ? 'MISSING' : 'SIGHTING'}`);
       return;
     }
     navigate(`/community/new?boardType=${activeTab}`);
@@ -170,6 +147,9 @@ export default function CommunityList() {
           </div>
 
           {/* Tabs */}
+          <p className="mb-6 rounded-xl bg-brand-soft p-4 text-sm text-brand-ink dark:bg-gray-800 dark:text-white">
+            실종 알림과 목격 제보는 <Link to="/reports/missing" className="font-bold underline underline-offset-4">실종동물 찾기</Link>에서 확인하고 등록해 주세요.
+          </p>
           <div className="border-b border-gray-200 dark:border-gray-700">
             <nav className="flex -mb-px gap-8">
               {boardTabs.map((tab) => {
@@ -199,7 +179,7 @@ export default function CommunityList() {
                 <span className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
                 <input
                   className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-focus"
-                  placeholder={reportPage ? '내용, 지역, 동물로 검색 (Enter)' : '제목, 내용으로 검색 (Enter)'}
+                  placeholder="제목, 내용으로 검색 (Enter)"
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
@@ -217,7 +197,7 @@ export default function CommunityList() {
                 className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
               >
                 <span className="material-symbols-outlined text-base">edit</span>
-                <span>{activeTab === 'MISSING' ? '실종 알리기' : activeTab === 'REPORT' ? '목격 제보하기' : '글쓰기'}</span>
+                <span>글쓰기</span>
               </button>
             </div>
           </div>
@@ -269,7 +249,7 @@ export default function CommunityList() {
               {filtered.map((post) => {
                 const imageUrl = resolveImage(post.imageUrls);
                 return (
-                  <Link key={post.id} to={post.report ? `/community/reports/${post.id}` : `/community/${post.id}`} className="flex flex-col gap-3 group">
+                  <Link key={post.id} to={`/community/${post.id}`} className="flex flex-col gap-3 group">
                     {imageUrl ? (
                       <div
                         className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
@@ -284,9 +264,6 @@ export default function CommunityList() {
                       <p className="text-base font-medium leading-normal text-brand-ink dark:text-white truncate">
                         {post.title}
                       </p>
-                      {post.report && <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                        {post.report.occurredOn} · {post.report.region}
-                      </p>}
                       <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
                         {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                       </p>

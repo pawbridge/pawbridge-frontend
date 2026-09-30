@@ -55,8 +55,18 @@ const exactPages = new Map<string, PageDefinition>([
   }],
   ['/community', {
     title: '반려동물 커뮤니티 | 포우브릿지',
-    description: '실종, 보호, 목격 정보와 반려동물에 관한 이야기를 함께 나누세요.',
+    description: '반려동물과 보호 동물에 관한 이야기를 함께 나누세요.',
     indexable: true,
+  }],
+  ['/reports/missing', {
+    title: '실종 알림 | 포우브릿지',
+    description: '이용자가 등록한 실종 동물의 사진, 위치와 특징을 확인하세요.',
+    indexable: false,
+  }],
+  ['/reports/sightings', {
+    title: '목격 제보 | 포우브릿지',
+    description: '이용자가 목격한 동물의 발견 당시 위치와 특징을 확인하세요.',
+    indexable: false,
   }],
   ['/privacy', {
     title: '개인정보처리방침 | 포우브릿지',
@@ -72,7 +82,7 @@ const exactPages = new Map<string, PageDefinition>([
 
 const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
-    pattern: /^\/community\/reports\/\d+$/,
+    pattern: /^\/(?:community\/)?reports\/\d+$/,
     page: {
       title: '실종·목격 제보 | 포우브릿지',
       description: '이용자가 등록한 실종 알림과 목격 제보를 확인하세요.',
@@ -140,6 +150,8 @@ const privatePathPatterns = [
   /^\/community\/new\/?$/,
   /^\/community\/reports\/new\/?$/,
   /^\/community\/reports\/\d+\/edit\/?$/,
+  /^\/reports\/new\/?$/,
+  /^\/reports\/\d+\/edit\/?$/,
   /^\/community\/[^/]+\/edit\/?$/,
   /^\/adoption\/new\/?$/,
   /^\/adoption\/[^/]+\/edit\/?$/,

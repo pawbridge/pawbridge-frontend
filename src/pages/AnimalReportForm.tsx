@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import { reportListPath } from '../lib/reportNavigation';
 import { createAnimalReport, getAnimalReport, updateAnimalReport } from '../api/animalReports.api';
 import { useAuthStore } from '../store/authStore';
 import type { AnimalReportInput, AnimalReportKind } from '../types/api.types';
@@ -50,7 +51,7 @@ export default function AnimalReportForm() {
   useEffect(() => {
     if (!existing || reportId === null || loadedId === reportId) return;
     if (existing.authorId !== user?.id) {
-      navigate(`/community/reports/${reportId}`, { replace: true });
+      navigate(`/reports/${reportId}`, { replace: true });
       return;
     }
     setForm({
@@ -77,7 +78,7 @@ export default function AnimalReportForm() {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: ['animal-report', result.reportId] });
-      navigate(`/community/reports/${result.reportId}`);
+      navigate(`/reports/${result.reportId}`);
     },
     onError: (cause: unknown) => {
       const message = isAxiosError<{ message?: string }>(cause) ? cause.response?.data?.message : null;
@@ -129,7 +130,7 @@ export default function AnimalReportForm() {
     return <div className="min-h-screen bg-background-light dark:bg-background-dark"><Header /><main className="mx-auto max-w-3xl px-4 py-16" role="status">제보를 불러오는 중입니다.</main><Footer /></div>;
   }
   if (reportId !== null && isError) {
-    return <div className="min-h-screen bg-background-light dark:bg-background-dark"><Header /><main className="mx-auto max-w-3xl px-4 py-16">제보를 불러오지 못했습니다. <Link className="underline" to="/community">목록으로</Link></main><Footer /></div>;
+    return <div className="min-h-screen bg-background-light dark:bg-background-dark"><Header /><main className="mx-auto max-w-3xl px-4 py-16">제보를 불러오지 못했습니다. <Link className="underline" to={reportListPath(form.kind)}>목록으로</Link></main><Footer /></div>;
   }
 
   const missing = form.kind === 'MISSING';
@@ -137,7 +138,7 @@ export default function AnimalReportForm() {
     <div className="flex min-h-screen flex-col bg-background-light text-brand-ink dark:bg-background-dark dark:text-white">
       <Header />
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
-        <Link to="/community" className="text-sm font-semibold underline underline-offset-4">제보 목록으로</Link>
+        <Link to={reportListPath(form.kind)} className="text-sm font-semibold underline underline-offset-4">제보 목록으로</Link>
         <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-9">
           <p className="text-sm font-bold text-brand-accent">동물을 다시 만날 수 있도록</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{reportId === null ? (missing ? '실종 동물 알리기' : '목격 제보하기') : '제보 수정'}</h1>
@@ -227,7 +228,7 @@ export default function AnimalReportForm() {
               </label>
             </section>
             <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:justify-end">
-              <Link className="inline-flex min-h-12 items-center justify-center rounded-lg bg-gray-100 px-6 font-bold hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600" to="/community">취소</Link>
+              <Link className="inline-flex min-h-12 items-center justify-center rounded-lg bg-gray-100 px-6 font-bold hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600" to={reportListPath(form.kind)}>취소</Link>
               <button className="min-h-12 rounded-lg bg-brand px-8 font-bold text-brand-ink hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={mutation.isPending}>
                 {mutation.isPending ? '저장 중...' : reportId === null ? '제보 등록' : '수정 완료'}
               </button>
