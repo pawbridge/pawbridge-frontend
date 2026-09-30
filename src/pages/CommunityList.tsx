@@ -3,16 +3,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import { getAllPosts, searchPosts } from '../api/community.api';
-import type { BoardType } from '../types/api.types';
+import type { AnimalReportResponse, BoardType, PostResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
 import Pagination from '../components/common/Pagination';
+import { getAnimalReports } from '../api/animalReports.api';
 
 const boardTabs: { key: BoardType; label: string }[] = [
-  { key: 'MISSING', label: '실종 동물' },
+  { key: 'MISSING', label: '실종 알림' },
   { key: 'PROTECTION', label: '보호 동물' },
-  { key: 'REPORT', label: '제보' },
+  { key: 'REPORT', label: '목격 제보' },
   { key: 'COMMUNICATION', label: '소통 게시판' },
 ];
+
+type ListPost = {
+  id: number;
+  boardType: BoardType;
+  title: string;
+  authorId: number;
+  authorName: string;
+  imageUrls: string[];
+  createdAt: string;
+  report?: AnimalReportResponse;
+};
+const EMPTY_POSTS: ListPost[] = [];
+const mapPost = (post: PostResponse): ListPost => ({
+  id: post.postId || post.id,
+  boardType: post.boardType,
+  title: post.title,
+  authorId: post.authorId,
+  authorName: post.authorName || `작성자 ${post.authorId}`,
+  imageUrls: post.imageUrls || [],
+  createdAt: post.createdAt,
+});
 
 export default function CommunityList() {
   const navigate = useNavigate();
@@ -22,17 +44,31 @@ export default function CommunityList() {
   const [searchKeyword, setSearchKeyword] = useState(''); // 실제 검색 키워드
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 12; // 페이지당 게시글 수
+  const reportPage = activeTab === 'MISSING' || activeTab === 'REPORT';
 
   // 게시글 목록 조회 (검색어가 있으면 검색, 없으면 전체 조회)
-  const { data: posts = [], isLoading, error } = useQuery({
-    queryKey: ['posts', searchKeyword],
-    queryFn: () => {
-      if (searchKeyword.trim()) {
-        return searchPosts(searchKeyword.trim());
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['posts', activeTab, searchKeyword, reportPage ? currentPage : 'all'],
+    queryFn: async (): Promise<{ items: ListPost[]; totalPages: number }> => {
+      if (reportPage) {
+        const kind = activeTab === 'MISSING' ? 'MISSING' : 'SIGHTING';
+        const page = await getAnimalReports(currentPage, pageSize, kind, searchKeyword.trim());
+        return { items: page.content.map((report) => ({
+          id: report.reportId,
+          boardType: activeTab,
+          title: report.title,
+          authorId: report.authorId,
+          authorName: report.authorNickname || `작성자 ${report.authorId}`,
+          imageUrls: report.imageUrls,
+          createdAt: report.createdAt,
+          report,
+        })), totalPages: page.totalPages };
       }
-      return getAllPosts();
+      const posts = searchKeyword.trim() ? await searchPosts(searchKeyword.trim()) : await getAllPosts();
+      return { items: posts.map(mapPost), totalPages: 0 };
     },
   });
+  const posts = data?.items ?? EMPTY_POSTS;
 
   // 탭에 따라 필터링된 게시글 (전체)
   const allFiltered = useMemo(
@@ -41,10 +77,10 @@ export default function CommunityList() {
   );
 
   // 페이지네이션 계산
-  const totalPages = Math.ceil(allFiltered.length / pageSize);
+  const totalPages = reportPage ? (data?.totalPages ?? 0) : Math.ceil(allFiltered.length / pageSize);
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
-  const filtered = allFiltered.slice(startIndex, endIndex);
+  const filtered = reportPage ? allFiltered : allFiltered.slice(startIndex, endIndex);
 
   // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
@@ -61,6 +97,7 @@ export default function CommunityList() {
   // 검색 실행
   const handleSearchSubmit = () => {
     setSearchKeyword(inputValue);
+    setCurrentPage(0);
   };
 
   // 엔터 키 핸들러
@@ -75,6 +112,10 @@ export default function CommunityList() {
     if (!user) {
       alert('로그인이 필요합니다.');
       navigate('/login');
+      return;
+    }
+    if (activeTab === 'MISSING' || activeTab === 'REPORT') {
+      navigate(`/community/reports/new?kind=${activeTab === 'MISSING' ? 'MISSING' : 'SIGHTING'}`);
       return;
     }
     navigate(`/community/new?boardType=${activeTab}`);
@@ -108,7 +149,7 @@ export default function CommunityList() {
         <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-red-600 dark:text-red-400">게시글을 불러오는데 실패했습니다.</p>
+            <p role="alert" className="text-lg text-red-600 dark:text-red-400">목록을 불러오지 못했습니다.</p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{(error as Error).message}</p>
           </div>
         </main>
@@ -158,7 +199,7 @@ export default function CommunityList() {
                 <span className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
                 <input
                   className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-focus"
-                  placeholder="제목, 내용으로 검색 (Enter)"
+                  placeholder={reportPage ? '내용, 지역, 동물로 검색 (Enter)' : '제목, 내용으로 검색 (Enter)'}
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
@@ -169,14 +210,14 @@ export default function CommunityList() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
                 <span className="material-symbols-outlined text-lg">lock</span>
-                <span>로그인이 필요한 서비스입니다.</span>
+                <span>열람은 누구나 · 작성은 로그인 후</span>
               </div>
               <button
                 onClick={handleWriteClick}
                 className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
               >
                 <span className="material-symbols-outlined text-base">edit</span>
-                <span>글쓰기</span>
+                <span>{activeTab === 'MISSING' ? '실종 알리기' : activeTab === 'REPORT' ? '목격 제보하기' : '글쓰기'}</span>
               </button>
             </div>
           </div>
@@ -208,8 +249,8 @@ export default function CommunityList() {
                 <tbody>
                   {filtered.map((post, idx) => (
                     <tr
-                      key={post.postId || post.id}
-                      onClick={() => (window.location.href = `/community/${post.postId || post.id}`)}
+                      key={post.id}
+                      onClick={() => navigate(`/community/${post.id}`)}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                     >
                       <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{filtered.length - idx}</td>
@@ -228,7 +269,7 @@ export default function CommunityList() {
               {filtered.map((post) => {
                 const imageUrl = resolveImage(post.imageUrls);
                 return (
-                  <Link key={post.postId || post.id} to={`/community/${post.postId || post.id}`} className="flex flex-col gap-3 group">
+                  <Link key={post.id} to={post.report ? `/community/reports/${post.id}` : `/community/${post.id}`} className="flex flex-col gap-3 group">
                     {imageUrl ? (
                       <div
                         className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
@@ -243,6 +284,9 @@ export default function CommunityList() {
                       <p className="text-base font-medium leading-normal text-brand-ink dark:text-white truncate">
                         {post.title}
                       </p>
+                      {post.report && <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        {post.report.occurredOn} · {post.report.region}
+                      </p>}
                       <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
                         {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
                       </p>

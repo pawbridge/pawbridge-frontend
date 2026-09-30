@@ -72,6 +72,14 @@ const exactPages = new Map<string, PageDefinition>([
 
 const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
+    pattern: /^\/community\/reports\/\d+$/,
+    page: {
+      title: '실종·목격 제보 | 포우브릿지',
+      description: '이용자가 등록한 실종 알림과 목격 제보를 확인하세요.',
+      indexable: false,
+    },
+  },
+  {
     pattern: /^\/animals\/[^/]+$/,
     page: {
       title: '보호 동물 상세 | 포우브릿지',
@@ -130,6 +138,8 @@ const privatePathPatterns = [
   /^\/products\/new\/?$/,
   /^\/products\/[^/]+\/edit\/?$/,
   /^\/community\/new\/?$/,
+  /^\/community\/reports\/new\/?$/,
+  /^\/community\/reports\/\d+\/edit\/?$/,
   /^\/community\/[^/]+\/edit\/?$/,
   /^\/adoption\/new\/?$/,
   /^\/adoption\/[^/]+\/edit\/?$/,

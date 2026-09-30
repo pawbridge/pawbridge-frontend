@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -63,6 +63,10 @@ export default function CommunityCreate() {
       files: form.files.length > 0 ? form.files : undefined,
     });
   };
+
+  if (initialBoardType === 'MISSING' || initialBoardType === 'REPORT') {
+    return <Navigate to={`/community/reports/new?kind=${initialBoardType === 'MISSING' ? 'MISSING' : 'SIGHTING'}`} replace />;
+  }
 
   // 소통게시판 전용 레이아웃
   if (isCommunicationBoard) {
@@ -170,7 +174,7 @@ export default function CommunityCreate() {
     );
   }
 
-  // 기존 커뮤니티 레이아웃 (실종/보호/제보)
+  // 보호 게시판은 기존 범용 작성 흐름을 유지합니다.
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display">
       <Header />
@@ -198,9 +202,7 @@ export default function CommunityCreate() {
                   <option disabled value="">
                     게시판을 선택해주세요
                   </option>
-                  <option value="MISSING">실종</option>
                   <option value="PROTECTION">보호</option>
-                  <option value="REPORT">제보</option>
                 </select>
               </div>
 
