@@ -81,7 +81,7 @@ export default function Header() {
             <div className={`${palette.icon} text-2xl`}>
               <span className="material-symbols-outlined">pets</span>
             </div>
-            <h2 className={`${palette.text} dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]`}>
+            <h2 className={`${palette.text} dark:text-white text-lg font-normal leading-[30px] tracking-normal`}>
               PawBridge
             </h2>
           </Link>
@@ -91,24 +91,24 @@ export default function Header() {
             <ProtectedAnimalNavigation />
             <NavLink to="/animals/lost" className={`${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} ${palette.active} ${palette.focus}`}>실종동물 찾기</NavLink>
 
-            <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
+            <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
               동반여행
             </NavLink>
             <Link
               to="/adoption"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.focus}`}
             >
               입양후기
             </Link>
             <Link
               to="/community"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.focus}`}
             >
               커뮤니티
             </Link>
             {showPetMarket && <Link
               to="/products"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-normal ${palette.navigation} transition-colors ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.focus}`}
             >
               펫마켓
             </Link>}
@@ -133,7 +133,7 @@ export default function Header() {
                 {user.role === 'ROLE_ADMIN' ? (
                   <Link
                     to="/admin/dashboard"
-                    className={`hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity ${palette.focus}`}
+                    className={`hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
                   >
                     <span className="material-symbols-outlined text-[18px]">dashboard</span>
                     <span className="truncate">관리자</span>
@@ -141,7 +141,7 @@ export default function Header() {
                 ) : (
                   <Link
                     to="/mypage"
-                    className={`hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity ${palette.focus}`}
+                    className={`hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
                   >
                     <span className="material-symbols-outlined text-[18px]">person</span>
                     <span className="truncate">마이페이지</span>
@@ -149,7 +149,7 @@ export default function Header() {
                 )}
                 <button
                   onClick={handleLogout}
-                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 ${palette.outline} text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity border ${palette.focus}`}
+                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 ${palette.outline} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity border ${palette.focus}`}
                 >
                   <span className="truncate">로그아웃</span>
                 </button>
@@ -159,13 +159,13 @@ export default function Header() {
               <>
                 <Link
                   to="/login"
-                  className={`hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 ${palette.outline} text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity border ${palette.focus}`}
+                  className={`hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 ${palette.outline} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity border ${palette.focus}`}
                 >
                   <span className="truncate">로그인</span>
                 </Link>
                 <Link
                   to="/signup"
-                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity ${palette.focus}`}
+                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
                 >
                   <span className="truncate">회원가입</span>
                 </Link>
