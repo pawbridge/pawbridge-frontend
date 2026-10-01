@@ -1,0 +1,217 @@
+// Local UI contracts only. Every API is intercepted; no production data is changed.
+async page => {
+  const origin = 'http://127.0.0.1:5199';
+  await page.unroute('**/api/**');
+  const check = (condition, label) => { if (!condition) throw new Error(label); };
+  const results = [];
+  const errors = [];
+  const writes = [];
+  let mode = 'normal';
+  let releaseMutation;
+  let applicationStatus = 'PENDING';
+  const members = [
+    { userId: 1, name: '김보호', email: 'member01@example.invalid', nickname: '포우친구', role: 'ROLE_USER', provider: 'GOOGLE', createdAt: '2026-09-24T10:00:00', careRegNo: '' },
+    { userId: 2, name: '박소장', email: 'shelter@example.invalid', nickname: '보호친구', role: 'ROLE_SHELTER', provider: 'LOCAL', createdAt: '2026-09-25T10:00:00', careRegNo: '411000202400001' },
+    { userId: 3, name: '아주 긴 회원 이름 테스트 '.repeat(7), email: 'longaddress'.repeat(12) + '@example.invalid', nickname: '긴닉네임', role: 'ROLE_ADMIN', createdAt: '2026-09-26T10:00:00' },
+  ];
+  const shelter = { id: 1, careRegNo: '411000202400001', name: '포우 동물보호센터', address: '서울특별시 동물보호로 123', organizationName: '서울특별시', phone: '02-000-0000', operatingHours: '09:00–18:00' };
+  const application = () => ({ application: { id: 42, userId: 2, shelterName: shelter.name, status: applicationStatus, requestedAt: '2026-09-24T10:00:00', reviewedAt: applicationStatus === 'PENDING' ? null : '2026-10-01T10:00:00', careRegNo: applicationStatus === 'APPROVED' ? shelter.careRegNo : null }, applicantName: '박소장', applicantEmail: members[1].email, reviewNote: '소속 확인' });
+  const paged = content => ({ content, totalElements: content.length, totalPages: content.length ? 1 : 0, number: 0, size: 20, first: true, last: true, empty: !content.length });
+  const envelope = data => ({ code: 200, data });
+  page.on('pageerror', error => errors.push(error.message));
+  await page.route('**/api/**', async route => {
+    const request = route.request();
+    if (!['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
+    const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+    const params = Object.fromEntries((request.url().split('?')[1] || '').split('&').filter(Boolean).map(item => item.split('=').map(decodeURIComponent)));
+    if (request.method() !== 'GET') {
+      writes.push({ path, method: request.method(), body: request.postData() ? request.postDataJSON() : null });
+      if (mode === 'pending') await new Promise(resolve => { releaseMutation = resolve; });
+      if (mode === 'delete-error') return route.fulfill({ status: 500, json: { message: 'mock failure' } });
+      if (path.endsWith('/approve')) applicationStatus = 'APPROVED';
+      if (path.endsWith('/reject')) applicationStatus = 'REJECTED';
+      return route.fulfill({ json: envelope(path.includes('shelter-applications') ? application() : null) });
+    }
+    if ((mode === 'members-error' && path === '/api/admin/users') || (mode === 'managers-error' && path.endsWith('/members')) || (mode === 'stats-error' && path.includes('/daily-signups'))) return route.fulfill({ status: 500, json: { message: 'mock failure' } });
+    if (mode === 'loading' && path === '/api/admin/users') await page.waitForTimeout(1800);
+    let body;
+    if (path === '/api/admin/users') body = envelope(paged(mode === 'empty' ? [] : members));
+    else if (/^\/api\/admin\/users\/\d+$/.test(path)) body = envelope(members[0]);
+    else if (path.endsWith('/stats/total-users')) body = envelope(1248);
+    else if (path.endsWith('/stats/today')) body = envelope(7);
+    else if (path.endsWith('/daily-signups') || path.endsWith('/daily-animals')) {
+      const dates = [];
+      for (let date = new Date(params.startDate + 'T00:00:00Z'), index = 0; date.toISOString().slice(0, 10) <= params.endDate; date.setUTCDate(date.getUTCDate() + 1), index++) if (index % 3 !== 1) dates.push({ date: date.toISOString().slice(0, 10), count: mode === 'zero' ? 0 : index + 3 });
+      body = path.endsWith('/daily-signups') ? envelope(dates) : dates;
+    } else if (path === '/api/shelters') body = paged([shelter]);
+    else if (path.startsWith('/api/shelters/by-care-reg-no/')) body = shelter;
+    else if (path.endsWith('/members')) body = envelope(paged([{ userId: 2, name: '박소장', email: members[1].email, approvalApplicationId: 42 }]));
+    else if (path === '/api/admin/users/shelter-applications') body = envelope(paged([application()]));
+    else if (path === '/api/admin/users/shelter-applications/42') body = envelope(application());
+    else if (path === '/api/users/me') body = envelope(null);
+    else return route.fulfill({ status: 501, json: { message: 'Unmocked API: ' + path } });
+    return route.fulfill({ json: body });
+  });
+  await page.goto(origin);
+  await page.evaluate(() => localStorage.setItem('auth-storage', JSON.stringify({ state: { user: { id: 99, name: '관리자', email: 'admin@example.invalid', role: 'ROLE_ADMIN', createdAt: '2026-09-01' }, accessToken: 'local-mock-only', refreshToken: null }, version: 0 })));
+  const paths = ['/admin/dashboard', '/admin/users', '/admin/users/1', '/admin/shelters', '/admin/shelters/411000202400001', '/admin/shelter-applications', '/admin/shelter-applications/42', '/admin/statistics'];
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of paths) {
+      await page.goto(origin + path);
+      await page.getByRole('heading', { level: 1 }).waitFor();
+      await page.waitForFunction(() => ![...document.querySelectorAll('[role="status"]')].some(el => el.textContent.includes('불러오는')));
+      const geometry = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth > innerWidth, font: getComputedStyle(document.querySelector('main')).fontFamily, sidebarWidth: document.querySelector('aside').getBoundingClientRect().width }));
+      check(!geometry.overflow, width + ' overflow: ' + path);
+      check(geometry.font.includes('Noto Sans KR'), 'Incorrect font: ' + path);
+      if (width === 1440) check(await page.getByRole('navigation', { name: '관리자 메뉴' }).locator('[aria-current="page"]').count() === 1, 'Exactly one current desktop menu');
+      if (width !== 320) await page.screenshot({ path: '/tmp/admin-renewal-' + width + '-' + path.replaceAll('/', '_') + '.png', fullPage: true });
+    }
+    results.push(width + 'px: eight screens, no overflow, Noto Sans KR');
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(origin + '/admin/users');
+  const menu = page.getByRole('button', { name: '메뉴', exact: true });
+  await menu.click();
+  const menuDialog = page.getByRole('dialog', { name: 'PawBridge · 관리자' });
+  await menuDialog.waitFor();
+  check(await menuDialog.locator('[aria-current="page"]').count() === 1, 'One mobile current menu');
+  check(await page.evaluate(() => document.body.style.overflow === 'hidden'), 'Background scroll must lock');
+  await page.keyboard.press('Tab');
+  check(await menuDialog.evaluate(el => el.contains(document.activeElement)), 'Dialog focus containment');
+  await page.keyboard.press('Escape');
+  await menuDialog.waitFor({ state: 'hidden' });
+  check(await menu.evaluate(el => el === document.activeElement), 'Menu trigger focus restoration');
+  results.push('mobile menu keyboard, Escape, focus return, background lock');
+  await page.getByLabel('회원 검색', { exact: true }).fill('shelter@');
+  check(await page.getByText('조회된 회원 1명').isVisible(), 'Email search');
+  await page.getByLabel('회원 검색', { exact: true }).fill('');
+  await page.getByLabel('회원 유형', { exact: true }).selectOption('ROLE_SHELTER');
+  check(await page.getByText('조회된 회원 1명').isVisible(), 'Role filter');
+  await page.getByRole('button', { name: '수정', exact: true }).click();
+  const edit = page.getByRole('dialog', { name: '회원 정보 수정' });
+  await edit.getByLabel('닉네임 (선택)').fill('a');
+  await edit.getByLabel('보호소 등록번호 (필수)').fill('');
+  await edit.getByRole('button', { name: '저장', exact: true }).click();
+  check(await edit.getByText('닉네임은 2~10자의 한글, 영문, 숫자만 가능합니다.').isVisible(), 'Nickname validation');
+  check(await edit.getByText('보호소 회원은 보호소 등록번호가 필요합니다.').isVisible(), 'Shelter registration validation');
+  check(writes.length === 0, 'Invalid form must not send request');
+  await edit.getByLabel('닉네임 (선택)').fill('포우회원');
+  await edit.getByLabel('보호소 등록번호 (필수)').fill(shelter.careRegNo);
+  mode = 'pending';
+  await edit.getByRole('button', { name: '저장', exact: true }).click();
+  await edit.getByRole('button', { name: '저장 중…' }).waitFor();
+  check(await edit.getByRole('button', { name: '취소' }).isDisabled(), 'Pending cancellation lock');
+  check(await edit.getByLabel('닉네임 (선택)').isDisabled(), 'Pending field lock');
+  await page.keyboard.press('Escape');
+  check(await edit.isVisible(), 'Pending Escape lock');
+  releaseMutation(); mode = 'normal';
+  await edit.waitFor({ state: 'hidden' });
+  check(writes[0].method === 'PUT' && writes[0].body.role === 'ROLE_SHELTER', 'Existing user update contract');
+  results.push('member search/filter/validation/update contract/pending modal');
+  mode = 'delete-error';
+  await page.getByRole('button', { name: '삭제', exact: true }).click();
+  const deletion = page.getByRole('dialog', { name: '회원을 삭제하시겠어요?' });
+  await deletion.getByRole('button', { name: '삭제', exact: true }).click();
+  await deletion.getByRole('button', { name: '최신 목록 확인' }).waitFor();
+  check(await deletion.getByRole('button', { name: '삭제', exact: true }).count() === 0, 'Uncertain deletion cannot be repeated blindly');
+  mode = 'normal';
+  await deletion.getByRole('button', { name: '최신 목록 확인' }).click();
+  await deletion.waitFor({ state: 'hidden' });
+  results.push('uncertain delete: no repeated mutation, latest-list recovery');
+  mode = 'members-error';
+  await page.goto(origin + '/admin/users');
+  await page.getByText('회원 목록 조회 실패', { exact: true }).waitFor({ timeout: 15000 });
+  check(await page.getByText('조회된 회원 0명', { exact: true }).count() === 0, 'Error is not empty result');
+  mode = 'normal';
+  await page.getByRole('button', { name: '다시 불러오기', exact: true }).click();
+  await page.getByText('조회된 회원 3명').waitFor();
+  mode = 'empty';
+  await page.goto(origin + '/admin/users');
+  await page.getByText('검색 결과가 없습니다.', { exact: true }).waitFor();
+  mode = 'loading';
+  await page.goto(origin + '/admin/users');
+  await page.getByRole('status', { name: '회원 목록을 불러오는 중입니다.' }).waitFor();
+  mode = 'normal';
+  await page.getByText('조회된 회원 3명').waitFor();
+  results.push('members loading, empty, error, retry');
+  mode = 'managers-error';
+  await page.goto(origin + '/admin/shelters/411000202400001');
+  await page.getByText('담당자 목록 조회 실패', { exact: true }).waitFor({ timeout: 15000 });
+  check(await page.getByRole('heading', { name: shelter.name, exact: true }).isVisible(), 'Manager failure keeps shelter basic information');
+  mode = 'normal';
+  results.push('independent shelter-manager failure');
+  await page.goto(origin + '/admin/shelter-applications/42?status=PENDING&page=0');
+  await page.getByLabel('연결할 보호소 등록번호 (필수)').fill(shelter.careRegNo);
+  await page.getByLabel('확인 메모 (필수)').fill('소속 확인 완료');
+  await page.getByRole('button', { name: '확인 후 승인하기' }).click();
+  const approval = page.getByRole('dialog', { name: '담당자 권한을 부여하시겠어요?' });
+  await approval.waitFor();
+  mode = 'pending';
+  await approval.getByRole('button', { name: '확인하고 승인' }).click();
+  await approval.getByRole('button', { name: '처리 중…' }).waitFor();
+  check(await approval.getByRole('button', { name: '취소' }).isDisabled(), 'Approval pending lock');
+  releaseMutation(); mode = 'normal';
+  await approval.waitFor({ state: 'hidden' });
+  await page.getByRole('heading', { name: '처리 결과', exact: true }).waitFor();
+  const approvalWrite = writes.find(write => write.path.endsWith('/approve'));
+  check(approvalWrite.body.careRegNo === shelter.careRegNo && approvalWrite.body.note === '소속 확인 완료', 'Approval payload unchanged');
+  check((await page.getByRole('link', { name: '신청 목록으로', exact: true }).getAttribute('href')).includes('status=PENDING'), 'List query retained');
+  applicationStatus = 'PENDING';
+  await page.goto(origin + '/admin/shelter-applications/42');
+  await page.getByRole('button', { name: '반려 사유 작성하기' }).click();
+  const rejection = page.getByRole('dialog', { name: '반려 사유', exact: true });
+  check(await rejection.getByRole('button', { name: '사유 전달하고 반려' }).isDisabled(), 'Reason is mandatory');
+  await rejection.getByLabel('반려 사유 (필수)').fill('확인 자료 부족');
+  await rejection.getByRole('button', { name: '사유 전달하고 반려' }).click();
+  await rejection.waitFor({ state: 'hidden' });
+  check(writes.find(write => write.path.endsWith('/reject')).body.reason === '확인 자료 부족', 'Rejection payload unchanged');
+  results.push('approval/rejection modals, payload, processing lock, back query');
+  mode = 'stats-error';
+  await page.goto(origin + '/admin/statistics');
+  await page.getByText('통계 조회 실패', { exact: true }).waitFor({ timeout: 15000 });
+  check(await page.getByRole('heading', { name: '기간 합계' }).count() === 0, 'Statistics failure is not zero');
+  mode = 'zero';
+  await page.getByRole('button', { name: '다시 불러오기', exact: true }).click();
+  await page.getByRole('heading', { name: '회원 가입 추이', exact: true }).waitFor();
+  await page.getByRole('button', { name: '최근 30일', exact: true }).click();
+  await page.getByRole('button', { name: '다음', exact: true }).click();
+  check(await page.getByText('2 / 5', { exact: true }).isVisible(), 'Statistics pagination');
+  await page.getByRole('button', { name: '오늘', exact: true }).click();
+  await page.getByText('1 / 1', { exact: true }).waitFor();
+  results.push('statistics failure/zero/date filter/page reset');
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto(origin + '/animals/new');
+  const breadcrumb = page.getByRole('navigation', { name: '현재 위치', exact: true });
+  check(await breadcrumb.getByRole('link', { name: '홈', exact: true }).isVisible(), 'Public breadcrumb keeps home link');
+  await breadcrumb.getByRole('button').click();
+  check(await breadcrumb.getByRole('link', { name: '마이페이지', exact: true }).isVisible(), 'Public breadcrumb keeps collapsed ancestors');
+  await page.keyboard.press('Escape');
+  check(await breadcrumb.getByRole('button').getAttribute('aria-expanded') === 'false', 'Public breadcrumb Escape closes ancestors');
+  await page.goto(origin + '/animals/stats');
+  const dateTrigger = page.getByRole('button', { name: '직접 선택', exact: true });
+  await dateTrigger.click();
+  const publicDialog = page.getByRole('dialog', { name: '조회 기간 선택', exact: true });
+  await publicDialog.waitFor();
+  const publicGeometry = await publicDialog.evaluate(el => ({ width: el.getBoundingClientRect().width, viewport: innerWidth, overflow: document.body.style.overflow }));
+  check(publicGeometry.width <= publicGeometry.viewport - 30 && publicGeometry.overflow === 'hidden', 'Public dialog keeps bounded width and scroll lock');
+  await page.keyboard.press('Escape');
+  await publicDialog.waitFor({ state: 'hidden' });
+  check(await dateTrigger.evaluate(el => document.activeElement === el), 'Public dialog returns focus');
+  results.push('public breadcrumb collapse/Escape and default statistics dialog/focus');
+  for (const role of [null, 'ROLE_USER']) {
+    await page.evaluate(role => {
+      if (!role) localStorage.removeItem('auth-storage');
+      else localStorage.setItem('auth-storage', JSON.stringify({ state: { user: { id: 3, name: '일반 회원', email: 'member@example.invalid', role }, accessToken: 'local-mock-only', refreshToken: null }, version: 0 }));
+    }, role);
+    for (const path of ['/admin/dashboard', '/admin/shelter-applications/42', '/products/new']) {
+      await page.goto(origin + path);
+      await page.getByText(role ? '접근 권한이 없습니다' : '로그인이 필요합니다', { exact: true }).waitFor();
+      check(await page.getByRole('heading', { level: 1 }).count() === 0, 'Denied route must not render admin page: ' + path);
+    }
+  }
+  check(writes.length === 4, 'Shared/public/access regression must not send extra writes');
+  results.push('logged-out and non-admin access blocked on three representative routes');
+  check(errors.length === 0, 'Page errors: ' + errors.join('; '));
+  return { results, screensRendered: 24, screenshotCount: 16, mockedMutationCount: writes.length, pageErrors: errors };
+}

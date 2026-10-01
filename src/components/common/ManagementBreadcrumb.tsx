@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 
 type ManagementBreadcrumbProps = {
   current: string;
+  items?: { label: string; to: string; state?: unknown }[];
+  separatorSrc?: string;
+  collapseAncestors?: boolean;
 };
 
 const ancestors = [
@@ -11,7 +14,8 @@ const ancestors = [
   { label: '등록한 동물', to: '/mypage', state: { tab: 'registeredAnimals' } },
 ] as const;
 
-export default function ManagementBreadcrumb({ current }: ManagementBreadcrumbProps) {
+export default function ManagementBreadcrumb({ current, items, separatorSrc, collapseAncestors = true }: ManagementBreadcrumbProps) {
+  const trail = items ?? ancestors;
   const [expanded, setExpanded] = useState(false);
   const menuRef = useRef<HTMLLIElement>(null);
 
@@ -38,7 +42,7 @@ export default function ManagementBreadcrumb({ current }: ManagementBreadcrumbPr
     };
   }, [expanded]);
 
-  const separator = (
+  const separator = separatorSrc ? <img src={separatorSrc} alt="" width="16" height="16" /> : (
     <span aria-hidden="true" className="material-symbols-outlined text-base leading-none text-brand-muted">
       chevron_right
     </span>
@@ -46,28 +50,28 @@ export default function ManagementBreadcrumb({ current }: ManagementBreadcrumbPr
 
   return (
     <nav aria-label="현재 위치" className="relative min-w-0 text-sm font-medium">
-      <ol className="hidden h-11 items-center gap-1.5 md:flex">
-        {ancestors.map((item) => (
+      <ol className={collapseAncestors ? 'hidden h-11 items-center gap-1.5 md:flex' : 'flex min-h-11 flex-wrap items-center gap-1.5'}>
+        {trail.map((item) => (
           <li key={item.label} className="flex items-center gap-1.5">
             <Link
               to={item.to}
               state={item.state}
-              className="rounded-md px-1.5 py-2 text-brand-muted transition-colors hover:bg-brand-soft hover:text-brand-ink dark:hover:bg-stone-800 dark:hover:text-white"
+              className={`${collapseAncestors ? '' : 'inline-flex min-h-11 items-center'} rounded-md px-1.5 py-2 text-brand-muted transition-colors hover:bg-brand-soft hover:text-brand-ink dark:hover:bg-stone-800 dark:hover:text-white`}
             >
               {item.label}
             </Link>
             {separator}
           </li>
         ))}
-        <li aria-current="page" className="max-w-56 truncate rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:bg-stone-800 dark:text-white">
+        <li aria-current="page" className={`${collapseAncestors ? 'max-w-56 truncate' : 'break-words'} rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:bg-stone-800 dark:text-white`}>
           {current}
         </li>
       </ol>
 
-      <ol className="flex h-11 min-w-0 items-center gap-1 md:hidden">
+      {collapseAncestors && <ol className="flex h-11 min-w-0 items-center gap-1 md:hidden">
         <li>
-          <Link to="/" className="inline-flex min-h-11 items-center rounded-md px-1.5 text-brand-muted hover:text-brand-ink dark:hover:text-white">
-            홈
+          <Link to={trail[0].to} className="inline-flex min-h-11 items-center rounded-md px-1.5 text-brand-muted hover:text-brand-ink dark:hover:text-white">
+            {trail[0].label}
           </Link>
         </li>
         <li>{separator}</li>
@@ -87,7 +91,7 @@ export default function ManagementBreadcrumb({ current }: ManagementBreadcrumbPr
               id="management-breadcrumb-ancestors"
               className="absolute left-0 top-full z-30 mt-1 w-44 rounded-xl border border-brand-border bg-white p-1.5 shadow-lg dark:border-stone-700 dark:bg-stone-900"
             >
-              {ancestors.slice(1).map((item) => (
+              {trail.slice(1).map((item) => (
                 <Link
                   key={item.label}
                   to={item.to}
@@ -105,7 +109,7 @@ export default function ManagementBreadcrumb({ current }: ManagementBreadcrumbPr
         <li aria-current="page" className="min-w-0 max-w-[calc(100vw-172px)] truncate rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:bg-stone-800 dark:text-white">
           {current}
         </li>
-      </ol>
+      </ol>}
     </nav>
   );
 }

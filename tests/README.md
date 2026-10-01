@@ -1,5 +1,32 @@
 # 동반여행 DB 기반 로컬 검증
 
+## 관리자 리뉴얼 UI 검증
+
+관리자 화면 17개와 기존 API 변경 계약을 로컬 모의 응답으로 검증한다. 운영 인증정보·DB·실제 결제는 사용하지 않는다. `admin-renewal.browser.js`는 회원·보호소·통계 8개, `admin-market.browser.js`는 게시글·상품·주문·분류 9개 화면을 담당한다. 각 스크립트는 1440·390·320px에서 화면을 렌더링한다.
+
+```sh
+node --experimental-strip-types --test-isolation=none --test tests/adminStatistics.test.ts tests/shelters.test.ts tests/animalStatistics.test.ts tests/authSession.test.ts tests/seo.test.ts
+VITE_API_BASE_URL=https://api.pawbridge.kr npm run build
+VITE_API_BASE_URL=http://127.0.0.1:5199 CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev -- --host 127.0.0.1 --port 5199 --strictPort
+```
+
+이미 설치된 Chromium 경로를 지정해 전용 Playwright 세션을 열고 두 스크립트를 순서대로 실행한다. WSL의 Windows 작업 폴더에서 파일 감시가 누락되면 polling 설정을 사용하거나 이 작업의 개발 서버만 다시 실행한다. 다른 서버·VM을 중지하지 않는다.
+
+```sh
+PLAYWRIGHT_MCP_EXECUTABLE_PATH=/absolute/path/to/chromium playwright-cli -s=admin-renewal open http://127.0.0.1:5199
+playwright-cli -s=admin-renewal run-code --filename=tests/admin-renewal.browser.js --raw
+playwright-cli -s=admin-renewal run-code --filename=tests/admin-market.browser.js --raw
+playwright-cli -s=admin-renewal close
+```
+
+API 가로채기는 fetch/XHR에만 적용한다. Vite의 `/src/api/` 모듈을 가로채면 정상 소스까지 모의 501 응답으로 바뀌어 화면이 비게 된다. 결과의 개별 테스트 이름과 실제 실행 개수를 확인한다. 파일 하나의 성공 표시를 파일 안의 모든 테스트 실행으로 해석하지 않는다. 스크린샷은 `/tmp/admin-renewal-*.png`, `/tmp/admin-market-*.png`에 남긴다.
+
+위 단위 테스트 명령은 Node.js 24의 `--test-isolation=none`을 사용한다. 이 실행 환경에서 기본 격리 방식이 개별 테스트 대신 파일 성공만 보고한 사례가 있어, 개별 테스트 이름과 통과 수를 확인한다. 관리자 전용 main 승격에서는 dev에만 있는 환경 정책 테스트 4개를 제외한 26개를 실행한다. dev의 기존 30개 검사 결과와 구분하며 빌드·Worker 설정은 이번 승격에 포함하지 않는다.
+
+검증에는 검색·페이지·0건·오류·재시도, 모바일 메뉴 포커스·Escape, 승인·반려 확인, SKU 조합·이미지 업로드·가격/재고, 게시글 multipart 수정, 카테고리·옵션 값 변경, 주문 상태 부분 실패 후 최신 상태 복구가 포함된다. 운영 CRUD와 신규 통계 집계 API 검증을 대신하지 않는다.
+
+공용 브레드크럼의 공개 화면 축약·Escape, 기본 통계 모달의 크기·스크롤 잠금·포커스 복귀, 비회원·일반 회원의 관리자 대표 경로 차단도 확인한다. 카테고리·옵션 그룹은 편집 시작 클릭이 저장 요청을 보내지 않아야 하며 실제 값을 바꾼 저장에서만 기존 PUT을 전송한다.
+
 이 절차는 합성 관광공사 응답을 실제 수집기로 MySQL에 저장한 뒤, 실제 Gateway·Controller·Service와 프런트 화면을 연결한다. API 응답 JSON을 브라우저에서 만들지 않는다.
 
 관광공사 실 API, 전체 animal-service 인프라, 운영 도메인·TLS·CORS는 검증 범위가 아니다. 실제 API 키와 운영 DB를 사용하지 않는다.
