@@ -1,9 +1,36 @@
 import apiClient from './client';
+import type { AdminDailyCount } from '../lib/adminStatistics';
 import type {
   SignupPeriodsResponse,
   DailySignupStatsResponse,
   DailyAnimalStatsResponse,
 } from '../types/api.types';
+
+export interface AdminPeriodTrend {
+  startDate: string;
+  endDate: string;
+  daily: AdminDailyCount[];
+  previousDayCount: number;
+}
+export interface ShelterApplicationStats extends AdminPeriodTrend {
+  currentPending: number;
+  approvedCount: number;
+  rejectedCount: number;
+}
+export type PostStatsBoardType = 'MISSING' | 'PROTECTION' | 'REPORT' | 'ADOPTION' | 'COMMUNICATION';
+export interface PostPeriodStats extends AdminPeriodTrend {
+  byBoardType: { boardType: PostStatsBoardType; count: number }[];
+}
+interface Envelope<T> { data: T }
+
+export const getIntakeTrend = async (startDate: string, endDate: string): Promise<AdminPeriodTrend> =>
+  (await apiClient.get<AdminPeriodTrend>('/api/admin/stats/intake-trend', { params: { startDate, endDate } })).data;
+export const getShelterApplicationStats = async (startDate: string, endDate: string): Promise<ShelterApplicationStats> =>
+  (await apiClient.get<Envelope<ShelterApplicationStats>>('/api/admin/users/shelter-applications/stats', { params: { startDate, endDate } })).data.data;
+export const getPostPeriodStats = async (startDate: string, endDate: string): Promise<PostPeriodStats> =>
+  (await apiClient.get<Envelope<PostPeriodStats>>('/api/admin/posts/stats/period', { params: { startDate, endDate } })).data.data;
+export const getRegisteredShelterCount = async (): Promise<number> =>
+  (await apiClient.get<number>('/api/shelters/count')).data;
 
 // 전체 회원 수 조회
 export const getTotalUserCount = async (): Promise<number> => {
