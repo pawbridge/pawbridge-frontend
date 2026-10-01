@@ -16,11 +16,13 @@ import type {
   CreateOptionValueRequest,
   UpdateOptionValueRequest,
 } from '../types/api.types';
-import { useAuthStore } from '../store/authStore';
-import AdminSidebar from '../components/layout/AdminSidebar';
+import AdminLayout from '../components/layout/AdminLayout';
+import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
+import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
 
 export default function AdminOptionGroupManagement() {
-  const { user } = useAuthStore();
+  const [notice, setNotice] = useState('');
+  const [deleting, setDeleting] = useState<{ kind: 'group' | 'value'; id: number; name: string } | null>(null);
   const queryClient = useQueryClient();
 
   const [selectedGroup, setSelectedGroup] = useState<OptionGroupResponse | null>(null);
@@ -33,7 +35,7 @@ export default function AdminOptionGroupManagement() {
   const [editingValueName, setEditingValueName] = useState('');
 
   // 옵션 그룹 목록 조회
-  const { data: optionGroups = [], isLoading, error } = useQuery<OptionGroupResponse[]>({
+  const { data: optionGroups = [], isLoading, error, refetch } = useQuery<OptionGroupResponse[]>({
     queryKey: ['optionGroups'],
     queryFn: getOptionGroups,
   });
@@ -49,21 +51,19 @@ export default function AdminOptionGroupManagement() {
         });
       }
     }
-  }, [optionGroups, selectedGroup?.id, isEditMode]);
+  }, [optionGroups, selectedGroup, isEditMode]);
 
   // 옵션 그룹 생성
   const createMutation = useMutation({
     mutationFn: createOptionGroup,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['optionGroups'] });
-      alert('옵션 그룹이 생성되었습니다.');
+      setNotice('옵션 그룹이 생성되었습니다.');
       setIsCreateMode(false);
       setGroupFormData({ name: '' });
       setSelectedGroup(null);
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '옵션 그룹 생성에 실패했습니다.');
-    },
+    onError: () => { setNotice('저장에 실패했습니다. 입력 내용을 확인한 후 다시 시도해 주세요.'); },
   });
 
   // 옵션 그룹 수정
@@ -72,26 +72,10 @@ export default function AdminOptionGroupManagement() {
       updateOptionGroup(groupId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['optionGroups'] });
-      alert('옵션 그룹이 수정되었습니다.');
+      setNotice('옵션 그룹이 수정되었습니다.');
       setIsEditMode(false);
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '옵션 그룹 수정에 실패했습니다.');
-    },
-  });
-
-  // 옵션 그룹 삭제
-  const deleteMutation = useMutation({
-    mutationFn: deleteOptionGroup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['optionGroups'] });
-      alert('옵션 그룹이 삭제되었습니다.');
-      setSelectedGroup(null);
-      setGroupFormData({ name: '' });
-    },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '옵션 그룹 삭제에 실패했습니다.');
-    },
+    onError: () => { setNotice('저장에 실패했습니다. 입력 내용을 확인한 후 다시 시도해 주세요.'); },
   });
 
   // 옵션 값 추가
@@ -101,11 +85,9 @@ export default function AdminOptionGroupManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['optionGroups'] });
       setNewValueName('');
-      alert('옵션 값이 추가되었습니다.');
+      setNotice('옵션 값이 추가되었습니다.');
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '옵션 값 추가에 실패했습니다.');
-    },
+    onError: () => { setNotice('저장에 실패했습니다. 입력 내용을 확인한 후 다시 시도해 주세요.'); },
   });
 
   // 옵션 값 수정
@@ -116,25 +98,10 @@ export default function AdminOptionGroupManagement() {
       queryClient.invalidateQueries({ queryKey: ['optionGroups'] });
       setEditingValueId(null);
       setEditingValueName('');
-      alert('옵션 값이 수정되었습니다.');
+      setNotice('옵션 값이 수정되었습니다.');
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '옵션 값 수정에 실패했습니다.');
-    },
+    onError: () => { setNotice('저장에 실패했습니다. 입력 내용을 확인한 후 다시 시도해 주세요.'); },
   });
-
-  // 옵션 값 삭제
-  const deleteValueMutation = useMutation({
-    mutationFn: deleteOptionValue,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['optionGroups'] });
-      alert('옵션 값이 삭제되었습니다.');
-    },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '옵션 값 삭제에 실패했습니다.');
-    },
-  });
-
 
   // 옵션 그룹 선택
   const handleSelectGroup = (group: OptionGroupResponse) => {
@@ -161,7 +128,9 @@ export default function AdminOptionGroupManagement() {
   };
 
   // 수정하기 버튼 클릭
-  const handleEditClick = () => {
+  const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // 편집 전환으로 버튼 type이 바뀌어도 같은 클릭에서 저장하지 않는다.
+    event.preventDefault();
     setIsEditMode(true);
   };
 
@@ -170,7 +139,7 @@ export default function AdminOptionGroupManagement() {
     e.preventDefault();
 
     if (!groupFormData.name.trim()) {
-      alert('그룹 이름을 입력해주세요.');
+      setNotice('그룹 이름을 입력해주세요.');
       return;
     }
 
@@ -193,13 +162,11 @@ export default function AdminOptionGroupManagement() {
     if (!selectedGroup) return;
 
     if (selectedGroup.values && selectedGroup.values.length > 0) {
-      alert('옵션 값이 있는 경우 삭제할 수 없습니다.');
+      setNotice('옵션 값이 있는 경우 삭제할 수 없습니다.');
       return;
     }
 
-    if (confirm(`"${selectedGroup.name}" 옵션 그룹을 삭제하시겠습니까?`)) {
-      deleteMutation.mutate(selectedGroup.id);
-    }
+    setDeleting({ kind: 'group', id: selectedGroup.id, name: selectedGroup.name });
   };
 
   // 취소
@@ -223,12 +190,12 @@ export default function AdminOptionGroupManagement() {
   // 옵션 값 추가
   const handleAddValue = () => {
     if (!selectedGroup) {
-      alert('옵션 그룹을 먼저 선택해주세요.');
+      setNotice('옵션 그룹을 먼저 선택해주세요.');
       return;
     }
 
     if (!newValueName.trim()) {
-      alert('옵션 값 이름을 입력해주세요.');
+      setNotice('옵션 값 이름을 입력해주세요.');
       return;
     }
 
@@ -253,7 +220,7 @@ export default function AdminOptionGroupManagement() {
   // 옵션 값 수정 저장
   const handleSaveValue = (valueId: number) => {
     if (!editingValueName.trim()) {
-      alert('옵션 값 이름을 입력해주세요.');
+      setNotice('옵션 값 이름을 입력해주세요.');
       return;
     }
 
@@ -265,9 +232,7 @@ export default function AdminOptionGroupManagement() {
 
   // 옵션 값 삭제
   const handleDeleteValue = (valueId: number, valueName: string) => {
-    if (confirm(`"${valueName}" 옵션 값을 삭제하시겠습니까?`)) {
-      deleteValueMutation.mutate(valueId);
-    }
+    setDeleting({ kind: 'value', id: valueId, name: valueName });
   };
 
   // 검색 필터링
@@ -275,369 +240,31 @@ export default function AdminOptionGroupManagement() {
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  return (
-    <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
-      {/* 사이드바 */}
-      <AdminSidebar />
-
-      {/* 메인 콘텐츠 */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
-        {/* 헤더 */}
-        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-text-main dark:text-white">옵션 그룹 관리</h2>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
-              <span className="material-symbols-outlined text-text-secondary">search</span>
-              <input
-                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
-                placeholder="검색..."
-                type="text"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
-              </button>
-              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
-                >
-                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
-                    {user?.name?.charAt(0) || '관'}
-                  </div>
-                </div>
-                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
-                  {user?.name || '관리자'}님
-                </span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* 콘텐츠 영역 */}
-        <div className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
-          <div className="max-w-[1280px] mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-text-main dark:text-white tracking-tight">옵션 그룹 관리</h1>
-                <p className="mt-1 text-sm text-text-secondary dark:text-gray-400">
-                  상품 등록 시 사용되는 옵션 그룹을 관리합니다.
-                </p>
-              </div>
-              <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-text-main dark:text-white font-medium text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
-                <span className="material-symbols-outlined text-[20px]">download</span>
-                내보내기
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px] items-stretch">
-              {/* 왼쪽: 옵션 그룹 목록 */}
-              <section className="lg:col-span-4 flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden h-full max-h-[calc(100vh-200px)] lg:h-auto">
-                <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-surface-dark sticky top-0 z-10 flex-shrink-0">
-                  <div className="relative group">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-accent transition-colors">
-                      <span className="material-symbols-outlined text-[20px]">search</span>
-                    </span>
-                    <input
-                      className="w-full pl-10 pr-4 py-2 bg-background-light dark:bg-background-dark border-none rounded-lg text-sm font-medium focus:ring-1 focus:ring-brand-focus text-text-main dark:text-white placeholder-gray-400 transition-all"
-                      placeholder="그룹 검색..."
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar min-h-0">
-                  {isLoading ? (
-                    <div className="flex items-center justify-center h-full">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-focus"></div>
-                    </div>
-                  ) : error ? (
-                    <div className="text-red-500 text-sm p-4">옵션 그룹 목록을 불러오는데 실패했습니다.</div>
-                  ) : filteredGroups.length === 0 ? (
-                    <div className="text-text-sub dark:text-gray-400 text-sm p-4">옵션 그룹이 없습니다.</div>
-                  ) : (
-                    filteredGroups.map((group) => (
-                      <button
-                        key={group.id}
-                        onClick={() => handleSelectGroup(group)}
-                        className={`w-full text-left p-3 rounded-lg flex justify-between items-center group transition-all ${
-                          selectedGroup?.id === group.id
-                            ? 'bg-brand/10 border border-brand-focus'
-                            : 'hover:bg-gray-50 dark:hover:bg-gray-800/60 border border-transparent'
-                        }`}
-                      >
-                        <div>
-                          <p
-                            className={`text-sm ${
-                              selectedGroup?.id === group.id
-                                ? 'font-bold text-text-main dark:text-white'
-                                : 'font-medium text-text-main dark:text-gray-300 group-hover:text-brand-accent dark:group-hover:text-brand-accent'
-                            }`}
-                          >
-                            {group.name}
-                          </p>
-                          <p className="text-xs text-text-secondary mt-0.5">사용자 정의</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`text-xs font-bold px-2 py-0.5 rounded border shadow-sm ${
-                              selectedGroup?.id === group.id
-                                ? 'bg-white dark:bg-background-dark text-text-main dark:text-white border-gray-100 dark:border-gray-700'
-                                : 'bg-gray-100 dark:bg-gray-800 text-gray-500 group-hover:bg-white dark:group-hover:bg-background-dark'
-                            }`}
-                          >
-                            {group.values.length}
-                          </span>
-                          {selectedGroup?.id === group.id && (
-                            <span className="material-symbols-outlined text-brand-accent text-[20px]">chevron_right</span>
-                          )}
-                        </div>
-                      </button>
-                    ))
-                  )}
-                </div>
-                <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-surface-dark/50 flex-shrink-0">
-                  <button
-                    onClick={handleNewGroup}
-                    className="w-full py-2.5 bg-brand hover:bg-brand-hover text-text-main text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md shadow-brand/20 active:scale-[0.98]"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                    새 그룹 추가
-                  </button>
-                </div>
-              </section>
-
-              {/* 오른쪽: 옵션 그룹 상세 */}
-              <section className="lg:col-span-8 flex flex-col bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden h-full">
-                {isCreateMode || selectedGroup ? (
-                  <>
-                    <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-start gap-6">
-                      <form onSubmit={handleGroupSubmit} className="flex-1 w-full space-y-4">
-                        <div className="space-y-1">
-                          <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider">
-                            그룹 이름
-                          </label>
-                          <input
-                            type="text"
-                            value={groupFormData.name}
-                            onChange={(e) => setGroupFormData({ ...groupFormData, name: e.target.value })}
-                            readOnly={!isCreateMode && !isEditMode}
-                            className={`w-full bg-transparent text-xl font-bold border-0 border-b-2 px-0 py-1.5 text-text-main dark:text-white transition-colors placeholder-gray-300 ${
-                              !isCreateMode && !isEditMode
-                                ? 'border-gray-200 dark:border-gray-700 cursor-not-allowed'
-                                : 'border-gray-200 dark:border-gray-700 focus:border-brand-focus focus:ring-0'
-                            }`}
-                            placeholder="그룹 이름을 입력하세요"
-                            required
-                          />
-                        </div>
-                      </form>
-                      <div className="w-[120px] flex justify-end">
-                        {!isCreateMode && selectedGroup && !isEditMode && (
-                          <button
-                            type="button"
-                            onClick={handleEditClick}
-                            className="px-4 py-2 rounded-lg bg-brand hover:bg-brand text-card-dark text-sm font-bold transition-all flex items-center justify-center gap-2"
-                          >
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
-                            수정하기
-                          </button>
-                        )}
-                      </div>
-                      {!isCreateMode && selectedGroup && (
-                        <button
-                          type="button"
-                          onClick={handleDeleteGroup}
-                          disabled={deleteMutation.isPending}
-                          className="flex-shrink-0 flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-sm font-semibold transition-colors border border-transparent hover:border-red-100 dark:hover:border-red-900/30 disabled:opacity-50"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
-                          그룹 삭제
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="flex-1 flex flex-col min-h-0">
-                      <div className="p-4 sm:px-6 sm:py-4 flex items-center justify-between">
-                        <h3 className="font-bold text-text-main dark:text-white flex items-center gap-2">
-                          <span className="material-symbols-outlined text-brand-accent">list</span>
-                          옵션 값 관리
-                        </h3>
-                        {selectedGroup && (
-                          <span className="text-xs font-bold bg-background-light dark:bg-background-dark px-3 py-1 rounded-full text-text-secondary border border-gray-100 dark:border-gray-700">
-                            총 {selectedGroup.values.length}개 항목
-                          </span>
-                        )}
-                      </div>
-
-                      {selectedGroup && (
-                        <>
-                          <div className="px-4 sm:px-6 pb-4">
-                            <div className="flex flex-col sm:flex-row items-end gap-3 bg-background-light dark:bg-background-dark p-4 rounded-lg border border-dashed border-gray-200 dark:border-gray-700">
-                              <div className="flex-1 w-full">
-                                <label className="block text-xs font-bold text-text-secondary mb-1.5 ml-0.5">
-                                  옵션 값 이름
-                                </label>
-                                <input
-                                  type="text"
-                                  value={newValueName}
-                                  onChange={(e) => setNewValueName(e.target.value)}
-                                  onKeyPress={(e) => {
-                                    if (e.key === 'Enter') {
-                                      e.preventDefault();
-                                      handleAddValue();
-                                    }
-                                  }}
-                                  className="w-full h-10 rounded-md border-gray-200 dark:border-gray-600 dark:bg-surface-dark dark:text-white text-sm focus:border-brand-focus focus:ring-brand-focus transition-shadow px-4"
-                                  placeholder="예: 말티즈"
-                                />
-                              </div>
-                              <button
-                                type="button"
-                                onClick={handleAddValue}
-                                disabled={createValueMutation.isPending}
-                                className="w-full sm:w-auto h-10 px-5 bg-white dark:bg-surface-dark border border-brand-focus text-brand-accent hover:bg-brand hover:text-text-main text-sm font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-sm disabled:opacity-50"
-                              >
-                                <span className="material-symbols-outlined text-[20px]">add</span>
-                                추가
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="flex-1 overflow-auto px-4 sm:px-6 pb-4 custom-scrollbar">
-                            {selectedGroup.values.length === 0 ? (
-                              <div className="text-center py-8 text-text-sub dark:text-gray-400">
-                                옵션 값이 없습니다. 위에서 추가해주세요.
-                              </div>
-                            ) : (
-                              <table className="w-full text-left border-collapse">
-                                <thead className="bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-10 text-xs font-bold text-text-secondary uppercase">
-                                  <tr>
-                                    <th className="py-3 px-4 rounded-l-lg w-16 text-center">No.</th>
-                                    <th className="py-3 px-4">값 이름</th>
-                                    <th className="py-3 px-4 rounded-r-lg w-24 text-center">관리</th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800 text-sm">
-                                  {selectedGroup.values.map((value, index) => (
-                                    <tr key={value.id} className="group hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                      <td className="py-3 px-4 text-center text-text-secondary">{index + 1}</td>
-                                      <td className="py-3 px-4">
-                                        {editingValueId === value.id ? (
-                                          <input
-                                            type="text"
-                                            value={editingValueName}
-                                            onChange={(e) => setEditingValueName(e.target.value)}
-                                            onKeyPress={(e) => {
-                                              if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                handleSaveValue(value.id);
-                                              }
-                                              if (e.key === 'Escape') {
-                                                handleCancelEditValue();
-                                              }
-                                            }}
-                                            className="w-full bg-transparent border border-brand-focus focus:ring-1 focus:ring-brand-focus rounded py-1 px-2 text-text-main dark:text-gray-200 font-medium text-sm"
-                                            autoFocus
-                                          />
-                                        ) : (
-                                          <span className="text-text-main dark:text-gray-200 font-medium text-sm">{value.name}</span>
-                                        )}
-                                      </td>
-                                      <td className="py-3 px-4">
-                                        <div className="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                          {editingValueId === value.id ? (
-                                            <>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleSaveValue(value.id)}
-                                                disabled={updateValueMutation.isPending}
-                                                className="p-1 text-brand-accent hover:bg-brand/10 transition-colors rounded"
-                                                title="저장"
-                                              >
-                                                <span className="material-symbols-outlined text-[18px]">check</span>
-                                              </button>
-                                              <button
-                                                type="button"
-                                                onClick={handleCancelEditValue}
-                                                className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                                                title="취소"
-                                              >
-                                                <span className="material-symbols-outlined text-[18px]">close</span>
-                                              </button>
-                                            </>
-                                          ) : (
-                                            <>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleStartEditValue(value)}
-                                                className="p-1 text-gray-400 hover:text-brand-accent transition-colors"
-                                                title="수정"
-                                              >
-                                                <span className="material-symbols-outlined text-[18px]">edit</span>
-                                              </button>
-                                              <button
-                                                type="button"
-                                                onClick={() => handleDeleteValue(value.id, value.name)}
-                                                disabled={deleteValueMutation.isPending}
-                                                className="p-1 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
-                                                title="삭제"
-                                              >
-                                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                                              </button>
-                                            </>
-                                          )}
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {(isCreateMode || isEditMode) && (
-                      <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-surface-dark/50 flex justify-end gap-3">
-                        <button
-                          type="button"
-                          onClick={handleGroupSubmit}
-                          disabled={createMutation.isPending || updateMutation.isPending}
-                          className="px-5 py-2.5 bg-brand hover:bg-brand-hover text-text-main font-bold text-sm rounded-lg transition-all shadow-md shadow-brand/20 flex items-center gap-2 active:scale-[0.98] disabled:opacity-50"
-                        >
-                          <span className="material-symbols-outlined text-[20px]">save</span>
-                          저장하기
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleCancel}
-                          className="px-5 py-2.5 bg-white dark:bg-surface-dark border-2 border-gray-300 dark:border-gray-600 text-text-main dark:text-gray-300 font-bold text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shadow-md"
-                        >
-                          변경 취소
-                        </button>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center">
-                      <span className="material-symbols-outlined text-5xl text-gray-400 mb-4">tune</span>
-                      <p className="text-text-sub dark:text-gray-400">옵션 그룹을 선택하거나 새 그룹을 추가해주세요.</p>
-                    </div>
-                  </div>
-                )}
-              </section>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+  const busy = createMutation.isPending || updateMutation.isPending || createValueMutation.isPending || updateValueMutation.isPending;
+  return <AdminLayout title="옵션 그룹 관리" description="상품 옵션 그룹과 선택 가능한 값을 관리합니다.">
+    {notice && <p role="status" className={adminPanel}>{notice}</p>}
+    {isLoading ? <AdminLoading /> : error ? <AdminError title="옵션 그룹 조회 실패" retry={() => void refetch()} /> : <fieldset disabled={busy || !!deleting} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <section className={`${adminPanel} space-y-4`}><h2 className="text-xl font-bold">옵션 그룹</h2>
+        <label className="block text-sm font-medium">그룹 검색<input className={adminInput} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></label>
+        <ul className="space-y-2">{filteredGroups.map(group => <li key={group.id}><button type="button" className={`${adminControl} w-full !justify-start break-words ${selectedGroup?.id === group.id ? '!bg-brand-soft' : ''}`} aria-pressed={selectedGroup?.id === group.id} onClick={() => handleSelectGroup(group)}>{group.name}</button></li>)}</ul>
+        {!filteredGroups.length && <p className="text-sm text-brand-muted">{optionGroups.length ? '검색 결과가 없습니다.' : '등록된 옵션 그룹이 없습니다.'}</p>}
+        <button type="button" className={adminPrimary} onClick={handleNewGroup}>새 그룹 추가</button>
+      </section>
+      {selectedGroup || isCreateMode ? <section className={`${adminPanel} space-y-6`}><h2 className="break-words text-xl font-bold">{isCreateMode ? '옵션 그룹 등록' : selectedGroup?.name}</h2>
+        <form onSubmit={handleGroupSubmit} className="space-y-4">
+          <label className="block text-sm font-medium">그룹 이름 (필수)<input disabled={!isEditMode} className={adminInput} value={groupFormData.name} onChange={e => setGroupFormData({ name: e.target.value })} /></label>
+          <div className="flex flex-wrap gap-2">{isEditMode ? <button type="submit" className={adminPrimary}>{busy ? '저장 중…' : '저장'}</button> : <button type="button" className={adminPrimary} onClick={handleEditClick}>그룹 수정</button>}<button type="button" className={adminControl} onClick={handleCancel}>취소</button></div>
+        </form>
+        {selectedGroup && !isCreateMode && <section className="space-y-4"><h3 className="text-lg font-bold">옵션 값 · {selectedGroup.values.length}개</h3>
+          <ul className="space-y-3">{selectedGroup.values.map(value => <li key={value.id} className="flex min-w-0 flex-col gap-3 rounded-xl bg-stone-50 p-4 sm:flex-row sm:items-center dark:bg-stone-800">
+            {editingValueId === value.id ? <><label className="min-w-0 flex-1 text-sm">옵션 값 수정<input className={adminInput} value={editingValueName} onChange={e => setEditingValueName(e.target.value)} /></label><div className="flex flex-wrap gap-2"><button className={adminPrimary} type="button" onClick={() => handleSaveValue(value.id)}>저장</button><button className={adminControl} type="button" onClick={handleCancelEditValue}>취소</button></div></> : <><span className="min-w-0 flex-1 break-words text-sm">{value.name}</span><div className="flex flex-wrap gap-2"><button className={adminControl} type="button" onClick={() => handleStartEditValue(value)}>수정</button><button className={`${adminControl} text-red-700`} type="button" onClick={() => handleDeleteValue(value.id, value.name)}>삭제</button></div></>}
+          </li>)}</ul>
+          <label className="block text-sm font-medium">추가할 옵션 값<input className={adminInput} value={newValueName} onChange={e => setNewValueName(e.target.value)} /></label><button className={adminControl} type="button" onClick={handleAddValue}>옵션 값 추가</button>
+          <div><button className={`${adminControl} text-red-700`} type="button" disabled={!!selectedGroup.values.length} onClick={handleDeleteGroup}>그룹 삭제</button><p className="mt-3 text-xs text-brand-muted">옵션 값이 있는 그룹은 삭제할 수 없습니다.</p></div>
+        </section>}
+      </section> : <AdminEmpty title="옵션 그룹을 선택해 주세요." />}
+    </fieldset>}
+    {deleting && <AdminDeleteDialog name={deleting.name} run={() => deleting.kind === 'group' ? deleteOptionGroup(deleting.id) : deleteOptionValue(deleting.id)} refresh={async () => { const result = await refetch(); if (result.isError) throw new Error('refresh failed'); if (deleting.kind === 'group') { setSelectedGroup(null); setIsEditMode(false); } }} onClose={() => setDeleting(null)} />}
+  </AdminLayout>;
 }
 
