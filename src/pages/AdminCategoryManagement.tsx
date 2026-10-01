@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCategories, createCategory, updateCategory, deleteCategory } from '../api/products.api';
 import type { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } from '../types/api.types';
-import { useAuthStore } from '../store/authStore';
-import CustomSelect from '../components/common/CustomSelect';
-import AdminSidebar from '../components/layout/AdminSidebar';
+import AdminLayout from '../components/layout/AdminLayout';
+import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
+import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
 
 interface CategoryTreeNodeProps {
   category: CategoryResponse;
@@ -23,7 +23,8 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
     <div>
       <details className="group" open={isOpen} onToggle={(e) => setIsOpen((e.target as HTMLDetailsElement).open)}>
         <summary
-          className={`flex cursor-pointer items-center justify-between gap-2 p-2 rounded-lg transition-colors ${
+          aria-current={isSelected ? 'true' : undefined}
+          className={`flex cursor-pointer items-center justify-between min-h-11 gap-2 p-2 rounded-lg transition-colors ${
             isSelected
               ? 'bg-brand/10 border border-brand-focus'
               : 'hover:bg-background-light dark:hover:bg-background-dark/50'
@@ -37,7 +38,7 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
             }
           }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             {hasChildren && (
               <span
                 className={`material-symbols-outlined text-text-sub dark:text-gray-400 transition-transform text-[20px] ${
@@ -134,7 +135,8 @@ function canSetParent(
 }
 
 export default function AdminCategoryManagement() {
-  const { user } = useAuthStore();
+  const [notice, setNotice] = useState('');
+  const [deleting, setDeleting] = useState<CategoryResponse | null>(null);
   const queryClient = useQueryClient();
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryResponse | null>(null);
@@ -147,7 +149,7 @@ export default function AdminCategoryManagement() {
   });
 
   // 카테고리 목록 조회
-  const { data: categories = [], isLoading, error } = useQuery<CategoryResponse[]>({
+  const { data: categories = [], isLoading, error, refetch } = useQuery<CategoryResponse[]>({
     queryKey: ['categories'],
     queryFn: getCategories,
   });
@@ -176,21 +178,19 @@ export default function AdminCategoryManagement() {
         });
       }
     }
-  }, [categories, selectedCategory?.id, isEditMode]);
+  }, [categories, selectedCategory, isEditMode]);
 
   // 카테고리 생성
   const createMutation = useMutation({
     mutationFn: createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
-      alert('카테고리가 생성되었습니다.');
+      setNotice('카테고리가 생성되었습니다.');
       setIsCreateMode(false);
       setFormData({ name: '', description: '', parentId: null });
       setSelectedCategory(null);
     },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '카테고리 생성에 실패했습니다.');
-    },
+    onError: () => { setNotice('저장에 실패했습니다. 입력 내용을 확인한 후 다시 시도해 주세요.'); },
   });
 
   // 카테고리 수정
@@ -199,27 +199,11 @@ export default function AdminCategoryManagement() {
       updateCategory(categoryId, data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['categories'] });
-        alert('카테고리가 수정되었습니다.');
+        setNotice('카테고리가 수정되었습니다.');
         setIsEditMode(false); // 수정 완료 후 readonly 모드로
         // 쿼리 재조회 후 선택된 카테고리 정보가 자동으로 갱신됨
       },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '카테고리 수정에 실패했습니다.');
-    },
-  });
-
-  // 카테고리 삭제
-  const deleteMutation = useMutation({
-    mutationFn: deleteCategory,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      alert('카테고리가 삭제되었습니다.');
-      setSelectedCategory(null);
-      setFormData({ name: '', description: '', parentId: null });
-    },
-    onError: (error: any) => {
-      alert(error.response?.data?.message || '카테고리 삭제에 실패했습니다.');
-    },
+    onError: () => { setNotice('저장에 실패했습니다. 입력 내용을 확인한 후 다시 시도해 주세요.'); },
   });
 
   // 카테고리 선택
@@ -243,7 +227,9 @@ export default function AdminCategoryManagement() {
   };
 
   // 수정하기 버튼 클릭
-  const handleEditClick = () => {
+  const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // 같은 DOM 버튼이 submit으로 바뀌어도 이번 클릭은 편집 전환만 수행한다.
+    event.preventDefault();
     setIsEditMode(true);
   };
 
@@ -252,7 +238,7 @@ export default function AdminCategoryManagement() {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      alert('카테고리 이름을 입력해주세요.');
+      setNotice('카테고리 이름을 입력해주세요.');
       return;
     }
 
@@ -262,7 +248,7 @@ export default function AdminCategoryManagement() {
       // 순환 참조 체크
       const validation = canSetParent(selectedCategory.id, formData.parentId ?? null, categories);
       if (!validation.valid) {
-        alert(validation.reason);
+        setNotice(validation.reason ?? '상위 카테고리를 확인해 주세요.');
         return;
       }
       updateMutation.mutate({ categoryId: selectedCategory.id, data: formData });
@@ -274,13 +260,11 @@ export default function AdminCategoryManagement() {
     if (!selectedCategory) return;
 
     if (selectedCategory.children && selectedCategory.children.length > 0) {
-      alert('하위 카테고리가 있는 경우 삭제할 수 없습니다.');
+      setNotice('하위 카테고리가 있는 경우 삭제할 수 없습니다.');
       return;
     }
 
-    if (confirm(`"${selectedCategory.name}" 카테고리를 삭제하시겠습니까?`)) {
-      deleteMutation.mutate(selectedCategory.id);
-    }
+    setDeleting(selectedCategory);
   };
 
   // 취소
@@ -312,233 +296,28 @@ export default function AdminCategoryManagement() {
     })),
   ];
 
-  return (
-    <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
-      {/* 사이드바 */}
-      <AdminSidebar />
-
-      {/* 메인 콘텐츠 */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
-        {/* 헤더 */}
-        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-text-main dark:text-white">카테고리 관리</h2>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
-              <span className="material-symbols-outlined text-text-secondary">search</span>
-              <input
-                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
-                placeholder="검색..."
-                type="text"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
-              </button>
-              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
-                >
-                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
-                    {user?.name?.charAt(0) || '관'}
-                  </div>
-                </div>
-                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
-                  {user?.name || '관리자'}님
-                </span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* 메인 콘텐츠 영역 */}
-        <div className="flex-1 overflow-y-auto p-8 bg-background-light dark:bg-background-dark">
-          <div className="max-w-[1280px] mx-auto">
-            <div className="mb-8">
-              <h1 className="text-2xl md:text-3xl font-bold text-text-main dark:text-white mb-2">카테고리 관리</h1>
-              <p className="text-text-sub dark:text-gray-400">
-                유기동물 입양 및 쇼핑몰 서비스의 카테고리 구조를 설정하고 관리합니다.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              {/* 왼쪽: 카테고리 트리 구조 */}
-              <section className="lg:col-span-4 flex flex-col gap-4">
-                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-brand-border dark:border-stone-700 shadow-sm p-5 flex flex-col min-h-[600px]">
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-brand-soft dark:border-stone-700">
-                    <h3 className="text-lg font-bold text-text-main dark:text-white flex items-center gap-2">
-                      <span className="material-symbols-outlined text-brand-accent">account_tree</span>
-                      카테고리 구조
-                    </h3>
-                    <button
-                      onClick={handleNewCategory}
-                      className="flex items-center justify-center gap-1 bg-brand text-background-dark px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-brand-hover transition-colors shadow-sm"
-                    >
-                      <span className="material-symbols-outlined text-[16px]">add</span>
-                      새 카테고리
-                    </button>
-                  </div>
-                  <div className="flex-1 flex flex-col gap-2 overflow-y-auto pr-1">
-                    {isLoading ? (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-focus"></div>
-                      </div>
-                    ) : error ? (
-                      <div className="text-red-500 text-sm">카테고리 목록을 불러오는데 실패했습니다.</div>
-                    ) : categories.length === 0 ? (
-                      <div className="text-text-sub dark:text-gray-400 text-sm">카테고리가 없습니다.</div>
-                    ) : (
-                      categories.map((category) => (
-                        <CategoryTreeNode
-                          key={category.id}
-                          category={category}
-                          selectedId={selectedCategory?.id || null}
-                          onSelect={handleSelectCategory}
-                        />
-                      ))
-                    )}
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-brand-border dark:border-stone-700 text-center">
-                    <p className="text-xs text-text-sub dark:text-gray-500 flex items-center justify-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]">drag_indicator</span>
-                      드래그 앤 드롭으로 순서 변경 가능
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              {/* 오른쪽: 카테고리 수정 폼 */}
-              <section className="lg:col-span-8 flex flex-col gap-4">
-                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-brand-border dark:border-stone-700 shadow-sm overflow-hidden flex flex-col flex-1">
-                  <div className="p-6 border-b border-brand-soft dark:border-stone-700 flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-text-main dark:text-white flex items-center gap-2">
-                      <span className="material-symbols-outlined text-brand-accent text-[28px]">edit_note</span>
-                      {isCreateMode ? '카테고리 등록' : selectedCategory ? '카테고리 상세' : '카테고리 수정'}
-                    </h2>
-                    <div className="w-[120px] flex justify-end">
-                      {!isCreateMode && selectedCategory && !isEditMode && (
-                        <button
-                          type="button"
-                          onClick={handleEditClick}
-                          className="px-4 py-2 rounded-lg bg-brand hover:bg-brand text-card-dark text-sm font-bold transition-all flex items-center justify-center gap-2"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
-                          수정하기
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <form className="p-6 md:p-8 flex flex-col gap-6 flex-1" onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold text-text-main dark:text-gray-200" htmlFor="cat-name">
-                          카테고리 이름 <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          id="cat-name"
-                          type="text"
-                          value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder="카테고리 이름을 입력하세요"
-                          readOnly={!isCreateMode && !isEditMode}
-                          className={`w-full rounded-lg border border-brand-border dark:border-stone-700 dark:bg-stone-800 dark:text-white px-4 py-3 text-sm focus:border-brand-focus focus:ring-2 focus:ring-brand-focus focus:outline-none transition-all placeholder:text-gray-400 ${
-                            !isCreateMode && !isEditMode ? 'bg-gray-50 dark:bg-stone-800 cursor-not-allowed' : ''
-                          }`}
-                          required
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <label className="text-sm font-bold text-text-main dark:text-gray-200" htmlFor="parent-cat">
-                          상위 카테고리
-                        </label>
-                        <CustomSelect
-                          value={formData.parentId || ''}
-                          onChange={(value) => setFormData({ ...formData, parentId: value ? Number(value) : null })}
-                          options={parentOptions}
-                          placeholder="상위 카테고리 선택"
-                          disabled={!isCreateMode && !isEditMode}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-sm font-bold text-text-main dark:text-gray-200" htmlFor="cat-desc">
-                        설명
-                      </label>
-                        <textarea
-                          id="cat-desc"
-                          value={formData.description || ''}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                          placeholder="카테고리에 대한 설명을 입력하세요..."
-                          rows={4}
-                          readOnly={!isCreateMode && !isEditMode}
-                          className={`w-full rounded-lg border border-brand-border dark:border-stone-700 dark:bg-stone-800 dark:text-white px-4 py-3 text-sm focus:border-brand-focus focus:ring-2 focus:ring-brand-focus focus:outline-none transition-all placeholder:text-gray-400 resize-none ${
-                            !isCreateMode && !isEditMode ? 'bg-gray-50 dark:bg-stone-800 cursor-not-allowed' : ''
-                          }`}
-                        />
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-brand-soft dark:border-stone-700 mt-auto">
-                      {!isCreateMode && selectedCategory && (
-                        <button
-                          type="button"
-                          onClick={handleDelete}
-                          disabled={deleteMutation.isPending}
-                          className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-red-200 hover:border-red-400 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
-                          삭제
-                        </button>
-                      )}
-                      {isCreateMode && <div></div>}
-                      {(!isCreateMode && !isEditMode) ? (
-                        <div className="w-full sm:w-auto flex justify-end">
-                          <button
-                            type="button"
-                            onClick={handleCancel}
-                            className="px-6 py-2.5 rounded-lg border border-brand-border dark:border-stone-700 text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-stone-800 text-sm font-bold transition-all"
-                          >
-                            닫기
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="w-full sm:w-auto flex gap-3 ml-auto">
-                          <button
-                            type="submit"
-                            disabled={createMutation.isPending || updateMutation.isPending}
-                            className="flex-1 sm:flex-none px-8 py-2.5 rounded-lg bg-brand hover:bg-brand text-card-dark text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                          >
-                            <span className="material-symbols-outlined text-[20px]">check</span>
-                            저장하기
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleCancel}
-                            className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg border border-brand-border dark:border-stone-700 text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-stone-800 text-sm font-bold transition-all"
-                          >
-                            취소
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </form>
-                </div>
-                <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 flex gap-4">
-                  <span className="material-symbols-outlined text-blue-500 mt-0.5">info</span>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-bold text-blue-800 dark:text-blue-300">Tip: 카테고리 순서 변경</p>
-                    <p className="text-sm text-blue-600 dark:text-blue-400">
-                      좌측 트리에서 항목을 드래그하여 순서를 변경하거나 상위 카테고리를 이동할 수 있습니다.
-                    </p>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
+  const busy = createMutation.isPending || updateMutation.isPending;
+  return <AdminLayout title="카테고리 관리" description="상품 분류를 만들고 상하위 관계를 관리합니다.">
+    {notice && <p role="status" className={adminPanel}>{notice}</p>}
+    {isLoading ? <AdminLoading /> : error ? <AdminError title="카테고리 조회 실패" retry={() => void refetch()} /> : <fieldset disabled={busy || !!deleting} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <section className={`${adminPanel} space-y-4`}><h2 className="text-xl font-bold">카테고리</h2>
+        {!categories.length ? <p className="text-sm text-brand-muted">등록된 카테고리가 없습니다.</p> : categories.map(category => <CategoryTreeNode key={category.id} category={category} selectedId={selectedCategory?.id ?? null} onSelect={handleSelectCategory} />)}
+        <button type="button" className={adminPrimary} onClick={handleNewCategory}>새 카테고리</button>
+      </section>
+      {selectedCategory || isCreateMode ? <section className={`${adminPanel} space-y-4`}><h2 className="break-words text-xl font-bold">{isCreateMode ? '카테고리 등록' : selectedCategory?.name}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4"><fieldset disabled={!isEditMode || busy} className="space-y-4">
+          <label className="block text-sm font-medium">카테고리 이름 (필수)<input className={adminInput} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} /></label>
+          <label className="block text-sm font-medium">상위 카테고리<select className={adminInput} value={formData.parentId ?? ''} onChange={e => setFormData({ ...formData, parentId: e.target.value ? Number(e.target.value) : null })}>{parentOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+          <label className="block text-sm font-medium">설명<textarea className={`${adminInput} min-h-32 resize-y`} value={formData.description ?? ''} onChange={e => setFormData({ ...formData, description: e.target.value })} /></label>
+        </fieldset>
+        <div className="flex flex-wrap gap-2">{isEditMode ? <button type="submit" className={adminPrimary}>{busy ? '저장 중…' : '저장'}</button> : <button type="button" className={adminPrimary} onClick={handleEditClick}>수정하기</button>}<button type="button" className={adminControl} onClick={handleCancel}>취소</button>
+          {!isCreateMode && <button type="button" className={`${adminControl} text-red-700`} disabled={!!selectedCategory?.children?.length} onClick={handleDelete}>삭제</button>}
         </div>
-      </main>
-    </div>
-  );
+        {!!selectedCategory?.children?.length && <p className="text-xs text-brand-muted">하위 카테고리가 있는 분류는 삭제할 수 없습니다.</p>}
+        </form>
+      </section> : <AdminEmpty title="카테고리를 선택해 주세요." />}
+    </fieldset>}
+    {deleting && <AdminDeleteDialog name={deleting.name} run={() => deleteCategory(deleting.id)} refresh={async () => { const result = await refetch(); if (result.isError) throw new Error('refresh failed'); setSelectedCategory(null); setIsEditMode(false); }} onClose={() => setDeleting(null)} />}
+  </AdminLayout>;
 }
 
