@@ -7,9 +7,11 @@ async page => {
   const onError = error => errors.push(error.message);
   const profile = { id: 901, name: '검증회원', email: 'member@example.invalid', role: 'ROLE_USER', createdAt: '2026-09-30T00:00:00' };
   const base = { reportId: 42, authorId: 901, authorNickname: '검증회원', kind: 'MISSING', occurredOn: '2026-09-28', approximateTime: null, region: '서울 마포구', landmark: '공원 입구', species: '개', animalName: '콩이', coatColor: '흰색', animalSize: '소형', distinguishingFeatures: '파란 목줄', direction: null, description: '보호자가 등록한 실종 동물 정보입니다.', title: '파란 목줄을 한 콩이를 찾습니다', imageUrls: [origin + '/__test-photo'], createdAt: '2026-09-30T10:00:00', updatedAt: '2026-09-30T10:00:00' };
+  Object.assign(base, { province: '서울특별시', district: '마포구', animalType: 'DOG' });
   let failure = false, resume = null;
   const handler = async route => {
     const request = route.request(), path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+    if (!path.startsWith('/api/')) return route.continue();
     const params = Object.fromEntries((request.url().split('?')[1] || '').split('&').filter(Boolean).map(pair => pair.split('=').map(value => decodeURIComponent(value.replace(/\+/g, ' ')))));
     if (path === '/api/auth/login') {
       writes.push(path);
@@ -75,9 +77,11 @@ async page => {
     await main.getByText('사진이 등록되지 않았어요', { exact: true }).waitFor();
     await main.getByText('사진을 불러오지 못했어요', { exact: true }).waitFor();
     check(await main.getByText('실종일: 2026-09-28', { exact: true }).count() === 3, 'Event day must be distinguished from registration day');
-    await main.getByRole('button', { name: '2페이지', exact: true }).click(); await waitCards();
+    const pageResponse = page.waitForResponse(response => response.url().includes('/api/reports?') && response.url().includes('page=1'));
+    await main.getByRole('button', { name: '2페이지', exact: true }).click(); await pageResponse;
+    await page.waitForURL(origin + '/reports/missing?page=2'); await waitCards();
     check(await page.evaluate(() => new URL(location.href).searchParams.get('page')) === '2', 'Page selection missing in URL');
-    await main.getByRole('searchbox', { name: '검색어' }).fill('흰색');
+    await main.getByRole('searchbox', { name: '특징·지역 키워드' }).fill('흰색');
     const searchResponse = page.waitForResponse(response => response.url().includes('/api/reports?') && response.url().includes('keyword=' + encodeURIComponent('흰색')));
     await main.getByRole('button', { name: '검색', exact: true }).click(); await searchResponse; await waitCards();
     check(!await page.evaluate(() => new URL(location.href).searchParams.has('page')), 'Search must reset page');
@@ -133,7 +137,10 @@ async page => {
 
     await main.getByLabel(/^날짜/).fill(base.occurredOn);
     await main.getByLabel(/^지역/).fill(base.region);
-    await main.getByLabel(/^동물 종류/).fill(base.species);
+    await main.getByRole('combobox', { name: '시·도 *', exact: true }).selectOption(base.province);
+    await main.getByRole('combobox', { name: '시·군·구 (선택)', exact: true }).selectOption(base.district);
+    await main.getByRole('combobox', { name: '동물 종류 *', exact: true }).selectOption(base.animalType);
+    await main.getByLabel(/^품종·세부 종류/).fill(base.species);
     await main.getByLabel(/^상황 설명/).fill(base.description);
     await main.getByRole('checkbox', { name: '공개되는 내용을 확인했습니다.' }).check();
     await main.getByRole('button', { name: '제보 등록', exact: true }).click();

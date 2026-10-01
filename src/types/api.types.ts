@@ -430,8 +430,12 @@ export interface DirectOrderRequest {
 export type BoardType = 'MISSING' | 'COMMUNICATION' | 'ADOPTION' | 'PROTECTION' | 'REPORT';
 
 export type AnimalReportKind = 'MISSING' | 'SIGHTING';
+export type ReportAnimalType = 'DOG' | 'CAT' | 'OTHER';
 
 export interface AnimalReportInput {
+  province?: string | null;
+  district?: string | null;
+  animalType?: ReportAnimalType | null;
   kind: AnimalReportKind;
   occurredOn: string;
   approximateTime: string | null;
