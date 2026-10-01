@@ -1,473 +1,55 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySignupStats, getDailyAnimalStats } from '../api/stats.api';
-import { useAuthStore } from '../store/authStore';
-import AdminSidebar from '../components/layout/AdminSidebar';
-
-type PeriodType = 'today' | '7days' | '30days' | 'month';
-type TabType = 'signup' | 'animal';
+import AdminLayout from '../components/layout/AdminLayout';
+import AdminTrend from '../components/admin/AdminTrend';
+import { AdminError, AdminLoading, AdminPagination, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+import { adminDailyChange, fillAdminDays, kstToday, shiftDay, validAdminRange } from '../lib/adminStatistics';
 
 export default function AdminStatistics() {
-  const { user } = useAuthStore();
-
-  // 상태 관리
-  const [selectedTab, setSelectedTab] = useState<TabType>('signup');
-  const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('7days');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // 한국 시간대(KST) 날짜를 YYYY-MM-DD 형식으로 변환
-  const getKSTDate = (date: Date): string => {
-    const kstOffset = 9 * 60; // KST는 UTC+9
-    const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-    const kstDate = new Date(utc + (kstOffset * 60000));
-
-    const year = kstDate.getFullYear();
-    const month = String(kstDate.getMonth() + 1).padStart(2, '0');
-    const day = String(kstDate.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-  };
-
-  // 기간에 따라 날짜 계산
-  const getDateRange = () => {
-    const today = new Date();
-    const end = getKSTDate(today);
-    let start = end;
-
-    switch (selectedPeriod) {
-      case 'today':
-        start = end;
-        break;
-      case '7days': {
-        const sevenDaysAgo = new Date(today);
-        sevenDaysAgo.setDate(today.getDate() - 6);
-        start = getKSTDate(sevenDaysAgo);
-        break;
-      }
-      case '30days': {
-        const thirtyDaysAgo = new Date(today);
-        thirtyDaysAgo.setDate(today.getDate() - 29);
-        start = getKSTDate(thirtyDaysAgo);
-        break;
-      }
-      case 'month': {
-        const kstToday = getKSTDate(today);
-        const [year, month] = kstToday.split('-');
-        start = `${year}-${month}-01`;
-        break;
-      }
-    }
-
-    return { start, end };
-  };
-
-  const { start: calculatedStartDate, end: calculatedEndDate } = getDateRange();
-  const finalStartDate = startDate || calculatedStartDate;
-  const finalEndDate = endDate || calculatedEndDate;
-
-  // 가입자 통계 조회
-  const { data: signupStats = [], isLoading: isLoadingSignup } = useQuery({
-    queryKey: ['signup-stats', finalStartDate, finalEndDate],
-    queryFn: () => getDailySignupStats(finalStartDate, finalEndDate),
-    enabled: selectedTab === 'signup',
+  const today = kstToday();
+  const [tab, setTab] = useState<'signup' | 'collection'>('signup');
+  const [range, setRange] = useState({ start: shiftDay(today, -6), end: today });
+  const [draft, setDraft] = useState(range);
+  const [rangeError, setRangeError] = useState('');
+  const [page, setPage] = useState(0);
+  const query = useQuery({
+    queryKey: ['admin-statistics', tab, range.start, range.end],
+    queryFn: () => (tab === 'signup' ? getDailySignupStats : getDailyAnimalStats)(shiftDay(range.start, -1), range.end),
   });
-
-  // 동물 등록 통계 조회
-  const { data: animalStats = [], isLoading: isLoadingAnimal } = useQuery({
-    queryKey: ['animal-stats', finalStartDate, finalEndDate],
-    queryFn: () => getDailyAnimalStats(finalStartDate, finalEndDate),
-    enabled: selectedTab === 'animal',
-  });
-
-  const currentStats = selectedTab === 'signup' ? signupStats : animalStats;
-  const isLoading = selectedTab === 'signup' ? isLoadingSignup : isLoadingAnimal;
-
-  // 최대값 계산 (그래프용)
-  const maxCount = currentStats.length > 0 ? Math.max(...currentStats.map(s => s.count)) : 50;
-
-  // 전일 대비 계산
-  const calculateChangeRate = (current: number, previous: number | undefined) => {
-    if (!previous || previous === 0) return null;
-    return ((current - previous) / previous * 100).toFixed(1);
+  const rows = query.isSuccess ? fillAdminDays(query.data, range.start, range.end) : [];
+  const previous = new Map((query.data || []).map(row => [row.date.slice(0, 10), row.count]));
+  const change = (date: string, count: number) => adminDailyChange(count, previous.get(shiftDay(date, -1)) ?? 0);
+  const unit = tab === 'signup' ? '명' : '건';
+  const label = tab === 'signup' ? '회원 가입' : '동물 신규 수집';
+  const apply = (next: typeof range) => {
+    if (!validAdminRange(next.start, next.end) || next.end > today) { setRangeError('시작일과 종료일을 확인해 주세요. 오늘까지 최대 366일을 조회할 수 있습니다.'); return; }
+    setRange(next); setDraft(next); setPage(0); setRangeError('');
   };
-
-  // 페이지네이션
-  const totalPages = Math.ceil(currentStats.length / itemsPerPage);
-  const paginatedStats = [...currentStats].reverse().slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  // 날짜 포맷팅
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const weekday = weekdays[date.getDay()];
-    return `${year}년 ${month}월 ${String(day).padStart(2, '0')}일 (${weekday})`;
-  };
-
-  // 짧은 날짜 포맷 (그래프용)
-  const formatShortDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}/${String(date.getDate()).padStart(2, '0')}`;
-  };
-
-  return (
-    <div className="bg-background-light dark:bg-background-dark text-text-main dark:text-white h-screen overflow-hidden flex">
-      <AdminSidebar />
-
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
-        {/* 헤더 */}
-        <header className="flex-none h-16 bg-surface-light dark:bg-surface-dark border-b border-[#e5e7eb] dark:border-gray-700 px-8 flex items-center justify-between z-10">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-text-main dark:text-white">통계</h2>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center w-64 h-10 rounded-lg bg-background-light dark:bg-gray-800 px-3 border border-transparent focus-within:border-brand-focus transition-colors">
-              <span className="material-symbols-outlined text-text-secondary">search</span>
-              <input
-                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-text-main dark:text-white placeholder:text-text-secondary focus:ring-0"
-                placeholder="검색..."
-                type="text"
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="size-10 rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 text-text-main dark:text-white transition-colors relative">
-                <span className="material-symbols-outlined">notifications</span>
-                <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-gray-800"></span>
-              </button>
-              <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <div
-                  className="size-8 rounded-full bg-cover bg-center border border-gray-200 bg-brand/20 flex items-center justify-center"
-                >
-                  <div className="w-full h-full flex items-center justify-center text-text-main font-bold text-xs">
-                    {user?.name?.charAt(0) || '관'}
-                  </div>
-                </div>
-                <span className="text-sm font-semibold text-text-main dark:text-white hidden lg:block">
-                  {user?.name || '관리자'}님
-                </span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* 콘텐츠 영역 */}
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-7xl mx-auto flex flex-col gap-6">
-            {/* 페이지 헤더 */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="mb-6">
-                <h1 className="text-text-main dark:text-white text-2xl font-black leading-tight">통계</h1>
-                <p className="text-text-sub dark:text-gray-400 text-sm mt-1">플랫폼의 성장 지표와 활동 내역을 확인하세요.</p>
-              </div>
-
-              {/* 필터 영역 */}
-              <div className="flex flex-wrap items-end gap-4">
-                {/* 날짜 범위 선택 */}
-                <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl border border-gray-200 dark:border-gray-700">
-                  <div className="relative">
-                    <label className="absolute -top-2.5 left-3 bg-gray-50 dark:bg-gray-800 px-1 text-[10px] font-bold text-text-sub dark:text-gray-400">
-                      시작일
-                    </label>
-                    <input
-                      type="date"
-                      value={startDate || calculatedStartDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="px-3 py-2 h-10 w-40 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-focus"
-                    />
-                  </div>
-                  <span className="text-gray-400 font-medium">~</span>
-                  <div className="relative">
-                    <label className="absolute -top-2.5 left-3 bg-gray-50 dark:bg-gray-800 px-1 text-[10px] font-bold text-text-sub dark:text-gray-400">
-                      종료일
-                    </label>
-                    <input
-                      type="date"
-                      value={endDate || calculatedEndDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="px-3 py-2 h-10 w-40 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-text-main dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-focus"
-                    />
-                  </div>
-                </div>
-
-                {/* 기간 선택 버튼 */}
-                <div className="flex h-[54px] items-center rounded-xl bg-gray-50 dark:bg-gray-800 p-1.5">
-                  <button
-                    onClick={() => {
-                      setSelectedPeriod('today');
-                      setStartDate('');
-                      setEndDate('');
-                    }}
-                    className={`h-full px-3 rounded-lg transition-all text-sm font-medium ${
-                      selectedPeriod === 'today'
-                        ? 'bg-white dark:bg-gray-900 shadow-sm text-text-main dark:text-white'
-                        : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
-                    }`}
-                  >
-                    오늘
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedPeriod('7days');
-                      setStartDate('');
-                      setEndDate('');
-                    }}
-                    className={`h-full px-3 rounded-lg transition-all text-sm font-medium ${
-                      selectedPeriod === '7days'
-                        ? 'bg-white dark:bg-gray-900 shadow-sm text-text-main dark:text-white'
-                        : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
-                    }`}
-                  >
-                    최근 7일
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedPeriod('30days');
-                      setStartDate('');
-                      setEndDate('');
-                    }}
-                    className={`h-full px-3 rounded-lg transition-all text-sm font-medium ${
-                      selectedPeriod === '30days'
-                        ? 'bg-white dark:bg-gray-900 shadow-sm text-text-main dark:text-white'
-                        : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
-                    }`}
-                  >
-                    최근 30일
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedPeriod('month');
-                      setStartDate('');
-                      setEndDate('');
-                    }}
-                    className={`h-full px-3 rounded-lg transition-all text-sm font-medium ${
-                      selectedPeriod === 'month'
-                        ? 'bg-white dark:bg-gray-900 shadow-sm text-text-main dark:text-white'
-                        : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
-                    }`}
-                  >
-                    이번 달
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 차트 카드 */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col gap-6">
-              {/* 탭 */}
-              <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
-                <div className="flex gap-6">
-                  <button
-                    onClick={() => setSelectedTab('signup')}
-                    className={`relative pb-4 -mb-[17px] font-medium text-base transition-colors ${
-                      selectedTab === 'signup'
-                        ? 'text-text-main dark:text-white font-bold border-b-2 border-brand-focus'
-                        : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
-                    }`}
-                  >
-                    가입자 통계
-                  </button>
-                  <button
-                    onClick={() => setSelectedTab('animal')}
-                    className={`relative pb-4 -mb-[17px] font-medium text-base transition-colors ${
-                      selectedTab === 'animal'
-                        ? 'text-text-main dark:text-white font-bold border-b-2 border-brand-focus'
-                        : 'text-text-sub dark:text-gray-400 hover:text-text-main dark:hover:text-white'
-                    }`}
-                  >
-                    동물 등록 통계
-                  </button>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-text-sub dark:text-gray-400">
-                  <span className="size-2 rounded-full bg-brand"></span>
-                  {selectedTab === 'signup' ? '신규 가입자 수' : '동물 등록 건수'}
-                </div>
-              </div>
-
-              {/* 차트 */}
-              {isLoading ? (
-                <div className="h-[320px] flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus"></div>
-                </div>
-              ) : currentStats.length === 0 ? (
-                <div className="h-[320px] flex items-center justify-center">
-                  <p className="text-text-sub dark:text-gray-400">데이터가 없습니다</p>
-                </div>
-              ) : (
-                <div className="w-full h-[320px] flex flex-col justify-end relative pl-10 pr-4 pb-8 pt-4">
-                  {/* Y축 눈금 */}
-                  <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 pl-10 pr-4 pt-4 text-xs text-gray-400 font-mono">
-                    <div className="w-full border-b border-gray-100 dark:border-gray-800 border-dashed flex items-center">
-                      <span className="-ml-8">{maxCount}</span>
-                    </div>
-                    <div className="w-full border-b border-gray-100 dark:border-gray-800 border-dashed flex items-center">
-                      <span className="-ml-8">{Math.floor(maxCount * 0.8)}</span>
-                    </div>
-                    <div className="w-full border-b border-gray-100 dark:border-gray-800 border-dashed flex items-center">
-                      <span className="-ml-8">{Math.floor(maxCount * 0.6)}</span>
-                    </div>
-                    <div className="w-full border-b border-gray-100 dark:border-gray-800 border-dashed flex items-center">
-                      <span className="-ml-8">{Math.floor(maxCount * 0.4)}</span>
-                    </div>
-                    <div className="w-full border-b border-gray-100 dark:border-gray-800 border-dashed flex items-center">
-                      <span className="-ml-8">{Math.floor(maxCount * 0.2)}</span>
-                    </div>
-                    <div className="w-full border-b border-gray-200 dark:border-gray-700 flex items-center">
-                      <span className="-ml-8">0</span>
-                    </div>
-                  </div>
-
-                  {/* 막대 그래프 */}
-                  <div className="relative z-10 flex h-full items-end justify-between gap-2 md:gap-4 pl-2 pr-2">
-                    {currentStats.map((stat, index) => {
-                      const heightPercent = maxCount > 0 ? (stat.count / maxCount) * 100 : 0;
-                      const isToday = index === currentStats.length - 1;
-
-                      return (
-                        <div key={stat.date} className="group relative flex-1 flex flex-col justify-end items-center h-full">
-                          <div
-                            className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 hover:opacity-80 group-hover:scale-y-105 origin-bottom relative ${
-                              isToday ? 'bg-brand' : 'bg-brand/30 hover:bg-brand'
-                            }`}
-                            style={{ height: `${heightPercent}%` }}
-                          >
-                            <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-brand-ink text-white text-xs py-1 px-2 rounded whitespace-nowrap transition-opacity pointer-events-none z-20">
-                              {stat.count}{selectedTab === 'signup' ? '명' : '건'}
-                            </div>
-                          </div>
-                          <span className={`absolute -bottom-6 text-xs font-medium ${
-                            isToday ? 'text-text-main dark:text-white font-bold' : 'text-gray-500 dark:text-gray-400'
-                          }`}>
-                            {formatShortDate(stat.date)}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 상세 데이터 테이블 */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">
-                <h3 className="text-base font-bold text-text-main dark:text-white">상세 데이터</h3>
-                <button className="flex items-center gap-1 text-sm font-medium text-text-sub dark:text-gray-400 hover:text-brand-accent transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">download</span>
-                  엑셀 다운로드
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                {isLoading ? (
-                  <div className="p-12 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-                    <p className="text-text-sub dark:text-gray-400">데이터를 불러오는 중...</p>
-                  </div>
-                ) : paginatedStats.length === 0 ? (
-                  <div className="p-12 text-center">
-                    <p className="text-text-sub dark:text-gray-400">데이터가 없습니다</p>
-                  </div>
-                ) : (
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-gray-50/50 dark:bg-gray-800/50 text-text-sub dark:text-gray-400 text-xs uppercase tracking-wider">
-                        <th className="px-6 py-4 font-semibold w-1/3">날짜</th>
-                        <th className="px-6 py-4 font-semibold w-1/3 text-center">
-                          {selectedTab === 'signup' ? '신규 가입자 수' : '동물 등록 건수'}
-                        </th>
-                        <th className="px-6 py-4 font-semibold w-1/3 text-right">전일 대비</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                      {paginatedStats.map((stat, index) => {
-                        const reversedIndex = currentStats.length - 1 - ((currentPage - 1) * itemsPerPage + index);
-                        const previousStat = reversedIndex > 0 ? currentStats[reversedIndex - 1] : undefined;
-                        const changeRate = calculateChangeRate(stat.count, previousStat?.count);
-
-                        return (
-                          <tr
-                            key={stat.date}
-                            className="border-b border-gray-50 dark:border-gray-800 hover:bg-brand/5 dark:hover:bg-brand/5 transition-colors group"
-                          >
-                            <td className="px-6 py-4 text-text-main dark:text-white font-medium">
-                              {formatDate(stat.date)}
-                            </td>
-                            <td className="px-6 py-4 text-text-main dark:text-white text-center font-bold">
-                              {stat.count}{selectedTab === 'signup' ? '명' : '건'}
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              {changeRate === null ? (
-                                <span className="inline-flex items-center gap-1 text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md text-xs font-bold">
-                                  -
-                                </span>
-                              ) : Number(changeRate) > 0 ? (
-                                <span className="inline-flex items-center gap-1 text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-md text-xs font-bold">
-                                  <span className="material-symbols-outlined text-[14px]">trending_up</span>
-                                  +{changeRate}%
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-rose-500 bg-rose-50 dark:bg-rose-900/30 px-2 py-1 rounded-md text-xs font-bold">
-                                  <span className="material-symbols-outlined text-[14px]">trending_down</span>
-                                  {changeRate}%
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-
-              {/* 페이지네이션 */}
-              {totalPages > 1 && (
-                <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="size-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-sub dark:text-gray-400 transition-colors disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-                  </button>
-
-                  {[...Array(Math.min(totalPages, 5))].map((_, i) => {
-                    const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                    if (pageNum > totalPages) return null;
-
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`size-8 flex items-center justify-center rounded-lg transition-colors ${
-                          currentPage === pageNum
-                            ? 'bg-brand text-card-dark font-bold shadow-sm'
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-text-sub dark:text-gray-400 font-medium'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="size-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-text-sub dark:text-gray-400 transition-colors disabled:opacity-50"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+  const total = rows.reduce((sum, row) => sum + row.count, 0);
+  return <AdminLayout title="통계" description="집계 기준을 구분하여 회원 가입과 수집 현황을 확인하세요.">
+    <section className={`${adminPanel} space-y-5`}>
+      <div role="group" aria-label="통계 유형" className="flex flex-wrap gap-2">
+        <button className={tab === 'signup' ? adminPrimary : adminControl} aria-pressed={tab === 'signup'} onClick={() => { setTab('signup'); setPage(0); }}>회원</button>
+        <button className={tab === 'collection' ? adminPrimary : adminControl} aria-pressed={tab === 'collection'} onClick={() => { setTab('collection'); setPage(0); }}>동물 수집</button>
+      </div>
+      <form className="flex flex-col items-end gap-4 sm:flex-row" onSubmit={event => { event.preventDefault(); apply(draft); }}>
+        <label htmlFor="stats-start" className="w-full text-sm font-medium">시작일<input id="stats-start" type="date" max={today} className={adminInput} value={draft.start} onChange={event => setDraft({ ...draft, start: event.target.value })} /></label>
+        <label htmlFor="stats-end" className="w-full text-sm font-medium">종료일<input id="stats-end" type="date" max={today} className={adminInput} value={draft.end} onChange={event => setDraft({ ...draft, end: event.target.value })} /></label>
+        <button className={`${adminPrimary} w-full shrink-0 sm:w-auto`}>조회</button>
+      </form>
+      {rangeError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{rangeError}</p>}
+      <div role="group" aria-label="조회 기간" className="flex flex-wrap gap-2">{[['오늘', today], ['최근 7일', shiftDay(today, -6)], ['최근 30일', shiftDay(today, -29)], ['이번 달', today.slice(0, 8) + '01']].map(([text, start]) => <button key={text} className={range.start === start && range.end === today ? adminPrimary : adminControl} aria-pressed={range.start === start && range.end === today} onClick={() => apply({ start, end: today })}>{text}</button>)}</div>
+      <p className="text-xs text-brand-muted dark:text-stone-300">{tab === 'signup' ? '가입일 기준 · 현재 남아 있는 회원 기록입니다. 회원 삭제가 과거 집계에 영향을 줄 수 있습니다.' : '시스템 최초 저장일 기준 · 실제 발견·접수 건수가 아닙니다. 수동 등록과 공공 데이터 수집이 포함될 수 있습니다.'}</p>
+    </section>
+    {query.isPending ? <AdminLoading label="통계를 불러오는 중입니다." /> : query.isError ? <AdminError title="통계 조회 실패" retry={() => void query.refetch()} /> : <>
+      <div className="grid gap-4 sm:grid-cols-3">{[['기간 합계', `${total.toLocaleString()}${unit}`], ['하루 최대', `${Math.max(0, ...rows.map(row => row.count)).toLocaleString()}${unit}`], ['일평균', `${(total / Math.max(1, rows.length)).toFixed(1)}${unit}`]].map(([name, value]) => <section key={name} className={`${adminPanel} space-y-3`}><h2 className="text-sm text-brand-muted dark:text-stone-300">{name}</h2><p className="text-[28px] font-bold">{value}</p></section>)}</div>
+      <AdminTrend key={`${tab}-${range.start}-${range.end}`} title={`${label} 추이`} rows={rows} unit={unit} />
+      <section className={`${adminPanel} space-y-5`}>
+        <h2 className="text-xl font-bold">날짜별 상세</h2><p className="text-xs text-brand-muted dark:text-stone-300">달력상의 전일과 비교합니다. 전일 0건에서 증가하면 증감 건수를 표시합니다.</p>
+        <div className="space-y-3">{[...rows].reverse().slice(page * 7, (page + 1) * 7).map(row => <div key={row.date} className={`grid gap-3 rounded-lg border border-brand-border p-4 sm:grid-cols-3 dark:border-stone-700 ${row.date === today ? 'bg-brand-soft dark:bg-stone-800' : ''}`}><span className="text-sm font-medium">{row.date}{row.date === today ? ' · 오늘' : ''}</span><span className="text-sm">{row.count.toLocaleString()}{unit}</span><span className="text-xs text-brand-muted dark:text-stone-300">전일 대비 {change(row.date, row.count)}</span></div>)}</div>
+        <AdminPagination page={page} total={Math.ceil(rows.length / 7)} onChange={setPage} />
+      </section>
+    </>}
+  </AdminLayout>;
 }
