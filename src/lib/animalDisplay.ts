@@ -21,3 +21,9 @@ export function animalGenderLabel(gender?: string | null) {
 export function animalAgeLabel(age?: number | null) {
   return age == null ? '정보 없음' : age === 0 ? '1세 미만' : `${age}세`;
 }
+
+export function animalWeightLabel(weight?: string | null): string | null {
+  const value = weight?.trim();
+  if (!value) return null;
+  return /^\d+(?:\.\d+)?$/.test(value) ? `${value} kg` : value;
+}
