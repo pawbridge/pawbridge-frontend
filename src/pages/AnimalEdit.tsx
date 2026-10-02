@@ -58,7 +58,7 @@ export default function AnimalEdit() {
       setGender((animal.gender as 'MALE' | 'FEMALE' | 'UNKNOWN') || '');
       setNeuterStatus((animal.neuterStatus as 'YES' | 'NO' | 'UNKNOWN') || '');
       setBirthYear(animal.birthYear || '');
-      setWeight(animal.weight?.toString() || '');
+      setWeight(animal.weight ?? '');
       setColor(animal.color || '');
       setSpecialMark(animal.specialMark || '');
       setHappenDate(animal.happenDate?.split('T')[0] || '');

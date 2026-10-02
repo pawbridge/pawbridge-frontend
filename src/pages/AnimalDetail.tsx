@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAnimals } from '../api/animals.api';
 import { publicShelterById } from '../api/publicShelters.api';
 import { shelterTelephone } from '../lib/shelters';
-import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel } from '../lib/animalDisplay';
+import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel } from '../lib/animalDisplay';
 import { readLostSearchSession } from '../utils/lostSearchSession';
 import { animalSearchReturnTo } from '../utils/animalSearch';
 import { useAuthStore } from '../store/authStore';
@@ -50,6 +50,7 @@ export default function AnimalDetail() {
   const { data: animal, isLoading, isError, refetch } = useQuery({
     queryKey: ['animal', id], queryFn: () => getAnimalById(animalId), enabled: Number.isInteger(animalId) && animalId > 0,
   });
+  const weight = animalWeightLabel(animal?.weight);
   const { data: shelter } = useQuery({
     queryKey: ['publicShelter', animal?.shelterId],
     queryFn: ({ signal }) => publicShelterById(animal!.shelterId, signal),
@@ -180,7 +181,7 @@ export default function AnimalDetail() {
                 <Info label="종" value={animalSpeciesLabel(animal.species)} />
                 <Info label="성별" value={animalGenderLabel(animal.gender)} />
                 <Info label="나이" value={animalAgeLabel(animal.age)} />
-                {animal.weight != null && <Info label="체중" value={/(?:kg|㎏)/i.test(String(animal.weight)) ? String(animal.weight) : `${animal.weight}kg`} />}
+                {weight && <Info label="체중" value={weight} />}
                 {animal.color && <Info label="색상" value={animal.color} />}
                 {animal.neuterStatus && <Info label="중성화" value={animal.neuterStatus === 'YES' ? '완료' : animal.neuterStatus === 'NO' ? '미완료' : '미상'} />}
               </dl>

@@ -8,7 +8,7 @@ export interface Animal {
   breed?: string;               // 품종
   gender: 'MALE' | 'FEMALE' | 'UNKNOWN';  // 성별
   age?: number;                 // 나이 (현재 연도 - 출생 연도)
-  weight?: number;              // 체중 (kg)
+  weight?: string;              // API 체중 원문 (예: "3(Kg)", "3.5")
   description?: string;         // 설명
   imageUrl?: string;            // 이미지 URL
   imageUrl2?: string;           // 추가 이미지 URL
