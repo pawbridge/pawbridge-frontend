@@ -26,11 +26,25 @@ export function fillAdminDays(rows: AdminDailyCount[], start: string, end: strin
   return result;
 }
 
-export function adminDailyChange(current: number, previous: number): string {
+export function adminDailyChange(current: number, previous: number, unit = '건'): string {
   const change = current - previous;
   if (!change) return '변동 없음';
-  const count = `${change > 0 ? '+' : ''}${change.toLocaleString()}건`;
+  const count = `${change > 0 ? '+' : ''}${change.toLocaleString()}${unit}`;
   return previous === 0 ? `${count} · 비율 비교 불가` : `${count} (${change > 0 ? '+' : ''}${(change / previous * 100).toFixed(1)}%)`;
+}
+
+// Legacy signup/collection endpoints return the previous date in their array.
+// New bounded APIs supply it separately without requesting a 367th public day.
+export function separateAdminPreviousDay(rows: AdminDailyCount[], start: string, end: string) {
+  return {
+    startDate: start, endDate: end,
+    daily: rows.filter(row => row.date.slice(0, 10) >= start && row.date.slice(0, 10) <= end),
+    previousDayCount: rows.find(row => row.date.slice(0, 10) === shiftDay(start, -1))?.count ?? 0,
+  };
+}
+
+export function adminTrendChanges(rows: AdminDailyCount[], previousDayCount: number, unit = '건'): Map<string, string> {
+  return new Map(rows.map((row, index) => [row.date, adminDailyChange(row.count, index === 0 ? previousDayCount : rows[index - 1].count, unit)]));
 }
 
 export function groupAdminDays(rows: AdminDailyCount[]): { date: string; end: string; count: number }[] {
