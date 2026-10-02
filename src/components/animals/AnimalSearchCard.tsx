@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Animal } from '../../types/api.types';
+import { animalWeightLabel } from '../../lib/animalDisplay';
 
 interface AnimalSearchCardProps {
   animal: Animal;
@@ -48,7 +49,7 @@ export default function AnimalSearchCard({ animal, searchReturnTo }: AnimalSearc
   const shelterName = animal.shelter?.name || animal.shelterName;
   const foundDate = dateLabel(animal.happenDate || animal.noticeStartDate);
   const birth = animal.birthYear ? `${animal.birthYear}년생` : animal.age !== undefined ? `${animal.age}살` : '연령 미상';
-  const weight = animal.weight ? `${animal.weight}kg` : null;
+  const weight = animalWeightLabel(animal.weight);
   const neuter = neuterLabel(animal);
   const feature = animal.specialMark || animal.description;
   const deadline = dday(animal.noticeEndDate);
