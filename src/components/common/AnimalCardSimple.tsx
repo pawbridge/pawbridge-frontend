@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel } from '../../lib/animalDisplay';
+import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel } from '../../lib/animalDisplay';
 import type { Animal } from '../../types/api.types';
 
 interface AnimalCardSimpleProps {
@@ -13,8 +13,7 @@ export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo }
   const [failedImageUrl, setFailedImageUrl] = useState<string>();
   const title = animal.breed || animalSpeciesLabel(animal.species);
   const status = animalStatusLabel(animal.status);
-  const weight = animal.weight == null ? null
-    : /(?:kg|㎏)/i.test(String(animal.weight)) ? String(animal.weight) : `${animal.weight} kg`;
+  const weight = animalWeightLabel(animal.weight);
   const shelterName = animal.shelter?.name || animal.shelterName || '보호소 정보 없음';
   const noticeNumber = animal.apmsNoticeNo || animal.noticeNo;
   const feature = animal.specialMark || animal.description;

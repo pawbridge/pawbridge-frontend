@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Animal } from '../../types/api.types';
 import { calculateDday } from '../../api/animals.api.mock';
+import { animalWeightLabel } from '../../lib/animalDisplay';
 
 interface AnimalCardProps {
   animal: Animal;
@@ -10,6 +11,7 @@ interface AnimalCardProps {
 export default function AnimalCard({ animal, onFavorite }: AnimalCardProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const weight = animalWeightLabel(animal.weight);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -112,7 +114,7 @@ export default function AnimalCard({ animal, onFavorite }: AnimalCardProps) {
             label="성별"
             value={animal.gender === 'MALE' ? '수컷' : '암컷'}
           />
-          {animal.weight && <InfoRow icon="⚖️" label="체중" value={`${animal.weight}kg`} />}
+          {weight && <InfoRow icon="⚖️" label="체중" value={weight} />}
         </div>
 
         {/* 위치 정보 */}
