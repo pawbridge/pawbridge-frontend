@@ -8,7 +8,7 @@ export const adminNavigation = [
     { label: '보호소 목록', path: '/admin/shelters' },
     { label: '담당자 신청', path: '/admin/shelter-applications' },
   ] },
-  { label: '커뮤니티 관리', items: [{ label: '게시글 관리', path: '/admin/posts' }] },
+  { label: '커뮤니티 관리', items: [{ label: '게시글 관리', path: '/admin/posts' }, { label: '영상 관리', path: '/admin/videos' }] },
   { label: '펫마켓', items: [
     { label: '상품 목록', path: '/admin/products' },
     { label: '상품 등록', path: '/products/new' },

@@ -11,6 +11,7 @@ import { defaultAnimalSearch, writeAnimalSearch } from '../utils/animalSearch';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import HomeAnimalCard from '../components/home/HomeAnimalCard';
+import HomeVideoSection from '../components/home/HomeVideoSection';
 import { useAuthStore } from '../store/authStore';
 import { canSeePetMarket } from '../lib/petMarket';
 
@@ -91,6 +92,8 @@ export default function Home() {
                 : <div className="grid gap-4 md:grid-cols-3 lg:gap-6">{featuredAnimals.map(animal => <HomeAnimalCard key={animal.id} animal={animal} />)}</div>}
           <p className="mt-4 text-xs text-brand-muted dark:text-gray-400">최근 등록된 보호 동물입니다. 현재 보호 상태와 입양 상담은 상세에서 확인해 주세요.</p>
         </section>
+
+        <HomeVideoSection />
 
         <section aria-labelledby="stories-heading" className="mt-12">
           <h2 id="stories-heading" className="mb-5 text-xl font-bold sm:text-2xl">가족이 된 이후의 이야기</h2>
