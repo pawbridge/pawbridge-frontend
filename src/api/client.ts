@@ -76,7 +76,8 @@ apiClient.interceptors.response.use(
           // 공개 API 경로 패턴: /api/animals 또는 /api/animals/{id}
           const isPublicAnimalApi = /^\/api\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
           
-          if (isPublicAnimalApi || isPublicTravelRequest(requestUrl, error.config?.method) || isPublicShelterRequest(requestUrl, error.config?.method)) {
+          const isPublicVideoApi = requestUrl === '/api/home/videos' && error.config?.method?.toLowerCase() === 'get';
+          if (isPublicVideoApi || isPublicAnimalApi || isPublicTravelRequest(requestUrl, error.config?.method) || isPublicShelterRequest(requestUrl, error.config?.method)) {
             // 공개 API는 에러만 로그하고 리다이렉트하지 않음
             console.warn('공개 API 인증 실패 (리다이렉트 제외):', requestUrl);
           } else {
