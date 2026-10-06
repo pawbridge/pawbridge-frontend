@@ -1,5 +1,8 @@
 // Bearer auth stays in the header. No token in URLs, EventSource query parameters or storage.
-export interface StreamEvent { event: string; data: string }
+export interface StreamEvent {
+  event: string;
+  data: string;
+}
 export class SseParser {
   private buffer = '';
   feed(chunk: string): StreamEvent[] {
@@ -27,10 +30,22 @@ export class SseParser {
   }
 }
 
-export async function consumeNoteStream(url: string, token: string, signal: AbortSignal,
-  onEvent: (event: StreamEvent) => void) {
-  const response = await fetch(url, { headers: { Authorization: `Bearer ${token}`, Accept: 'text/event-stream' }, signal, cache: 'no-store' });
-  if (!response.ok || !response.body || !response.headers.get('content-type')?.startsWith('text/event-stream')) {
+export async function consumeNoteStream(
+  url: string,
+  token: string,
+  signal: AbortSignal,
+  onEvent: (event: StreamEvent) => void,
+) {
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}`, Accept: 'text/event-stream' },
+    signal,
+    cache: 'no-store',
+  });
+  if (
+    !response.ok ||
+    !response.body ||
+    !response.headers.get('content-type')?.startsWith('text/event-stream')
+  ) {
     const error = new Error('알림 연결을 복구하고 있습니다.') as Error & { status?: number };
     error.status = response.status;
     throw error;

@@ -12,7 +12,7 @@
 
 ```sh
 npm run build
-node --experimental-strip-types --test-isolation=none --test tests/privateNoteStream.test.ts tests/reportNavigation.test.ts tests/seo.test.ts tests/authSession.test.ts
+node --experimental-strip-types --test-isolation=none --test tests/noteNotificationWindow.test.ts tests/privateNoteStream.test.ts tests/reportNavigation.test.ts tests/seo.test.ts tests/authSession.test.ts
 CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev:local
 ```
 
@@ -29,6 +29,20 @@ node tests/run-private-notes.browser.cjs
 Community/User의 새 DB 테스트는 명시한 `PRIVATE_NOTES_PG_TEST_PORT`와 `migration_test_guard.guard = services-pg-disposable` 표식이 있는 일회용 PostgreSQL만 사용한다. 운영·일반 개발 DB에 이 표식을 만들지 않는다. 환경변수가 없으면 시험을 건너뛰므로 테스트 XML의 `tests/skipped/failures`를 확인한다. `BUILD SUCCESSFUL`만으로 DB 시험이 실행됐다고 판단하지 않는다.
 
 시험 후 이번에 기동한 개발 컨테이너·Vite·브라우저를 중지하고 비공개 합성 인증 파일을 제거한다. 기존 개발 데이터 볼륨은 보존한다. 운영 Community replica/롤링 배포·Cloudflare 스트리밍·운영 쓰기 검증을 대신하는 시험이 아니다.
+
+### 펼친 알림 목록의 UI 회귀
+
+`private-note-notifications.browser.js`는 합성 로그인 상태와 모의 API만 사용한다. 실제 User·Community·DB·인증·SSE 연동을 검증하지 않는다. 위 단위 검사 24건과 별개로 초기 20개→더 보기 40개, 늦은 갱신 응답의 덮어쓰기 방지, 화면 복귀 갱신, 이전 페이지 삭제·읽음 반영, 부분 실패 후 기존 목록 보존·재시도, 1440/375px 화면·Escape·가로 넘침, 페이지 오류 없음의 7개 검사 묶음을 실행한다.
+
+프론트만 `127.0.0.1:5184`에 기동하고 설치된 Chromium을 전용 Playwright 세션으로 사용한다. Windows 폴더에서 작업하면 위의 polling 설정을 유지한다. 이 실행기의 파일은 함수 표현식이므로 마지막에 세미콜론을 추가하지 않는다.
+
+```sh
+PLAYWRIGHT_MCP_EXECUTABLE_PATH=/absolute/path/to/chromium playwright-cli -s=notes-fix-review open about:blank
+playwright-cli -s=notes-fix-review run-code --filename=tests/private-note-notifications.browser.js --raw
+playwright-cli -s=notes-fix-review close
+```
+
+스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 현재 GitHub Actions는 환경 정책·빌드 검사만 실행하므로 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다.
 
 ## 관리자 리뉴얼 UI 검증
 
