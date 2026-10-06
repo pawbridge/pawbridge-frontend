@@ -33,9 +33,15 @@ export interface SendNote {
   contextId?: number;
 }
 export interface NotePage {
-  content: PrivateNote[]; totalElements: number; totalPages: number; number: number; size: number;
+  content: PrivateNote[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
 }
 export interface BlockPage {
   content: { memberId: number; nickname: string; createdAt: string }[];
-  totalElements: number; totalPages: number; number: number;
+  totalElements: number;
+  totalPages: number;
+  number: number;
 }

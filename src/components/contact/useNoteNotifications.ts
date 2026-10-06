@@ -2,9 +2,15 @@ import { createContext, useContext } from 'react';
 import type { NoteNotification } from '../../types/privateNotes';
 
 export interface NotificationsState {
-  items: NoteNotification[]; unread: number; loading: boolean; error: boolean;
-  hasMore: boolean; refresh: () => Promise<void>; more: () => Promise<void>;
-  toast: NoteNotification | null; dismissToast: () => void;
+  items: NoteNotification[];
+  unread: number;
+  loading: boolean;
+  error: boolean;
+  hasMore: boolean;
+  refresh: () => Promise<void>;
+  more: () => Promise<void>;
+  toast: NoteNotification | null;
+  dismissToast: () => void;
 }
 export const NotificationsContext = createContext<NotificationsState | null>(null);
 export function useNoteNotifications() {
