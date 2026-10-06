@@ -10,10 +10,18 @@ export function legacyReportPath(pathname: string, search = '', hash = '') {
 
 const returnKey = 'pawbridge-report-login-return';
 
-// Only report writing destinations are accepted, never an arbitrary return URL.
+// Only explicit report/contact destinations are accepted, never an arbitrary return URL.
 export function validReportLoginReturn(value: unknown): value is string {
-  return typeof value === 'string'
-    && /^\/reports\/(?:new(?:\?kind=(?:MISSING|SIGHTING))?|[1-9]\d*\/edit)$/.test(value);
+  if (typeof value !== 'string') return false;
+  if (/^\/reports\/(?:new(?:\?kind=(?:MISSING|SIGHTING))?|[1-9]\d*\/edit)$/.test(value)) return true;
+  if (/^\/notes(?:\/blocks|\/[0-9a-f-]{36})?$/.test(value)) return true;
+  if (!value.startsWith('/notes/new?')) return false;
+  const params = new URLSearchParams(value.slice('/notes/new?'.length));
+  if (!/^[1-9]\d*$/.test(params.get('to') || '')) return false;
+  if ([...params.keys()].some(key => !['to', 'replyTo', 'context', 'contextId'].includes(key) || params.getAll(key).length !== 1)) return false;
+  if (params.has('replyTo') && !/^[0-9a-f-]{36}$/i.test(params.get('replyTo') || '')) return false;
+  if (params.has('context') !== params.has('contextId')) return false;
+  return !params.has('context') || (['POST', 'REPORT'].includes(params.get('context') || '') && /^[1-9]\d*$/.test(params.get('contextId') || ''));
 }
 
 export function rememberReportLoginReturn(value: unknown) {

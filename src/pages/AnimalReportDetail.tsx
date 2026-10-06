@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import Header from '../components/layout/Header';
+import AuthorContact from '../components/contact/AuthorContact';
 import Footer from '../components/layout/Footer';
 import { reportListPath } from '../lib/reportNavigation';
 import placeholderImg from '../assets/image-placeholder.svg';
@@ -73,7 +74,7 @@ export default function AnimalReportDetail() {
           </span>
           <h1 className="text-2xl font-bold md:text-3xl">{report.title}</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            {report.authorNickname || `작성자 ${report.authorId}`} · {new Date(report.createdAt).toLocaleDateString('ko-KR')}
+            <AuthorContact memberId={report.authorId} nickname={report.authorNickname || `작성자 ${report.authorId}`} contextType="REPORT" contextId={report.reportId} /> <time>{new Date(report.createdAt).toLocaleDateString('ko-KR')}</time>
           </p>
         </div>
         {user?.id === report.authorId && <div className="flex gap-2">
