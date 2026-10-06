@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import Header from '../components/layout/Header';
+import AuthorContact from '../components/contact/AuthorContact';
 import Footer from '../components/layout/Footer';
 import placeholderImg from '../assets/image-placeholder.svg';
 import {
@@ -169,7 +170,7 @@ export default function CommunityDetail() {
                   {post.title}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                  <AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /> <time>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</time>
                 </p>
               </div>
               {isAuthor && (
@@ -270,7 +271,7 @@ export default function CommunityDetail() {
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <span className="font-semibold text-gray-900 dark:text-white">
-                          {comment.authorName || `작성자 ${comment.authorId}`}
+                          <AuthorContact memberId={comment.authorId} nickname={comment.authorName || `작성자 ${comment.authorId}`} />
                         </span>
                         <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                           {new Date(comment.createdAt).toLocaleDateString('ko-KR')}

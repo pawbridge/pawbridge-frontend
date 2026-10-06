@@ -7,6 +7,7 @@ import { ProtectedAnimalLinks } from './ProtectedAnimalNavigation';
 import { LostAnimalLinks } from './LostAnimalNavigation';
 import { protectedAnimalDestinations, lostAnimalDestinations } from '../../lib/navigationDestinations';
 import NavigationGroup, { type OpenMode } from './NavigationGroup';
+import NoteNotificationBell from '../contact/NoteNotificationBell';
 
 const palette = {
   text: 'text-brand-ink',
@@ -128,6 +129,8 @@ export default function Header() {
             {user ? (
               // 로그인된 경우: 찜 아이콘 + 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
+                <NoteNotificationBell />
+                <Link to="/notes" className={`hidden sm:flex items-center rounded-lg px-3 min-h-11 text-sm ${palette.text} ${palette.focus} hover:bg-brand-soft`}>쪽지함</Link>
                 {showPetMarket && <Link
                   to="/wishlist"
                   className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
+import AuthorContact from '../components/contact/AuthorContact';
 import { getAllPosts, searchPosts } from '../api/community.api';
 import type { BoardType, PostResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
@@ -237,7 +238,7 @@ export default function CommunityList() {
                       <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
                         {post.title}
                       </th>
-                      <td className="px-6 py-4 text-center">{post.authorName || `작성자 ${post.authorId}`}</td>
+                      <td className="px-6 py-4 text-center" onClick={event => event.stopPropagation()}><AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /></td>
                       <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
                     </tr>
                   ))}
@@ -249,7 +250,7 @@ export default function CommunityList() {
               {filtered.map((post) => {
                 const imageUrl = resolveImage(post.imageUrls);
                 return (
-                  <Link key={post.id} to={`/community/${post.id}`} className="flex flex-col gap-3 group">
+                  <div key={post.id} className="flex flex-col gap-3 group"><Link to={`/community/${post.id}`}>
                     {imageUrl ? (
                       <div
                         className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
@@ -264,11 +265,9 @@ export default function CommunityList() {
                       <p className="text-base font-medium leading-normal text-brand-ink dark:text-white truncate">
                         {post.title}
                       </p>
-                      <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">
-                        {post.authorName || `작성자 ${post.authorId}`} · {new Date(post.createdAt).toLocaleDateString('ko-KR')}
-                      </p>
                     </div>
                   </Link>
+                  <div className="text-sm text-gray-500 dark:text-gray-400"><AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /> <time>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</time></div></div>
                 );
               })}
             </div>

@@ -1,5 +1,35 @@
 # 동반여행 DB 기반 로컬 검증
 
+## 쪽지의 실제 개발 환경 검증
+
+`private-notes.browser.js`는 실제 로컬 로그인·Gateway·Community·PostgreSQL·SSE를 연결한다. 모의 응답으로 쪽지 원문이나 인증 결과를 만들지 않는다. 저장 후 응답만 일부러 끊어 같은 멱등키 재시도를 검증한다. 운영 계정·운영 DB를 사용하지 않는다.
+
+1. 기존 Infra 로컬 Compose의 DB 표식이 `dev`인지 확인한다. 다른 환경이면 진행하지 않는다. User/Community 마이그레이션을 별도 도구로 적용하고 앱 권한·기존 행 수 보존을 확인한다. DB를 초기화하거나 기존 마이그레이션의 체크섬을 바꾸지 않는다.
+2. PostgreSQL·Redis·개발 SMTP·local-access·User·Community·Gateway와 기존 User listener가 요구하는 개발 Kafka만 기동한다. 쪽지 자체는 Kafka나 Redis Pub/Sub를 사용하지 않는다. 모든 앱은 이 작업 브랜치의 빌드여야 한다.
+3. 개발 SMTP 인증과 실제 가입/로그인 API로 이 시험 전용 회원 3명을 준비한다. 이메일은 `note-`로 시작하고 `@example.invalid`로 끝내며 비밀번호는 각각 생성한다. 회원 ID·이메일·비밀번호·테스트 토큰을 `userId/email/password/token` 키의 배열로 저장한 비공개 파일을 준비한다. 파일과 값은 Git·대화·로그에 올리지 않는다. 동일 초 로그인에서 기존 Refresh Token 충돌이 발견돼 시험 로그인 시각을 구분한다. 이 우회는 인증 결함의 해결이 아니다.
+4. 기존 개발 DB에는 합성 커뮤니티 글이 있어야 작성자 진입점 검사를 할 수 있다. 시험은 제공한 회원들의 쪽지함과 서로 간 차단만 정리한다. 다른 회원·게시글·제보를 삭제하지 않는다. 이 시험 계정을 다른 목적으로 재사용하지 않는다.
+5. Java 17 서비스 빌드 후 아래 프론트 검사와 개발 서버를 실행한다. WSL에서 Windows 폴더를 사용하면 변경 감시 polling을 켠다.
+
+```sh
+npm run build
+node --experimental-strip-types --test-isolation=none --test tests/privateNoteStream.test.ts tests/reportNavigation.test.ts tests/seo.test.ts tests/authSession.test.ts
+CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev:local
+```
+
+다른 터미널에서 이미 설치된 Playwright 모듈과 비공개 합성 계정 파일의 절대 경로를 지정한다. 새 도구 설치는 하지 않는다.
+
+```sh
+PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
+PAWBRIDGE_NOTES_FIXTURE_FILE=/private/path/to/synthetic-accounts.json \
+node tests/run-private-notes.browser.cjs
+```
+
+검사 주소는 프론트 `127.0.0.1:5184`, API `localhost:28080`으로 고정한다. 결과는 작성자 진입점·중복 클릭·응답 유실 재전송·직접 SSE·알림 메뉴 미읽음과 본문 비노출·안전한 텍스트/읽음·답장·개인 즐겨찾기/삭제·제3자 거부·차단/해제·오프라인 수신 복원·1440/375px 화면·계정 전환 후 개인 상태 제거의 15개 검사다. 스크린샷은 `/tmp/pawbridge-private-notes-*.png`에 저장한다. 실패 이미지는 합성 본문만 포함하지만 외부 게시 전에 확인한다.
+
+Community/User의 새 DB 테스트는 명시한 `PRIVATE_NOTES_PG_TEST_PORT`와 `migration_test_guard.guard = services-pg-disposable` 표식이 있는 일회용 PostgreSQL만 사용한다. 운영·일반 개발 DB에 이 표식을 만들지 않는다. 환경변수가 없으면 시험을 건너뛰므로 테스트 XML의 `tests/skipped/failures`를 확인한다. `BUILD SUCCESSFUL`만으로 DB 시험이 실행됐다고 판단하지 않는다.
+
+시험 후 이번에 기동한 개발 컨테이너·Vite·브라우저를 중지하고 비공개 합성 인증 파일을 제거한다. 기존 개발 데이터 볼륨은 보존한다. 운영 Community replica/롤링 배포·Cloudflare 스트리밍·운영 쓰기 검증을 대신하는 시험이 아니다.
+
 ## 관리자 리뉴얼 UI 검증
 
 관리자 화면 17개와 기존 API 변경 계약을 로컬 모의 응답으로 검증한다. 운영 인증정보·DB·실제 결제는 사용하지 않는다. `admin-renewal.browser.js`는 회원·보호소·통계 8개, `admin-market.browser.js`는 게시글·상품·주문·분류 9개 화면을 담당한다. 각 스크립트는 1440·390·320px에서 화면을 렌더링한다.
