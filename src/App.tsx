@@ -65,7 +65,7 @@ import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
-  (window as any).useAuthStore = useAuthStore;
+  Object.assign(window, { useAuthStore });
 }
 
 function ProtectedRoute({ children }: { children: ReactElement }) {
