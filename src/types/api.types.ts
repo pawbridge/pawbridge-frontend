@@ -15,7 +15,7 @@ export interface Animal {
   status: 'AVAILABLE' | 'ADOPTED' | 'RESERVED' | 'UNAVAILABLE' | 'PROTECT' | 'ADOPTION_PENDING' | 'EUTHANIZED' | 'NATURAL_DEATH' | 'RETURNED' | 'DONATED' | 'RELEASED' | 'ESCAPED' | 'UNKNOWN';  // 상태
   shelterId: number;            // 보호소 ID
   shelterName?: string;         // 보호소 이름
-  shelter?: any;                // 보호소 정보 (임시)
+  shelter?: { name?: string; phone?: string }; // 기존 응답의 보호소 요약 정보
   careRegNo?: string;           // 보호소 등록번호
   favoriteCount?: number;        // 찜 횟수
   createdAt?: string;            // 등록일
@@ -376,10 +376,10 @@ export interface AdminOrderListParams {
 }
 
 // 주문 목록 응답 (일반 사용자용)
-export interface OrderListResponse extends PageResponse<OrderListItem> {}
+export type OrderListResponse = PageResponse<OrderListItem>;
 
 // 주문 목록 응답 (관리자용)
-export interface AdminOrderListResponse extends PageResponse<AdminOrderListItem> {}
+export type AdminOrderListResponse = PageResponse<AdminOrderListItem>;
 
 // 주문 상태 변경 요청
 export interface UpdateOrderStatusRequest {
@@ -537,7 +537,7 @@ export interface WishlistSearchParams {
 }
 
 // 위시리스트 검색 응답
-export interface WishlistSearchResponse extends PageResponse<WishlistItem> {}
+export type WishlistSearchResponse = PageResponse<WishlistItem>;
 
 // ========== 관리자 통계 관련 타입 ==========
 
@@ -573,7 +573,7 @@ export interface AdminPostListParams {
 }
 
 // 관리자용 게시글 목록 응답
-export interface AdminPostListResponse extends PageResponse<PostResponse> {}
+export type AdminPostListResponse = PageResponse<PostResponse>;
 
 // ========== 마이페이지 관련 타입 ==========
 

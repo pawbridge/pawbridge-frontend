@@ -9,6 +9,7 @@ import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import { getApiErrorMessage } from '../lib/apiError';
 
 export default function AnimalCreate() {
   const navigate = useNavigate();
@@ -99,8 +100,8 @@ export default function AnimalCreate() {
       // 등록한 동물의 상세 페이지로 이동 (등록 내용 확인)
       navigate(`/animals/${data.id}`);
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '동물 등록에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '동물 등록에 실패했습니다.');
       alert(message);
     },
   });
@@ -188,8 +189,8 @@ export default function AnimalCreate() {
       console.log('imageUrl 포함 여부:', !!animalData.imageUrl);
 
       await createAnimalMutation.mutateAsync(animalData);
-    } catch (error: any) {
-      const message = error.response?.data?.message || '이미지 업로드에 실패했습니다.';
+    } catch (error) {
+      const message = getApiErrorMessage(error, '이미지 업로드에 실패했습니다.');
       alert(message);
     }
   };

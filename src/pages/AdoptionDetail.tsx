@@ -12,6 +12,7 @@ import {
   deletePost
 } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
+import { getApiErrorMessage } from '../lib/apiError';
 
 export default function AdoptionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -48,8 +49,8 @@ export default function AdoptionDetail() {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       alert('댓글이 작성되었습니다.');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '댓글 작성에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '댓글 작성에 실패했습니다.');
       alert(message);
     },
   });
@@ -61,8 +62,8 @@ export default function AdoptionDetail() {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       alert('댓글이 삭제되었습니다.');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '댓글 삭제에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '댓글 삭제에 실패했습니다.');
       alert(message);
     },
   });
@@ -76,8 +77,8 @@ export default function AdoptionDetail() {
       alert('입양후기가 삭제되었습니다.');
       navigate('/adoption');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '입양후기 삭제에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '입양후기 삭제에 실패했습니다.');
       alert(message);
     },
   });

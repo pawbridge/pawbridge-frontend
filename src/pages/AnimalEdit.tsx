@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore';
 import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import AdminSidebar from '../components/layout/AdminSidebar';
+import { getApiErrorMessage } from '../lib/apiError';
 
 export default function AnimalEdit() {
   const navigate = useNavigate();
@@ -108,8 +109,8 @@ export default function AnimalEdit() {
       alert('동물 정보가 수정되었습니다.');
       navigate(`/animals/${data.id}`, { state: { from: fromMyPage ? 'mypage' : undefined, tab: previousTab } });
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '동물 정보 수정에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '동물 정보 수정에 실패했습니다.');
       alert(message);
     },
   });
@@ -178,8 +179,8 @@ export default function AnimalEdit() {
       };
 
       await updateAnimalMutation.mutateAsync(animalData);
-    } catch (error: any) {
-      const message = error.response?.data?.message || '이미지 업로드 또는 동물 정보 수정에 실패했습니다.';
+    } catch (error) {
+      const message = getApiErrorMessage(error, '이미지 업로드 또는 동물 정보 수정에 실패했습니다.');
       alert(message);
     }
   };

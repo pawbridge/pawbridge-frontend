@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { createPost } from '../api/community.api';
+import { getApiErrorMessage } from '../lib/apiError';
 
 export default function AdoptionCreate() {
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ export default function AdoptionCreate() {
       alert('입양후기가 작성되었습니다.');
       navigate(`/adoption/${data.postId || data.id}`);
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '입양후기 작성에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '입양후기 작성에 실패했습니다.');
       alert(message);
     },
   });
