@@ -58,6 +58,10 @@ import AnimalStats from './pages/AnimalStats.tsx';
 import Travel from './pages/Travel.tsx';
 import TravelDetail from './pages/TravelDetail.tsx';
 import Privacy from './pages/Privacy.tsx';
+import PrivateNotes from './pages/PrivateNotes';
+import PrivateNoteCompose from './pages/PrivateNoteCompose';
+import PrivateNoteDetail from './pages/PrivateNoteDetail';
+import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -160,6 +164,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
 }
 
 function App() {
+  const location = useLocation();
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -168,6 +173,10 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/notes" element={<ProtectedRoute><PrivateNotes /></ProtectedRoute>} />
+      <Route path="/notes/new" element={<ProtectedRoute><PrivateNoteCompose key={location.search} /></ProtectedRoute>} />
+      <Route path="/notes/blocks" element={<ProtectedRoute><PrivateNoteBlocks /></ProtectedRoute>} />
+      <Route path="/notes/:id" element={<ProtectedRoute><PrivateNoteDetail key={location.pathname} /></ProtectedRoute>} />
       <Route path="/animals" element={<Animals />} />
       <Route path="/animals/lost" element={<LostAnimalSearch />} />
 

@@ -11,7 +11,7 @@ export default function Privacy() {
         <header>
           <p className="text-sm font-bold text-brand-accent dark:text-brand-accent">개인정보 안내</p>
           <h1 className="mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl">개인정보처리방침</h1>
-          <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 9월 22일</p>
+          <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 10월 6일</p>
         </header>
 
         <div className="mt-10 space-y-8 text-sm leading-7 text-gray-700 dark:text-gray-200">
@@ -21,6 +21,7 @@ export default function Privacy() {
               <li>회원 기능: 이메일, 이름, 인증 결과를 가입, 로그인, 계정 관리에 사용합니다.</li>
               <li>보호소 담당자 신청: 신청한 보호소와 승인 상태를 담당자 권한 확인에 사용합니다.</li>
               <li>게시글 및 등록 동물: 이용자가 작성한 내용과 이미지를 해당 기능 제공에 사용합니다.</li>
+              <li>비공개 쪽지: 발신·수신 회원, 본문, 발송·읽음 시각과 개인 즐겨찾기·차단 상태를 회원 간 연락과 쪽지함 제공에 사용합니다. 알림에는 본문을 표시하지 않습니다.</li>
               <li>주문 기능: 수령인, 연락처, 배송지와 주문·결제 결과를 주문 처리에 사용합니다.</li>
               <li>접속 기록: 서비스 안정성, 오류 대응과 보안 확인을 위해 기술적 기록이 생성될 수 있습니다.</li>
             </ul>
@@ -44,6 +45,7 @@ export default function Privacy() {
 
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">보관과 이용자 권리</h2>
+            <p className="mt-4">쪽지는 발송일부터 1년이 지나면 조회할 수 없으며 원문을 주기적으로 정리합니다. 양쪽 쪽지함에서 모두 제거되면 그 전에 삭제합니다. 회원 삭제 시 해당 회원의 쪽지함과 연결 정보를 제거하지만 상대방 쪽지함의 본문은 남을 수 있습니다. 본문에 직접 작성한 개인정보는 자동으로 지워지지 않으므로 개인정보 처리 요청으로 문의해 주세요. 임시 전송 기록은 발송일부터 48시간이 지났고 원문이 삭제된 경우 주기적으로 정리합니다. 이 기록은 재전송 중복과 발송 제한 우회를 막기 위한 것이며 쪽지 본문을 보관하지 않습니다.</p>
             <p className="mt-4">
               정보는 서비스 제공 목적을 달성할 때까지 보관하며, 관계 법령에 별도 보관 의무가 있는 경우 해당
               기간 동안 보관할 수 있습니다. 이용자는 계정 정보를 확인·수정하거나 개인정보 처리에 관한 요청을

@@ -7,13 +7,14 @@ import { queryClient } from './lib/queryClient.ts'
 import './index.css'
 import App from './App.tsx'
 import RouteSeo from './components/seo/RouteSeo.tsx'
+import NoteNotificationsProvider from './components/contact/NoteNotificationsProvider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <RouteSeo />
-        <App />
+        <NoteNotificationsProvider><App /></NoteNotificationsProvider>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

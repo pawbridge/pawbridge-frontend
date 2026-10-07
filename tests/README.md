@@ -1,5 +1,53 @@
 # 동반여행 DB 기반 로컬 검증
 
+## 쪽지의 실제 개발 환경 검증
+
+`private-notes.browser.js`는 실제 로컬 로그인·Gateway·Community·PostgreSQL·SSE를 연결한다. 모의 응답으로 쪽지 원문이나 인증 결과를 만들지 않는다. 저장 후 응답만 일부러 끊어 같은 멱등키 재시도를 검증한다. 운영 계정·운영 DB를 사용하지 않는다.
+
+1. 기존 Infra 로컬 Compose의 DB 표식이 `dev`인지 확인한다. 다른 환경이면 진행하지 않는다. User/Community 마이그레이션을 별도 도구로 적용하고 앱 권한·기존 행 수 보존을 확인한다. DB를 초기화하거나 기존 마이그레이션의 체크섬을 바꾸지 않는다.
+2. PostgreSQL·Redis·개발 SMTP·local-access·User·Community·Gateway와 기존 User listener가 요구하는 개발 Kafka만 기동한다. 쪽지 자체는 Kafka나 Redis Pub/Sub를 사용하지 않는다. 모든 앱은 이 작업 브랜치의 빌드여야 한다.
+3. 개발 SMTP 인증과 실제 가입/로그인 API로 이 시험 전용 회원 3명을 준비한다. 이메일은 `note-`로 시작하고 `@example.invalid`로 끝내며 비밀번호는 각각 생성한다. 회원 ID·이메일·비밀번호·테스트 토큰을 `userId/email/password/token` 키의 배열로 저장한 비공개 파일을 준비한다. 파일과 값은 Git·대화·로그에 올리지 않는다. 동일 초 로그인에서 기존 Refresh Token 충돌이 발견돼 시험 로그인 시각을 구분한다. 이 우회는 인증 결함의 해결이 아니다.
+4. 기존 개발 DB에는 합성 커뮤니티 글이 있어야 작성자 진입점 검사를 할 수 있다. 시험은 제공한 회원들의 쪽지함과 서로 간 차단만 정리한다. 다른 회원·게시글·제보를 삭제하지 않는다. 이 시험 계정을 다른 목적으로 재사용하지 않는다.
+5. Java 17 서비스 빌드 후 아래 프론트 검사와 개발 서버를 실행한다. WSL에서 Windows 폴더를 사용하면 변경 감시 polling을 켠다.
+
+```sh
+npm run build
+node --experimental-strip-types --test-isolation=none --test tests/noteNotificationWindow.test.ts tests/privateNoteStream.test.ts tests/reportNavigation.test.ts tests/seo.test.ts tests/authSession.test.ts
+VITE_API_BASE_URL=http://localhost:28080 CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev -- --host 127.0.0.1 --port 5184 --strictPort
+```
+
+다른 터미널에서 이미 설치된 Playwright 모듈과 비공개 합성 계정 파일의 절대 경로를 지정한다. 새 도구 설치는 하지 않는다.
+
+```sh
+PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
+PAWBRIDGE_NOTES_FIXTURE_FILE=/private/path/to/synthetic-accounts.json \
+node tests/run-private-notes.browser.cjs
+```
+
+검사 주소는 프론트 `127.0.0.1:5184`, API `localhost:28080`으로 고정한다. 결과는 작성자 진입점·중복 클릭·응답 유실 재전송·직접 SSE·알림 메뉴 미읽음과 본문 비노출·안전한 텍스트/읽음·답장·개인 즐겨찾기/삭제·제3자 거부·차단/해제·오프라인 수신 복원·1440/375px 화면·계정 전환 후 개인 상태 제거의 15개 검사다. 스크린샷은 `/tmp/pawbridge-private-notes-*.png`에 저장한다. 실패 이미지는 합성 본문만 포함하지만 외부 게시 전에 확인한다.
+
+Community/User의 새 DB 테스트는 명시한 `PRIVATE_NOTES_PG_TEST_PORT`와 `migration_test_guard.guard = services-pg-disposable` 표식이 있는 일회용 PostgreSQL만 사용한다. 운영·일반 개발 DB에 이 표식을 만들지 않는다. 환경변수가 없으면 시험을 건너뛰므로 테스트 XML의 `tests/skipped/failures`를 확인한다. `BUILD SUCCESSFUL`만으로 DB 시험이 실행됐다고 판단하지 않는다.
+
+시험 후 이번에 기동한 개발 컨테이너·Vite·브라우저를 중지하고 비공개 합성 인증 파일을 제거한다. 기존 개발 데이터 볼륨은 보존한다. 운영 Community replica/롤링 배포·Cloudflare 스트리밍·운영 쓰기 검증을 대신하는 시험이 아니다.
+
+### 펼친 알림 목록의 UI 회귀
+
+`private-note-notifications.browser.js`는 합성 로그인 상태와 모의 API만 사용한다. 실제 User·Community·DB·인증·SSE 연동을 검증하지 않는다. 위 단위 검사 24건과 별개로 초기 20개→더 보기 40개, 늦은 갱신 응답의 덮어쓰기 방지, 화면 복귀 갱신, 이전 페이지 삭제·읽음 반영, 부분 실패 후 기존 목록 보존·재시도, 1440/375px 화면·Escape·가로 넘침, 페이지 오류 없음의 7개 검사 묶음을 실행한다.
+
+프론트만 `127.0.0.1:5184`에 기동하고 설치된 Chromium을 전용 Playwright 세션으로 사용한다. Windows 폴더에서 작업하면 위의 polling 설정을 유지한다. 이 실행기의 파일은 함수 표현식이므로 마지막에 세미콜론을 추가하지 않는다.
+
+```sh
+PLAYWRIGHT_MCP_EXECUTABLE_PATH=/absolute/path/to/chromium playwright-cli -s=notes-fix-review open about:blank
+playwright-cli -s=notes-fix-review run-code --filename=tests/private-note-notifications.browser.js --raw
+playwright-cli -s=notes-fix-review close
+```
+
+스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다. main의 빌드·Worker 설정은 이 승격에서 변경하지 않는다.
+
+## 공개 문의 링크 검증
+
+`footer-contact.browser.js`는 로컬 후보의 개인정보 안내 화면에서 공개 문의 주소와 `mailto:` 링크, 1440·375·320px 잘림·가로 넘침·키보드 포커스를 확인한다. 로그인하거나 메일을 보내지 않는다. 실제 이메일 수신·도메인 주소로 회신하는 기능의 검증은 별개다.
+
 ## 관리자 리뉴얼 UI 검증
 
 관리자 화면 17개와 기존 API 변경 계약을 로컬 모의 응답으로 검증한다. 운영 인증정보·DB·실제 결제는 사용하지 않는다. `admin-renewal.browser.js`는 회원·보호소·통계 8개, `admin-market.browser.js`는 게시글·상품·주문·분류 9개 화면을 담당한다. 각 스크립트는 1440·390·320px에서 화면을 렌더링한다.

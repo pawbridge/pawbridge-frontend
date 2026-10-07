@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import AuthorContact from '../components/contact/AuthorContact';
 import Pagination from '../components/common/Pagination';
 import { getAnimalReports } from '../api/animalReports.api';
 import { reportListPath } from '../lib/reportNavigation';
@@ -21,7 +22,8 @@ function ReportPhoto({ src, title }: { src?: string; title: string }) {
 
 function ReportCard({ report }: { report: AnimalReportResponse }) {
   const missing = report.kind === 'MISSING';
-  return <Link to={`/reports/${report.reportId}`} className="flex min-w-0 flex-col gap-4 rounded-2xl border border-brand-border bg-white p-4 transition-colors hover:border-brand-focus focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus dark:border-gray-700 dark:bg-gray-900">
+  return <article className="flex min-w-0 flex-col rounded-2xl border border-brand-border bg-white p-4 transition-colors hover:border-brand-focus dark:border-gray-700 dark:bg-gray-900">
+    <Link to={`/reports/${report.reportId}`} className="flex min-w-0 flex-1 flex-col gap-4 rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus">
     <ReportPhoto key={report.imageUrls[0] || 'no-photo'} src={report.imageUrls[0]} title={report.title} />
     <div className="flex min-w-0 flex-1 flex-col gap-3 break-words">
       <p className="text-sm font-medium leading-5 text-brand-muted dark:text-gray-300">{missing ? '실종 알림' : '목격 제보'}</p>
@@ -35,7 +37,9 @@ function ReportCard({ report }: { report: AnimalReportResponse }) {
       </p>
       <p className="mt-auto pt-1 text-sm leading-6 text-brand-muted dark:text-gray-400">등록일: {new Date(report.createdAt).toLocaleDateString('ko-KR')}</p>
     </div>
-  </Link>;
+    </Link>
+    <div className="mt-3 text-sm text-brand-muted dark:text-gray-300"><AuthorContact memberId={report.authorId} nickname={report.authorNickname || `작성자 ${report.authorId}`} contextType="REPORT" contextId={report.reportId} /></div>
+  </article>;
 }
 
 export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
