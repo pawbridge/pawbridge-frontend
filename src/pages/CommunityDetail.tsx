@@ -14,6 +14,8 @@ import {
 } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
 
+import { getApiErrorMessage } from '../lib/apiError';
+
 const boardLabel: Record<string, string> = {
   MISSING: '실종',
   PROTECTION: '보호',
@@ -53,8 +55,8 @@ export default function CommunityDetail() {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       alert('댓글이 작성되었습니다.');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '댓글 작성에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '댓글 작성에 실패했습니다.');
       alert(message);
     },
   });
@@ -66,8 +68,8 @@ export default function CommunityDetail() {
       queryClient.invalidateQueries({ queryKey: ['comments', postId] });
       alert('댓글이 삭제되었습니다.');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '댓글 삭제에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '댓글 삭제에 실패했습니다.');
       alert(message);
     },
   });
@@ -81,8 +83,8 @@ export default function CommunityDetail() {
       alert('게시글이 삭제되었습니다.');
       navigate('/community');
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '게시글 삭제에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '게시글 삭제에 실패했습니다.');
       alert(message);
     },
   });

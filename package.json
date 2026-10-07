@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
+    "test:lint-policy": "node --test-isolation=none --test tests/lint-policy.test.mjs",
     "preview": "vite preview",
     "test:seo": "node --experimental-strip-types --test tests/seo.test.ts",
     "test:stats": "node --experimental-strip-types --test tests/regionalStats.test.ts tests/animalStatistics.test.ts",
