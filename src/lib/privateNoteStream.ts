@@ -3,6 +3,42 @@ export interface StreamEvent {
   event: string;
   data: string;
 }
+
+export function retryAfterMilliseconds(value: string | null, now = Date.now()): number | undefined {
+  if (value === null || value.length > 128) return undefined;
+  const header = value.trim();
+  let milliseconds: number;
+  if (/^\d{1,3}$/.test(header)) {
+    milliseconds = Number(header) * 1000;
+  } else if (/^[A-Za-z]{3}, \d{2} [A-Za-z]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(header)) {
+    const timestamp = Date.parse(header);
+    if (!Number.isFinite(timestamp) || new Date(timestamp).toUTCString() !== header) return undefined;
+    milliseconds = timestamp - now;
+  } else {
+    return undefined;
+  }
+  // A malformed or unreasonable server hint must not create a tight loop or an unbounded timer.
+  if (!Number.isFinite(milliseconds) || milliseconds < 0 || milliseconds > 300_000) return undefined;
+  return Math.max(1000, Math.ceil(milliseconds));
+}
+
+export class NoteStreamError extends Error {
+  readonly status: number;
+  readonly retryAfterMs: number | undefined;
+  constructor(status: number, retryAfterMs?: number) {
+    super('알림 연결을 복구하고 있습니다.');
+    this.status = status;
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+export function noteStreamRetryDelay(failure: unknown, delay: number, random = Math.random): number {
+  const wait = failure instanceof NoteStreamError && failure.status === 429
+    ? (failure.retryAfterMs ?? 30_000)
+    : delay;
+  // Add jitter after the server's minimum delay, never before it.
+  return wait + Math.floor(random() * 1000);
+}
 export class SseParser {
   private buffer = '';
   feed(chunk: string): StreamEvent[] {
@@ -46,9 +82,11 @@ export async function consumeNoteStream(
     !response.body ||
     !response.headers.get('content-type')?.startsWith('text/event-stream')
   ) {
-    const error = new Error('알림 연결을 복구하고 있습니다.') as Error & { status?: number };
-    error.status = response.status;
-    throw error;
+    const retryAfter = response.status === 429
+      ? retryAfterMilliseconds(response.headers.get('retry-after'))
+      : undefined;
+    await response.body?.cancel().catch(() => undefined);
+    throw new NoteStreamError(response.status, retryAfter);
   }
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -57,7 +95,10 @@ export async function consumeNoteStream(
     while (!signal.aborted) {
       const { value, done } = await reader.read();
       if (done) break;
-      for (const event of parser.feed(decoder.decode(value, { stream: true }))) onEvent(event);
+      for (const event of parser.feed(decoder.decode(value, { stream: true }))) {
+        if (signal.aborted) break;
+        onEvent(event);
+      }
     }
   } finally {
     await reader.cancel().catch(() => undefined);
