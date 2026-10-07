@@ -13,7 +13,7 @@
 ```sh
 npm run build
 node --experimental-strip-types --test-isolation=none --test tests/noteNotificationWindow.test.ts tests/privateNoteStream.test.ts tests/reportNavigation.test.ts tests/seo.test.ts tests/authSession.test.ts
-CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev:local
+VITE_API_BASE_URL=http://localhost:28080 CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev -- --host 127.0.0.1 --port 5184 --strictPort
 ```
 
 다른 터미널에서 이미 설치된 Playwright 모듈과 비공개 합성 계정 파일의 절대 경로를 지정한다. 새 도구 설치는 하지 않는다.
@@ -42,7 +42,11 @@ playwright-cli -s=notes-fix-review run-code --filename=tests/private-note-notifi
 playwright-cli -s=notes-fix-review close
 ```
 
-스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 현재 GitHub Actions는 환경 정책·빌드 검사만 실행하므로 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다.
+스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다. main의 빌드·Worker 설정은 이 승격에서 변경하지 않는다.
+
+## 공개 문의 링크 검증
+
+`footer-contact.browser.js`는 로컬 후보의 개인정보 안내 화면에서 공개 문의 주소와 `mailto:` 링크, 1440·375·320px 잘림·가로 넘침·키보드 포커스를 확인한다. 로그인하거나 메일을 보내지 않는다. 실제 이메일 수신·도메인 주소로 회신하는 기능의 검증은 별개다.
 
 ## 관리자 리뉴얼 UI 검증
 

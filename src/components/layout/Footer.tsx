@@ -15,6 +15,10 @@ export default function Footer() {
           <div>
             <h2 className={`text-xl font-bold ${titleColor} dark:text-white`}>포우 브릿지</h2>
             <p className={`mt-2 text-sm ${mutedColor} dark:text-gray-400`}>모든 동물이 새로운 가족을 만날 때까지.</p>
+            <p className={`mt-3 text-sm ${mutedColor}`}>
+              <span className="block">개선 제안·오류 문의</span>
+              <a href="mailto:shyu6370@pawbridge.kr" className={linkClass}>shyu6370@pawbridge.kr</a>
+            </p>
           </div>
 
           <FooterColumn titleClassName={titleColor} title="입양">
