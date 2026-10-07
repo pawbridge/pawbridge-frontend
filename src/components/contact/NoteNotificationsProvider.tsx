@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { getNoteNotifications } from '../../api/privateNotes.api';
-import { consumeNoteStream } from '../../lib/privateNoteStream';
+import { consumeNoteStream, noteStreamRetryDelay } from '../../lib/privateNoteStream';
 import { loadNoteNotificationWindow } from '../../lib/noteNotificationWindow';
 import type { NoteNotification } from '../../types/privateNotes';
 import { NotificationsContext } from './useNoteNotifications';
@@ -107,6 +107,7 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     void refresh();
     async function connect() {
       if (controller.signal.aborted || !isCurrentSession() || !accessToken) return;
+      let retryFailure: unknown;
       try {
         await consumeNoteStream(
           `${import.meta.env.VITE_API_BASE_URL || ''}/api/notes/stream`,
@@ -137,19 +138,19 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
           },
         );
       } catch (failure) {
+        retryFailure = failure;
         if (!controller.signal.aborted && isCurrentSession()) {
           const status = (failure as { status?: number }).status;
           if (status === 401) {
             useAuthStore.getState().clearAuth();
             return;
           }
-          if (status === 429) delay = 30000;
         }
       }
       if (!controller.signal.aborted && isCurrentSession()) {
         retryTimer = setTimeout(() => {
           void connect();
-        }, delay);
+        }, noteStreamRetryDelay(retryFailure, delay));
         delay = Math.min(delay * 2, 30000);
       }
     }
