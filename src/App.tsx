@@ -37,6 +37,7 @@ import AdminUserDetail from './pages/AdminUserDetail.tsx';
 import AdminPostManagement from './pages/AdminPostManagement.tsx';
 import AdminPostDetail from './pages/AdminPostDetail.tsx';
 import AdminStatistics from './pages/AdminStatistics.tsx';
+import AdminVideoManagement from './pages/AdminVideoManagement';
 import MyPage from './pages/MyPage.tsx';
 import FavoriteAnimals from './pages/FavoriteAnimals.tsx';
 import RegisteredAnimals from './pages/RegisteredAnimals.tsx';
@@ -283,6 +284,10 @@ function App() {
             </AdminRoute>
           </ProtectedRoute>
         }
+      />
+      <Route
+        path="/admin/videos"
+        element={<ProtectedRoute><AdminRoute><AdminVideoManagement /></AdminRoute></ProtectedRoute>}
       />
       <Route
         path="/admin/posts"
