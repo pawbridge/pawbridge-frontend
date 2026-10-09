@@ -1,5 +1,38 @@
 # 동반여행 DB 기반 로컬 검증
 
+## 프런트 Lint 정책과 브라우저 회귀
+
+기존 ESLint 규칙은 TypeScript·TSX에 적용된다. `npm run lint`는 오류뿐 아니라 경고도 실패로 처리한다. JavaScript·MJS·CJS의 별도 Lint 규칙 도입이나 백엔드 검사는 이번 범위가 아니다.
+
+`npm run test:lint-policy`는 파일을 만들지 않고 CLI의 stdin으로 정상 코드, `any` 오류, Hook 의존성 경고를 전달한다. 정상 코드는 exit0, 나머지는 exit1이어야 한다. GitHub Actions는 dev/main 대상 PR에서 전체 Lint와 이 정책 검사를 환경 검사·빌드보다 먼저 실행한다. 브랜치 보호의 필수 검사 설정은 이 workflow 변경과 별개다.
+
+```sh
+npm run lint
+npm run test:lint-policy
+node --experimental-strip-types --test-isolation=none --test tests/*.test.ts tests/environment-policy.test.mjs
+VITE_API_BASE_URL=http://localhost:28080 npm run build:dev
+VITE_API_BASE_URL=https://api.pawbridge.kr npm run build:prod
+```
+
+`lint-regression.browser.js`는 커뮤니티·입양후기 작성/수정 실패 안내와 입력 유지, multipart 계약, 상품 기본 SKU·옵션 변경·재조회, 바로 구매 요청, 결제 SDK의 취소·null·문자열 오류를 실제 브라우저로 조작한다. 1440·390px을 사용한다. API·주소 검색·결제 SDK는 전부 합성이며 외부 요청을 차단한다. 실제 로그인·DB·결제·운영 검증은 아니다.
+
+이미 설치된 Playwright·Chromium만 사용한다. 아래 Vite 서버와 브라우저 실행기는 이 작업 전용이며 다른 서버·VM을 중지하지 않는다.
+
+```sh
+VITE_API_BASE_URL=http://localhost:28080 VITE_TOSS_CLIENT_KEY=test_local_lint_fixture \
+  CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev -- --host 127.0.0.1 --port 5202 --strictPort
+```
+
+별도 터미널에서 실행하고 개별 검사 이름·개수를 확인한다. 종료 시 브라우저는 실행기가 닫고, 위 전용 Vite만 Ctrl+C로 종료한다.
+
+```sh
+PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
+PAWBRIDGE_CHROMIUM_PATH=/absolute/path/to/installed/chromium \
+node tests/run-lint-regression.browser.cjs
+```
+
+스크린샷은 `/tmp/pawbridge-lint-{product,checkout}-{1440,390}.png`에 남는다. 브라우저 회귀는 로컬 별도 검증이며 이번 GitHub Actions에는 추가하지 않았다.
+
 ## 쪽지의 실제 개발 환경 검증
 
 `private-notes.browser.js`는 실제 로컬 로그인·Gateway·Community·PostgreSQL·SSE를 연결한다. 모의 응답으로 쪽지 원문이나 인증 결과를 만들지 않는다. 저장 후 응답만 일부러 끊어 같은 멱등키 재시도를 검증한다. 운영 계정·운영 DB를 사용하지 않는다.

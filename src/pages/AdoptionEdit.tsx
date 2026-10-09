@@ -5,6 +5,7 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { getPost, updatePost } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
+import { getApiErrorMessage } from '../lib/apiError';
 
 export default function AdoptionEdit() {
   const { id } = useParams<{ id: string }>();
@@ -62,8 +63,8 @@ export default function AdoptionEdit() {
       alert('입양후기가 수정되었습니다.');
       navigate(`/adoption/${data.postId || data.id}`);
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || '입양후기 수정에 실패했습니다.';
+    onError: (error) => {
+      const message = getApiErrorMessage(error, '입양후기 수정에 실패했습니다.');
       alert(message);
     },
   });

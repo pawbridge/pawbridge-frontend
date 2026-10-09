@@ -35,3 +35,8 @@ dist-ssr
 *.pdf
 *.md
 !README.md
+
+# Versioned environment runbook
+!scripts/ENVIRONMENTS.md
+.env.dev
+.env.prod

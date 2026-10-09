@@ -6,5 +6,20 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "DEPLOYMENT_ENVIRONMENT": "prod"
+  },
+  "env": {
+    "prod": {
+      "name": "pawbridge-frontend",
+      "vars": {
+        "DEPLOYMENT_ENVIRONMENT": "prod"
+      },
+      "assets": {
+        "directory": "./dist/prod",
+        "binding": "ASSETS"
+      }
+    }
   }
 }
