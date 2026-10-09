@@ -31,7 +31,7 @@ export default function ProductDetail() {
       setSelectedOptions(firstSku.options || {});
       setMainImage(product.imageUrl);
     }
-  }, [product]);
+  }, [product, selectedSku]);
 
   const addToCartMutation = useMutation({
     mutationFn: () => addToCart({ skuId: selectedSku!.skuId, quantity }),
@@ -137,7 +137,7 @@ export default function ProductDetail() {
 
   // 선택된 옵션 문자열
   const getSelectedOptionText = () => {
-    return Object.entries(selectedOptions).map(([_key, value]) => `${value}`).join(' / ');
+    return Object.values(selectedOptions).join(' / ');
   };
 
   const optionGroups = getOptionGroups();

@@ -186,8 +186,8 @@ export default function Checkout() {
         successUrl: `${window.location.origin}/order-complete?internalOrderId=${orderId}`,
         failUrl: `${window.location.origin}/checkout?error=payment_failed`,
       });
-    } catch (error: any) {
-      if (error.code === 'USER_CANCEL') {
+    } catch (error) {
+      if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'USER_CANCEL') {
         setPaymentModal({ type: 'cancel', message: '결제가 취소되었습니다.' });
       } else {
         console.error('Payment error:', error);
