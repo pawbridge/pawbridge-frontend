@@ -46,7 +46,7 @@ export default function Privacy() {
 
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">YouTube 영상</h2>
-            <p className="mt-4">홈 영상의 제목·채널·썸네일 등은 YouTube Data API Services를 통해 확인합니다. 영상 원본은 YouTube가 제공합니다. 재생 버튼을 누르면 YouTube의 공식 플레이어를 불러오며, 자동 재생하지 않습니다. 썸네일 조회와 플레이어 이용 시 IP 주소 등 접속 정보가 Google에 전달될 수 있고, 플레이어에서 광고나 쿠키 등 YouTube의 기능이 제공될 수 있습니다.</p>
+            <p className="mt-4">홈 영상 정보는 YouTube Data API Services로 제공합니다. 썸네일·플레이어 이용 시 IP 주소 등 접속 정보가 Google에 전달될 수 있습니다. YouTube는 쿠키를 사용하거나 광고를 표시할 수 있습니다.</p>
             <p className="mt-4">영상 이용에는 <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="underline underline-offset-4">YouTube 서비스 약관</a>과 <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="underline underline-offset-4">Google 개인정보처리방침</a>이 적용됩니다.</p>
           </section>
 

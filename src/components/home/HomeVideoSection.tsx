@@ -49,7 +49,6 @@ export default function HomeVideoSection() {
         allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
       <h3 className="mt-4 break-words text-lg font-bold">{playing.title}</h3>
       <p className="mt-2 text-sm text-brand-muted dark:text-stone-300">YouTube · {playing.channelTitle}</p>
-      <p className="mt-3 text-xs leading-5 text-brand-muted dark:text-stone-300">플레이어를 열면 YouTube에 접속 정보가 전달됩니다. 재생되지 않으면 YouTube에서 확인해 주세요.</p>
       <a href={`https://www.youtube.com/watch?v=${playing.videoId}`} target="_blank" rel="noopener noreferrer" className={`mt-4 ${adminControl}`}>YouTube에서 보기</a>
     </VideoDialog>}
   </section>;
