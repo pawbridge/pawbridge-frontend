@@ -8,13 +8,14 @@ import './index.css'
 import App from './App.tsx'
 import RouteSeo from './components/seo/RouteSeo.tsx'
 import NoteNotificationsProvider from './components/contact/NoteNotificationsProvider.tsx'
+import MemberChatProvider from './components/contact/MemberChatProvider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <RouteSeo />
-        <NoteNotificationsProvider><App /></NoteNotificationsProvider>
+        <MemberChatProvider><NoteNotificationsProvider><App /></NoteNotificationsProvider></MemberChatProvider>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

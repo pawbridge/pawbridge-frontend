@@ -107,8 +107,8 @@ async (page) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(`${origin}/notes`);
   await page.getByRole('heading', { name: '연락 공간', exact: true }).waitFor();
-  const bell = page.getByRole('button', { name: /^쪽지 알림/ });
-  const panel = page.getByRole('region', { name: '쪽지 알림 목록' });
+  const bell = page.getByRole('button', { name: /^연락 알림/ });
+  const panel = page.getByRole('region', { name: '연락 알림 목록' });
   const notificationLinks = panel.locator('a[href^="/notes/"]');
   await bell.click();
   await page.waitForFunction(
@@ -172,11 +172,12 @@ async (page) => {
 
   failOlderPage = true;
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await panel.getByText('알림을 불러오지 못했어요.', { exact: false }).waitFor();
+  const noteFailure = panel.getByRole('status').filter({ hasText: /^알림을 불러오지 못했어요\./ });
+  await noteFailure.waitFor();
   check((await notificationLinks.count()) === 40, 'A partial failed refresh erased history');
   failOlderPage = false;
-  await panel.getByRole('button', { name: '다시 시도' }).click();
-  await panel.getByText('알림을 불러오지 못했어요.', { exact: false }).waitFor({ state: 'hidden' });
+  await noteFailure.getByRole('button', { name: '다시 시도' }).click();
+  await noteFailure.waitFor({ state: 'hidden' });
   results.push('older-page failure preserves history and retry recovers');
   await page.screenshot({ path: '/tmp/private-note-notifications-desktop.png', fullPage: true });
   await bell.focus();

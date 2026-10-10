@@ -77,8 +77,8 @@ async (page, accounts) => {
     const id = page.url().split('/').pop();
     assert(keys.length === 2 && keys[0] === keys[1], 'Uncertain retry changed idempotency key');
     assert((await notification()).unreadCount === 1, 'Retry created another received note'); checks.push('lost-response-idempotent-retry');
-    await receiver.getByRole('button', { name: /^쪽지 알림/ }).click();
-    const menu = receiver.getByRole('region', { name: '쪽지 알림 목록' });
+    await receiver.getByRole('button', { name: /^연락 알림/ }).click();
+    const menu = receiver.getByRole('region', { name: '연락 알림 목록' });
     assert(!(await menu.innerText()).includes('합성 쪽지 검증'), 'Notification exposed a private body preview');
     assert((await notification()).unreadCount === 1, 'Opening notification menu marked note read'); checks.push('notification-without-body-and-no-menu-read');
     await menu.locator(`a[href="/notes/${id}"]`).click();
@@ -124,22 +124,22 @@ async (page, accounts) => {
     const offline = await page.request.post(`${api}/api/notes`, { headers: headers(accounts[0]), data: { recipientId: accounts[1].userId, body: '로그아웃 동안 보낸 합성 쪽지', requestId: crypto.randomUUID() } });
     assert(offline.ok(), 'Offline note persistence failed');
     await login(receiver, accounts[1]);
-    await waitFor(async () => (await receiver.getByRole('button', { name: /^쪽지 알림/ }).getAttribute('aria-label')).includes('1개'));
+    await waitFor(async () => (await receiver.getByRole('button', { name: /^연락 알림/ }).getAttribute('aria-label')).includes('1개'));
     checks.push('offline-receipt-rest-restoration');
     await receiver.screenshot({ path: '/tmp/pawbridge-private-notes-desktop.png', fullPage: true });
     await receiver.setViewportSize({ width: 375, height: 812 });
     assert(await receiver.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Mobile horizontal overflow');
-    await receiver.getByRole('button', { name: /^쪽지 알림/ }).click();
-    const bounds = await receiver.getByRole('region', { name: '쪽지 알림 목록' }).boundingBox();
+    await receiver.getByRole('button', { name: /^연락 알림/ }).click();
+    const bounds = await receiver.getByRole('region', { name: '연락 알림 목록' }).boundingBox();
     assert(bounds.x >= 0 && bounds.x + bounds.width <= 375, 'Mobile notification menu clipped');
     await receiver.screenshot({ path: '/tmp/pawbridge-private-notes-mobile.png', fullPage: true });
     checks.push('desktop-mobile-and-notification-overflow');
-    await receiver.getByRole('button', { name: /^쪽지 알림/ }).click();
+    await receiver.getByRole('button', { name: /^연락 알림/ }).click();
     await receiver.locator('header').getByRole('button', { name: '로그아웃' }).first().click();
     await receiver.waitForURL(`${origin}/`);
     await login(receiver, accounts[2]);
     await receiver.getByRole('heading', { name: '아직 쪽지가 없어요', exact: true }).waitFor();
-    assert(!(await receiver.getByRole('button', { name: /^쪽지 알림/ }).getAttribute('aria-label')).includes('1개'), 'Previous account unread count leaked');
+    assert(!(await receiver.getByRole('button', { name: /^연락 알림/ }).getAttribute('aria-label')).includes('1개'), 'Previous account unread count leaked');
     checks.push('account-switch-private-state-reset');
     return { environment: 'local-dev-real-http', checks, screenshots: ['/tmp/pawbridge-private-notes-desktop.png', '/tmp/pawbridge-private-notes-mobile.png'] };
   } catch (error) {
