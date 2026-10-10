@@ -35,8 +35,9 @@ const unwrapResponse = <T>(responseData: T | WrappedResponse<T>): T => {
 };
 
 // 동물 목록 조회 (페이지네이션, 필터링, 정렬)
-export const getAnimals = async (params?: AnimalSearchParams): Promise<PageResponse<Animal>> => {
+export const getAnimals = async (params?: AnimalSearchParams, signal?: AbortSignal): Promise<PageResponse<Animal>> => {
   const response = await apiClient.get<PageResponse<Animal>>('/api/animals', {
+    signal,
     params: {
       page: params?.page ?? 0,
       size: params?.size ?? 20,

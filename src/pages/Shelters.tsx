@@ -5,6 +5,7 @@ import { discoverShelters } from '../api/publicShelters.api';
 import ShelterLayout from '../components/shelters/ShelterLayout';
 import ShelterDiscoveryCard from '../components/shelters/ShelterDiscoveryCard';
 import AnimalSearchPagination from '../components/animals/AnimalSearchPagination';
+import useShelterScroll from '../hooks/useShelterScroll';
 import { koreaToday, readShelterDiscovery, shiftDate, validIntakeRange, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../utils/shelterDiscovery';
 
 const inputClass = 'mt-2 block h-11 w-full rounded-lg border-brand-border bg-white text-base text-brand-ink focus:border-brand-focus focus:ring-brand-focus';
@@ -33,6 +34,7 @@ export default function Shelters() {
   const [params, setParams] = useSearchParams();
   const filters = readShelterDiscovery(params);
   const result = useQuery({ queryKey: ['shelter-discovery', filters], queryFn: ({ signal }) => discoverShelters(filters, signal), retry: false });
+  useShelterScroll(!result.isPending, true);
   const reset = () => setParams({});
   return <ShelterLayout><div className="mx-auto max-w-[1216px]">
     <p className="mb-4 text-xs text-brand-muted dark:text-gray-300"><Link to="/">홈</Link> / 보호소 찾기</p>
