@@ -12,6 +12,8 @@ import { useAuthStore } from '../store/authStore';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
+import { shelterDetailPath, shelterDetailUrl } from '../utils/shelterDetail';
+import useShelterScroll from '../hooks/useShelterScroll';
 import AnimalChatbot from '../components/common/AnimalChatbot';
 
 const dateLabel = (date?: string) => date ? date.slice(0, 10).replace(/-/g, '.') : null;
@@ -33,23 +35,26 @@ export default function AnimalDetail() {
   const previousTab = location.state?.tab || sessionStorage.getItem('mypageActiveTab') || 'registeredAnimals';
   const fromLostSearch = location.state?.from === 'lost-search';
   const searchReturnTo = animalSearchReturnTo(location.state?.searchReturnTo);
+  const shelterReturnTo = shelterDetailPath(location.state?.shelterDetailReturnTo);
   const returnToSearch = () => {
-    if (fromMyPage) navigate('/mypage', { state: { tab: previousTab } });
+    if (shelterReturnTo) navigate(shelterReturnTo, { state: { ...location.state?.shelterDetailState, shelterRestoreKey: location.state?.shelterRestoreKey } });
+    else if (fromMyPage) navigate('/mypage', { state: { tab: previousTab } });
     else if (fromFavorites) navigate('/favorite-animals');
     else if (fromLostSearch && readLostSearchSession(location.state?.lostSearchEntryKey)) navigate(-1);
     else navigate(fromLostSearch ? '/animals/lost' : searchReturnTo);
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!location.state?.shelterRestoreKey || shelterReturnTo) window.scrollTo({ top: 0, behavior: 'instant' });
     setSelectedImage('');
     setImageFailed(false);
     if (fromMyPage) sessionStorage.setItem('mypageActiveTab', previousTab);
-  }, [id, fromMyPage, previousTab]);
+  }, [id, fromMyPage, previousTab, location.state?.shelterRestoreKey, shelterReturnTo]);
 
   const { data: animal, isLoading, isError, refetch } = useQuery({
     queryKey: ['animal', id], queryFn: () => getAnimalById(animalId), enabled: Number.isInteger(animalId) && animalId > 0,
   });
+  useShelterScroll(!isLoading && !shelterReturnTo);
   const weight = animalWeightLabel(animal?.weight);
   const { data: shelter } = useQuery({
     queryKey: ['publicShelter', animal?.shelterId],
@@ -143,7 +148,7 @@ export default function AnimalDetail() {
         <nav aria-label="현재 위치" className="mb-7 flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
           <Link to="/" className="hover:underline">홈</Link><span aria-hidden="true">/</span>
           <button type="button" onClick={returnToSearch} className="hover:underline">
-            {fromMyPage || fromFavorites ? '관심 동물' : fromLostSearch ? '실종 검색 결과' : '동물 검색'}
+            {shelterReturnTo ? '보호소 동물 목록' : fromMyPage || fromFavorites ? '관심 동물' : fromLostSearch ? '실종 검색 결과' : '동물 검색'}
           </button>
           <span aria-hidden="true">/</span><span className="font-medium text-brand-ink dark:text-white">{animal.breed || '동물 상세'}</span>
         </nav>
@@ -195,7 +200,7 @@ export default function AnimalDetail() {
               <h2 className="text-lg font-bold">보호소 연락처</h2>
               <p className="mt-4 break-words text-sm">{shelterName || '보호소 정보 없음'}</p>
               {phone && <p className="mt-2 text-sm">전화 {telephone ? <a href={telephone} className="underline underline-offset-4">{phone}</a> : phone}</p>}
-              {shelter?.careRegNo && <Link to={`/shelters/${shelter.careRegNo}`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">보호소 상세 보기</Link>}
+              {shelter?.careRegNo && <Link to={shelterReturnTo?.startsWith(`/shelters/${shelter.careRegNo}`) ? shelterReturnTo : shelterDetailUrl(shelter.careRegNo, location.pathname + location.search)} state={shelterReturnTo?.startsWith(`/shelters/${shelter.careRegNo}`) ? { ...location.state?.shelterDetailState, shelterRestoreKey: location.state?.shelterRestoreKey } : { shelterReturnState: location.state, shelterReturnKey: location.key }} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">보호소 상세 보기</Link>}
               {!phone && <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">등록된 연락처가 없습니다.</p>}
             </section>
           </div>
@@ -225,7 +230,7 @@ export default function AnimalDetail() {
             </dl>
           </section>
         </div>
-        <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-ink sm:w-auto">동물 목록으로</button>
+        <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-ink sm:w-auto">{shelterReturnTo ? '보호소 동물 목록으로' : '동물 목록으로'}</button>
         <section aria-labelledby="similar-animals-title" className="mt-14 border-t border-border-light pt-10 dark:border-border-dark">
           <h2 id="similar-animals-title" className="mb-6 text-xl font-bold">비슷한 동물</h2>
           {similarQuery.isPending && <p role="status" className="rounded-2xl border border-border-light p-6 text-sm text-brand-muted dark:border-border-dark dark:text-gray-300">비슷한 동물을 불러오는 중입니다…</p>}

@@ -6,10 +6,11 @@ import type { Animal } from '../../types/api.types';
 interface AnimalCardSimpleProps {
   animal: Animal;
   searchReturnTo?: string;
+  navigationState?: Record<string, unknown>;
   onCardClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
-export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo }: AnimalCardSimpleProps) {
+export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo, navigationState }: AnimalCardSimpleProps) {
   const [failedImageUrl, setFailedImageUrl] = useState<string>();
   const title = animal.breed || animalSpeciesLabel(animal.species);
   const status = animalStatusLabel(animal.status);
@@ -23,7 +24,7 @@ export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo }
   return (
     <Link
       to={`/animals/${animal.id}`}
-      state={searchReturnTo ? { searchReturnTo } : undefined}
+      state={navigationState || (searchReturnTo ? { searchReturnTo } : undefined)}
       onClick={onCardClick}
       className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border-light bg-card-light p-4 text-brand-ink transition-colors hover:border-brand-ink xl:grid-cols-[12.5rem_minmax(0,1fr)] xl:gap-x-4 xl:gap-y-1 dark:border-border-dark dark:bg-card-dark dark:text-text-dark dark:hover:border-brand"
     >
