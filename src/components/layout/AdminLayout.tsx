@@ -19,9 +19,10 @@ export default function AdminLayout({ title, description, breadcrumb, children }
   return <div className="flex min-h-dvh bg-stone-100 font-sans text-brand-ink dark:bg-background-dark dark:text-white">
     <div className="sticky top-0 hidden h-dvh shrink-0 lg:block"><AdminSidebar /></div>
     <div className="flex min-w-0 flex-1 flex-col">
-      <header className="flex h-16 shrink-0 items-center gap-4 border-b border-brand-border bg-surface-light px-4 lg:h-[72px] lg:px-6 dark:border-stone-700 dark:bg-surface-dark">
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brand-border bg-surface-light px-4 sm:gap-4 lg:h-[72px] lg:px-6 dark:border-stone-700 dark:bg-surface-dark">
         <button type="button" className={`${adminControl} lg:hidden`} aria-haspopup="dialog" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>메뉴</button>
-        <span className="min-w-0 flex-1 text-sm font-medium"><span className="lg:hidden">관리자 콘솔</span><span className="hidden lg:inline">관리자 콘솔 / {adminSection(pathname)}</span></span>
+        <span className="min-w-0 flex-1 truncate text-sm font-medium"><span className="lg:hidden">관리자 콘솔</span><span className="hidden lg:inline">관리자 콘솔 / {adminSection(pathname)}</span></span>
+        <Link to="/" className={`${adminControl} shrink-0 whitespace-nowrap !px-3 sm:!px-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus`}>메인페이지</Link>
         <div className="flex shrink-0 items-center gap-2 text-sm"><span className="relative flex size-8 items-center justify-center text-brand-ink"><img src="/admin/avatar-background.svg" alt="" width="32" height="32" className="absolute inset-0" /><span className="relative">AD</span></span><span className="hidden lg:inline">관리자</span></div>
       </header>
       <main className="min-w-0 flex-1 space-y-6 p-4 lg:space-y-8 lg:p-8">
