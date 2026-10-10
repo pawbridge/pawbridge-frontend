@@ -63,6 +63,7 @@ import PrivateNotes from './pages/PrivateNotes';
 import PrivateNoteCompose from './pages/PrivateNoteCompose';
 import PrivateNoteDetail from './pages/PrivateNoteDetail';
 import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
+import MemberChats from './pages/MemberChats';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -175,6 +176,9 @@ function App() {
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/notes" element={<ProtectedRoute><PrivateNotes /></ProtectedRoute>} />
+      <Route path="/chats" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
+      <Route path="/chats/new" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
+      <Route path="/chats/:roomId" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
       <Route path="/notes/new" element={<ProtectedRoute><PrivateNoteCompose key={location.search} /></ProtectedRoute>} />
       <Route path="/notes/blocks" element={<ProtectedRoute><PrivateNoteBlocks /></ProtectedRoute>} />
       <Route path="/notes/:id" element={<ProtectedRoute><PrivateNoteDetail key={location.pathname} /></ProtectedRoute>} />
