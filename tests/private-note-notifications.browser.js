@@ -107,8 +107,8 @@ async (page) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(`${origin}/notes`);
   await page.getByRole('heading', { name: '연락 공간', exact: true }).waitFor();
-  const bell = page.getByRole('button', { name: /^쪽지 알림/ });
-  const panel = page.getByRole('region', { name: '쪽지 알림 목록' });
+  const bell = page.getByRole('button', { name: /^연락 알림/ });
+  const panel = page.getByRole('region', { name: '연락 알림 목록' });
   const notificationLinks = panel.locator('a[href^="/notes/"]');
   await bell.click();
   await page.waitForFunction(
