@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import type { ShelterAnimalPreview, ShelterDiscovery } from '../../api/publicShelters.api';
 import { shelterAnimalUrl, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../../utils/shelterDiscovery';
 import ShelterHistory from './ShelterHistory';
+import { shelterDetailUrl } from '../../utils/shelterDetail';
+import { readShelterView, saveShelterView } from '../../utils/shelterView';
 
 function Preview({ animal, returnTo }: { animal: ShelterAnimalPreview; returnTo: string }) {
   const [failed, setFailed] = useState(false);
@@ -17,18 +19,27 @@ function Preview({ animal, returnTo }: { animal: ShelterAnimalPreview; returnTo:
 }
 
 export default function ShelterDiscoveryCard({ shelter, filters }: { shelter: ShelterDiscovery; filters: ShelterDiscoveryFilters }) {
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const location = useLocation();
+  const [historyOpen, setHistoryOpen] = useState(() => readShelterView(location.state?.shelterRestoreKey || location.key)?.expanded.includes(shelter.id) || false);
   const animalUrl = shelterAnimalUrl(shelter.id, filters);
+  const detailUrl = shelterDetailUrl(shelter.careRegNo, `/shelters?${writeShelterDiscovery(filters)}`);
+  const detailState = { shelterReturnKey: location.key };
+  const toggleHistory = () => {
+    const open = !historyOpen;
+    setHistoryOpen(open);
+    const expanded = readShelterView(location.key)?.expanded || [];
+    saveShelterView(location.key, { expanded: open ? [...new Set([...expanded, shelter.id])] : expanded.filter(id => id !== shelter.id) });
+  };
   return <article className="rounded-xl border border-brand-border bg-white p-4 dark:bg-card-dark md:p-6">
     <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div className="min-w-0">
       <p className="text-xs text-brand-muted dark:text-gray-300">{shelter.address || '주소 미등록'}</p>
       <h2 className="mt-2 break-words text-xl font-bold">{shelter.name}</h2>
       <p className="mt-3 inline-block rounded-lg bg-brand-soft px-3 py-2 text-sm text-brand-ink">조건에 맞는 보호중 <strong>{shelter.protectedCount.toLocaleString()}마리</strong></p>
-    </div><Link to={`/shelters/${encodeURIComponent(shelter.careRegNo)}?${writeShelterDiscovery(filters)}`} className="min-h-11 shrink-0 self-start py-3 text-sm underline underline-offset-4">보호소 정보 →</Link></div>
-    <p className="mt-4 text-xs leading-5 text-brand-muted dark:text-gray-300">사진으로 만나보고, 보호소에 방문 전 문의해 주세요.</p>
+    </div><Link to={detailUrl} state={detailState} className="min-h-11 shrink-0 self-start py-3 text-sm underline underline-offset-4">보호소 상세 →</Link></div>
+    <p className="mt-4 text-xs leading-5 text-brand-muted dark:text-gray-300">선택한 접수기간의 최근 동물 3마리를 미리 보여드려요. 상세에서 전체 기간의 동물과 보호 현황을 볼 수 있어요.</p>
     <div aria-label={`${shelter.name} 보호중 동물 미리보기`} className="mt-3 flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3">{shelter.animals.map(animal => <Preview key={animal.id} animal={animal} returnTo={animalUrl} />)}</div>
-    <div className="mt-4 flex flex-col gap-3 sm:flex-row"><Link to={animalUrl} className="flex min-h-11 items-center justify-center rounded-lg bg-brand px-6 text-sm font-bold text-brand-ink hover:bg-brand-hover">이 보호소 동물 보기 →</Link>
-      <button type="button" aria-expanded={historyOpen} aria-controls={`shelter-history-${shelter.id}`} onClick={() => setHistoryOpen(!historyOpen)} className="min-h-11 rounded-lg border border-brand-border px-6 text-sm font-medium">보호 현황 {historyOpen ? '접기 −' : '펼치기 +'}</button></div>
+    <div className="mt-4 flex flex-col gap-3 sm:flex-row"><Link to={detailUrl} state={detailState} className="flex min-h-11 items-center justify-center rounded-lg bg-brand px-6 text-sm font-bold text-brand-ink hover:bg-brand-hover">보호소 상세 보기 →</Link>
+      <button type="button" aria-expanded={historyOpen} aria-controls={`shelter-history-${shelter.id}`} onClick={toggleHistory} className="min-h-11 rounded-lg border border-brand-border px-6 text-sm font-medium">보호 현황 {historyOpen ? '접기 −' : '펼치기 +'}</button></div>
     <div id={`shelter-history-${shelter.id}`}>{historyOpen && <ShelterHistory shelterId={shelter.id} />}</div>
   </article>;
 }
