@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { memberChatEnabled } from '../../lib/memberChat';
 
 export default function AuthorContact({
   memberId,
@@ -66,7 +67,7 @@ export default function AuthorContact({
           const bounds = event.currentTarget.getBoundingClientRect();
           setPosition({
             left: Math.max(8, Math.min(bounds.left, window.innerWidth - 184)),
-            top: Math.min(bounds.bottom + 4, window.innerHeight - 76),
+            top: Math.max(8, Math.min(bounds.bottom + 4, window.innerHeight - (memberChatEnabled ? 120 : 76))),
           });
           setOpen((value) => !value);
         }}
@@ -92,6 +93,12 @@ export default function AuthorContact({
             >
               쪽지 보내기
             </Link>
+            {memberChatEnabled && <Link
+              to={user ? `/chats/new?${params}` : '/login'}
+              state={user ? undefined : { from: `/chats/new?${params}` }}
+              className="flex min-h-11 items-center rounded-lg px-3 hover:bg-brand-soft focus-visible:outline-brand-focus"
+              onClick={(event) => { event.stopPropagation(); setOpen(false); }}
+            >1:1 대화</Link>}
           </span>,
           document.body,
         )}

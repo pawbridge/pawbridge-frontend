@@ -15,7 +15,9 @@ async function main() {
     throw new Error('Use three task-owned synthetic local dev accounts, not production credentials.');
   }
   const { chromium } = require(modulePath);
-  const browser = await chromium.launch({ headless: true });
+  const executable = process.env.PAWBRIDGE_BROWSER_EXECUTABLE;
+  if (executable && !path.isAbsolute(executable)) throw new Error('Existing absolute browser path required.');
+  const browser = await chromium.launch({ headless: true, ...(executable ? { executablePath: executable } : {}) });
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     page.setDefaultTimeout(15000);
