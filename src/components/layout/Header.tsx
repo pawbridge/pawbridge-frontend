@@ -146,7 +146,6 @@ export default function Header() {
                     to="/admin/dashboard"
                     className={`hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
                   >
-                    <span className="material-symbols-outlined text-[18px]">dashboard</span>
                     <span className="truncate">관리자</span>
                   </Link>
                 ) : (
@@ -261,7 +260,6 @@ export default function Header() {
                         className={`flex items-center gap-2 mb-2 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        <span className="material-symbols-outlined text-[18px]">dashboard</span>
                         <span>관리자 대시보드</span>
                       </Link>
                     ) : (
