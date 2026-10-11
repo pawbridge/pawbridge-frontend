@@ -28,8 +28,8 @@ export function NavigationLinks({ id, destinations, mobile = false, onNavigate }
   });
 }
 
-export default function NavigationGroup({ id, title, destinations, current, mode, anotherOpen, onModeChange }: {
-  id: string; title: string; destinations: NavigationDestination[]; current: boolean; mode: OpenMode; anotherOpen: boolean;
+export default function NavigationGroup({ id, title, destinations, current, mode, onModeChange }: {
+  id: string; title: string; destinations: NavigationDestination[]; current: boolean; mode: OpenMode;
   onModeChange: (id: string, next: OpenMode) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -76,7 +76,7 @@ export default function NavigationGroup({ id, title, destinations, current, mode
     clearTimer();
     if (modeRef.current === 'hover') timer.current = setTimeout(() => {
       if (!rootRef.current?.contains(document.activeElement)) changeMode(null);
-    }, 300);
+    }, 150);
   };
 
   return <div ref={rootRef} className="flex h-16 items-center"
@@ -84,9 +84,8 @@ export default function NavigationGroup({ id, title, destinations, current, mode
       if (event.pointerType !== 'mouse') return;
       clearTimer();
       if (!modeRef.current) {
-        // Crossing an adjacent trigger on the way to the open panel is not a menu switch.
-        if (anotherOpen) timer.current = setTimeout(() => changeMode('hover'), 300);
-        else changeMode('hover');
+        // 메뉴 선택은 즉시 반영하고, 패널로 이동할 때의 닫기만 짧게 유예한다.
+        changeMode('hover');
       }
     }} onPointerLeave={scheduleClose}
     onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) changeMode(null); }}>

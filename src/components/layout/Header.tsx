@@ -95,29 +95,29 @@ export default function Header() {
           <nav aria-label="주 메뉴" className="hidden xl:flex items-center gap-2">
             <NavigationGroup id="protected" title="보호동물" destinations={protectedAnimalDestinations}
               current={protectedAnimalDestinations.some(item => item.current(pathname))}
-              mode={openNavigation?.id === 'protected' ? openNavigation.mode : null} anotherOpen={!!openNavigation && openNavigation.id !== 'protected'} onModeChange={changeNavigation} />
+              mode={openNavigation?.id === 'protected' ? openNavigation.mode : null} onModeChange={changeNavigation} />
             <NavigationGroup id="lost" title="실종동물 찾기" destinations={lostAnimalDestinations}
               current={pathname.startsWith('/reports/') || pathname === '/animals/lost'}
-              mode={openNavigation?.id === 'lost' ? openNavigation.mode : null} anotherOpen={!!openNavigation && openNavigation.id !== 'lost'} onModeChange={changeNavigation} />
+              mode={openNavigation?.id === 'lost' ? openNavigation.mode : null} onModeChange={changeNavigation} />
 
-            <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
+            <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} ${palette.active} ${palette.focus}`}>
               동반여행
             </NavLink>
             <NavLink
               to="/adoption"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} ${palette.active} ${palette.focus}`}
             >
               입양후기
             </NavLink>
             <NavLink
               to="/community"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} ${palette.active} ${palette.focus}`}
             >
               커뮤니티
             </NavLink>
             {showPetMarket && <NavLink
               to="/products"
-              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
+              className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} ${palette.active} ${palette.focus}`}
             >
               펫마켓
             </NavLink>}
@@ -215,26 +215,26 @@ export default function Header() {
                 </div>
               </section>
 
-              <NavLink to="/travel" onClick={closeMobileMenu} className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}>
+              <NavLink to="/travel" onClick={closeMobileMenu} className={`flex min-h-12 items-center px-0 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} ${palette.active} ${palette.focus}`}>
                 동반여행
               </NavLink>
               <NavLink
                 to="/adoption"
-                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
+                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} ${palette.active} ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 입양후기
               </NavLink>
               <NavLink
                 to="/community"
-                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
+                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} ${palette.active} ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 커뮤니티
               </NavLink>
               {showPetMarket && <NavLink
                 to="/products"
-                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} transition-colors ${palette.active} ${palette.focus}`}
+                className={`flex min-h-12 items-center px-3 ${palette.text} dark:text-gray-300 text-lg font-normal ${palette.navigation} ${palette.active} ${palette.focus}`}
                 onClick={closeMobileMenu}
               >
                 펫마켓
