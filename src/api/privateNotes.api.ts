@@ -1,4 +1,6 @@
 import apiClient from './client';
+import { queryClient } from '../lib/queryClient';
+import { getAuthSessionVersion } from '../store/authStore';
 import type {
   BlockPage,
   NoteNotifications,
@@ -54,8 +56,24 @@ export async function getNoteBlocks(page: number, signal?: AbortSignal) {
     .data.data;
 }
 export async function blockNoteMember(id: number) {
+  const session = getAuthSessionVersion();
   await apiClient.put(`${base}/blocks/${id}`);
+  if (session === getAuthSessionVersion()) await queryClient.invalidateQueries({ queryKey: ['blocked-authors'] });
 }
 export async function unblockNoteMember(id: number) {
+  const session = getAuthSessionVersion();
   await apiClient.delete(`${base}/blocks/${id}`);
+  if (session === getAuthSessionVersion()) await queryClient.invalidateQueries({ queryKey: ['blocked-authors'] });
+}
+
+export async function getBlockedAuthors(memberIds: number[], signal?: AbortSignal) {
+  const blocked: number[] = [];
+  for (let start = 0; start < memberIds.length; start += 100) {
+    const batch = memberIds.slice(start, start + 100);
+    const response = await apiClient.get<{ data: { memberIds: number[] } }>(`${base}/blocks/status`, {
+      params: { memberIds: batch.join(',') }, signal,
+    });
+    blocked.push(...response.data.data.memberIds);
+  }
+  return blocked;
 }

@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import Header from '../components/layout/Header';
 import AuthorContact from '../components/contact/AuthorContact';
+import BlockedAuthorContent from '../components/contact/BlockedAuthorContent';
+import { useBlockedAuthors } from '../components/contact/useBlockedAuthors';
 import Footer from '../components/layout/Footer';
 import { reportListPath } from '../lib/reportNavigation';
 import placeholderImg from '../assets/image-placeholder.svg';
@@ -29,6 +31,7 @@ export default function AnimalReportDetail() {
       navigate(reportListPath(report?.kind));
     },
   });
+  const blocks = useBlockedAuthors(report ? [report.authorId] : []);
 
   const shell = (content: React.ReactNode) => (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light font-display text-brand-ink dark:bg-background-dark dark:text-white">
@@ -66,6 +69,7 @@ export default function AnimalReportDetail() {
     <Link to={reportListPath(report?.kind)} className="mb-6 inline-flex items-center gap-1 text-gray-600 hover:text-brand-accent dark:text-gray-300">
       <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span> 목록으로
     </Link>
+    <BlockedAuthorContent key={report.reportId} state={blocks} authorId={report.authorId}>
     <article className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800 md:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -94,5 +98,6 @@ export default function AnimalReportDetail() {
       </section>
       <p className="mt-6 whitespace-pre-wrap leading-relaxed text-gray-800 dark:text-gray-200">{report.description}</p>
     </article>
+    </BlockedAuthorContent>
   </div>);
 }

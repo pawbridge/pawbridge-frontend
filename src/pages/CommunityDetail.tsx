@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import Header from '../components/layout/Header';
 import AuthorContact from '../components/contact/AuthorContact';
+import BlockedAuthorContent from '../components/contact/BlockedAuthorContent';
+import { useBlockedAuthors } from '../components/contact/useBlockedAuthors';
 import Footer from '../components/layout/Footer';
 import placeholderImg from '../assets/image-placeholder.svg';
 import {
@@ -39,6 +41,7 @@ export default function CommunityDetail() {
     queryFn: () => getPost(postId),
     enabled: !!postId,
   });
+  const blocks = useBlockedAuthors(post ? [post.authorId] : []);
 
   // 댓글 목록 조회
   const { data: comments = [] } = useQuery({
@@ -161,6 +164,7 @@ export default function CommunityDetail() {
           </div>
 
           {/* 게시글 카드 */}
+          <BlockedAuthorContent key={postId} state={blocks} authorId={post.authorId}>
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 md:p-8 mb-6">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-4">
@@ -297,6 +301,7 @@ export default function CommunityDetail() {
               )}
             </div>
           </div>
+          </BlockedAuthorContent>
         </div>
       </main>
       <Footer />
