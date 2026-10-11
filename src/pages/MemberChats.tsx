@@ -234,7 +234,7 @@ export default function MemberChats() {
     enabled: memberChatEnabled && !!owner, staleTime: 0,
   });
   if (!memberChatEnabled) return <NotFound />;
-  if (findingExisting && existing.isSuccess && existing.data.roomId) {
+  if (findingExisting && existing.isFetchedAfterMount && existing.isSuccess && existing.data.roomId) {
     return <Navigate replace to={existingChatPath(existing.data.roomId, params)} />;
   }
   const selected = !!roomId || !!recipientId;
@@ -253,7 +253,8 @@ export default function MemberChats() {
           onClick={() => void rooms.fetchNextPage()}>{rooms.isFetchingNextPage ? '불러오는 중…' : '대화 10개 더 보기'}</button>}
         {!!content.length && <p className="mt-2 text-center text-xs text-brand-muted dark:text-gray-400">대화 {content.length}개 불러옴</p>}
       </aside>
-      {findingExisting && existing.isPending ? <p role="status" className="p-4">이전 대화를 확인하는 중입니다…</p>
+      {/* A cached null is not a lookup for this entry. Later refreshes must preserve the draft. */}
+      {findingExisting && (existing.isPending || (!existing.isFetchedAfterMount && !existing.isError)) ? <p role="status" className="p-4">이전 대화를 확인하는 중입니다…</p>
         : findingExisting && existing.isError ? <p role="alert" className="p-4">이전 대화를 확인하지 못했어요. <button type="button" className={contactButton} onClick={() => void existing.refetch()}>다시 시도</button></p>
         : selected ? <ChatConversation key={`${owner}:${getAuthSessionVersion()}:${roomId ?? `new:${recipientId}`}`} roomId={roomId} recipientId={recipientId} />
         : <section className="hidden self-start rounded-xl bg-brand-soft p-6 lg:block dark:bg-gray-800"><h3 className="text-lg font-bold">대화를 선택해 주세요</h3><p className="mt-3 text-sm leading-6">목록에서 회원을 선택하면 기존 기록을 확인할 수 있어요.</p></section>}
