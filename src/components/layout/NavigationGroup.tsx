@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export type OpenMode = 'hover' | 'explicit' | null;
@@ -28,8 +28,9 @@ export function NavigationLinks({ id, destinations, mobile = false, onNavigate }
   });
 }
 
-export default function NavigationGroup({ id, title, destinations, current, mode, onModeChange }: {
+export default function NavigationGroup({ id, title, destinations, current, mode, canOpenOnHover, onModeChange }: {
   id: string; title: string; destinations: NavigationDestination[]; current: boolean; mode: OpenMode;
+  canOpenOnHover: (x: number, y: number) => boolean;
   onModeChange: (id: string, next: OpenMode) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -79,17 +80,21 @@ export default function NavigationGroup({ id, title, destinations, current, mode
     }, 150);
   };
 
-  return <div ref={rootRef} className="flex h-16 items-center"
-    onPointerEnter={(event) => {
+  const hoverTrigger = (event: ReactPointerEvent<HTMLButtonElement>) => {
       if (event.pointerType !== 'mouse') return;
       clearTimer();
-      if (!modeRef.current) {
+      if (!modeRef.current && canOpenOnHover(event.clientX, event.clientY)) {
         // 메뉴 선택은 즉시 반영하고, 패널로 이동할 때의 닫기만 짧게 유예한다.
         changeMode('hover');
       }
-    }} onPointerLeave={scheduleClose}
+  };
+
+  return <div ref={rootRef} className="flex h-16 items-center"
+    onPointerEnter={clearTimer} onPointerLeave={scheduleClose}
     onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) changeMode(null); }}>
     <button ref={triggerRef} type="button" aria-expanded={!!mode} aria-controls={`${id}-animal-navigation`}
+      onPointerEnter={hoverTrigger}
+      onPointerMove={hoverTrigger}
       aria-current={current ? 'page' : undefined}
       className={`rounded-lg px-3 py-2 text-sm leading-5 text-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${current ? 'bg-brand font-bold hover:bg-brand-hover dark:text-brand-ink' : 'font-medium hover:bg-neutral-100 dark:text-gray-200 dark:hover:bg-gray-800'}`}
       onClick={() => changeMode(modeRef.current === 'explicit' ? null : 'explicit')}>{title}</button>

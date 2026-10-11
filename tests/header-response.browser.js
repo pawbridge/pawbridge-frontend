@@ -48,7 +48,15 @@ async page => {
     await page.locator('#protected-animal-navigation').waitFor();
     await protectedButton.click();
     if (await protectedButton.getAttribute('aria-expanded') !== 'false') throw new Error('Click toggle failed');
-    checks.push({ width: 1440, hoverSwitchMs, panelPointer: true, escapeFocus: true, keyboard: true, clickToggle: true });
+    await page.mouse.move(0, 0);
+    await protectedButton.hover();
+    await page.locator('#protected-animal-navigation').waitFor();
+    const last = await page.locator('#protected-animal-navigation a').last().boundingBox();
+    await page.mouse.move(last.x + 30, last.y + 30, { steps: 12 });
+    await page.waitForTimeout(200);
+    if (!await page.locator('#protected-animal-navigation').isVisible()) throw new Error('Diagonal panel movement switched the menu');
+    await page.keyboard.press('Escape');
+    checks.push({ width: 1440, hoverSwitchMs, panelPointer: true, diagonalPanelPointer: true, escapeFocus: true, keyboard: true, clickToggle: true });
 
     // API는 1.2초 늦춰도 메뉴 선택과 URL 변경은 즉시 일어나야 한다.
     const slowAPI = async route => {
