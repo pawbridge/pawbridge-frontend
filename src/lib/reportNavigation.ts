@@ -10,9 +10,21 @@ export function legacyReportPath(pathname: string, search = '', hash = '') {
 
 const returnKey = 'pawbridge-report-login-return';
 
+function validChatLoginReturn(value: string) {
+  if (/^\/chats(?:\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?$/i.test(value)) return true;
+  if (!value.startsWith('/chats/new?') || value.includes('#')) return false;
+  const params = new URLSearchParams(value.slice('/chats/new?'.length));
+  const positiveId = (id: string | null) => id !== null && /^[1-9]\d*$/.test(id) && Number.isSafeInteger(Number(id));
+  if (!positiveId(params.get('to'))) return false;
+  if ([...params.keys()].some(key => !['to', 'context', 'contextId'].includes(key) || params.getAll(key).length !== 1)) return false;
+  if (params.has('context') !== params.has('contextId')) return false;
+  return !params.has('context') || (['POST', 'REPORT'].includes(params.get('context') || '') && positiveId(params.get('contextId')));
+}
+
 // Only explicit report/contact destinations are accepted, never an arbitrary return URL.
 export function validReportLoginReturn(value: unknown): value is string {
   if (typeof value !== 'string') return false;
+  if (validChatLoginReturn(value)) return true;
   if (/^\/reports\/(?:new(?:\?kind=(?:MISSING|SIGHTING))?|[1-9]\d*\/edit)$/.test(value)) return true;
   if (/^\/notes(?:\/blocks|\/[0-9a-f-]{36})?$/.test(value)) return true;
   if (!value.startsWith('/notes/new?')) return false;
