@@ -26,6 +26,7 @@ export default function Header() {
     setOpenNavigation(previous => mode ? { id, mode } : previous?.id === id ? null : previous);
   }, []);
   const headerRef = useRef<HTMLElement>(null);
+  const pointerTrail = useRef<{ previous: { x: number; y: number } | null; current: { x: number; y: number } | null }>({ previous: null, current: null });
   const mobileButtonRef = useRef<HTMLButtonElement>(null);
   const { pathname } = useLocation();
   const user = useAuthStore((state) => state.user);
@@ -63,6 +64,18 @@ export default function Header() {
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
+  const canOpenOnHover = (x: number, y: number) => {
+    if (!openNavigation) return true;
+    const panel = headerRef.current?.querySelector(`#${openNavigation.id}-animal-navigation`);
+    if (!panel) return true;
+    const trail = pointerTrail.current;
+    const previous = trail.current?.x === x && trail.current?.y === y ? trail.previous : trail.current;
+    if (!previous) return true;
+    const bounds = panel.getBoundingClientRect();
+    // 열린 패널로 내려가는 중 인접 버튼을 스치면 기존 패널을 유지한다.
+    return !(y > previous.y && previous.y < bounds.top && y <= bounds.top && x >= bounds.left && x <= bounds.right);
+  };
+
   const handleLogout = async () => {
     const sessionVersion = getAuthSessionVersion();
     try {
@@ -80,7 +93,10 @@ export default function Header() {
   };
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+    <header ref={headerRef} onPointerMoveCapture={event => {
+      if (event.pointerType !== 'mouse') return;
+      pointerTrail.current = { previous: pointerTrail.current.current, current: { x: event.clientX, y: event.clientY } };
+    }} className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
       <div className="mx-auto max-w-[1504px] px-4 md:px-6">
         <div className={`flex items-center justify-between whitespace-nowrap border-b border-solid ${palette.border} h-16`}>
           {/* 로고 */}
@@ -95,10 +111,10 @@ export default function Header() {
           <nav aria-label="주 메뉴" className="hidden xl:flex items-center gap-2">
             <NavigationGroup id="protected" title="보호동물" destinations={protectedAnimalDestinations}
               current={protectedAnimalDestinations.some(item => item.current(pathname))}
-              mode={openNavigation?.id === 'protected' ? openNavigation.mode : null} onModeChange={changeNavigation} />
+              mode={openNavigation?.id === 'protected' ? openNavigation.mode : null} canOpenOnHover={canOpenOnHover} onModeChange={changeNavigation} />
             <NavigationGroup id="lost" title="실종동물 찾기" destinations={lostAnimalDestinations}
               current={pathname.startsWith('/reports/') || pathname === '/animals/lost'}
-              mode={openNavigation?.id === 'lost' ? openNavigation.mode : null} onModeChange={changeNavigation} />
+              mode={openNavigation?.id === 'lost' ? openNavigation.mode : null} canOpenOnHover={canOpenOnHover} onModeChange={changeNavigation} />
 
             <NavLink to="/travel" className={`${palette.text} dark:text-gray-300 text-sm font-medium leading-5 ${palette.navigation} ${palette.active} ${palette.focus}`}>
               동반여행
