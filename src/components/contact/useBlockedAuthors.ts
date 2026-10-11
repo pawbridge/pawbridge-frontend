@@ -17,7 +17,8 @@ export function useBlockedAuthors(authorIds: number[]) {
   return {
     owner,
     memberIds: new Set(query.data ?? []),
-    pending: enabled && query.isPending,
+    // Wait for this entry's check, not just the first request ever made for this key.
+    pending: enabled && (query.isPending || (!query.isFetchedAfterMount && !query.isError)),
     failed: enabled && query.isError,
     retry: () => void query.refetch(),
   };
