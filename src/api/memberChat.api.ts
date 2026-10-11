@@ -2,6 +2,9 @@ import apiClient from './client';
 import type { ChatMessage, ChatRoom } from '../types/memberChat';
 
 const base = '/api/chats';
+export async function getExistingChatRoom(member: number, signal?: AbortSignal) {
+  return (await apiClient.get<{ data: { roomId: string | null } }>(`${base}/with/${member}`, { signal })).data.data;
+}
 export async function getChatRooms(cursor?: string, signal?: AbortSignal) {
   return (await apiClient.get<{ data: { content: ChatRoom[]; nextCursor: string | null } }>(base, {
     params: { cursor }, signal,
