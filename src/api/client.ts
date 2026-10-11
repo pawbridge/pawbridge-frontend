@@ -58,6 +58,15 @@ apiClient.interceptors.response.use(
     if (isPreviousSession(response.config)) {
       throw new axios.CanceledError('로그인 정보가 변경되어 이전 요청 결과를 사용할 수 없습니다.');
     }
+    // 페이지 이탈 중 XHR이 status 0으로 끝나도 성공 데이터로 캐시하지 않는다.
+    if (response.status === 0) {
+      throw new axios.AxiosError(
+        '서버의 HTTP 응답을 받지 못했습니다.',
+        axios.AxiosError.ERR_NETWORK,
+        response.config,
+        response.request,
+      );
+    }
     return response;
   },
   (error) => {
