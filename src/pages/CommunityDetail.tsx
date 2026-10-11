@@ -172,7 +172,7 @@ export default function CommunityDetail() {
                   {post.title}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /> <time>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</time>
+                  <AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={postId} /> <time>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</time>
                 </p>
               </div>
               {isAuthor && (
