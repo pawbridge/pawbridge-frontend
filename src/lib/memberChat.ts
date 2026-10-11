@@ -3,6 +3,18 @@ import type { ChatMessage } from '../types/memberChat';
 // Deployment remains a separate approval: expose UI only with an explicit environment flag.
 export const memberChatEnabled = import.meta.env?.VITE_MEMBER_CHAT_ENABLED === 'true';
 
+export function existingChatPath(roomId: string, search: URLSearchParams) {
+  const context = search.get('context');
+  const contextId = search.get('contextId');
+  const params = new URLSearchParams();
+  if ((context === 'POST' || context === 'REPORT') && contextId !== null
+    && /^[1-9]\d*$/.test(contextId) && Number.isSafeInteger(Number(contextId))) {
+    params.set('context', context);
+    params.set('contextId', contextId);
+  }
+  return `/chats/${roomId}${params.size ? `?${params}` : ''}`;
+}
+
 export function chatSocketUrl(apiBase: string, origin: string) {
   const url = new URL('/api/chats/socket', apiBase || origin);
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
