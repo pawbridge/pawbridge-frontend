@@ -42,7 +42,7 @@ export default function PrivateNoteBlocks() {
     <ContactLayout active="blocks">
       <h2 className="text-xl font-bold">차단 관리</h2>
       <p className="mt-2 text-sm leading-6 text-brand-muted dark:text-gray-400">
-        차단하면 서로 새 쪽지를 보내지 못합니다. 기존 쪽지는 남으며, 공개 게시글은 숨기지 않습니다.
+        차단하면 서로 새 쪽지와 대화를 보내지 못합니다. 기존 기록은 남으며, 내가 차단한 회원의 공개 글은 접어서 표시합니다. 원하면 글을 펼쳐 볼 수 있습니다.
       </p>
       {data.isPending ? (
         <p role="status" className="mt-6">

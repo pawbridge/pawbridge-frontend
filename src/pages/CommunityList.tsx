@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import AuthorContact from '../components/contact/AuthorContact';
+import BlockedAuthorContent from '../components/contact/BlockedAuthorContent';
+import { useBlockedAuthors } from '../components/contact/useBlockedAuthors';
 import { getAllPosts, searchPosts } from '../api/community.api';
 import type { BoardType, PostResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
@@ -63,6 +65,7 @@ export default function CommunityList() {
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const filtered = allFiltered.slice(startIndex, endIndex);
+  const blocks = useBlockedAuthors(filtered.map(post => post.authorId));
 
   // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
@@ -234,12 +237,14 @@ export default function CommunityList() {
                       onClick={() => navigate(`/community/${post.id}`)}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                     >
+                      <BlockedAuthorContent state={blocks} authorId={post.authorId} tableColumns={4}>
                       <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{filtered.length - idx}</td>
                       <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
                         {post.title}
                       </th>
                       <td className="px-6 py-4 text-center" onClick={event => event.stopPropagation()}><AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /></td>
                       <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
+                      </BlockedAuthorContent>
                     </tr>
                   ))}
                 </tbody>
@@ -250,7 +255,8 @@ export default function CommunityList() {
               {filtered.map((post) => {
                 const imageUrl = resolveImage(post.imageUrls);
                 return (
-                  <div key={post.id} className="flex flex-col gap-3 group"><Link to={`/community/${post.id}`}>
+                  <BlockedAuthorContent key={post.id} state={blocks} authorId={post.authorId}>
+                  <div className="flex flex-col gap-3 group"><Link to={`/community/${post.id}`}>
                     {imageUrl ? (
                       <div
                         className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
@@ -268,6 +274,7 @@ export default function CommunityList() {
                     </div>
                   </Link>
                   <div className="text-sm text-gray-500 dark:text-gray-400"><AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /> <time>{new Date(post.createdAt).toLocaleDateString('ko-KR')}</time></div></div>
+                  </BlockedAuthorContent>
                 );
               })}
             </div>
