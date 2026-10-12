@@ -281,3 +281,31 @@ playwright-cli -s=font-consistency close
 500ms 지연된 폰트 스타일시트 이후 실제 Noto Sans KR 렌더링,
 폰트 다운로드 실패 시 읽을 수 있는 시스템 글꼴 유지까지 81개 단언으로 확인한다.
 전체 관리자 화면, 실제 백엔드 연결, 운영 배포나 모든 실기기 조합의 검증을 대신하지 않는다.
+
+## 의존성 보안 갱신 회귀
+
+`dependency-security.test.mjs`는 별도 Node 프로세스와 루프백 HTTP 서버에서
+합성 prototype 오염 후 Axios가 상속된 헤더를 보내지 않는지 확인한다.
+다른 테스트 프로세스의 prototype이나 실제 API·인증정보는 사용하지 않는다.
+
+```sh
+node --test tests/dependency-security.test.mjs
+```
+
+브라우저 실행기는 이미 설치된 Playwright·Chromium의 절대 경로를 요구한다.
+새 브라우저를 설치하지 않으며, 루프백 주소 외에는 실행을 거부한다.
+
+```sh
+VITE_API_BASE_URL=http://localhost:28080 VITE_MEMBER_CHAT_ENABLED=true \
+  npm run dev -- --host 127.0.0.1 --port 5260 --strictPort
+PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
+PAWBRIDGE_CHROMIUM_PATH=/absolute/path/to/installed/chromium \
+  node tests/run-dependency-security.browser.cjs
+```
+
+1440·375px에서 로그인 실패 안내와 작성자 연락 복귀, 실제 XHR의 인증 헤더·JSON·
+multipart·HTTP 오류·연결 실패 처리, 지도 선택·확대·Escape·가로 넘침을 검사한다.
+기존 대화 캐시·차단 작성자 캐시와 중단된 응답의 성공 캐시 방지 회귀도 재사용한다.
+API·인증·폰트·주소검색 SDK·장식 사진은 합성이며 실제 백엔드·결제·R2 연동 또는
+운영 검증이 아니다. 브라우저는 실행기의 finally에서 닫고, 종료 후 위 전용 Vite만
+Ctrl+C로 중지한다. 다른 개발 서버·컨테이너·VM을 중지하지 않는다.
