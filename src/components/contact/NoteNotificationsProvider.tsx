@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { getNoteNotifications } from '../../api/privateNotes.api';
 import { consumeNoteStream, noteStreamRetryDelay } from '../../lib/privateNoteStream';
+import { getNoteStreamClientId } from '../../lib/noteStreamClient';
 import { loadNoteNotificationWindow } from '../../lib/noteNotificationWindow';
 import type { NoteNotification } from '../../types/privateNotes';
 import { NotificationsContext } from './useNoteNotifications';
@@ -104,13 +105,14 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     setError(false);
     setLoading(false);
     if (!accessToken || !currentUserId) return () => controller.abort();
+    const streamClientId = getNoteStreamClientId();
     void refresh();
     async function connect() {
       if (controller.signal.aborted || !isCurrentSession() || !accessToken) return;
       let retryFailure: unknown;
       try {
         await consumeNoteStream(
-          `${import.meta.env.VITE_API_BASE_URL || ''}/api/notes/stream`,
+          `${import.meta.env.VITE_API_BASE_URL || ''}/api/notes/stream?clientId=${streamClientId}`,
           accessToken,
           controller.signal,
           (event) => {
