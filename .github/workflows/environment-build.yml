@@ -22,6 +22,8 @@ jobs:
       - name: Lint policy regression
         run: npm run test:lint-policy
       - run: npm run test:environment
+      - name: Daily visitor contract
+        run: npm run test:visits
       - run: npm run build:dev
         env:
           VITE_API_BASE_URL: http://localhost:28080

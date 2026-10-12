@@ -7,13 +7,14 @@ import type { AdminPeriodTrend, ShelterApplicationStats, PostPeriodStats, PostSt
 import { getAnimalStatusStats } from '../api/animalStats.api';
 import AdminLayout from '../components/layout/AdminLayout';
 import AdminTrend from '../components/admin/AdminTrend';
+import AdminVisitStatistics from '../components/visits/AdminVisitStatistics';
 import { AdminError, AdminLoading, AdminPagination, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
 import { adminTrendChanges, fillAdminDays, kstToday, separateAdminPreviousDay, shiftDay, validAdminRange } from '../lib/adminStatistics';
 
-type Area = 'animals' | 'members' | 'shelters' | 'community';
+type Area = 'animals' | 'members' | 'shelters' | 'community' | 'visits';
 type Trend = AdminPeriodTrend | ShelterApplicationStats | PostPeriodStats;
 type Range = { start: string; end: string };
-const areas: [Area, string][] = [['animals', '보호동물'], ['members', '회원'], ['shelters', '보호소'], ['community', '커뮤니티']];
+const areas: [Area, string][] = [['animals', '보호동물'], ['members', '회원'], ['shelters', '보호소'], ['community', '커뮤니티'], ['visits', '방문']];
 const boardLabels: [PostStatsBoardType, string][] = [['ADOPTION', '입양 후기'], ['COMMUNICATION', '자유 이야기'], ['MISSING', '실종 게시글'], ['PROTECTION', '보호 게시글'], ['REPORT', '제보 게시글']];
 
 function Metric({ title, value, caption, query, unit }: { title: string; value: number | undefined; caption: string; query: Pick<UseQueryResult, 'isPending' | 'isError' | 'refetch'>; unit: string }) {
@@ -104,9 +105,9 @@ export default function AdminStatistics() {
     if (!validAdminRange(next.start, next.end) || next.end > today) { setRangeError('시작일과 종료일을 확인해 주세요. 오늘까지 최대 366일을 조회할 수 있습니다.'); return; }
     setRange(next); setDraft(next); setRangeError('');
   };
-  return <AdminLayout title="통계" description="보호동물·회원·보호소·커뮤니티의 집계 기준을 구분하여 확인하세요.">
+  return <AdminLayout title={area === 'visits' ? '방문 통계' : '통계'} description={area === 'visits' ? '하루 기준으로 같은 브라우저의 중복을 제외한 방문 추이를 확인하세요.' : '보호동물·회원·보호소·커뮤니티의 집계 기준을 구분하여 확인하세요.'}>
     <section className={`${adminPanel} space-y-5`}>
-      <div role="group" aria-label="통계 유형" className="grid grid-cols-2 gap-2 sm:grid-cols-4">{areas.map(([value, label]) => <button key={value} className={area === value ? adminPrimary : adminControl} aria-pressed={area === value} onClick={() => setArea(value)}>{label}</button>)}</div>
+      <div role="group" aria-label="통계 유형" className="grid grid-cols-2 gap-2 sm:grid-cols-5">{areas.map(([value, label]) => <button key={value} className={area === value ? adminPrimary : adminControl} aria-pressed={area === value} onClick={() => setArea(value)}>{label}</button>)}</div>
       <form className="flex flex-col items-end gap-4 sm:flex-row" onSubmit={event => { event.preventDefault(); apply(draft); }}>
         <label htmlFor="stats-start" className="w-full text-sm font-medium">시작일<input id="stats-start" type="date" max={today} className={adminInput} value={draft.start} onChange={event => setDraft({ ...draft, start: event.target.value })} /></label>
         <label htmlFor="stats-end" className="w-full text-sm font-medium">종료일<input id="stats-end" type="date" max={today} className={adminInput} value={draft.end} onChange={event => setDraft({ ...draft, end: event.target.value })} /></label>
@@ -115,6 +116,7 @@ export default function AdminStatistics() {
       {rangeError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{rangeError}</p>}
       <div role="group" aria-label="조회 기간" className="flex flex-wrap gap-2">{[['오늘', today], ['최근 7일', shiftDay(today, -6)], ['최근 30일', shiftDay(today, -29)], ['이번 달', today.slice(0, 8) + '01']].map(([text, start]) => <button key={text} className={range.start === start && range.end === today ? adminPrimary : adminControl} aria-pressed={range.start === start && range.end === today} onClick={() => apply({ start, end: today })}>{text}</button>)}</div>
     </section>
-    <StatisticsContent key={`${area}-${range.start}-${range.end}`} area={area} range={range} />
+    {area === 'visits' ? <AdminVisitStatistics key={`visits-${range.start}-${range.end}`} start={range.start} end={range.end} />
+      : <StatisticsContent key={`${area}-${range.start}-${range.end}`} area={area} range={range} />}
   </AdminLayout>;
 }
