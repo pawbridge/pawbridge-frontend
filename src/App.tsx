@@ -64,6 +64,7 @@ import PrivateNoteCompose from './pages/PrivateNoteCompose';
 import PrivateNoteDetail from './pages/PrivateNoteDetail';
 import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
 import MemberChats from './pages/MemberChats';
+import VisitTracker from './components/visits/VisitTracker';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -168,6 +169,8 @@ function AdminRoute({ children }: { children: ReactElement }) {
 function App() {
   const location = useLocation();
   return (
+    <>
+    <VisitTracker />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
@@ -469,6 +472,7 @@ function App() {
       <Route path="/admin/shelter-applications/:id" element={<AdminRoute><AdminShelterApplicationDetail /></AdminRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 }
 
