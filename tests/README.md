@@ -313,3 +313,36 @@ multipart·HTTP 오류·연결 실패 처리, 지도 선택·확대·Escape·가
 API·인증·폰트·주소검색 SDK·장식 사진은 합성이며 실제 백엔드·결제·R2 연동 또는
 운영 검증이 아니다. 브라우저는 실행기의 finally에서 닫고, 종료 후 위 전용 Vite만
 Ctrl+C로 중지한다. 다른 개발 서버·컨테이너·VM을 중지하지 않는다.
+
+## 지도 D3 보안·화면 호환성
+
+`mapDependencySecurity.test.mjs`는 잠금 파일의 실제 `d3-color` 경로를 모두 검사한다.
+타입 전용 `@types/d3-color`와 구분하며, 중첩 설치에 취약 버전이 남아도 실패한다.
+지도 라이브러리의 자체 타입·React 19 지원 계약도 확인한다.
+
+```sh
+node --test-isolation=none --test tests/mapDependencySecurity.test.mjs
+```
+
+지도 전용 브라우저 검사는 설치된 Playwright·Chromium과 루프백 Vite만 사용한다.
+아래 변수에는 현재 PC의 기존 설치 경로와 별도 임시 증거 폴더를 지정한다.
+
+```sh
+npm run dev -- --host 127.0.0.1 --port 5262 --strictPort
+PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
+PAWBRIDGE_CHROMIUM_PATH=/absolute/path/to/installed/chromium \
+PAWBRIDGE_MAP_EVIDENCE=/absolute/path/to/temporary/evidence \
+PAWBRIDGE_MAP_PHASE=after node tests/run-map-security.browser.cjs
+```
+
+1440·375px와 밝은·어두운 모드에서 17개 지역, 반응형 SVG, hover·pressed·focus,
+지도 클릭·키보드 지역 선택, 확대/축소 한계, 드래그, 전체 보기, 선택 메뉴,
+Escape·가로 넘침을 검사한다. 로딩·빈 결과·실패 후 재시도도 확인한다.
+라이브러리 변경 **전에** 같은 실행기를 `PAWBRIDGE_MAP_PHASE=before`로 실행해
+동일 증거 폴더에 `before.json`을 저장했다면, 변경 후 지도 크기·색·지역·마커를
+자동 대조한다. 기준 파일이 없으면 동작 검사만 하며 비교 성공으로 표시하지 않는다.
+
+통계·폰트·외부 자산은 합성 응답이고 실제 백엔드 연결·운영 검증은 아니다.
+캡처는 픽셀 동일성을 자동 보장하지 않으므로 전후 이미지를 직접 확인한다.
+출력·캡처를 Git에 넣지 않는다. 브라우저는 finally에서 닫으며, 종료 후 위 전용
+Vite만 Ctrl+C로 중지한다.
