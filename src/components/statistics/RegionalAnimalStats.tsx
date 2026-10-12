@@ -1,8 +1,9 @@
 import { useEffect, useId, useMemo, useState } from 'react';
-import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
+import { ComposableMap, Geographies, Marker, ZoomableGroup } from 'react-simple-maps';
 import type { RegionalAnimalStats as RegionalStats } from '../../types/api.types';
 import { terrainBand, terrainColor, terrainBreaks, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
 import StatsDialog from './StatsDialog';
+import RegionalMapGeography from './RegionalMapGeography';
 
 const mapCenter: [number, number] = [127.7, 35.95];
 const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-brand/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:opacity-40 dark:border-border-dark';
@@ -57,16 +58,17 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
     const layers = <>
       <Geographies geography="/korea-provinces-topo.json">
         {({ geographies }) => geographies.map(geo => {
-          const name = normalizeRegion(geo.properties.name as string);
+          const regionName = geo.properties?.name;
+          if (typeof regionName !== 'string') return null;
+          const name = normalizeRegion(regionName);
           const count = rows.find(row => row.name === name)?.count ?? 0;
           const active = selected === name;
-          return <Geography key={geo.rsmKey} geography={geo} tabIndex={-1}
+          return <RegionalMapGeography key={geo.rsmKey} geography={geo} tabIndex={-1}
             aria-label={`${name} · ${count.toLocaleString()}마리`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
             onClick={() => setSelected(name)} fill={terrainColor(count, breaks)}
             stroke={active ? 'var(--chart-outline)' : 'var(--chart-surface)'} strokeWidth={active ? 2 : 1}
-            style={{ default: { outline: 'none' }, hover: { outline: 'none', stroke: 'var(--chart-outline)', strokeWidth: 2 }, pressed: { outline: 'none' } }}
             className="cursor-pointer" filter={`url(#${filterId}-${zoomed ? 'expanded' : 'main'})`}>
-          </Geography>;
+          </RegionalMapGeography>;
         })}
       </Geographies>
       {provinces.filter(p => ['경기', '강원', '충남', '충북', '전북', '전남', '경북', '경남', '제주'].includes(p.short)).map(p => {
@@ -99,7 +101,10 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
         <feDropShadow dx="0" dy="3" stdDeviation="1.2" floodColor="var(--chart-outline)" floodOpacity="0.22" />
       </filter></defs>
       {zoomed ? <ZoomableGroup center={position.coordinates} zoom={position.zoom} minZoom={1} maxZoom={3}
-        onMoveEnd={p => setPosition({ coordinates: p.coordinates, zoom: p.zoom })}>{layers}</ZoomableGroup> : layers}
+        onMoveEnd={p => {
+          if (p.coordinates === undefined || p.zoom === undefined) return;
+          setPosition({ coordinates: p.coordinates, zoom: p.zoom });
+        }}>{layers}</ZoomableGroup> : layers}
       </ComposableMap>
       {hovered?.zoomed === zoomed && <div role="tooltip"
         className="absolute z-10 w-[200px] max-w-[calc(100%-16px)] rounded-lg border border-brand-border bg-white px-3 py-2 text-sm text-brand-ink shadow-lg dark:border-border-dark dark:bg-gray-900 dark:text-gray-200"
