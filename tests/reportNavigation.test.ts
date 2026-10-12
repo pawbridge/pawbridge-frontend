@@ -19,6 +19,30 @@ test('쪽지 로그인 복귀는 대상과 문맥만 허용하고 외부 이동�
   for (const path of ['/notes/new?to=0', '/notes/new?to=7&redirect=https://example.com', '/notes/new?to=7&to=8', '/notes/new?to=7&context=OTHER&contextId=42', '/notes/new?to=7&context=POST', '/notes/new?to=7&contextId=42']) assert.equal(validReportLoginReturn(path), false, path);
 });
 
+test('채팅 로그인 복귀는 목록·기존 방과 작성자 연락 문맥을 보존한다', () => {
+  for (const path of [
+    '/chats',
+    '/chats/12345678-1234-4567-89ab-123456789abc',
+    '/chats/new?to=7',
+    '/chats/new?to=7&context=POST&contextId=42',
+    '/chats/new?to=7&context=REPORT&contextId=42',
+  ]) assert.equal(validReportLoginReturn(path), true, path);
+});
+
+test('채팅 로그인 복귀는 외부 주소·잘못된 식별자·중복 문맥을 거부한다', () => {
+  for (const path of [
+    '//example.com/chats', '/chats/../admin', '/chats/not-a-room',
+    '/chats/new?to=0', '/chats/new?to=-1', '/chats/new?to=9007199254740992',
+    '/chats/new?to=7&to=8', '/chats/new?to=7&redirect=https://example.com',
+    '/chats/new?to=7&replyTo=12345678-1234-4567-89ab-123456789abc',
+    '/chats/new?to=7&context=OTHER&contextId=42',
+    '/chats/new?to=7&context=POST', '/chats/new?to=7&contextId=42',
+    '/chats/new?to=7&context=POST&contextId=9007199254740992',
+    '/chats/new?to=7&context=POST&context=REPORT&contextId=42',
+    '/chats/new?to=7#https://example.com',
+  ]) assert.equal(validReportLoginReturn(path), false, path);
+});
+
 test('로그인 복귀는 한 번만 소비하며 잘못된 값과 저장소 불가 시 홈을 사용한다', () => {
   const values = new Map<string, string>();
   Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, value: {
@@ -29,6 +53,9 @@ test('로그인 복귀는 한 번만 소비하며 잘못된 값과 저장소 불
   try {
     rememberReportLoginReturn('/reports/new?kind=SIGHTING');
     assert.equal(consumeReportLoginReturn(), '/reports/new?kind=SIGHTING');
+    assert.equal(consumeReportLoginReturn(), '/');
+    rememberReportLoginReturn('/chats/new?to=7&context=REPORT&contextId=42');
+    assert.equal(consumeReportLoginReturn(), '/chats/new?to=7&context=REPORT&contextId=42');
     assert.equal(consumeReportLoginReturn(), '/');
     rememberReportLoginReturn('//example.com');
     assert.equal(values.size, 0);

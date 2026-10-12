@@ -1,4 +1,6 @@
 import apiClient from './client';
+import { queryClient } from '../lib/queryClient';
+import { getAuthSessionVersion } from '../store/authStore';
 import type {
   BlockPage,
   NoteNotifications,
@@ -54,8 +56,42 @@ export async function getNoteBlocks(page: number, signal?: AbortSignal) {
     .data.data;
 }
 export async function blockNoteMember(id: number) {
+  const session = getAuthSessionVersion();
   await apiClient.put(`${base}/blocks/${id}`);
+  await refreshBlockedAuthor(id, true, session);
 }
 export async function unblockNoteMember(id: number) {
+  const session = getAuthSessionVersion();
   await apiClient.delete(`${base}/blocks/${id}`);
+  await refreshBlockedAuthor(id, false, session);
+}
+
+async function refreshBlockedAuthor(memberId: number, blocked: boolean, session: number) {
+  if (session !== getAuthSessionVersion()) return;
+  const affectedQueries = {
+    queryKey: ['blocked-authors'],
+    predicate: (query: { queryKey: readonly unknown[] }) => query.queryKey[2] === session
+      && Array.isArray(query.queryKey[3]) && query.queryKey[3].includes(memberId),
+  };
+  // Cancel older reads before updating inactive caches too; invalidation alone keeps old data.
+  await queryClient.cancelQueries(affectedQueries);
+  if (session !== getAuthSessionVersion()) return;
+  queryClient.setQueriesData<number[]>(affectedQueries, previous => {
+    if (!previous) return previous;
+    return blocked ? [...new Set([...previous, memberId])].sort((a, b) => a - b)
+      : previous.filter(id => id !== memberId);
+  });
+  await queryClient.invalidateQueries(affectedQueries);
+}
+
+export async function getBlockedAuthors(memberIds: number[], signal?: AbortSignal) {
+  const blocked: number[] = [];
+  for (let start = 0; start < memberIds.length; start += 100) {
+    const batch = memberIds.slice(start, start + 100);
+    const response = await apiClient.get<{ data: { memberIds: number[] } }>(`${base}/blocks/status`, {
+      params: { memberIds: batch.join(',') }, signal,
+    });
+    blocked.push(...response.data.data.memberIds);
+  }
+  return blocked;
 }

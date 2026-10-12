@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import AuthorContact from '../components/contact/AuthorContact';
+import BlockedAuthorContent from '../components/contact/BlockedAuthorContent';
+import { useBlockedAuthors } from '../components/contact/useBlockedAuthors';
 import Pagination from '../components/common/Pagination';
 import { getAnimalReports } from '../api/animalReports.api';
 import { reportListPath } from '../lib/reportNavigation';
@@ -58,6 +60,7 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
     retry: false,
     staleTime: 30_000,
   });
+  const blocks = useBlockedAuthors(data?.content.map(report => report.authorId) ?? []);
   function changeSearch(nextFilters: ReportSearch, nextPage = 0) {
     setParams(reportSearchParams(nextFilters, nextPage));
   }
@@ -97,7 +100,7 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
           : isError ? <div role="alert" className="rounded-xl border border-brand-border px-6 py-16 text-center dark:border-gray-700">
             <p>제보를 불러오지 못했습니다.</p><button type="button" onClick={() => refetch()} className="mt-4 min-h-11 rounded-lg border border-brand-border px-5 font-bold hover:bg-neutral-100 dark:hover:bg-gray-800">다시 시도</button>
           </div>
-          : data?.content.length ? <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{data.content.map(report => <ReportCard key={report.reportId} report={report} />)}</div>
+          : data?.content.length ? <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{data.content.map(report => <BlockedAuthorContent key={report.reportId} state={blocks} authorId={report.authorId}><ReportCard report={report} /></BlockedAuthorContent>)}</div>
           : <div role="status" className="rounded-xl border border-brand-border px-6 py-16 text-center dark:border-gray-700">
             <p>{filterError ? '검색 조건을 확인해 주세요.' : hasFilters ? '검색 조건에 맞는 제보가 없습니다.' : page ? '이 페이지에는 제보가 없습니다.' : '아직 등록된 제보가 없습니다.'}</p>
             <p className="mt-2 text-sm text-brand-muted dark:text-gray-300">{hasFilters ? '조건을 바꾸거나 초기화해 보세요.' : '실종·목격 정보를 알고 있다면 제보를 남겨 주세요.'}</p>
