@@ -24,6 +24,8 @@ jobs:
       - run: npm run test:environment
       - name: Daily visitor contract
         run: npm run test:visits
+      - name: Chat connection regressions
+        run: npm run test:chat
       - run: npm run build:dev
         env:
           VITE_API_BASE_URL: http://localhost:28080
