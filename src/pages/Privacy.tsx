@@ -30,6 +30,7 @@ export default function Privacy() {
 
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">웹사이트 이용 통계</h2>
+            <p className="mt-4">일일 방문 표시가 활성화된 경우, 같은 브라우저의 당일 중복을 제외하기 위해 무작위 방문 쿠키를 사용합니다. 쿠키는 다음 한국 시간 자정에 만료됩니다. 서버에는 방문 날짜와 식별번호의 해시만 보관하고, 지난 식별 기록은 자정 이후 짧은 정리 유예를 거쳐 삭제합니다. 일별 숫자는 방문 추이를 확인하는 데 사용합니다. 이 기능은 회원 계정, IP 주소, 기기 지문, 페이지 이동이나 클릭 기록으로 방문자를 식별하지 않습니다. 브라우저에서 이 쿠키를 차단하거나 삭제할 수 있으며 쿠키 차단으로 다른 서비스 기능을 제한하지 않습니다.</p>
             <p className="mt-4">
               포우브릿지는 공개 화면의 페이지 조회와 성능을 집계하기 위해 Cloudflare Web Analytics를 사용합니다.
               이 도구는 쿠키로 이용자를 추적하지 않으며, Cloudflare 설명에 따르면 방문자의 개인정보를 수집하거나

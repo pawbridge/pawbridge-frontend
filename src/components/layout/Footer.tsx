@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import TodayVisitCount from '../visits/TodayVisitCount';
 
 export default function Footer() {
   const titleColor = 'text-brand-ink';
@@ -41,7 +42,10 @@ export default function Footer() {
         <div className={`mt-8 border-t border-brand-border text-brand-muted pt-5 text-xs leading-5 dark:border-gray-700 dark:text-gray-400`}>
           <p>반려동물 동반여행 정보는 <a href="https://api.visitkorea.or.kr/" target="_blank" rel="noopener noreferrer" className={`underline underline-offset-2 ${hoverColor}`}>한국관광공사 TourAPI</a>를 활용합니다.</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 포우 브릿지</p>
+            <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 sm:justify-start">
+              <p>© 2026 포우 브릿지</p>
+              <TodayVisitCount />
+            </div>
             <div className="flex flex-wrap gap-x-5 gap-y-3">
               <Link to="/terms" className={hoverColor}>이용약관</Link>
               <Link to="/privacy" className={hoverColor}>개인정보처리방침</Link>
