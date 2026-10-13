@@ -12,6 +12,7 @@
     "test:seo": "node --experimental-strip-types --test tests/seo.test.ts",
     "test:stats": "node --experimental-strip-types --test tests/regionalStats.test.ts tests/animalStatistics.test.ts",
     "test:visits": "node --experimental-strip-types --test-isolation=none --test tests/visits.test.ts",
+    "test:chat": "node --experimental-strip-types --test-isolation=none --test tests/member-chat.test.ts tests/chat-ticket.test.ts tests/noteStreamClient.test.ts",
     "build:dev": "node scripts/build-environment.mjs dev",
     "build:prod": "node scripts/build-environment.mjs prod",
     "test:environment": "node --test tests/environment-policy.test.mjs",

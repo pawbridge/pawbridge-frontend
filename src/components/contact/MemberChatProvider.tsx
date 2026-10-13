@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getChatNotifications, issueChatTicket } from '../../api/memberChat.api';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { chatSocketUrl, memberChatEnabled } from '../../lib/memberChat';
+import { requestChatTicket } from '../../lib/chatTicket';
 import type { ChatReceipt, ChatRoom, ChatSend, ChatSignal } from '../../types/memberChat';
 import { MemberChatContext } from './useMemberChat';
 
@@ -146,7 +147,7 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
       beforeConnect: async () => {
         if (abort.signal.aborted || !current()) return;
         try {
-          const ticket = await issueChatTicket(abort.signal);
+          const ticket = await requestChatTicket(owner, abort.signal, () => issueChatTicket(abort.signal));
           if (!current() || abort.signal.aborted) return;
           client.connectHeaders = { ticket: ticket.ticket };
         } catch {
