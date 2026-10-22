@@ -8,7 +8,7 @@ import type {
 
 // 관리자용 게시글 목록 조회
 export const getAdminPosts = async (params?: AdminPostListParams): Promise<AdminPostListResponse> => {
-  const response = await apiClient.get<{ code: number; data: AdminPostListResponse; message: string }>('/api/admin/posts', {
+  const response = await apiClient.get<{ code: number; data: AdminPostListResponse; message: string }>('/api/v1/admin/posts', {
     params: {
       page: params?.page ?? 0,
       size: params?.size ?? 20,
@@ -22,7 +22,7 @@ export const getAdminPosts = async (params?: AdminPostListParams): Promise<Admin
 
 // 관리자용 게시글 상세 조회
 export const getAdminPostById = async (postId: number): Promise<PostResponse> => {
-  const response = await apiClient.get<{ code: number; data: PostResponse; message: string }>(`/api/admin/posts/${postId}`);
+  const response = await apiClient.get<{ code: number; data: PostResponse; message: string }>(`/api/v1/admin/posts/${postId}`);
   return response.data.data;
 };
 
@@ -39,7 +39,7 @@ export const updatePost = async (postId: number, data: UpdatePostRequest): Promi
   }
 
   await apiClient.put<{ code: number; data: null; message: string }>(
-    `/api/admin/posts/${postId}`,
+    `/api/v1/admin/posts/${postId}`,
     formData,
     {
       headers: {
@@ -51,11 +51,11 @@ export const updatePost = async (postId: number, data: UpdatePostRequest): Promi
 
 // 게시글 삭제
 export const deletePost = async (postId: number): Promise<void> => {
-  await apiClient.delete(`/api/admin/posts/${postId}`);
+  await apiClient.delete(`/api/v1/admin/posts/${postId}`);
 };
 
 // 오늘 작성된 게시글 수 조회
 export const getTodayPostCount = async (): Promise<number> => {
-  const response = await apiClient.get<{ code: number; data: number; message: string }>('/api/admin/posts/stats/today');
+  const response = await apiClient.get<{ code: number; data: number; message: string }>('/api/v1/admin/posts/stats/today');
   return response.data.data;
 };

@@ -80,12 +80,12 @@ apiClient.interceptors.response.use(
         case 401: {
           const requestUrl = error.config?.url || '';
           // 로그인 실패는 Login의 오류 안내로 전달하고 현재 입력을 유지한다.
-          if (requestUrl === '/api/auth/login' && error.config?.method?.toLowerCase() === 'post') break;
+          if (requestUrl === '/api/v1/auth/login' && error.config?.method?.toLowerCase() === 'post') break;
 
-          // 공개 API 경로 패턴: /api/animals 또는 /api/animals/{id}
-          const isPublicAnimalApi = /^\/api\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
+          // 공개 API 경로 패턴: /api/v1/animals 또는 /api/v1/animals/{id}
+          const isPublicAnimalApi = /^\/api\/v1\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
           
-          const isPublicVideoApi = requestUrl === '/api/home/videos' && error.config?.method?.toLowerCase() === 'get';
+          const isPublicVideoApi = requestUrl === '/api/v1/home/videos' && error.config?.method?.toLowerCase() === 'get';
           if (isPublicVideoApi || isPublicAnimalApi || isPublicTravelRequest(requestUrl, error.config?.method) || isPublicShelterRequest(requestUrl, error.config?.method)) {
             // 공개 API는 에러만 로그하고 리다이렉트하지 않음
             console.warn('공개 API 인증 실패 (리다이렉트 제외):', requestUrl);

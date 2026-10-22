@@ -30,18 +30,18 @@ async function publicRequest(path: string, method: 'GET' | 'POST'): Promise<Toda
   } finally { clearTimeout(timer); }
 }
 export async function initializeVisit(): Promise<void> {
-  await publicRequest('/api/visits/identity', 'POST');
+  await publicRequest('/api/v1/visits/identity', 'POST');
 }
 export async function countVisit(): Promise<TodayVisits | null> {
-  return publicRequest('/api/visits/today', 'POST'); // A known bot's 204 is not a count.
+  return publicRequest('/api/v1/visits/today', 'POST'); // A known bot's 204 is not a count.
 }
 export async function getTodayVisits(): Promise<TodayVisits> {
-  const data = await publicRequest('/api/visits/today', 'GET');
+  const data = await publicRequest('/api/v1/visits/today', 'GET');
   if (!data) throw new Error('방문 통계 응답 없음');
   return data;
 }
 export async function getVisitPeriod(startDate: string, endDate: string): Promise<VisitPeriod> {
-  return (await apiClient.get<Envelope<VisitPeriod>>('/api/admin/visits/stats/period', {
+  return (await apiClient.get<Envelope<VisitPeriod>>('/api/v1/admin/visits/stats/period', {
     params: { startDate, endDate },
   })).data.data;
 }

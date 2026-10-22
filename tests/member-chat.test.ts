@@ -23,6 +23,6 @@ test('body uses Unicode code points and rejects empty, null and unpaired surroga
   for (const input of [' ', '\0', '\uD800']) assert.equal(validChatBody(input), false);
 });
 test('WebSocket URL preserves TLS and never contains authentication values', () => {
-  assert.equal(chatSocketUrl('https://api.example.invalid', 'https://site.example.invalid'), 'wss://api.example.invalid/api/chats/socket');
-  assert.equal(chatSocketUrl('', 'http://localhost:5184'), 'ws://localhost:5184/api/chats/socket');
+  assert.equal(chatSocketUrl('https://api.example.invalid', 'https://site.example.invalid'), 'wss://api.example.invalid/api/v1/chats/socket');
+  assert.equal(chatSocketUrl('', 'http://localhost:5184'), 'ws://localhost:5184/api/v1/chats/socket');
 });

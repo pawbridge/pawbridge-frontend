@@ -5,9 +5,9 @@ async page => {
   let fail = false, legacy = false, listRequests = 0, total = 21;
   const place = index => ({ contentId: String(1000 + index), title: `페이지 검증 장소 ${index + 1}`, address: '테스트 주소', imageUrl: null });
   await page.unrouteAll();
-  await page.route(/^https?:\/\/[^/]+\/api\//, route => {
+  await page.route(/^https?:\/\/[^/]+\/api\/v1\//, route => {
     const url = route.request().url();
-    const path = url.split('/api/')[1].split('?')[0];
+    const path = url.split('/api/v1/')[1].split('?')[0];
     if (path === 'places/regions') return route.fulfill({ json: { items: [{ code: '11', name: '서울' }, { code: '26', name: '부산' }], fetchedAt: null, availability: 'READY' } });
     if (path === 'places') {
       listRequests++;

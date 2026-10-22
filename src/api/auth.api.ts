@@ -14,14 +14,14 @@ import type {
 
 // 로그인
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/auth/login', credentials);
+  const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/v1/auth/login', credentials);
   return response.data.data;
 };
 
 // 회원가입
 export const signup = async (userData: SignupRequest): Promise<SignupResponse> => {
   const response = await apiClient.post<ApiResponse<SignupResponse>>(
-    '/api/users/signup',
+    '/api/v1/users/signup',
     userData
   );
   return response.data.data;
@@ -29,7 +29,7 @@ export const signup = async (userData: SignupRequest): Promise<SignupResponse> =
 
 // 로그아웃
 export const logout = async (): Promise<void> => {
-  await apiClient.post('/api/auth/logout');
+  await apiClient.post('/api/v1/auth/logout');
   // localStorage에서 토큰 제거
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
@@ -40,7 +40,7 @@ export const logout = async (): Promise<void> => {
 // 비밀번호 재설정 - 1단계: 인증 코드 발송
 export const sendResetCode = async (data: SendResetCodeRequest): Promise<void> => {
   await apiClient.post<ApiResponse<null>>(
-    '/api/auth/password/reset-request',
+    '/api/v1/auth/password/reset-request',
     data,
     {
       timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
@@ -51,7 +51,7 @@ export const sendResetCode = async (data: SendResetCodeRequest): Promise<void> =
 // 비밀번호 재설정 - 2단계: 인증 및 비밀번호 변경
 export const resetPassword = async (data: ResetPasswordRequest): Promise<void> => {
   await apiClient.post<ApiResponse<null>>(
-    '/api/auth/password/reset',
+    '/api/v1/auth/password/reset',
     data
   );
 };

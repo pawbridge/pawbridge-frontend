@@ -1,7 +1,7 @@
 // All HTTP APIs are mocked. This script never mutates production data.
 async page => {
   const origin = 'http://127.0.0.1:5199';
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   const check = (condition, label) => { if (!condition) throw new Error(label); };
   const errors = [], writes = [], results = [];
   let fail = '', empty = false, failDelivery = false, release, pending = false;
@@ -14,7 +14,7 @@ async page => {
   const paged = content => ({ content, totalElements: content.length, totalPages: content.length ? 1 : 0, number: 0, size: 20, first: true, last: true, empty: !content.length });
   const envelope = data => ({ code: 200, data });
   page.on('pageerror', error => errors.push(error.message));
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const request = route.request();
     if (!['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
@@ -24,30 +24,30 @@ async page => {
       writes.push({ path, method: request.method(), json, raw });
       if (pending) await new Promise(resolve => { release = resolve; });
       if (failDelivery && path.endsWith('/delivery-status')) return route.fulfill({ status: 500, json: { message: 'mock failure' } });
-      if (path === '/api/images') return route.fulfill({ json: { imageUrl: image } });
-      if (path === '/api/products' || path === '/api/products/1') return route.fulfill({ json: product });
-      if (path === '/api/admin/orders/1/status') order = { ...order, status: json.status };
-      if (path === '/api/admin/orders/1/delivery-status') order = { ...order, deliveryStatus: json.deliveryStatus };
-      if (path.startsWith('/api/admin/orders/')) return route.fulfill({ json: order });
-      if (path === '/api/categories') categories.push({ id: 3, ...json, children: [] });
-      if (path === '/api/categories/2' && request.method() === 'PUT') categories[0].children[0] = { ...categories[0].children[0], ...json };
-      if (path === '/api/option-groups') groups.push({ id: 3, ...json, values: [] });
-      if (path === '/api/option-groups/1' && request.method() === 'PUT') groups[0] = { ...groups[0], ...json };
-      if (path === '/api/option-groups/1/values') groups[0].values.push({ id: 3, groupId: 1, groupName: '사이즈', ...json });
-      if (path === '/api/option-groups/values/1' && request.method() === 'PUT') groups[0].values[0].name = json.name;
-      if (path === '/api/option-groups/values/1' && request.method() === 'DELETE') groups[0].values = groups[0].values.filter(value => value.id !== 1);
-      if (path === '/api/admin/posts/12' && request.method() === 'PUT') posts[0].title = '수정한 게시글';
+      if (path === '/api/v1/images') return route.fulfill({ json: { imageUrl: image } });
+      if (path === '/api/v1/products' || path === '/api/v1/products/1') return route.fulfill({ json: product });
+      if (path === '/api/v1/admin/orders/1/status') order = { ...order, status: json.status };
+      if (path === '/api/v1/admin/orders/1/delivery-status') order = { ...order, deliveryStatus: json.deliveryStatus };
+      if (path.startsWith('/api/v1/admin/orders/')) return route.fulfill({ json: order });
+      if (path === '/api/v1/categories') categories.push({ id: 3, ...json, children: [] });
+      if (path === '/api/v1/categories/2' && request.method() === 'PUT') categories[0].children[0] = { ...categories[0].children[0], ...json };
+      if (path === '/api/v1/option-groups') groups.push({ id: 3, ...json, values: [] });
+      if (path === '/api/v1/option-groups/1' && request.method() === 'PUT') groups[0] = { ...groups[0], ...json };
+      if (path === '/api/v1/option-groups/1/values') groups[0].values.push({ id: 3, groupId: 1, groupName: '사이즈', ...json });
+      if (path === '/api/v1/option-groups/values/1' && request.method() === 'PUT') groups[0].values[0].name = json.name;
+      if (path === '/api/v1/option-groups/values/1' && request.method() === 'DELETE') groups[0].values = groups[0].values.filter(value => value.id !== 1);
+      if (path === '/api/v1/admin/posts/12' && request.method() === 'PUT') posts[0].title = '수정한 게시글';
       return route.fulfill({ json: envelope(null) });
     }
     if (fail === path) return route.fulfill({ status: 500, json: { message: 'mock failure' } });
-    if (path === '/api/admin/posts') return route.fulfill({ json: envelope(paged(empty ? [] : posts)) });
-    if (path === '/api/admin/posts/12') return route.fulfill({ json: envelope(posts[0]) });
-    if (path === '/api/products') return route.fulfill({ json: { items: empty ? [] : [{ id: 1, skuId: 2, name: product.name, imageUrl: image, status: 'ACTIVE', price: 19000, totalStock: 12 }], totalCount: empty ? 0 : 1, currentPage: 0, totalPages: 1, hasNext: false } });
-    if (path === '/api/products/1') return route.fulfill({ json: product });
-    if (path === '/api/categories') return route.fulfill({ json: envelope(empty ? [] : categories) });
-    if (path === '/api/option-groups') return route.fulfill({ json: empty ? [] : groups });
-    if (path === '/api/admin/orders') return route.fulfill({ json: paged(empty ? [] : [order]) });
-    if (path === '/api/admin/orders/1') return route.fulfill({ json: order });
+    if (path === '/api/v1/admin/posts') return route.fulfill({ json: envelope(paged(empty ? [] : posts)) });
+    if (path === '/api/v1/admin/posts/12') return route.fulfill({ json: envelope(posts[0]) });
+    if (path === '/api/v1/products') return route.fulfill({ json: { items: empty ? [] : [{ id: 1, skuId: 2, name: product.name, imageUrl: image, status: 'ACTIVE', price: 19000, totalStock: 12 }], totalCount: empty ? 0 : 1, currentPage: 0, totalPages: 1, hasNext: false } });
+    if (path === '/api/v1/products/1') return route.fulfill({ json: product });
+    if (path === '/api/v1/categories') return route.fulfill({ json: envelope(empty ? [] : categories) });
+    if (path === '/api/v1/option-groups') return route.fulfill({ json: empty ? [] : groups });
+    if (path === '/api/v1/admin/orders') return route.fulfill({ json: paged(empty ? [] : [order]) });
+    if (path === '/api/v1/admin/orders/1') return route.fulfill({ json: order });
     return route.fulfill({ status: 501, json: { message: 'Unmocked API: ' + path } });
   });
   await page.goto(origin);
@@ -97,13 +97,13 @@ async page => {
   await page.getByLabel('대표 이미지 선택').setInputFiles({ name: 'local-test.png', mimeType: 'image/png', buffer: await imageResponse.body() });
   await page.getByRole('button', { name: '상품 등록', exact: true }).click();
   await page.waitForURL('**/admin/products');
-  const created = writes.find(write => write.path === '/api/products' && write.method === 'POST');
+  const created = writes.find(write => write.path === '/api/v1/products' && write.method === 'POST');
   check(created.json.skus.length === 2 && created.json.imageUrl === image && created.json.skus.every(sku => sku.optionValueIds.length === 1), 'SKU and uploaded-image create contract');
   await page.goto(origin + '/admin/products/1/edit');
   await page.getByLabel('가격 1 (원)').fill('20000');
   await page.getByRole('button', { name: '변경 저장', exact: true }).click();
   await page.waitForURL('**/admin/products');
-  const edited = writes.find(write => write.path === '/api/products/1' && write.method === 'PATCH');
+  const edited = writes.find(write => write.path === '/api/v1/products/1' && write.method === 'PATCH');
   check(edited.json.skus[0].id === 2 && edited.json.skus[0].price === 20000 && edited.json.status === 'ACTIVE', 'Existing SKU ids preserved');
   results.push('option combinations, image upload, product create/update, SKU ids');
   await page.goto(origin + '/admin/orders/1');
@@ -133,7 +133,7 @@ async page => {
   await page.getByLabel('카테고리 이름 (필수)').fill('산책 준비');
   await page.getByRole('button', { name: '저장', exact: true }).click();
   await page.getByText('카테고리가 수정되었습니다.', { exact: true }).waitFor();
-  check(writes.some(write => write.path === '/api/categories/2' && write.method === 'PUT' && write.json.parentId === 1), 'Category update contract');
+  check(writes.some(write => write.path === '/api/v1/categories/2' && write.method === 'PUT' && write.json.parentId === 1), 'Category update contract');
   await page.getByText('산책 준비', { exact: true }).first().waitFor();
   await page.getByRole('button', { name: '새 카테고리' }).click();
   check(await page.getByRole('button', { name: '저장', exact: true }).count() === 1, 'New category enters editable create mode');
@@ -161,9 +161,9 @@ async page => {
   modal = page.getByRole('dialog', { name: '삭제하시겠어요?' });
   await modal.getByRole('button', { name: '삭제', exact: true }).click();
   await modal.waitFor({ state: 'hidden' });
-  check(writes.some(write => write.path === '/api/option-groups/values/1' && write.method === 'DELETE'), 'Option-value delete contract');
+  check(writes.some(write => write.path === '/api/v1/option-groups/values/1' && write.method === 'DELETE'), 'Option-value delete contract');
   results.push('category create/update/parent guard, group edit without auto-submit, option-value create/update/delete');
-  for (const [path, api] of [['/admin/posts', '/api/admin/posts'], ['/admin/products', '/api/products'], ['/admin/orders', '/api/admin/orders'], ['/admin/categories', '/api/categories'], ['/admin/option-groups', '/api/option-groups']]) {
+  for (const [path, api] of [['/admin/posts', '/api/v1/admin/posts'], ['/admin/products', '/api/v1/products'], ['/admin/orders', '/api/v1/admin/orders'], ['/admin/categories', '/api/v1/categories'], ['/admin/option-groups', '/api/v1/option-groups']]) {
     fail = api;
     await page.goto(origin + path);
     await page.getByRole('alert').waitFor({ timeout: 15000 });

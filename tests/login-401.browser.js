@@ -18,21 +18,21 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (path === '/api/auth/login' && request.method() === 'POST') {
+    if (path === '/api/v1/auth/login' && request.method() === 'POST') {
       requests.push('login');
       return route.fulfill({ status: 401, json: { code: 401, data: null, message: '이메일 또는 비밀번호가 일치하지 않습니다.' } });
     }
-    if (path === '/api/users/me' && request.method() === 'GET') {
+    if (path === '/api/v1/users/me' && request.method() === 'GET') {
       requests.push('profile');
       return route.fulfill({ status: 401, json: { code: 401, data: null, message: '로그인이 필요합니다.' } });
     }
-    if (path.startsWith('/api/')) {
+    if (path.startsWith('/api/v1/')) {
       unexpected.push(`${request.method()} ${path}`);
       return route.abort();
     }
     return route.continue();
   };
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   page.on('pageerror', onError);
   try {
     for (const width of [1920, 390]) {
@@ -69,6 +69,6 @@ async page => {
     return { checks, requests, unexpected, errors };
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }

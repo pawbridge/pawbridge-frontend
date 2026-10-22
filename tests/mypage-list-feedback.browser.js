@@ -4,11 +4,11 @@ async page => {
   const checks = [], errors = [], unexpected = [], requests = [];
   const assert = (ok, message) => { if (!ok) throw new Error(message); };
   const definitions = [
-    { tab: 'favoriteAnimals', title: '내가 찜한 동물', label: '찜한 동물을', empty: '아직 찜한 동물이 없습니다.', path: '/api/users/me/favorite-animals' },
-    { tab: 'registeredAnimals', title: '내 보호소가 등록한 동물', label: '등록한 동물을', empty: '아직 등록한 동물이 없습니다.', path: '/api/users/me/registered-animals' },
+    { tab: 'favoriteAnimals', title: '내가 찜한 동물', label: '찜한 동물을', empty: '아직 찜한 동물이 없습니다.', path: '/api/v1/users/me/favorite-animals' },
+    { tab: 'registeredAnimals', title: '내 보호소가 등록한 동물', label: '등록한 동물을', empty: '아직 등록한 동물이 없습니다.', path: '/api/v1/users/me/registered-animals' },
     { tab: 'wishlist', title: '나의 위시리스트', label: '위시리스트를', empty: '찜한 상품이 없습니다.', path: '/api/v1/mypage/wishlists' },
-    { tab: 'cart', title: '나의 장바구니', label: '장바구니를', empty: '장바구니가 비어있습니다.', path: '/api/carts' },
-    { tab: 'orders', title: '나의 주문 목록', label: '주문 내역을', empty: '주문 내역이 없습니다.', path: '/api/orders' },
+    { tab: 'cart', title: '나의 장바구니', label: '장바구니를', empty: '장바구니가 비어있습니다.', path: '/api/v1/carts' },
+    { tab: 'orders', title: '나의 주문 목록', label: '주문 내역을', empty: '주문 내역이 없습니다.', path: '/api/v1/orders' },
   ];
   let selected, mode = 'hold', held = [], empty = false;
   const user = () => ({ id: 10, userId: 10, name: '목록검증', nickname: '목록검증', email: 'lists@example.invalid', provider: 'LOCAL', role: selected.tab === 'registeredAnimals' ? 'ROLE_SHELTER' : 'ROLE_ADMIN', createdAt: '2026-09-01T00:00:00' });
@@ -17,10 +17,10 @@ async page => {
   const order = id => ({ orderId: id, orderUuid: `test-order-${id}`, status: 'PAID', createdAt: '2026-09-01T00:00:00', totalAmount: 1000, receiverName: '테스트', deliveryAddress: '테스트 주소', items: [product(id)] });
   const handler = async route => {
     const req = route.request(), relative = req.url().replace(/^https?:\/\/[^/]+/, ''), path = relative.split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     requests.push({ method: req.method(), relative });
-    if (path === '/api/users/me' && req.method() === 'GET') return route.fulfill({ json: { code: 200, data: user() } });
-    if (path === '/api/carts' && req.method() === 'DELETE') return route.fulfill({ json: {} });
+    if (path === '/api/v1/users/me' && req.method() === 'GET') return route.fulfill({ json: { code: 200, data: user() } });
+    if (path === '/api/v1/carts' && req.method() === 'DELETE') return route.fulfill({ json: {} });
     if (path !== selected.path || req.method() !== 'GET') {
       unexpected.push(`${req.method()} ${relative}`); return route.abort();
     }
@@ -80,7 +80,7 @@ async page => {
   };
   const onError = error => errors.push(error.message);
   page.on('pageerror', onError);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   await page.addInitScript(() => { window.confirm = () => true; });
   try {
     await page.goto(`${origin}/login`);

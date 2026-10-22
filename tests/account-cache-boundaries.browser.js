@@ -12,11 +12,11 @@ async page => {
     const id = Number(r.headers()['x-user-id'] || 0);
     requests.push({ method: r.method(), path, id });
     const send = json => route.fulfill({ json });
-    if (path === '/api/auth/login' && r.method() === 'POST') {
+    if (path === '/api/v1/auth/login' && r.method() === 'POST') {
       const account = r.postDataJSON().email.includes('101') ? 101 : 202;
       return send({ code: 200, data: { ...user(account), accessToken: `mock-${account}`, refreshToken: `mock-refresh-${account}` } });
     }
-    if (path === '/api/auth/logout' && r.method() === 'POST') {
+    if (path === '/api/v1/auth/logout' && r.method() === 'POST') {
       if (holdLogout) await new Promise(resolve => { held = resolve; });
       return route.fulfill({ status: failLogout ? 500 : 200, json: { code: failLogout ? 500 : 200 } });
     }
@@ -26,16 +26,16 @@ async page => {
         held = null;
       }
       if (failRead?.id === id && failRead.path === path) return route.fulfill({ status: failRead.status, json: { message: '모의 오류' } });
-      if (path === '/api/animals/303') return send(animal(303));
-      if (path === '/api/animals/303/similar') return send([]);
-      if (path === '/api/favorites/303/check') return send({ code: 200, data: id === 101 });
-      if (path === '/api/users/me') return send({ code: 200, data: user(id) });
-      if (path === '/api/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });
-      if (path === '/api/users/me/registered-animals') return send({ code: 200, data: paged([animal(id)]) });
-      if (path === '/api/carts') return send([{ id, skuId: id, skuCode: `SKU-${id}`, productId: id, productName: `계정${id}전용상품`, productImageUrl: '', price: 1000, quantity: 1, stockQuantity: 10 }]);
+      if (path === '/api/v1/animals/303') return send(animal(303));
+      if (path === '/api/v1/animals/303/similar') return send([]);
+      if (path === '/api/v1/favorites/303/check') return send({ code: 200, data: id === 101 });
+      if (path === '/api/v1/users/me') return send({ code: 200, data: user(id) });
+      if (path === '/api/v1/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });
+      if (path === '/api/v1/users/me/registered-animals') return send({ code: 200, data: paged([animal(id)]) });
+      if (path === '/api/v1/carts') return send([{ id, skuId: id, skuCode: `SKU-${id}`, productId: id, productName: `계정${id}전용상품`, productImageUrl: '', price: 1000, quantity: 1, stockQuantity: 10 }]);
       if (path === '/api/v1/mypage/wishlists') return send(paged([{ wishlistId: id, skuId: id, productId: id, productName: `계정${id}전용찜상품`, productStatus: 'ACTIVE', price: 1000, options: {}, createdAt: '2026-09-21T00:00:00' }]));
-      if (path === '/api/animals') return send(paged([]));
-      if (path === '/api/posts/read') return send({ code: 200, data: [] });
+      if (path === '/api/v1/animals') return send(paged([]));
+      if (path === '/api/v1/posts/read') return send({ code: 200, data: [] });
       if (path === '/api/v1/animals/stats/today') return send({ rescueCount: 0, adoptionCount: 0 });
       if (path === '/api/v1/animals/stats/status') return send([]);
     }
@@ -61,7 +61,7 @@ async page => {
     window.__documentMarker = Math.random();
   });
   page.on('pageerror', e => errors.push(e.message));
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
 
   const waitHeld = async () => {
     for (let i = 0; i < 100 && !held; i++) await page.waitForTimeout(20);
@@ -93,9 +93,9 @@ async page => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     // Independent routes share the same user-scoped entries as MyPage.
     for (const c of [
-      { role: 'ROLE_USER', path: '/favorite-animals', tab: '내가 찜한 동물', text: '전용동물', api: '/api/users/me/favorite-animals' },
-      { role: 'ROLE_SHELTER', path: '/registered-animals', tab: '내 보호소가 등록한 동물', text: '전용동물', api: '/api/users/me/registered-animals' },
-      { role: 'ROLE_ADMIN', path: '/cart', tab: '나의 장바구니', text: '전용상품', api: '/api/carts' },
+      { role: 'ROLE_USER', path: '/favorite-animals', tab: '내가 찜한 동물', text: '전용동물', api: '/api/v1/users/me/favorite-animals' },
+      { role: 'ROLE_SHELTER', path: '/registered-animals', tab: '내 보호소가 등록한 동물', text: '전용동물', api: '/api/v1/users/me/registered-animals' },
+      { role: 'ROLE_ADMIN', path: '/cart', tab: '나의 장바구니', text: '전용상품', api: '/api/v1/carts' },
     ]) {
       await reset(c.role); await login(101);
       await page.getByRole('button', { name: c.tab }).click();
@@ -114,7 +114,7 @@ async page => {
     await page.getByTitle('찜 해제', { exact: true }).waitFor();
     await logout(); await login(202); await navigate('/animals/303');
     await page.getByTitle('찜하기', { exact: true }).waitFor();
-    assert(requests.filter(r => r.path === '/api/favorites/303/check' && r.id === 202).length === 1, 'Favorite status reused');
+    assert(requests.filter(r => r.path === '/api/v1/favorites/303/check' && r.id === 202).length === 1, 'Favorite status reused');
     results.push('animal detail favorite belongs to B');
 
     // B's slow/failed read must never fall back to A's cached list, even transiently.
@@ -128,15 +128,15 @@ async page => {
       await page.evaluate(() => { window.__allowLogout = true; });
       await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
       await page.waitForURL(`${origin}/login`);
-      holdRead = { path: '/api/users/me/favorite-animals', id: 202 };
+      holdRead = { path: '/api/v1/users/me/favorite-animals', id: 202 };
       if (mode === 'failure') failRead = { ...holdRead, status: 500 };
       await startWatching(); await login(202);
       await page.getByRole('button', { name: '내가 찜한 동물' }).click();
       await waitHeld(); await noOldData(); release();
       if (mode === 'slow') await page.getByText('계정202전용동물', { exact: true }).waitFor();
       else {
-        for (let i = 0; i < 150 && requests.filter(r => r.path === '/api/users/me/favorite-animals' && r.id === 202).length < 2; i++) await page.waitForTimeout(20);
-        assert(requests.filter(r => r.path === '/api/users/me/favorite-animals' && r.id === 202).length === 2, 'Failure retry not exercised');
+        for (let i = 0; i < 150 && requests.filter(r => r.path === '/api/v1/users/me/favorite-animals' && r.id === 202).length < 2; i++) await page.waitForTimeout(20);
+        assert(requests.filter(r => r.path === '/api/v1/users/me/favorite-animals' && r.id === 202).length === 2, 'Failure retry not exercised');
         await page.waitForTimeout(100);
       }
       await noOldData(); results.push(`cancelled logout and B ${mode}`);
@@ -162,9 +162,9 @@ async page => {
     }
     // signal-aware A query is cancelled by logout, not reused by B.
     await reset(); await login(101);
-    holdRead = { path: '/api/users/me/favorite-animals', id: 101 };
+    holdRead = { path: '/api/v1/users/me/favorite-animals', id: 101 };
     let cancelled = false;
-    const onFailed = r => { if (r.url().includes('/api/users/me/favorite-animals')) cancelled = true; };
+    const onFailed = r => { if (r.url().includes('/api/v1/users/me/favorite-animals')) cancelled = true; };
     page.on('requestfailed', onFailed);
     await page.getByRole('button', { name: '내가 찜한 동물' }).click(); await waitHeld();
     await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
@@ -181,7 +181,7 @@ async page => {
     await reset(); await login(101); holdLogout = true;
     await page.locator('header').getByRole('button', { name: '로그아웃' }).first().click(); await waitHeld();
     await navigate('/login'); await login(202);
-    const logoutResponse = page.waitForResponse(r => r.url().includes('/api/auth/logout'));
+    const logoutResponse = page.waitForResponse(r => r.url().includes('/api/v1/auth/logout'));
     holdLogout = false; release(); await logoutResponse; await page.waitForTimeout(100);
     assert(await page.evaluate(() => JSON.parse(localStorage.getItem('auth-storage')).state.user?.id) === 202, 'Old logout cleared new account');
     assert(page.url() === `${origin}/mypage`, 'Old logout navigated new account');
@@ -198,5 +198,5 @@ async page => {
     assert(errors.length === 0, `Browser errors: ${errors.join(', ')}`);
     assert(unexpected.length === 0, `Unexpected API: ${unexpected.join(', ')}`);
     return { results, errors, unexpected };
-  } finally { if (held) { holdRead = null; held(); } await page.unroute('**/api/**', handler); }
+  } finally { if (held) { holdRead = null; held(); } await page.unroute('**/api/v1/**', handler); }
 }

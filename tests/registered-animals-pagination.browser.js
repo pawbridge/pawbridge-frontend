@@ -15,11 +15,11 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
-    if (request.method() === 'GET' && path === '/api/users/me') {
+    if (!path.startsWith('/api/v1/')) return route.continue();
+    if (request.method() === 'GET' && path === '/api/v1/users/me') {
       return route.fulfill({ json: { code: 200, data: user() } });
     }
-    if (request.method() === 'GET' && path === '/api/users/me/registered-animals') {
+    if (request.method() === 'GET' && path === '/api/v1/users/me/registered-animals') {
       const query = request.url().split('?')[1];
       const number = Number(query.match(/(?:^|&)page=(\d+)/)?.[1]);
       assert(/(?:^|&)size=20(?:&|$)/.test(query), 'Page size changed');
@@ -41,7 +41,7 @@ async page => {
     return route.abort();
   };
   page.on('pageerror', onError);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   const cards = () => page.locator('main a[href^="/animals/"]').filter({ has: page.locator('h3') });
   const open = async route => {
     await page.evaluate(user => {
@@ -49,7 +49,7 @@ async page => {
       sessionStorage.setItem('mypageActiveTab', 'registeredAnimals');
     }, user());
     const response = role === 'ROLE_SHELTER'
-      ? page.waitForResponse(response => response.url().includes('/api/users/me/registered-animals') && response.status() === 200)
+      ? page.waitForResponse(response => response.url().includes('/api/v1/users/me/registered-animals') && response.status() === 200)
       : null;
     await page.goto(origin + route);
     if (response) await response;
@@ -112,7 +112,7 @@ async page => {
     assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected}`);
     return { checks, memberAccess: 'pass', pageErrors: errors, unexpectedRequests: unexpected };
   } finally {
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
     page.off('pageerror', onError);
   }
 }

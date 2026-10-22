@@ -13,34 +13,34 @@ export default defineConfig({
   server: {
     proxy: {
       // Store Service (상점) - 8085
-      // '/api/products': {
+      // '/api/v1/products': {
       //   target: 'http://localhost:8085',
       //   changeOrigin: true,
       // },
-      // '/api/carts': {
+      // '/api/v1/carts': {
       //   target: 'http://localhost:8085',
       //   changeOrigin: true,
       // },
       // 주문 관련 API (관리자용) - API Gateway를 통해 요청
-      '/api/admin/orders': {
+      '/api/v1/admin/orders': {
         target: 'http://localhost:8080', // API Gateway
         changeOrigin: true,
       },
       // 주문 관련 API (일반 사용자용) - API Gateway를 통해 요청
-      '/api/orders': {
+      '/api/v1/orders': {
         target: 'http://localhost:8080', // API Gateway
         changeOrigin: true,
       },
       // 카테고리 API는 API Gateway를 통해 요청
-      '/api/categories': {
+      '/api/v1/categories': {
         target: 'http://localhost:8080', // API Gateway
         changeOrigin: true,
       },
-      '/api/option-groups': {
+      '/api/v1/option-groups': {
         target: 'http://localhost:8080', // API Gateway로 변경
         changeOrigin: true,
       },
-      '/api/images': {
+      '/api/v1/images': {
         target: 'http://localhost:8085',
         changeOrigin: true,
       },
@@ -49,7 +49,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/v1\/mypage/, '/api/v1/mypage'),
       },
-      '/api/wishlists': {
+      '/api/v1/wishlists': {
         target: 'http://localhost:8085',
         changeOrigin: true,
       },
@@ -59,7 +59,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       // Payment Service (결제) - 8084
-      '/api/payments': {
+      '/api/v1/payments': {
         target: 'http://localhost:8084',
         changeOrigin: true,
         secure: false,
