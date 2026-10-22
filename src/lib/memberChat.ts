@@ -16,7 +16,7 @@ export function existingChatPath(roomId: string, search: URLSearchParams) {
 }
 
 export function chatSocketUrl(apiBase: string, origin: string) {
-  const url = new URL('/api/chats/socket', apiBase || origin);
+  const url = new URL('/api/v1/chats/socket', apiBase || origin);
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
   return url.toString();
 }

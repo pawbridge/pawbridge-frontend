@@ -15,9 +15,9 @@ async (page, accounts, faults) => {
     window.WebSocket = class extends Native {
       constructor(url, protocols) {
         const target = new URL(String(url));
-        if (peer && target.pathname === '/api/chats/socket') target.port = '28180';
+        if (peer && target.pathname === '/api/v1/chats/socket') target.port = '28180';
         super(target.href,protocols);
-        if (target.pathname === '/api/chats/socket') window.__chatSockets.push(this);
+        if (target.pathname === '/api/v1/chats/socket') window.__chatSockets.push(this);
       }
       send(data) {
         if (typeof data === 'string' && data.startsWith('SEND\n')) {
@@ -79,21 +79,21 @@ async (page, accounts, faults) => {
     await page.getByRole('alert').filter({hasText:'전송 결과를 확인하지 못했습니다'}).waitFor({timeout:30000});
     const firstKeys = await page.evaluate(() => window.__chatRequests);
     assert(firstKeys.length === 1,'Same-tick double click emitted multiple sends');
-    const first = (await get('/api/chats')).content[0];
+    const first = (await get('/api/v1/chats')).content[0];
     assert(first.latestSequence === 1,'Lost ACK did not preserve exactly one committed message');
     await page.getByRole('button',{name:'같은 메시지 다시 확인·전송',exact:true}).click();
     await page.waitForURL(/\/chats\/[0-9a-f-]{36}$/);
     const room = page.url().split('/').pop();
     const retryKeys = await page.evaluate(() => window.__chatRequests);
     assert(retryKeys.length === 2 && retryKeys[0] === retryKeys[1],'Ambiguous retry changed request ID');
-    assert((await get('/api/chats/'+room+'/messages')).content.length === 1,'ACK retry duplicated original');
+    assert((await get('/api/v1/chats/'+room+'/messages')).content.length === 1,'ACK retry duplicated original');
     checks.push('actual-commit-lost-ack-double-click-idempotent-retry');
 
     step('same-browser-disconnect-recovery');
     await receiver.evaluate(() => window.__chatSockets.forEach(socket => socket.close()));
     await send('합성 연결 복구 메시지');
     await wait(async () => await receiver.getByText('합성 연결 복구 메시지',{exact:true}).count() > 0);
-    assert((await get('/api/chats/'+room)).latestSequence === 2,'Reconnect changed message count');
+    assert((await get('/api/v1/chats/'+room)).latestSequence === 2,'Reconnect changed message count');
     checks.push('same-browser-reconnect-authoritative-rest-recovery');
 
     step('peer-app-stop-and-missed-redis-signal');
@@ -102,7 +102,7 @@ async (page, accounts, faults) => {
     }
     await faults.stopPeer();
     await send('합성 앱 재기동 복구');
-    assert((await get('/api/chats/'+room)).latestSequence === 3,'Peer failure prevented durable send');
+    assert((await get('/api/v1/chats/'+room)).latestSequence === 3,'Peer failure prevented durable send');
     await faults.startPeer();
     step('peer-authorized-rest-ready');
     await wait(async () => await receiver.getByText('합성 앱 재기동 복구',{exact:true}).count() > 0);
@@ -115,13 +115,13 @@ async (page, accounts, faults) => {
     await page.getByRole('button',{name:'보내기',exact:true}).click();
     await page.waitForTimeout(4500);
     await faults.resumeRedis();
-    await wait(async () => (await get('/api/chats/'+room)).latestSequence === 4);
+    await wait(async () => (await get('/api/v1/chats/'+room)).latestSequence === 4);
     await page.getByText(/2,000자 · 연결됨/).waitFor({timeout:30000});
     if (await page.getByRole('button',{name:'같은 메시지 다시 확인·전송',exact:true}).count()) {
       await page.getByRole('button',{name:'같은 메시지 다시 확인·전송',exact:true}).click();
     }
     await wait(async () => await page.getByLabel('메시지',{exact:true}).inputValue() === '');
-    assert((await get('/api/chats/'+room+'/messages')).content.length === 4,'Redis repair duplicated or lost a committed message');
+    assert((await get('/api/v1/chats/'+room+'/messages')).content.length === 4,'Redis repair duplicated or lost a committed message');
     checks.push('actual-redis-outage-db-preservation-and-repair');
     return {environment:'isolated-local-dev',checks,productionVerified:false};
   } catch (failure) {

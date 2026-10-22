@@ -9,7 +9,7 @@ async (page, origin, evidenceDirectory, phase) => {
   page.on('pageerror', error => errors.push(error.message));
   await page.route('**/*', async route => {
     const request = route.request(), url = new URL(request.url());
-    if (url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith('/api/v1/')) {
       if (url.pathname.endsWith('/stats/regional')) {
         if (state === 'loading') await new Promise(resolve => { releasePending = resolve; });
         if (state === 'error') return route.fulfill({ status: 503, json: { message: 'Synthetic unavailable' } });
@@ -17,8 +17,8 @@ async (page, origin, evidenceDirectory, phase) => {
       }
       if (url.pathname.endsWith('/stats/today')) return route.fulfill({ json: { date: today, rescuedToday: 20, adoptedToday: 2 } });
       if (url.pathname.endsWith('/stats/status')) return route.fulfill({ json: [{ status: 'PROTECT', label: '보호중', count: 20 }] });
-      if (url.pathname === '/api/visits/identity' || (url.pathname === '/api/visits/today' && request.method() === 'POST')) return route.fulfill({ status: 204 });
-      if (url.pathname === '/api/visits/today') return route.fulfill({ json: { data: { date: today, count: 0 } } });
+      if (url.pathname === '/api/v1/visits/identity' || (url.pathname === '/api/v1/visits/today' && request.method() === 'POST')) return route.fulfill({ status: 204 });
+      if (url.pathname === '/api/v1/visits/today') return route.fulfill({ json: { data: { date: today, count: 0 } } });
       unexpected.push(`${request.method()} ${url.pathname}`);
       return route.abort();
     }

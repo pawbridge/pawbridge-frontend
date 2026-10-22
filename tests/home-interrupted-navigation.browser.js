@@ -13,23 +13,23 @@ async page => {
   }));
   const handler = async route => {
     const path = new URL(route.request().url()).pathname;
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     seen.push(path);
     let data;
-    if (path === '/api/animals') data = { content: animals, totalElements: 3, totalPages: 1 };
+    if (path === '/api/v1/animals') data = { content: animals, totalElements: 3, totalPages: 1 };
     else if (path === '/api/v1/animals/stats/status') data = [
       { status: 'PROTECT', count: 2 }, { status: 'ADOPTED', count: 1 }, { status: 'EUTHANIZED', count: 1 },
     ];
     else if (path === '/api/v1/animals/stats/today') data = { rescuedToday: 3 };
-    else if (path === '/api/posts/read') data = { code: 200, data: [] };
-    else if (path === '/api/home/videos') data = { code: 200, data: [] };
+    else if (path === '/api/v1/posts/read') data = { code: 200, data: [] };
+    else if (path === '/api/v1/home/videos') data = { code: 200, data: [] };
     else { unexpected.push(path); data = {}; }
     if (delayed) await new Promise(resolve => setTimeout(resolve, 600));
     // 이탈한 페이지의 모의 응답은 전송 대상 자체가 없어질 수 있다.
     await route.fulfill({ json: data }).catch(() => {});
   };
   page.on('pageerror', onError);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   try {
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 900 });
@@ -42,7 +42,7 @@ async page => {
         throw new Error(`Normal home outcome rates changed at ${width}`);
       }
       delayed = true;
-      const requested = page.waitForRequest(request => new URL(request.url()).pathname === '/api/animals');
+      const requested = page.waitForRequest(request => new URL(request.url()).pathname === '/api/v1/animals');
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.getByRole('heading', { name: /한 번의 만남/ }).waitFor();
       await requested;
@@ -65,6 +65,6 @@ async page => {
     throw new Error(`${error.message}; ${JSON.stringify({ errors, unexpected, checks, seen })}`);
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 };

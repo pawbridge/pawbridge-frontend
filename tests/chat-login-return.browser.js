@@ -1,7 +1,7 @@
 // Real password login through the isolated dev Gateway. No Google or production requests.
 async (page, accounts, origin = 'http://127.0.0.1:5184') => {
   const api = 'http://localhost:28080';
-  const response = await page.request.post(`${api}/api/posts`, {
+  const response = await page.request.post(`${api}/api/v1/posts`, {
     headers: { Authorization: `Bearer ${accounts[1].token}` },
     multipart: { title: '합성 로그인 복귀 검증', content: '로컬 검증 글', boardType: 'COMMUNICATION' },
   });
@@ -17,7 +17,7 @@ async (page, accounts, origin = 'http://127.0.0.1:5184') => {
   await page.getByRole('button', { name: '로그인', exact: true }).click();
   await page.waitForURL(`${origin}/chats/new?to=${accounts[1].userId}&context=POST&contextId=${id}`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('메시지', { exact: true }).waitFor();
-  const rooms = await page.request.get(`${api}/api/chats`, { headers: { Authorization: `Bearer ${accounts[0].token}` } });
+  const rooms = await page.request.get(`${api}/api/v1/chats`, { headers: { Authorization: `Bearer ${accounts[0].token}` } });
   if (!rooms.ok() || (await rooms.json()).data.content.length !== 0) throw new Error('Login return created a chat');
   return { environment: 'isolated-local-dev', checks: ['anonymous-author-contact', 'real-login-return-and-context', 'no-room-before-send'], productionVerified: false };
 }

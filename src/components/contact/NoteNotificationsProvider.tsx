@@ -112,7 +112,7 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       let retryFailure: unknown;
       try {
         await consumeNoteStream(
-          `${import.meta.env.VITE_API_BASE_URL || ''}/api/notes/stream?clientId=${streamClientId}`,
+          `${import.meta.env.VITE_API_BASE_URL || ''}/api/v1/notes/stream?clientId=${streamClientId}`,
           accessToken,
           controller.signal,
           (event) => {

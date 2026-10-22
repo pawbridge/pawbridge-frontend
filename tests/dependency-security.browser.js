@@ -9,7 +9,7 @@ async (page, origin = 'http://127.0.0.1:5260') => {
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   const handler = async route => {
     const request = route.request(), url = new URL(request.url());
-    if (!url.pathname.startsWith('/api/')) {
+    if (!url.pathname.startsWith('/api/v1/')) {
       if (url.origin === origin || url.protocol === 'data:') return route.continue();
       if (request.method() === 'GET' && (['fonts.googleapis.com', 'fonts.gstatic.com'].includes(url.hostname)
         || (url.hostname === 'www.pawbridge.kr' && ['/favicon-96.png', '/apple-touch-icon.png'].includes(url.pathname)))) {
@@ -29,18 +29,18 @@ async (page, origin = 'http://127.0.0.1:5260') => {
       return route.abort();
     }
     const path = url.pathname;
-    if (path === '/api/visits/identity' || (path === '/api/visits/today' && request.method() === 'POST')) {
+    if (path === '/api/v1/visits/identity' || (path === '/api/v1/visits/today' && request.method() === 'POST')) {
       return route.fulfill({ status: 204 });
     }
-    if (path === '/api/visits/today') return route.fulfill({ json: { data: { date: today, count: 0 } } });
-    if (path === '/api/auth/login') return route.fulfill({
+    if (path === '/api/v1/visits/today') return route.fulfill({ json: { data: { date: today, count: 0 } } });
+    if (path === '/api/v1/auth/login') return route.fulfill({
       status: validLogin ? 200 : 401,
       json: validLogin ? { code: 200, data: {
         userId: 901, name: '합성 사용자', email: 'member@example.invalid', role: 'ROLE_USER',
         accessToken: 'synthetic-test-token', refreshToken: 'synthetic-refresh',
       } } : { code: 401, data: null, message: '합성 로그인 실패' },
     });
-    if (path.startsWith('/api/dependency-probe/')) {
+    if (path.startsWith('/api/v1/dependency-probe/')) {
       probes.push({ path, method: request.method(), headers: request.headers(), body: request.postData() });
       if (path.endsWith('/network')) return route.abort();
       if (path.endsWith('/failure')) return route.fulfill({ status: 422, json: { message: '합성 검증 오류' } });
@@ -49,15 +49,15 @@ async (page, origin = 'http://127.0.0.1:5260') => {
     if (path.endsWith('ticket')) {
       return route.fulfill({ status: 503, json: { message: 'Synthetic stream disabled' } });
     }
-    if (path === '/api/comments/posts/read/41') return route.fulfill({ json: { code: 200, data: [] } });
-    if (path === '/api/posts/read/41') return route.fulfill({ json: { code: 200, data: {
+    if (path === '/api/v1/comments/posts/read/41') return route.fulfill({ json: { code: 200, data: [] } });
+    if (path === '/api/v1/posts/read/41') return route.fulfill({ json: { code: 200, data: {
       postId: 41, title: '합성 작성자 연락', content: '합성 내용', authorId: 902,
       authorName: '합성 작성자', boardType: 'COMMUNICATION', imageUrls: [],
       createdAt: '2026-10-12T01:00:00Z', likeCount: 0, viewCount: 1,
     } } });
-    if (path === '/api/notes/recipients/902') return route.fulfill({ json: { code: 200, data: { userId: 902, nickname: '합성 작성자', active: true } } });
-    if (path === '/api/chats/with/902') return route.fulfill({ json: { code: 200, data: { roomId: null } } });
-    if (path === '/api/notes/blocks/status') return route.fulfill({ json: { code: 200, data: { memberIds: [] } } });
+    if (path === '/api/v1/notes/recipients/902') return route.fulfill({ json: { code: 200, data: { userId: 902, nickname: '합성 작성자', active: true } } });
+    if (path === '/api/v1/chats/with/902') return route.fulfill({ json: { code: 200, data: { roomId: null } } });
+    if (path === '/api/v1/notes/blocks/status') return route.fulfill({ json: { code: 200, data: { memberIds: [] } } });
     if (path.endsWith('/stats/today')) return route.fulfill({ json: { date: today, rescuedToday: 20, adoptedToday: 2 } });
     if (path.endsWith('/stats/status')) return route.fulfill({ json: [{ status: 'PROTECT', label: '보호중', count: 20 }] });
     if (path.endsWith('/stats/regional')) return route.fulfill({ json: [
@@ -98,16 +98,16 @@ async (page, origin = 'http://127.0.0.1:5260') => {
 
       const result = await page.evaluate(async () => {
         const { default: client } = await import('/src/api/client.ts');
-        const read = await client.get('/api/dependency-probe/json');
-        const write = await client.post('/api/dependency-probe/json', { text: '합성 JSON' });
+        const read = await client.get('/api/v1/dependency-probe/json');
+        const write = await client.post('/api/v1/dependency-probe/json', { text: '합성 JSON' });
         const form = new FormData();
         form.append('description', '합성 업로드');
         form.append('file', new Blob(['synthetic'], { type: 'text/plain' }), 'fixture.txt');
-        await client.post('/api/dependency-probe/multipart', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+        await client.post('/api/v1/dependency-probe/multipart', form, { headers: { 'Content-Type': 'multipart/form-data' } });
         let failure, network;
-        try { await client.get('/api/dependency-probe/failure'); }
+        try { await client.get('/api/v1/dependency-probe/failure'); }
         catch (error) { failure = { status: error.response?.status, message: error.response?.data?.message }; }
-        try { await client.get('/api/dependency-probe/network'); }
+        try { await client.get('/api/v1/dependency-probe/network'); }
         catch (error) { network = error.code; }
         return { read: read.data, write: write.data, failure, network };
       });
