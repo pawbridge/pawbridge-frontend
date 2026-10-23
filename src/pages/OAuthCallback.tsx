@@ -29,10 +29,13 @@ export default function OAuthCallback() {
     const refreshToken = searchParams.get('refreshToken');
     const error = searchParams.get('error');
 
-    // 에러가 있는 경우
+    // Failures are shown inside the login card instead of a blocking alert.
+    const backToLogin = (message: string) => {
+      navigate(`/login?error=${encodeURIComponent(message)}`, { replace: true });
+    };
+
     if (error) {
-      alert(decodeURIComponent(error));
-      navigate('/login', { replace: true });
+      backToLogin(error);
       return;
     }
 
@@ -56,17 +59,15 @@ export default function OAuthCallback() {
         // Zustand store에 인증 정보 저장
         setAuth(user, accessToken, refreshToken);
 
-        alert('구글 로그인 성공!');
+        // Success needs no message: the header switches to the member menu on the page they return to.
         navigate(consumeReportLoginReturn(), { replace: true });
       } catch (error) {
         console.error('토큰 처리 실패:', error);
-        alert('로그인 처리 중 오류가 발생했습니다');
-        navigate('/login', { replace: true });
+        backToLogin('로그인 처리 중 오류가 발생했습니다');
       }
     } else {
       // 토큰이 없는 경우
-      alert('로그인 정보를 받지 못했습니다');
-      navigate('/login', { replace: true });
+      backToLogin('로그인 정보를 받지 못했습니다');
     }
   }, [searchParams, navigate, setAuth]);
 

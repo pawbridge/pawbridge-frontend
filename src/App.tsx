@@ -4,12 +4,11 @@ import AdminShelters from './pages/AdminShelters';
 import AdminShelterDetail from './pages/AdminShelterDetail';
 import AdminShelterApplications from './pages/AdminShelterApplications';
 import AdminShelterApplicationDetail from './pages/AdminShelterApplicationDetail';
-import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import { Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { useAuthStore } from './store/authStore.ts';
 import Home from './pages/Home.tsx';
 import Login from './pages/Login.tsx';
-import Signup from './pages/Signup.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
 import Animals from './pages/Animals.tsx';
 import LostAnimalSearch from './pages/LostAnimalSearch.tsx';
@@ -174,7 +173,8 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      {/* New email signup is closed; social login creates the account. */}
+      <Route path="/signup" element={<Navigate to="/login" replace />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/privacy" element={<Privacy />} />
