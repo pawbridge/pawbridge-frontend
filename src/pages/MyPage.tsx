@@ -372,6 +372,8 @@ export default function MyPage() {
         return '이메일 가입';
       case 'GOOGLE':
         return '구글 가입';
+      case 'NAVER':
+        return '네이버 가입';
       case 'KAKAO':
         return '카카오 가입';
       default:
