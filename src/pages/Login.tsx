@@ -1,10 +1,11 @@
 import { getApiErrorMessage } from '../lib/apiError';
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../api/auth.api';
 import { useAuthStore } from '../store/authStore';
 import Toast from '../components/common/Toast';
+import SocialLoginButton, { type SocialProvider } from '../components/common/SocialLoginButton';
 import { consumeReportLoginReturn, rememberReportLoginReturn } from '../lib/reportNavigation';
 
 export default function Login() {
@@ -13,6 +14,10 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [searchParams] = useSearchParams();
+  const oauthError = readOAuthError(searchParams.get('error'));
+  // Existing email members keep a collapsed entry until the social-account transition ends.
+  const [showEmailLogin, setShowEmailLogin] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; isVisible: boolean }>({
     message: '',
     type: 'success',
@@ -90,11 +95,11 @@ export default function Login() {
     loginMutation.mutate({ email, password });
   };
 
-  const handleGoogleLogin = () => {
+  const handleSocialLogin = (provider: SocialProvider) => {
     rememberReportLoginReturn(location.state?.from);
     // 백엔드 OAuth2 엔드포인트로 리다이렉트
     const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-    window.location.href = `${backendUrl}/oauth2/authorization/google`;
+    window.location.href = `${backendUrl}/oauth2/authorization/${provider}`;
   };
 
   return (
@@ -134,149 +139,150 @@ export default function Login() {
         {/* Right Side - Login Form */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 md:p-12 flex items-center justify-center">
           <div className="w-full max-w-sm mx-auto">
-            <div className="pb-3 mb-6">
+            <div className="mb-6 flex flex-col gap-2">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">로그인</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">네이버 또는 구글 계정으로 바로 시작할 수 있어요.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              <div className="flex flex-col gap-4">
-                {/* Email Input */}
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                    이메일
-                  </p>
-                  <input
-                    type="text"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      // 입력 중일 때는 에러 메시지만 숨김 (입력값은 유지)
-                      if (emailError) {
-                        setEmailError('');
-                      }
-                      if (errorMessage) {
-                        setErrorMessage('');
-                      }
-                    }}
-                    className={`form-input w-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-focus border ${
-                      emailError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    } bg-white dark:bg-gray-700 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 text-sm font-normal leading-normal`}
-                    placeholder="이메일 주소를 입력하세요"
-                    disabled={loginMutation.isPending}
-                  />
-                  {emailError && (
-                    <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-base">error</span>
-                      {emailError}
-                    </p>
-                  )}
-                </label>
+            {oauthError && (
+              <p role="alert" className="mb-4 flex items-start gap-1 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                <span className="material-symbols-outlined text-base">error</span>
+                {oauthError}
+              </p>
+            )}
 
-                {/* Password Input */}
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
-                    비밀번호
-                  </p>
-                  <div className="relative w-full h-12">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        // 입력 중일 때는 에러 메시지만 숨김 (입력값은 유지)
-                        if (passwordError) {
-                          setPasswordError('');
-                        }
-                        if (errorMessage) {
-                          setErrorMessage('');
-                        }
-                      }}
-                      className={`form-input w-full h-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-focus border ${
-                        passwordError || errorMessage ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                      } bg-white dark:bg-gray-700 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 pr-10 text-sm font-normal leading-normal`}
-                      placeholder="비밀번호를 입력하세요"
-                      disabled={loginMutation.isPending}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400"
-                      aria-label="비밀번호 보기"
-                    >
-                      <span className="material-symbols-outlined text-xl">
-                        {showPassword ? 'visibility' : 'visibility_off'}
-                      </span>
-                    </button>
-                  </div>
-                  {(passwordError || errorMessage) && (
-                    <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-base">error</span>
-                      {errorMessage || passwordError}
-                    </p>
-                  )}
-                </label>
-              </div>
+            <div className="flex flex-col gap-3">
+              <SocialLoginButton provider="naver" onClick={() => handleSocialLogin('naver')} />
+              <SocialLoginButton provider="google" onClick={() => handleSocialLogin('google')} />
+              <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">
+                처음 로그인하면 포우 브릿지 계정이 자동으로 만들어집니다. 이름과 이메일은{' '}
+                <Link to="/privacy" className="underline">개인정보처리방침</Link>에 따라 회원 식별에만 사용합니다.
+              </p>
+            </div>
 
-              {/* Forgot Password Link */}
-              <div className="flex justify-end">
-                <Link
-                  to="/reset-password"
-                  className="text-sm font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
-                >
-                  비밀번호 찾기
-                </Link>
-              </div>
+            <div className="my-6 border-t border-gray-200 dark:border-gray-600" />
 
-              {/* Login Button */}
-              <button
-                type="submit"
-                disabled={loginMutation.isPending}
-                className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-md h-12 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-wide hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-focus dark:focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="truncate">
-                  {loginMutation.isPending ? '로그인 중...' : '로그인'}
-                </span>
-              </button>
-
-              {/* Divider */}
-              <div className="relative my-1">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200 dark:border-gray-600"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-white dark:bg-gray-900 px-2 text-sm text-gray-500 dark:text-gray-400">
-                    또는
-                  </span>
-                </div>
-              </div>
-
-              {/* Google Login Button */}
+            <div className="flex flex-col gap-1">
               <button
                 type="button"
-                onClick={handleGoogleLogin}
-                className="flex items-center justify-center gap-2 w-full h-12 px-4 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
+                onClick={() => setShowEmailLogin((open) => !open)}
+                aria-expanded={showEmailLogin}
+                aria-controls="email-login-form"
+                className="flex items-center justify-between text-left text-sm font-medium text-gray-900 dark:text-gray-100"
               >
-                <img
-                  src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA"
-                  alt="Google logo"
-                  className="h-5 w-5"
-                />
-                <span className="text-sm font-semibold text-gray-900 dark:text-gray-200">
-                  구글로 로그인
-                </span>
+                <span>이메일로 가입한 기존 회원이신가요? 이메일로 로그인</span>
+                <span className="material-symbols-outlined text-xl">{showEmailLogin ? 'expand_less' : 'expand_more'}</span>
               </button>
-
-              {/* Signup Link */}
-              <p className="text-center text-sm text-gray-600 dark:text-gray-300">
-                아직 회원이 아니신가요?{' '}
-                <Link
-                  to="/signup"
-                  className="font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
-                >
-                  회원가입
-                </Link>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                신규 이메일 가입은 받지 않습니다. 로그인 후 네이버·구글 계정으로 옮겨 주세요.
               </p>
-            </form>
+            </div>
+
+            {showEmailLogin && (
+              <div id="email-login-form" className="mt-5">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-4">
+                    {/* Email Input */}
+                    <label className="flex flex-col w-full">
+                      <p className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                        이메일
+                      </p>
+                      <input
+                        type="text"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          // 입력 중일 때는 에러 메시지만 숨김 (입력값은 유지)
+                          if (emailError) {
+                            setEmailError('');
+                          }
+                          if (errorMessage) {
+                            setErrorMessage('');
+                          }
+                        }}
+                        className={`form-input w-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-focus border ${
+                          emailError ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                        } bg-white dark:bg-gray-700 h-12 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 text-sm font-normal leading-normal`}
+                        placeholder="이메일 주소를 입력하세요"
+                        disabled={loginMutation.isPending}
+                      />
+                      {emailError && (
+                        <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-base">error</span>
+                          {emailError}
+                        </p>
+                      )}
+                    </label>
+
+                    {/* Password Input */}
+                    <label className="flex flex-col w-full">
+                      <p className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                        비밀번호
+                      </p>
+                      <div className="relative w-full h-12">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            // 입력 중일 때는 에러 메시지만 숨김 (입력값은 유지)
+                            if (passwordError) {
+                              setPasswordError('');
+                            }
+                            if (errorMessage) {
+                              setErrorMessage('');
+                            }
+                          }}
+                          className={`form-input w-full h-full rounded-md text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-focus border ${
+                            passwordError || errorMessage ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                          } bg-white dark:bg-gray-700 placeholder:text-gray-500 dark:placeholder:text-gray-500 px-4 pr-10 text-sm font-normal leading-normal`}
+                          placeholder="비밀번호를 입력하세요"
+                          disabled={loginMutation.isPending}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400"
+                          aria-label="비밀번호 보기"
+                        >
+                          <span className="material-symbols-outlined text-xl">
+                            {showPassword ? 'visibility' : 'visibility_off'}
+                          </span>
+                        </button>
+                      </div>
+                      {(passwordError || errorMessage) && (
+                        <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-base">error</span>
+                          {errorMessage || passwordError}
+                        </p>
+                      )}
+                    </label>
+                  </div>
+
+                  {/* Forgot Password Link */}
+                  <div className="flex justify-end">
+                    <Link
+                      to="/reset-password"
+                      className="text-sm font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
+                    >
+                      비밀번호 찾기
+                    </Link>
+                  </div>
+
+                  {/* Login Button */}
+                  <button
+                    type="submit"
+                    disabled={loginMutation.isPending}
+                    className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-md h-12 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-wide hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-focus dark:focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="truncate">
+                      {loginMutation.isPending ? '로그인 중...' : '이메일로 로그인'}
+                    </span>
+                  </button>
+
+                </form>
+              </div>
+            )}
           </div>
         </div>
         </div>
@@ -292,4 +298,14 @@ export default function Login() {
       />
     </div>
   );
+}
+
+// The backend failure redirect sends one fixed, already-safe Korean sentence; never render arbitrary markup.
+function readOAuthError(value: string | null): string {
+  if (!value) return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }

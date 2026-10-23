@@ -181,21 +181,13 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              // 로그인 안 된 경우: 로그인 + 회원가입 버튼
-              <>
-                <Link
-                  to="/login"
-                  className={`hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-white dark:bg-gray-700 ${palette.outline} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity border ${palette.focus}`}
-                >
-                  <span className="truncate">로그인</span>
-                </Link>
-                <Link
-                  to="/signup"
-                  className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
-                >
-                  <span className="truncate">회원가입</span>
-                </Link>
-              </>
+              // 로그인 안 된 경우: 소셜 로그인이 가입을 겸하므로 로그인 버튼 하나만 둔다
+              <Link
+                to="/login"
+                className={`flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
+              >
+                <span className="truncate">로그인</span>
+              </Link>
             )}
             <button
               type="button"
