@@ -15,6 +15,7 @@ export default function AdminSidebar({ mobile = false, onNavigate }: { subdued?:
     </nav>
     <div className={`mt-6 flex flex-col gap-2 ${mobile ? 'pb-4' : 'text-sm'}`}>
       <Link className={mobile ? `${adminControl} min-h-12` : 'flex min-h-11 items-center'} to="/" onClick={onNavigate}>사용자 화면으로</Link>
+      <Link className={mobile ? `${adminControl} min-h-12` : 'flex min-h-11 items-center'} to="/mypage" onClick={onNavigate}>마이페이지</Link>
       <button type="button" className={mobile ? `${adminControl} min-h-12` : 'min-h-11 text-left text-brand-muted dark:text-stone-300'} onClick={() => { logoutWithoutWaiting(); onNavigate?.(); navigate('/login'); }}>로그아웃</button>
     </div>
   </aside>;
