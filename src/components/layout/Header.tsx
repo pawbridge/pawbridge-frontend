@@ -154,9 +154,22 @@ export default function Header() {
                 >
                   <span className="material-symbols-outlined text-[20px]">favorite</span>
                 </Link>}
-                <span className={`hidden sm:block ${palette.text} dark:text-gray-300 text-sm font-medium`}>
-                  {user.name}님
-                </span>
+                {user.role === 'ROLE_ADMIN' ? (
+                  // 관리자는 대시보드 버튼이 마이페이지 자리를 쓰므로 이름을 마이페이지 링크로 둔다.
+                  // 버튼을 더하면 640~712px 폭에서 메뉴 버튼이 화면 밖으로 밀린다.
+                  <Link
+                    to="/mypage"
+                    title="마이페이지"
+                    aria-label={`${user.name}님 마이페이지`}
+                    className={`hidden sm:block ${palette.text} dark:text-gray-300 text-sm font-medium underline-offset-4 hover:underline ${palette.focus}`}
+                  >
+                    {user.name}님
+                  </Link>
+                ) : (
+                  <span className={`hidden sm:block ${palette.text} dark:text-gray-300 text-sm font-medium`}>
+                    {user.name}님
+                  </span>
+                )}
                 {user.role === 'ROLE_ADMIN' ? (
                   <Link
                     to="/admin/dashboard"
@@ -262,7 +275,7 @@ export default function Header() {
                     <div className={`${palette.text} dark:text-gray-300 text-sm font-medium mb-2`}>
                       {user.name}님
                     </div>
-                    {user.role === 'ROLE_ADMIN' ? (
+                    {user.role === 'ROLE_ADMIN' && (
                       <Link
                         to="/admin/dashboard"
                         className={`flex items-center gap-2 mb-2 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
@@ -270,16 +283,15 @@ export default function Header() {
                       >
                         <span>관리자 대시보드</span>
                       </Link>
-                    ) : (
-                      <Link
-                        to="/mypage"
-                        className={`flex items-center gap-2 mb-2 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        <span className="material-symbols-outlined text-[18px]">person</span>
-                        <span>마이페이지</span>
-                      </Link>
                     )}
+                    <Link
+                      to="/mypage"
+                      className={`flex items-center gap-2 mb-2 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">person</span>
+                      <span>마이페이지</span>
+                    </Link>
                     <button
                       onClick={() => {
                         handleLogout();
