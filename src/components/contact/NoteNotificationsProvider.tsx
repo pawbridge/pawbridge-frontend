@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import { refreshAccessToken } from '../../api/authSession';
+import { isSessionEndedRefreshFailure } from '../../api/sessionRefresh';
 import { getNoteNotifications } from '../../api/privateNotes.api';
 import { consumeNoteStream, noteStreamRetryDelay } from '../../lib/privateNoteStream';
 import { getNoteStreamClientId } from '../../lib/noteStreamClient';
@@ -146,17 +147,21 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
           const status = (failure as { status?: number }).status;
           if (status === 401) {
             // 만료된 토큰이면 재발급한다. 토큰이 바뀌면 이 효과가 새 토큰으로 다시 연결한다.
+            // 재발급이 일시 장애로 실패하면 로그인 상태를 유지하고 아래의 재연결 대기로 넘어간다.
             try {
               const refreshedAccessToken = await refreshAccessToken(accessToken);
               if (isCurrentSession()) {
                 useAuthStore.getState().setAccessToken(refreshedAccessToken);
               }
-            } catch {
-              if (isCurrentSession()) {
-                useAuthStore.getState().clearAuth();
+              return;
+            } catch (refreshFailure) {
+              if (isSessionEndedRefreshFailure(refreshFailure)) {
+                if (isCurrentSession()) {
+                  useAuthStore.getState().clearAuth();
+                }
+                return;
               }
             }
-            return;
           }
         }
       }

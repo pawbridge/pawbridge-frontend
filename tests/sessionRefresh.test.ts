@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createSessionRefresher, type RefreshLockManager } from '../src/api/sessionRefresh.ts';
+import { createSessionRefresher, isSessionEndedRefreshFailure, type RefreshLockManager } from '../src/api/sessionRefresh.ts';
 import {
   isAccessTokenExpiringWithin,
   readAccessTokenExpiresAt,
@@ -173,4 +173,20 @@ test('형식이 맞지 않거나 만료 시각이 없는 토큰은 만료로 단
   assert.equal(isAccessTokenExpiringWithin(syntheticToken({ userId: 1 }), 60_000), false);
   assert.equal(isAccessTokenExpiringWithin(tokenExpiringIn(30, 'soon'), 60_000), true);
   assert.equal(isAccessTokenExpiringWithin(tokenExpiringIn(600, 'later'), 60_000), false);
+});
+
+test('재발급 실패 중 400·401·403만 로그인 종료로 보고 일시 장애는 로그인 상태를 유지한다', () => {
+  const responseFailure = (status: number) => Object.assign(new Error(`HTTP ${status}`), { response: { status } });
+  for (const status of [400, 401, 403]) {
+    assert.equal(isSessionEndedRefreshFailure(responseFailure(status)), true, `status ${status}`);
+  }
+  for (const status of [404, 408, 429, 500, 502, 503, 504]) {
+    assert.equal(isSessionEndedRefreshFailure(responseFailure(status)), false, `status ${status}`);
+  }
+  // 응답이 없는 네트워크 오류·시간 초과와 재발급 응답 형식 오류
+  assert.equal(isSessionEndedRefreshFailure(Object.assign(new Error('Network Error'), { code: 'ERR_NETWORK' })), false);
+  assert.equal(isSessionEndedRefreshFailure(Object.assign(new Error('timeout'), { code: 'ECONNABORTED' })), false);
+  assert.equal(isSessionEndedRefreshFailure(new Error('재발급 응답에 사용할 수 있는 Access Token이 없습니다.')), false);
+  assert.equal(isSessionEndedRefreshFailure(null), false);
+  assert.equal(isSessionEndedRefreshFailure(undefined), false);
 });

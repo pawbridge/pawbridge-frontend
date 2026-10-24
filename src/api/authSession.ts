@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { isAccessTokenExpiringWithin, readUserFromAccessToken } from '../lib/accessToken.ts';
 import { getAuthSessionVersion, readPersistedAccessToken, useAuthStore } from '../store/authStore.ts';
-import { createSessionRefresher, type RefreshLockManager } from './sessionRefresh.ts';
+import { createSessionRefresher, isSessionEndedRefreshFailure, type RefreshLockManager } from './sessionRefresh.ts';
 import type { ApiResponse } from '../types/response.types.ts';
 
 // 쿠키 Path(/api/v1/auth)는 서버 내부 경로 변환 전의 주소로 비교되므로 v1 주소를 직접 호출한다.
@@ -60,7 +60,8 @@ export const refreshAccessToken = createSessionRefresher({
 
 /**
  * 저장된 토큰이 만료됐거나 곧 만료되면 한 번만 조용히 재발급한다.
- * 실패하면 공개 화면이 이전 로그인 헤더를 보이지 않도록 이동 없이 로그인 상태만 정리한다.
+ * 로그인이 끝났다는 응답이면 공개 화면이 이전 로그인 헤더를 보이지 않도록 이동 없이 로그인 상태만 정리한다.
+ * 일시 장애이면 저장된 상태를 그대로 두고, 이후 요청의 401 처리에서 다시 재발급한다.
  */
 export async function refreshExpiredSessionOnStartup(): Promise<void> {
   const storedAccessToken = useAuthStore.getState().accessToken;
@@ -77,7 +78,10 @@ export async function refreshExpiredSessionOnStartup(): Promise<void> {
     if (sessionVersion === getAuthSessionVersion()) {
       useAuthStore.getState().setAccessToken(refreshedAccessToken);
     }
-  } catch {
+  } catch (failure) {
+    if (!isSessionEndedRefreshFailure(failure)) {
+      return;
+    }
     if (sessionVersion === getAuthSessionVersion()) {
       useAuthStore.getState().clearAuth();
     }
