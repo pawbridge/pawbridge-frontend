@@ -3,11 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { getMyApplications, submitApplication } from '../../api/shelter.api';
 import { useAuthStore } from '../../store/authStore';
+import { logoutWithoutWaiting } from '../../api/auth.api';
 import { Status, Pagination, Feedback } from './ShelterUI';
 import { control, input, panel, date } from './shelterView';
 export default function MyShelterApplications({ role }: { role: string; }) {
   const userId = useAuthStore(s => s.user?.id);
-  const logout = useAuthStore(s => s.logout);
   const navigate = useNavigate();
   const client = useQueryClient();
   const [page, setPage] = useState(0);
@@ -31,7 +31,7 @@ export default function MyShelterApplications({ role }: { role: string; }) {
         <h4 className="mt-4 font-bold">반려 사유</h4>
         <p className="mt-2 whitespace-pre-wrap break-words">{current.reason}</p>{role === 'ROLE_USER' && <button className={`${control} mt-4`} onClick={() => { setName(current.shelterName); setResubmit(true); }}>내용 보완하고 다시 신청</button>}</>}{current.status === 'APPROVED' && <>
           <p className="mt-4">승인되었습니다. 권한이 반영되지 않았다면 다시 로그인해 주세요.</p>
-          <button className={`${control} mt-4`} onClick={() => { client.removeQueries({ queryKey: ['shelter'] }); logout(); navigate('/login'); }}>다시 로그인하기</button>
+          <button className={`${control} mt-4`} onClick={() => { client.removeQueries({ queryKey: ['shelter'] }); logoutWithoutWaiting(); navigate('/login'); }}>다시 로그인하기</button>
         </>}<button className={`${control} mt-4 ml-2`} disabled={latest.isFetching} onClick={() => void client.invalidateQueries({ queryKey: ['shelter', 'mine', userId] })}>상태 새로고침</button>
     </div>}
     {!current && role !== 'ROLE_USER' && latest.data && <p>보호소 담당자 권한이 있거나 신청 대상이 아닌 계정입니다.</p>}

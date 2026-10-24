@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAnimalById, updateAnimal, uploadAnimalImage } from '../api/animals.api';
 import type { UpdateAnimalRequest } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
+import { logoutWithoutWaiting } from '../api/auth.api';
 import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import AdminSidebar from '../components/layout/AdminSidebar';
@@ -28,7 +29,6 @@ export default function AnimalEdit() {
 
   const authUser = useAuthStore((state) => state.user);
   const user = useAuthStore((state) => state.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   // 폼 상태
   const [species, setSpecies] = useState<'DOG' | 'CAT' | 'ETC'>('DOG');
@@ -239,7 +239,7 @@ export default function AnimalEdit() {
   }
 
   const handleLogout = () => {
-    clearAuth();
+    logoutWithoutWaiting();
     navigate('/login');
   };
 
