@@ -108,18 +108,21 @@ async page => {
   await page.context().addCookies([{ name: 'pb_test_refresh', value: 'synthetic', domain: 'localhost', path: '/api/v1/auth', httpOnly: true, sameSite: 'Lax' }]);
   page.on('pageerror', error => errors.push(error.message));
   try {
-    // 1. 기존 백엔드 소셜 로그인: 주소의 토큰을 쓰고 Refresh Token은 저장하지 않는다.
+    // 1. 이전 백엔드 형식의 주소 토큰은 쓰지 않는다. 재발급 전에 주소에서 지우고, 재발급이 실패하면 로그인하지 않는다.
     await reset();
+    refreshMode = 'unauthorized';
+    refreshDelay = 1000;
     await page.goto(`${origin}/oauth/callback?accessToken=${encodeURIComponent(firstToken)}&refreshToken=legacy-refresh`);
-    await page.waitForURL(`${origin}/`, { timeout: 5000 });
+    await page.waitForFunction(() => location.pathname === '/oauth/callback' && location.search === '', null, { timeout: 5000 });
+    await page.waitForURL(url => url.pathname === '/login', { timeout: 5000 });
     let state = await storedState();
-    assert(state?.user?.id === 901 && state.accessToken === firstToken, 'Legacy callback did not sign in');
-    assert(!('refreshToken' in state), 'Legacy callback stored refresh token');
-    assert(countRefresh() === 0, 'Legacy callback called refresh');
-    assert(!page.url().includes('accessToken'), 'Token stayed in URL');
-    checks.push('legacy social callback signs in without storing refresh token');
+    assert(!state?.user && !state?.accessToken, 'Query token signed in');
+    assert(state === null || !('refreshToken' in state), 'Query refresh token stored');
+    assert(countRefresh() === 1, 'Query token callback did not use refresh');
+    assert(!page.url().includes('Token'), 'Token stayed in URL');
+    checks.push('query tokens on social callback are scrubbed and ignored');
 
-    // 2. 새 백엔드 소셜 로그인: 쿼리 없이 돌아오면 쿠키로 재발급받는다.
+    // 2. 소셜 로그인: 쿼리 없이 돌아오면 쿠키로 재발급받는다.
     await reset();
     await page.goto(`${origin}/oauth/callback`);
     await page.waitForURL(`${origin}/`, { timeout: 5000 });
