@@ -19,11 +19,11 @@ async page => {
       unexpected.push(`GET ${path}`);
       return route.fulfill({ status: 404, json: { message: '테스트에 정의되지 않은 요청' } });
     }
-    if (!['/api/auth/login', '/api/users/signup', '/api/v1/email/send', '/api/v1/email/verify', '/api/auth/password/reset-request', '/api/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
+    if (!['/api/v1/auth/login', '/api/users/signup', '/api/v1/email/send', '/api/v1/email/verify', '/api/auth/password/reset-request', '/api/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
     writes.push({ path, body: request.postDataJSON() });
     if (mode === 'network') return route.abort();
     if (mode !== 'success') return route.fulfill({ status: 400, json: { code: 400, message: mode === 'malformed' ? { detail: 'not a string' } : '서버 테스트 안내', data: null } });
-    const data = path === '/api/auth/login'
+    const data = path === '/api/v1/auth/login'
       ? { userId: 321, email: 'member@example.invalid', name: '검증회원', role: 'ROLE_SHELTER', careRegNo: null, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' }
       : path === '/api/users/signup' ? { userId: 321, email: 'member@example.invalid', name: '검증회원', nickname: '새별명' }
       : path === '/api/v1/email/verify' ? { verified: true } : null;
@@ -57,7 +57,7 @@ async page => {
         mode = failure;
         await page.locator('button[type="submit"]').click();
         await page.getByText(expected, { exact: true }).first().waitFor();
-        lastWrite('/api/auth/login', { email: 'member@example.invalid', password: 'test-password' });
+        lastWrite('/api/v1/auth/login', { email: 'member@example.invalid', password: 'test-password' });
       }
       await layout('login-error', width);
       mode = 'success';
