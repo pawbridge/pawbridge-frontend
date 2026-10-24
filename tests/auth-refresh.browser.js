@@ -22,7 +22,7 @@ async page => {
   const expiredToken = token(901, 'expired', -60);
   const profile = { id: 901, email: 'member901@example.invalid', name: 'member-first', role: 'ROLE_USER', createdAt: '2026-10-24T00:00:00' };
 
-  // refresh: 'ok' | 'fail' (기존 백엔드처럼 본문 누락 400) | 'unauthorized'
+  // refresh: 'ok' | 'fail' (기존 백엔드처럼 본문 누락 400) | 'unauthorized' | 'unavailable' (503) | 'network'
   let refreshMode = 'ok';
   let refreshDelay = 0;
   let protectedAcceptsRefreshed = true;
@@ -53,6 +53,8 @@ async page => {
       if (refreshDelay) await new Promise(resolve => setTimeout(resolve, refreshDelay));
       if (refreshMode === 'fail') return respond(400, null);
       if (refreshMode === 'unauthorized') return respond(401, null);
+      if (refreshMode === 'unavailable') return respond(503, null);
+      if (refreshMode === 'network') return route.abort('connectionreset');
       return respond(200, { accessToken: refreshedToken });
     }
     if (path === '/api/v1/auth/logout' && method === 'POST') {
@@ -103,7 +105,7 @@ async page => {
   // 두 번째 탭에도 같은 합성 응답을 쓰도록 브라우저 컨텍스트에 등록한다.
   await page.context().route(`${api}/api/**`, handler);
   // 브라우저가 credentials를 포함해 보낼 때만 전달되는 합성 쿠키다.
-  await page.context().addCookies([{ name: 'pb_test_refresh', value: 'synthetic', domain: 'localhost', path: '/api/v1/auth', httpOnly: true, sameSite: 'Strict' }]);
+  await page.context().addCookies([{ name: 'pb_test_refresh', value: 'synthetic', domain: 'localhost', path: '/api/v1/auth', httpOnly: true, sameSite: 'Lax' }]);
   page.on('pageerror', error => errors.push(error.message));
   try {
     // 1. 기존 백엔드 소셜 로그인: 주소의 토큰을 쓰고 Refresh Token은 저장하지 않는다.
@@ -174,6 +176,21 @@ async page => {
     assert(state?.user === null && state?.accessToken === null, 'Refresh failure did not clear auth');
     checks.push('refresh failure keeps login redirect');
 
+    // 6-1. 재발급이 503이나 네트워크 오류로 실패하면 로그인 상태를 유지하고 원래 요청만 실패시킨다.
+    for (const mode of ['unavailable', 'network']) {
+      await reset();
+      await seed(firstToken);
+      await page.reload();
+      refreshMode = mode;
+      const transient = await callProtected(1);
+      assert(transient.fulfilled === 0, `Transient refresh failure resolved request (${mode})`);
+      await page.waitForTimeout(300);
+      assert(new URL(page.url()).pathname === '/privacy', `Transient refresh failure redirected (${mode})`);
+      state = await storedState();
+      assert(state?.user?.id === 901 && state.accessToken === firstToken, `Transient refresh failure cleared auth (${mode})`);
+      checks.push(`transient refresh failure keeps session (${mode})`);
+    }
+
     // 7. 공개 API 401은 재발급·이동 없이 기존처럼 둔다.
     await reset();
     await seed(firstToken);
@@ -201,6 +218,19 @@ async page => {
     await page.waitForFunction(() => JSON.parse(localStorage.getItem('auth-storage')).state.accessToken === null, null, { timeout: 5000 });
     assert(new URL(page.url()).pathname === '/privacy', 'Startup failure redirected');
     checks.push('startup failure clears auth without redirect');
+
+    await reset();
+    await seed(expiredToken);
+    refreshMode = 'unavailable';
+    await page.reload();
+    await page.waitForFunction(() => document.readyState === 'complete');
+    for (let attempt = 0; attempt < 50 && countRefresh() === 0; attempt += 1) await page.waitForTimeout(100);
+    await page.waitForTimeout(300);
+    assert(countRefresh() === 1, 'Startup transient refresh count');
+    state = await storedState();
+    assert(state?.user?.id === 901 && state.accessToken === expiredToken, 'Startup transient failure cleared auth');
+    assert(new URL(page.url()).pathname === '/privacy', 'Startup transient failure redirected');
+    checks.push('startup transient failure keeps stored session');
 
     // 9. 두 탭이 동시에 401을 받으면 Web Lock 뒤의 탭은 저장된 새 토큰을 재사용한다.
     await reset();

@@ -3,6 +3,7 @@ import { isPublicShelterRequest } from '../lib/shelters';
 import { isPublicTravelRequest } from '../lib/travel';
 import { getAuthSessionVersion, useAuthStore } from '../store/authStore.ts';
 import { AUTH_LOGIN_PATH, AUTH_LOGOUT_PATH, refreshAccessToken } from './authSession.ts';
+import { isSessionEndedRefreshFailure } from './sessionRefresh.ts';
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -78,12 +79,15 @@ async function retryWithRefreshedToken(error: AxiosError, failedConfig: Internal
   let refreshedAccessToken: string;
   try {
     refreshedAccessToken = await refreshAccessToken(readBearerToken(failedConfig));
-  } catch {
+  } catch (refreshFailure) {
     // 기다리는 동안 다른 계정으로 바뀌었다면 새 세션을 로그아웃시키지 않는다.
     if (requestSessionVersion !== getAuthSessionVersion()) {
       throw createPreviousSessionError();
     }
-    redirectToLogin();
+    // 서버 재시작 같은 일시 장애에는 로그인 상태를 유지하고 원래 요청만 실패시킨다.
+    if (isSessionEndedRefreshFailure(refreshFailure)) {
+      redirectToLogin();
+    }
     throw error;
   }
   if (requestSessionVersion !== getAuthSessionVersion()) {
