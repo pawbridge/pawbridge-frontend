@@ -11,14 +11,14 @@ export default function Privacy() {
         <header>
           <p className="text-sm font-bold text-brand-accent dark:text-brand-accent">개인정보 안내</p>
           <h1 className="mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl">개인정보처리방침</h1>
-          <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 10월 7일</p>
+          <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 10월 24일</p>
         </header>
 
         <div className="mt-10 space-y-8 text-sm leading-7 text-gray-700 dark:text-gray-200">
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">처리하는 정보와 목적</h2>
             <ul className="mt-4 list-disc space-y-2 pl-5">
-              <li>회원 기능: 이메일, 이름, 인증 결과를 가입, 로그인, 계정 관리에 사용합니다.</li>
+              <li>회원 기능: 이메일, 이름과 로그인 수단 정보(네이버·구글 이용자 식별자 또는 암호화된 비밀번호)를 가입, 로그인, 계정 관리에 사용합니다.</li>
               <li>보호소 담당자 신청: 신청한 보호소와 승인 상태를 담당자 권한 확인에 사용합니다.</li>
               <li>게시글 및 등록 동물: 이용자가 작성한 내용과 이미지를 해당 기능 제공에 사용합니다.</li>
               <li>비공개 쪽지: 발신·수신 회원, 본문, 발송·읽음 시각과 개인 즐겨찾기·차단 상태를 회원 간 연락과 쪽지함 제공에 사용합니다. 알림에는 본문을 표시하지 않습니다.</li>
