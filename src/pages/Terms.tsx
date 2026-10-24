@@ -24,7 +24,8 @@ export default function Terms() {
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">회원 가입과 계정</h2>
             <ul className="mt-4 list-disc space-y-2 pl-5">
-              <li>네이버 또는 구글 계정으로 로그인하면 회원으로 가입됩니다. 별도 비밀번호는 받지 않습니다.</li>
+              <li>네이버 또는 구글 계정으로 처음 로그인하면 이 약관에 동의하고 회원으로 가입한 것으로 봅니다. 별도 비밀번호는 받지 않습니다.</li>
+              <li>만 14세 미만은 가입할 수 없습니다.</li>
               <li>가입 시 제공받는 정보(이용자 식별자, 이름, 이메일)는 <Link to="/privacy" className="underline underline-offset-4">개인정보처리방침</Link>에 따라 처리합니다.</li>
               <li>계정은 본인만 사용할 수 있습니다. 탈퇴는 아래 문의 메일로 요청해 주세요.</li>
             </ul>
@@ -48,13 +49,13 @@ export default function Terms() {
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">정보의 정확성과 책임</h2>
             <p className="mt-4">보호 동물 정보는 공공 동물보호관리시스템(APMS) 수집 정보와 이용자 제보를 바탕으로 하며 실제와 다를 수 있습니다. 방문·입양 전에는 보호소에 직접 확인해 주세요.</p>
-            <p className="mt-4">서비스는 사전 안내 후 변경하거나 중단할 수 있습니다. 포우 브릿지의 고의 또는 중대한 과실이 없는 손해에 대해서는 책임지지 않습니다.</p>
+            <p className="mt-4">서비스는 사전 안내 후 변경하거나 중단할 수 있습니다. 포우 브릿지는 고의 또는 과실 없이 발생한 손해에 대해서는 책임지지 않습니다.</p>
           </section>
 
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">문의와 약관 변경</h2>
             <p className="mt-4">문의: <a href="mailto:shyu6370@pawbridge.kr" className="underline underline-offset-4">shyu6370@pawbridge.kr</a></p>
-            <p className="mt-4">약관을 바꾸면 이 페이지의 내용과 시행일을 갱신합니다.</p>
+            <p className="mt-4">약관을 바꾸면 시행 전에 이 페이지에 내용과 시행일을 공지합니다.</p>
           </section>
         </div>
       </main>
