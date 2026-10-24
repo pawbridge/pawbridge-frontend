@@ -8,11 +8,15 @@ async page => {
   const profile = { id: 901, name: '검증회원', email: 'member@example.invalid', role: 'ROLE_USER', createdAt: '2026-09-30T00:00:00' };
   const base = { reportId: 42, authorId: 901, authorNickname: '검증회원', kind: 'MISSING', occurredOn: '2026-09-28', approximateTime: null, region: '서울 마포구', landmark: '공원 입구', species: '개', animalName: '콩이', coatColor: '흰색', animalSize: '소형', distinguishingFeatures: '파란 목줄', direction: null, description: '보호자가 등록한 실종 동물 정보입니다.', title: '파란 목줄을 한 콩이를 찾습니다', imageUrls: [origin + '/__test-photo'], createdAt: '2026-09-30T10:00:00', updatedAt: '2026-09-30T10:00:00' };
   Object.assign(base, { province: '서울특별시', district: '마포구', animalType: 'DOG' });
-  let failure = false, resume = null;
+  let failure = false, resume = null, oauthAccessToken = null;
   const handler = async route => {
     const request = route.request(), path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
     if (!path.startsWith('/api/')) return route.continue();
     const params = Object.fromEntries((request.url().split('?')[1] || '').split('&').filter(Boolean).map(pair => pair.split('=').map(value => decodeURIComponent(value.replace(/\+/g, ' ')))));
+    if (path === '/api/v1/auth/refresh') {
+      writes.push(path);
+      return route.fulfill({ json: { code: 200, data: { accessToken: oauthAccessToken } } });
+    }
     if (path === '/api/v1/auth/login') {
       writes.push(path);
       return route.fulfill({ json: { code: 200, data: { ...profile, userId: profile.id, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' } } });
@@ -129,11 +133,13 @@ async page => {
     await resetAuth(null);
     const jwt = await page.evaluate(user => 'test.' + btoa(JSON.stringify({ userId: user.id, sub: user.email, name: 'Test Member', role: 'ROLE_USER' })) + '.test', profile);
     await page.evaluate(() => sessionStorage.setItem('pawbridge-report-login-return', '/reports/new?kind=MISSING'));
-    await page.goto(origin + '/oauth/callback?accessToken=' + encodeURIComponent(jwt) + '&refreshToken=test-only-refresh');
+    // 소셜 로그인 콜백은 주소 토큰 없이 돌아오고, 합성 재발급 응답으로 로그인한다.
+    oauthAccessToken = jwt;
+    await page.goto(origin + '/oauth/callback');
     await page.waitForURL(origin + '/reports/new?kind=MISSING');
     await main.getByRole('heading', { name: '실종 동물 알리기', exact: true }).waitFor();
     check(await page.evaluate(() => sessionStorage.getItem('pawbridge-report-login-return')) === null, 'OAuth destination must be consumed once');
-    checks.push('OAuth callback return with synthetic test tokens only');
+    checks.push('OAuth callback return through synthetic refresh only');
 
     await main.getByLabel(/^날짜/).fill(base.occurredOn);
     await main.getByLabel(/^지역/).fill(base.region);
@@ -187,7 +193,7 @@ async page => {
     await main.getByRole('link', { name: '실종동물 찾기', exact: true }).waitFor();
     checks.push('eight responsive widths, mobile group/current/touch/escape, community separation');
     check(errors.length === 0, errors.join('\n'));
-    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/login', 'POST /api/reports', 'PUT /api/reports/42', 'DELETE /api/reports/42']), 'Unexpected mutation traffic');
+    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/login', '/api/v1/auth/refresh', 'POST /api/reports', 'PUT /api/reports/42', 'DELETE /api/reports/42']), 'Unexpected mutation traffic');
     return { checks, apiRequests: requests.length, mockedWrites: writes, pageErrors: errors, scope: 'local build with mocked APIs, not production integration' };
   } finally {
     page.off('pageerror', onError);
