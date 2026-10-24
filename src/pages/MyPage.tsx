@@ -29,6 +29,8 @@ export default function MyPage() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
   const showPetMarket = canSeePetMarket(user?.role);
+  // 관리자는 신청을 심사하는 쪽이므로 보호소 담당자 신청 메뉴를 두지 않는다.
+  const showShelterApplication = user?.role !== 'ROLE_ADMIN';
 
   // location.state에서 탭 정보 가져오기 (뒤로가기 시)
   // sessionStorage도 확인하여 뒤로가기 시에도 탭 유지
@@ -46,8 +48,9 @@ export default function MyPage() {
     return 'profile';
   });
   // A saved market tab must not render or fetch market data for a non-admin.
-  const activeTab = !showPetMarket && ['wishlist', 'cart', 'orders'].includes(selectedTab)
-    ? 'profile' : selectedTab;
+  const isHiddenMarketTab = !showPetMarket && ['wishlist', 'cart', 'orders'].includes(selectedTab);
+  const isHiddenShelterTab = !showShelterApplication && selectedTab === 'shelter';
+  const activeTab = isHiddenMarketTab || isHiddenShelterTab ? 'profile' : selectedTab;
 
   // location.state가 변경되면 탭 업데이트
   useEffect(() => {
@@ -416,6 +419,7 @@ export default function MyPage() {
             userInfo={userInfo}
             activeTab={activeTab}
             showPetMarket={showPetMarket}
+            showShelterApplication={showShelterApplication}
             onTabChange={setActiveTab}
             onLogout={handleLogout}
           />
