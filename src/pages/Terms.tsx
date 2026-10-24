@@ -25,7 +25,7 @@ export default function Terms() {
             <h2 className="text-xl font-bold text-text-light dark:text-white">회원 가입과 계정</h2>
             <ul className="mt-4 list-disc space-y-2 pl-5">
               <li>네이버 또는 구글 계정으로 처음 로그인하면 이 약관에 동의하고 회원으로 가입한 것으로 봅니다. 별도 비밀번호는 받지 않습니다.</li>
-              <li>만 14세 미만은 가입할 수 없습니다.</li>
+              <li>만 14세 미만은 가입할 수 없으며, 만 14세 미만으로 확인되면 계정을 삭제할 수 있습니다.</li>
               <li>가입 시 제공받는 정보(이용자 식별자, 이름, 이메일)는 <Link to="/privacy" className="underline underline-offset-4">개인정보처리방침</Link>에 따라 처리합니다.</li>
               <li>계정은 본인만 사용할 수 있습니다. 탈퇴는 아래 문의 메일로 요청해 주세요.</li>
             </ul>
