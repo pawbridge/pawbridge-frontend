@@ -73,6 +73,11 @@ const exactPages = new Map<string, PageDefinition>([
     description: '포우브릿지의 개인정보 처리 방침과 이용자 권리를 안내합니다.',
     indexable: false,
   }],
+  ['/terms', {
+    title: '이용약관 | 포우브릿지',
+    description: '포우브릿지 서비스 이용약관을 안내합니다.',
+    indexable: false,
+  }],
   ['/products', {
     title: '펫마켓 | 포우브릿지',
     description: '포우브릿지 펫마켓입니다.',
