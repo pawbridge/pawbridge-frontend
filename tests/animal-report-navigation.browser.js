@@ -13,7 +13,7 @@ async page => {
     const request = route.request(), path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
     if (!path.startsWith('/api/')) return route.continue();
     const params = Object.fromEntries((request.url().split('?')[1] || '').split('&').filter(Boolean).map(pair => pair.split('=').map(value => decodeURIComponent(value.replace(/\+/g, ' ')))));
-    if (path === '/api/auth/login') {
+    if (path === '/api/v1/auth/login') {
       writes.push(path);
       return route.fulfill({ json: { code: 200, data: { ...profile, userId: profile.id, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' } } });
     }
@@ -187,7 +187,7 @@ async page => {
     await main.getByRole('link', { name: '실종동물 찾기', exact: true }).waitFor();
     checks.push('eight responsive widths, mobile group/current/touch/escape, community separation');
     check(errors.length === 0, errors.join('\n'));
-    check(JSON.stringify(writes) === JSON.stringify(['/api/auth/login', 'POST /api/reports', 'PUT /api/reports/42', 'DELETE /api/reports/42']), 'Unexpected mutation traffic');
+    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/login', 'POST /api/reports', 'PUT /api/reports/42', 'DELETE /api/reports/42']), 'Unexpected mutation traffic');
     return { checks, apiRequests: requests.length, mockedWrites: writes, pageErrors: errors, scope: 'local build with mocked APIs, not production integration' };
   } finally {
     page.off('pageerror', onError);

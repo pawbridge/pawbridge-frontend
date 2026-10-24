@@ -33,7 +33,7 @@ async (page, origin = 'http://127.0.0.1:5260') => {
       return route.fulfill({ status: 204 });
     }
     if (path === '/api/visits/today') return route.fulfill({ json: { data: { date: today, count: 0 } } });
-    if (path === '/api/auth/login') return route.fulfill({
+    if (path === '/api/v1/auth/login') return route.fulfill({
       status: validLogin ? 200 : 401,
       json: validLogin ? { code: 200, data: {
         userId: 901, name: '합성 사용자', email: 'member@example.invalid', role: 'ROLE_USER',

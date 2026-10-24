@@ -14,7 +14,8 @@ export interface LoginResponse {
   role: UserRole;
   careRegNo: string | null;
   accessToken: string;
-  refreshToken: string;
+  // 기존 백엔드만 본문으로 보낸다. 새 백엔드는 HttpOnly 쿠키로 저장하며, 프론트는 어느 쪽도 저장하지 않는다.
+  refreshToken?: string;
 }
 
 // 회원가입 요청

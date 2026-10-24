@@ -1,12 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
+import { logoutWithoutWaiting } from '../../api/auth.api';
 import { adminNavigation, currentAdminPath } from '../../lib/adminNavigation';
 import { adminControl } from '../admin/AdminUI';
 
 export default function AdminSidebar({ mobile = false, onNavigate }: { subdued?: boolean; mobile?: boolean; onNavigate?: () => void }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const logout = useAuthStore(state => state.logout);
   const activePath = currentAdminPath(pathname);
   return <aside className={`flex flex-col bg-surface-light dark:bg-surface-dark ${mobile ? 'min-h-[calc(100dvh-7rem)] w-full' : 'h-full w-[240px] border-r border-brand-border p-4 dark:border-stone-700'}`}>
     {!mobile && <Link to="/admin/dashboard" className="mb-4"><span className="block text-xl font-bold">PawBridge</span><span className="mt-1 block text-xs text-brand-muted dark:text-stone-300">관리자 콘솔</span></Link>}
@@ -16,7 +15,7 @@ export default function AdminSidebar({ mobile = false, onNavigate }: { subdued?:
     </nav>
     <div className={`mt-6 flex flex-col gap-2 ${mobile ? 'pb-4' : 'text-sm'}`}>
       <Link className={mobile ? `${adminControl} min-h-12` : 'flex min-h-11 items-center'} to="/" onClick={onNavigate}>사용자 화면으로</Link>
-      <button type="button" className={mobile ? `${adminControl} min-h-12` : 'min-h-11 text-left text-brand-muted dark:text-stone-300'} onClick={() => { logout(); onNavigate?.(); navigate('/login'); }}>로그아웃</button>
+      <button type="button" className={mobile ? `${adminControl} min-h-12` : 'min-h-11 text-left text-brand-muted dark:text-stone-300'} onClick={() => { logoutWithoutWaiting(); onNavigate?.(); navigate('/login'); }}>로그아웃</button>
     </div>
   </aside>;
 }
