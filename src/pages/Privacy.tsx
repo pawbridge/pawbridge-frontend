@@ -63,6 +63,17 @@ export default function Privacy() {
           </section>
 
           <section className={sectionClass}>
+            <h2 className="text-xl font-bold text-text-light dark:text-white">파기</h2>
+            <p className="mt-4">탈퇴하거나 보유 기간이 끝난 개인정보는 지체 없이 복구할 수 없는 방법으로 삭제합니다. 백업본에 남은 정보는 백업 보관 기간이 지나면 함께 삭제합니다.</p>
+          </section>
+
+          <section className={sectionClass}>
+            <h2 className="text-xl font-bold text-text-light dark:text-white">개인정보 보호책임자</h2>
+            <p className="mt-4">포우 브릿지 운영자 · <a href="mailto:shyu6370@pawbridge.kr" className="underline underline-offset-4">shyu6370@pawbridge.kr</a></p>
+            <p className="mt-4">개인정보 열람·정정·삭제 요청과 문의는 위 메일로 받습니다.</p>
+          </section>
+
+          <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">방침 변경</h2>
             <p className="mt-4">처리 항목이나 외부 서비스가 바뀌면 이 페이지의 내용과 시행일을 갱신합니다.</p>
           </section>
