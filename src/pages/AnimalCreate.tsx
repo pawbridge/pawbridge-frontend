@@ -5,6 +5,7 @@ import { createAnimal, uploadAnimalImage } from '../api/animals.api';
 import { getMyInfo } from '../api/user.api';
 import type { CreateAnimalRequest } from '../api/animals.api';
 import { useAuthStore } from '../store/authStore';
+import { logoutWithoutWaiting } from '../api/auth.api';
 import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import Header from '../components/layout/Header';
@@ -26,7 +27,6 @@ export default function AnimalCreate() {
 
   // authStore에서도 user 정보 가져오기 (로그인 시 저장된 careRegNo 사용)
   const authUser = useAuthStore((state) => state.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   // 기본 정보
   const [species, setSpecies] = useState<'DOG' | 'CAT' | 'ETC'>('DOG');
@@ -218,7 +218,7 @@ export default function AnimalCreate() {
   }
 
   const handleLogout = () => {
-    clearAuth();
+    logoutWithoutWaiting();
     navigate('/login');
   };
 

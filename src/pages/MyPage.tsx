@@ -16,6 +16,7 @@ import { getMyInfo, updateNickname, updatePassword, getFavoriteAnimals, getRegis
 import { getWishlists, deleteWishlist, addToCart, getCart, clearCart } from '../api/products.api';
 import { getOrders } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
+import { logoutWithoutWaiting } from '../api/auth.api';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { canSeePetMarket } from '../lib/petMarket';
@@ -26,7 +27,6 @@ export default function MyPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const { logout } = useAuthStore();
   const user = useAuthStore((state) => state.user);
   const showPetMarket = canSeePetMarket(user?.role);
 
@@ -247,7 +247,7 @@ export default function MyPage() {
   // 로그아웃 핸들러
   const handleLogout = () => {
     if (confirm('로그아웃 하시겠습니까?')) {
-      logout();
+      logoutWithoutWaiting();
       navigate('/login');
     }
   };
