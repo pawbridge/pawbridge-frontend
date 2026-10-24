@@ -155,9 +155,9 @@ export default function Login() {
               <SocialLoginButton provider="naver" onClick={() => handleSocialLogin('naver')} />
               <SocialLoginButton provider="google" onClick={() => handleSocialLogin('google')} />
               <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">
-                처음 로그인하면 포우 브릿지 계정이 자동으로 만들어지며,{' '}
-                <Link to="/terms" className="underline">이용약관</Link>과{' '}
-                <Link to="/privacy" className="underline">개인정보처리방침</Link>에 동의한 것으로 봅니다. 만 14세 미만은 가입할 수 없습니다.
+                처음 로그인하면 포우 브릿지 계정이 자동으로 만들어지며{' '}
+                <Link to="/terms" className="underline">이용약관</Link>에 동의한 것으로 봅니다. 개인정보는{' '}
+                <Link to="/privacy" className="underline">개인정보처리방침</Link>에 따라 처리합니다. 만 14세 미만은 가입할 수 없습니다.
               </p>
             </div>
 
