@@ -16,9 +16,9 @@ export default function OAuthCallback() {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
 
-    // 기존 백엔드는 토큰을 주소로 전달한다. 주소창·방문 기록에 남지 않도록 가장 먼저 지운다.
-    const legacyAccessToken = searchParams.get('accessToken');
-    if (legacyAccessToken || searchParams.has('refreshToken')) {
+    // 이전 백엔드 형식의 주소 토큰(예: 오래된 즐겨찾기)은 읽지도 사용하지도 않는다.
+    // 주소창·방문 기록에 남지 않도록 가장 먼저 지운다.
+    if (searchParams.has('accessToken') || searchParams.has('refreshToken')) {
       window.history.replaceState(window.history.state, '', window.location.pathname);
     }
     const error = searchParams.get('error');
@@ -45,15 +45,7 @@ export default function OAuthCallback() {
       return;
     }
 
-    // 기존 백엔드: 주소의 Access Token을 사용하고 Refresh Token은 저장하지 않는다.
-    if (legacyAccessToken) {
-      if (!completeLogin(legacyAccessToken)) {
-        backToLogin('로그인 처리 중 오류가 발생했습니다');
-      }
-      return;
-    }
-
-    // 새 백엔드: 로그인 유지 쿠키가 이미 저장되어 있으므로 Access Token을 재발급받는다.
+    // 로그인 유지 쿠키가 이미 저장되어 있으므로 Access Token을 재발급받는다.
     // 저장된 이전 토큰을 실패한 토큰으로 넘겨, 이전 세션의 토큰을 재사용하지 않고 서버에 요청하게 한다.
     refreshAccessToken(readPersistedAccessToken())
       .then((accessToken) => {
