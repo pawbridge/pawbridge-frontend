@@ -18,14 +18,20 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (path === '/api/auth/login' && request.method() === 'POST') {
+    if (path === '/api/v1/auth/login' && request.method() === 'POST') {
       requests.push('login');
       return route.fulfill({ status: 401, json: { code: 401, data: null, message: '이메일 또는 비밀번호가 일치하지 않습니다.' } });
+    }
+    if (path === '/api/v1/auth/refresh' && request.method() === 'POST') {
+      requests.push('refresh');
+      return route.fulfill({ status: 401, json: { code: 401, data: null, message: '로그인 유지 정보가 없습니다.' } });
     }
     if (path === '/api/users/me' && request.method() === 'GET') {
       requests.push('profile');
       return route.fulfill({ status: 401, json: { code: 401, data: null, message: '로그인이 필요합니다.' } });
     }
+    // 로그인 상태에서 함께 연결되는 쪽지 알림은 이 검사의 대상이 아니다.
+    if (path.startsWith('/api/notes/')) return route.abort();
     if (path.startsWith('/api/')) {
       unexpected.push(`${request.method()} ${path}`);
       return route.abort();
@@ -40,11 +46,13 @@ async page => {
       await page.goto(`${origin}/login`);
       await page.evaluate(() => localStorage.clear());
       await page.reload();
+      // 소셜 로그인 화면 적용 이후 이메일 로그인은 접힌 상태로 시작한다.
+      await page.getByRole('button', { name: /이메일로 로그인/ }).click();
       const email = page.getByPlaceholder('이메일 주소를 입력하세요');
       const password = page.getByPlaceholder('비밀번호를 입력하세요', { exact: true });
       await email.fill('member@example.invalid');
       await password.fill('wrong-password');
-      await page.getByRole('button', { name: '로그인', exact: true }).click();
+      await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
       await page.getByText('이메일 또는 비밀번호가 일치하지 않습니다.', { exact: true }).first().waitFor({ timeout: 5000 });
       assert(page.url() === `${origin}/login`, `Login failure redirected: ${page.url()}`);
       assert(await email.inputValue() === 'member@example.invalid', 'Email was cleared after login failure');
@@ -60,10 +68,12 @@ async page => {
       const state = await page.evaluate(() => JSON.parse(localStorage.getItem('auth-storage'))?.state);
       assert(state?.user === null && state?.accessToken === null, 'Protected API 401 did not clear auth');
       assert(!await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), `Protected 401 overflow ${width}`);
-      checks.push(`protected 401 clears session and redirects ${width}`);
+      checks.push(`protected 401 tries refresh, clears session and redirects ${width}`);
     }
     assert(requests.filter(request => request === 'login').length === 2, 'Expected two login requests');
     assert(requests.filter(request => request === 'profile').length === 2, 'Expected two protected requests');
+    // 보호 API 401은 재발급을 한 번 시도하고, 실패하면 기존처럼 로그인으로 보낸다.
+    assert(requests.filter(request => request === 'refresh').length === 2, 'Expected one refresh attempt per protected 401');
     assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected.join(', ')}`);
     assert(errors.length === 0, `Page errors: ${errors.join(', ')}`);
     return { checks, requests, unexpected, errors };
