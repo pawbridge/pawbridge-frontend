@@ -42,7 +42,18 @@ export default function MyPageSidebar({
 
         {/* 메뉴 */}
         <nav className="flex flex-col gap-1">
-          {showShelterApplication && <button onClick={() => onTabChange('shelter')} className={`min-h-11 rounded-lg px-3 py-3 text-left text-sm ${activeTab === 'shelter' ? 'bg-gray-100 font-semibold dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}>보호소 담당자 신청</button>}
+          {showShelterApplication && (
+            <button
+              onClick={() => onTabChange('shelter')}
+              className={`min-h-11 rounded-lg px-3 py-3 text-left text-sm ${
+                activeTab === 'shelter'
+                  ? 'bg-gray-100 font-semibold dark:bg-gray-700'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              보호소 담당자 신청
+            </button>
+          )}
           <button
             onClick={() => onTabChange('profile')}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${

@@ -159,9 +159,8 @@ export default function Header() {
                   // 버튼을 더하면 640~712px 폭에서 메뉴 버튼이 화면 밖으로 밀린다.
                   <Link
                     to="/mypage"
-                    title="마이페이지"
                     aria-label={`${user.name}님 마이페이지`}
-                    className={`hidden sm:block ${palette.text} dark:text-gray-300 text-sm font-medium underline-offset-4 hover:underline ${palette.focus}`}
+                    className={`hidden sm:flex min-h-11 items-center ${palette.text} dark:text-gray-300 text-sm font-medium underline-offset-4 hover:underline ${palette.focus}`}
                   >
                     {user.name}님
                   </Link>
