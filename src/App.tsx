@@ -58,6 +58,7 @@ import AnimalStats from './pages/AnimalStats.tsx';
 import Travel from './pages/Travel.tsx';
 import TravelDetail from './pages/TravelDetail.tsx';
 import Privacy from './pages/Privacy.tsx';
+import Terms from './pages/Terms.tsx';
 import PrivateNotes from './pages/PrivateNotes';
 import PrivateNoteCompose from './pages/PrivateNoteCompose';
 import PrivateNoteDetail from './pages/PrivateNoteDetail';
@@ -178,6 +179,7 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="/notes" element={<ProtectedRoute><PrivateNotes /></ProtectedRoute>} />
       <Route path="/chats" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
       <Route path="/chats/new" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
