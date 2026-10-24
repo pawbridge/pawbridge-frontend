@@ -1,18 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore, readPersistedAccessToken } from '../store/authStore';
+import { refreshAccessToken } from '../api/authSession';
+import { readUserFromAccessToken } from '../lib/accessToken';
 import { consumeReportLoginReturn } from '../lib/reportNavigation';
-
-// Base64 디코딩 시 UTF-8 문자 제대로 처리하는 함수
-function decodeBase64Unicode(str: string): string {
-  // Base64 디코딩 후 UTF-8 문자를 제대로 처리
-  const binary = atob(str);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return new TextDecoder('utf-8').decode(bytes);
-}
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
@@ -25,8 +16,11 @@ export default function OAuthCallback() {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
 
-    const accessToken = searchParams.get('accessToken');
-    const refreshToken = searchParams.get('refreshToken');
+    // 기존 백엔드는 토큰을 주소로 전달한다. 주소창·방문 기록에 남지 않도록 가장 먼저 지운다.
+    const legacyAccessToken = searchParams.get('accessToken');
+    if (legacyAccessToken || searchParams.has('refreshToken')) {
+      window.history.replaceState(window.history.state, '', window.location.pathname);
+    }
     const error = searchParams.get('error');
 
     // Failures are shown inside the login card instead of a blocking alert.
@@ -34,41 +28,42 @@ export default function OAuthCallback() {
       navigate(`/login?error=${encodeURIComponent(message)}`, { replace: true });
     };
 
+    const completeLogin = (accessToken: string): boolean => {
+      // JWT 토큰에서 사용자 정보 추출 (payload 디코딩)
+      const user = readUserFromAccessToken(accessToken);
+      if (!user) {
+        return false;
+      }
+      setAuth(user, accessToken);
+      // Success needs no message: the header switches to the member menu on the page they return to.
+      navigate(consumeReportLoginReturn(), { replace: true });
+      return true;
+    };
+
     if (error) {
       backToLogin(error);
       return;
     }
 
-    // 토큰이 있는 경우
-    if (accessToken && refreshToken) {
-      try {
-        // JWT 토큰에서 사용자 정보 추출 (payload 디코딩)
-        const payloadBase64 = accessToken.split('.')[1];
-        const decodedPayload = JSON.parse(decodeBase64Unicode(payloadBase64));
-
-        // 사용자 정보 구성
-        const user = {
-          id: decodedPayload.userId,
-          email: decodedPayload.sub, // JWT subject는 일반적으로 이메일
-          name: decodedPayload.name || '',
-          role: decodedPayload.role || 'ROLE_USER',
-          careRegNo: decodedPayload.careRegNo,
-          createdAt: new Date().toISOString(),
-        };
-
-        // Zustand store에 인증 정보 저장
-        setAuth(user, accessToken, refreshToken);
-
-        // Success needs no message: the header switches to the member menu on the page they return to.
-        navigate(consumeReportLoginReturn(), { replace: true });
-      } catch (error) {
-        console.error('토큰 처리 실패:', error);
+    // 기존 백엔드: 주소의 Access Token을 사용하고 Refresh Token은 저장하지 않는다.
+    if (legacyAccessToken) {
+      if (!completeLogin(legacyAccessToken)) {
         backToLogin('로그인 처리 중 오류가 발생했습니다');
       }
-    } else {
-      // 토큰이 없는 경우
-      backToLogin('로그인 정보를 받지 못했습니다');
+      return;
     }
+
+    // 새 백엔드: 로그인 유지 쿠키가 이미 저장되어 있으므로 Access Token을 재발급받는다.
+    // 저장된 이전 토큰을 실패한 토큰으로 넘겨, 이전 세션의 토큰을 재사용하지 않고 서버에 요청하게 한다.
+    refreshAccessToken(readPersistedAccessToken())
+      .then((accessToken) => {
+        if (!completeLogin(accessToken)) {
+          backToLogin('로그인 정보를 받지 못했습니다');
+        }
+      })
+      .catch(() => {
+        backToLogin('로그인 정보를 받지 못했습니다');
+      });
   }, [searchParams, navigate, setAuth]);
 
   return (

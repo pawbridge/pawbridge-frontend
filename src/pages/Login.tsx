@@ -40,7 +40,7 @@ export default function Login() {
         careRegNo: data.careRegNo,
         createdAt: new Date().toISOString(),
       };
-      setAuth(user, data.accessToken, data.refreshToken);
+      setAuth(user, data.accessToken);
       // 로그인 성공 시 알림 없이 바로 이동
       rememberReportLoginReturn(location.state?.from);
       navigate(consumeReportLoginReturn());
