@@ -11,14 +11,14 @@ export default function Privacy() {
         <header>
           <p className="text-sm font-bold text-brand-accent dark:text-brand-accent">개인정보 안내</p>
           <h1 className="mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl">개인정보처리방침</h1>
-          <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 10월 7일</p>
+          <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 10월 24일</p>
         </header>
 
         <div className="mt-10 space-y-8 text-sm leading-7 text-gray-700 dark:text-gray-200">
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-text-light dark:text-white">처리하는 정보와 목적</h2>
             <ul className="mt-4 list-disc space-y-2 pl-5">
-              <li>회원 기능: 이메일, 이름, 인증 결과를 가입, 로그인, 계정 관리에 사용합니다.</li>
+              <li>회원 기능: 이메일, 이름과 로그인 수단 정보(네이버·구글 이용자 식별자 또는 암호화된 비밀번호)를 가입, 로그인, 계정 관리에 사용합니다.</li>
               <li>보호소 담당자 신청: 신청한 보호소와 승인 상태를 담당자 권한 확인에 사용합니다.</li>
               <li>게시글 및 등록 동물: 이용자가 작성한 내용과 이미지를 해당 기능 제공에 사용합니다.</li>
               <li>비공개 쪽지: 발신·수신 회원, 본문, 발송·읽음 시각과 개인 즐겨찾기·차단 상태를 회원 간 연락과 쪽지함 제공에 사용합니다. 알림에는 본문을 표시하지 않습니다.</li>
@@ -60,6 +60,17 @@ export default function Privacy() {
               기간 동안 보관할 수 있습니다. 이용자는 계정 정보를 확인·수정하거나 개인정보 처리에 관한 요청을
               할 수 있습니다.
             </p>
+          </section>
+
+          <section className={sectionClass}>
+            <h2 className="text-xl font-bold text-text-light dark:text-white">파기</h2>
+            <p className="mt-4">탈퇴하거나 보유 기간이 끝난 개인정보는 지체 없이 복구할 수 없는 방법으로 삭제합니다. 백업본에 남은 정보는 백업 보관 기간이 지나면 함께 삭제합니다.</p>
+          </section>
+
+          <section className={sectionClass}>
+            <h2 className="text-xl font-bold text-text-light dark:text-white">개인정보 보호책임자</h2>
+            <p className="mt-4">포우 브릿지 운영자 · <a href="mailto:shyu6370@pawbridge.kr" className="underline underline-offset-4">shyu6370@pawbridge.kr</a></p>
+            <p className="mt-4">개인정보 열람·정정·삭제 요청과 문의는 위 메일로 받습니다.</p>
           </section>
 
           <section className={sectionClass}>
