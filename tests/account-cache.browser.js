@@ -11,11 +11,11 @@ async page => {
     const id = Number(r.headers()['x-user-id'] || 0);
     requests.push({ method: r.method(), path, id });
     const send = json => route.fulfill({ json });
-    if (path === '/api/auth/login' && r.method() === 'POST') {
+    if (path === '/api/v1/auth/login' && r.method() === 'POST') {
       const account = r.postDataJSON().email.includes('101') ? 101 : 202;
       return send({ code: 200, data: { ...user(account), accessToken: `mock-${account}`, refreshToken: `mock-refresh-${account}` } });
     }
-    if (path === '/api/auth/logout' && r.method() === 'POST') return send({ code: 200 });
+    if (path === '/api/v1/auth/logout' && r.method() === 'POST') return send({ code: 200 });
     if (r.method() === 'GET') {
       if (path === '/api/users/me') return send({ code: 200, data: user(id) });
       if (path === '/api/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });

@@ -12,11 +12,11 @@ async page => {
     const id = Number(r.headers()['x-user-id'] || 0);
     requests.push({ method: r.method(), path, id });
     const send = json => route.fulfill({ json });
-    if (path === '/api/auth/login' && r.method() === 'POST') {
+    if (path === '/api/v1/auth/login' && r.method() === 'POST') {
       const account = r.postDataJSON().email.includes('101') ? 101 : 202;
       return send({ code: 200, data: { ...user(account), accessToken: `mock-${account}`, refreshToken: `mock-refresh-${account}` } });
     }
-    if (path === '/api/auth/logout' && r.method() === 'POST') {
+    if (path === '/api/v1/auth/logout' && r.method() === 'POST') {
       if (holdLogout) await new Promise(resolve => { held = resolve; });
       return route.fulfill({ status: failLogout ? 500 : 200, json: { code: failLogout ? 500 : 200 } });
     }
@@ -181,7 +181,7 @@ async page => {
     await reset(); await login(101); holdLogout = true;
     await page.locator('header').getByRole('button', { name: '로그아웃' }).first().click(); await waitHeld();
     await navigate('/login'); await login(202);
-    const logoutResponse = page.waitForResponse(r => r.url().includes('/api/auth/logout'));
+    const logoutResponse = page.waitForResponse(r => r.url().includes('/api/v1/auth/logout'));
     holdLogout = false; release(); await logoutResponse; await page.waitForTimeout(100);
     assert(await page.evaluate(() => JSON.parse(localStorage.getItem('auth-storage')).state.user?.id) === 202, 'Old logout cleared new account');
     assert(page.url() === `${origin}/mypage`, 'Old logout navigated new account');
