@@ -119,9 +119,11 @@ async page => {
     await page.goto(origin + '/community/reports/new?kind=SIGHTING');
     await page.waitForURL(origin + '/reports/new?kind=SIGHTING');
     await page.getByRole('link', { name: '로그인', exact: true }).click();
+    // 소셜 로그인 화면 적용 이후 이메일 로그인은 접힌 상태로 시작한다.
+    await page.getByRole('button', { name: /이메일로 로그인/ }).click();
     await page.getByPlaceholder('이메일 주소를 입력하세요').fill(profile.email);
     await page.getByPlaceholder('비밀번호를 입력하세요', { exact: true }).fill('test-only-password');
-    await page.getByRole('button', { name: '로그인', exact: true }).click();
+    await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
     await page.waitForURL(origin + '/reports/new?kind=SIGHTING');
     await main.getByRole('heading', { name: '목격 제보하기', exact: true }).waitFor();
     await main.getByRole('link', { name: '취소', exact: true }).click(); await page.waitForURL(origin + '/reports/sightings'); await waitCards();
