@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { loadEnv } from 'vite';
 import { validateEnvironment } from './environment-policy.mjs';
 
@@ -16,5 +16,6 @@ mkdirSync(`dist/${environment}`, { recursive: true });
 writeFileSync(`dist/${environment}/environment.json`, JSON.stringify({ environment, apiOrigin: env.VITE_API_BASE_URL, sourceRevision: process.env.GITHUB_SHA || null }));
 if (environment === 'dev') {
   writeFileSync('dist/dev/robots.txt', 'User-agent: *\nDisallow: /\n');
-  writeFileSync('dist/dev/_headers', '/*\n  X-Robots-Tag: noindex, nofollow\n');
+  // public/_headers의 보안 헤더를 덮어쓰지 않도록 규칙을 덧붙인다. 같은 경로 규칙의 헤더는 합쳐서 적용된다.
+  appendFileSync('dist/dev/_headers', '\n/*\n  X-Robots-Tag: noindex, nofollow\n');
 }

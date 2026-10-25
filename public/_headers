@@ -1,0 +1,18 @@
+# Cloudflare Workers 정적 자산(assets) 응답 헤더. Vite가 dist/<환경>/_headers로 복사한다.
+# 형식 근거: https://developers.cloudflare.com/workers/static-assets/headers/
+#
+# CSP는 Report-Only다. 위반은 차단되지 않고 브라우저 콘솔에만 기록된다.
+# 정책은 한 줄이어야 하므로 아래 지시어를 세미콜론으로 이어 붙인다. 지시어별 근거는 PR 본문에 있다.
+#   default-src 'self'
+#   script-src  'self' + 다음 우편번호(t1.daumcdn.net) + 토스페이먼츠 SDK(js.tosspayments.com)
+#   style-src   'self' 'unsafe-inline' + Google Fonts CSS (React style 속성과 index.html <style> 때문에 unsafe-inline 필요)
+#   font-src    'self' + fonts.gstatic.com
+#   img-src     'self' data: blob: + 서비스가 실제로 표시하는 이미지 호스트
+#   connect-src 'self' + API(https/wss)
+#   frame-src   YouTube 임베드(youtube-nocookie) + 토스페이먼츠 결제창
+/*
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://t1.daumcdn.net https://js.tosspayments.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.pawbridge.kr https://images.pawbridge.kr http://openapi.animal.go.kr https://openapi.animal.go.kr https://tong.visitkorea.or.kr https://i.ytimg.com https://lh3.googleusercontent.com; connect-src 'self' https://api.pawbridge.kr wss://api.pawbridge.kr; frame-src https://www.youtube-nocookie.com https://*.tosspayments.com; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
