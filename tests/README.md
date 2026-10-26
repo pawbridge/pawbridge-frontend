@@ -77,6 +77,10 @@ playwright-cli -s=notes-fix-review close
 
 스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 현재 GitHub Actions는 환경 정책·빌드 검사만 실행하므로 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다.
 
+## 공개 문의 링크 검증
+
+`footer-contact.browser.js`는 로컬 후보의 개인정보 안내 화면에서 공개 문의 주소와 `mailto:` 링크, 1440·375·320px 잘림·가로 넘침·키보드 포커스를 확인한다. 로그인하거나 메일을 보내지 않는다. 실제 이메일 수신·도메인 주소로 회신하는 기능의 검증은 별개다.
+
 ## 관리자 리뉴얼 UI 검증
 
 관리자 화면 17개와 기존 API 변경 계약을 로컬 모의 응답으로 검증한다. 운영 인증정보·DB·실제 결제는 사용하지 않는다. `admin-renewal.browser.js`는 회원·보호소·통계 8개, `admin-market.browser.js`는 게시글·상품·주문·분류 9개 화면을 담당한다. 각 스크립트는 1440·390·320px에서 화면을 렌더링한다.

@@ -75,7 +75,7 @@ export default function ShelterDetail() {
               {shelter.operatingHours ? <p className="whitespace-pre-wrap break-words text-sm leading-6">{shelter.operatingHours}</p> : <dl className="space-y-5 text-sm leading-6">
                 <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">평일</dt><dd>{hours(info?.weekdayOpen, info?.weekdayClose)}</dd></div>
                 <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">주말</dt><dd>{hours(info?.weekendOpen, info?.weekendClose)}</dd></div>
-                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">휴무일</dt><dd className="whitespace-pre-wrap break-words">{info?.closedDays || '등록된 정보가 없어요'}</dd></div>
+                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">휴무일</dt><dd className="whitespace-pre-wrap break-words">{info?.closedDays?.trim() === '0' ? '전화로 확인해 주세요' : info?.closedDays || '등록된 정보가 없어요'}</dd></div>
               </dl>}
               <p className="mt-6 border-t border-border-light pt-5 text-sm leading-6 text-gray-600 dark:border-border-dark dark:text-gray-400">방문·입양 상담 시간은 전화로 먼저 확인해 주세요.</p>
             </section>
