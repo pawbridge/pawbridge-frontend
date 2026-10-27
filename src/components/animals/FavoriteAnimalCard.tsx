@@ -47,9 +47,10 @@ export default function FavoriteAnimalCard({ favorite, fromMyPage = false }: { f
               {favorite.shelterName && <p className="mt-2 break-words text-sm text-gray-600 dark:text-gray-300">보호소 {favorite.shelterName}</p>}
             </>
           )}
-          <div className="mt-auto flex flex-wrap gap-2 pt-5">
-            {!deleted && <Link to={`/animals/${favorite.animalId}`} state={{ from: fromMyPage ? 'mypage' : 'favorites', tab: 'favoriteAnimals' }} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-brand px-4 text-sm font-semibold text-brand-ink hover:bg-brand-hover">상세 보기</Link>}
-            <button type="button" onClick={() => remove.mutate()} disabled={remove.isPending} className="min-h-11 flex-1 rounded-lg border border-border-light px-4 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
+          {/* Figma 57 관심 동물 v1.2: 버튼은 글자 폭만큼 나란히, 모바일에서는 전체 폭으로 쌓는다. 글자는 줄바꿈하지 않는다. */}
+          <div className="mt-auto flex flex-col gap-2 pt-5 sm:flex-row sm:flex-wrap">
+            {!deleted && <Link to={`/animals/${favorite.animalId}`} state={{ from: fromMyPage ? 'mypage' : 'favorites', tab: 'favoriteAnimals' }} className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink hover:bg-brand-hover">상세 보기</Link>}
+            <button type="button" onClick={() => remove.mutate()} disabled={remove.isPending} className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg border border-border-light px-5 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
               {remove.isPending ? '삭제 중…' : '관심 동물에서 삭제'}
             </button>
           </div>

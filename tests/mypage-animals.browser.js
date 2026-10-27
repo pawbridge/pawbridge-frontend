@@ -111,9 +111,14 @@ async page => {
         assert(await page.getByRole('link', { name: /새 동물 등록/ }).getAttribute('href') === '/animals/new', 'Create link changed');
         await cards().first().click();
         await page.waitForURL('**/animals/21');
-        // The detail page's return button reads '동물 목록으로' but goes back to the My Page tab it came from.
-        await page.getByRole('button', { name: '동물 목록으로', exact: true }).waitFor();
-        await page.getByRole('button', { name: '동물 목록으로', exact: true }).click();
+        await page.getByRole('navigation', { name: '현재 위치', exact: true }).waitFor();
+        await page.evaluate(() => document.fonts.ready);
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await page.screenshot({ path: `/tmp/mypage-animals-registered-detail-${width}.png`, fullPage: true, animations: 'disabled' });
+        // Both return controls name the My Page tab the visitor came from.
+        const breadcrumb = page.getByRole('navigation', { name: '현재 위치', exact: true });
+        await breadcrumb.getByRole('button', { name: '등록한 동물', exact: true }).waitFor();
+        await page.getByRole('button', { name: '등록한 동물로 돌아가기', exact: true }).click();
         await page.getByText(`총 ${count}마리의 동물을 등록했습니다`, { exact: true }).waitFor();
         assert((await names())[0] === '동물 1', 'Detail return baseline changed');
         checks.push(`registered ${count}, tab persistence and detail return / ${width}`);
@@ -124,11 +129,21 @@ async page => {
         await page.mouse.move(0, 0);
         await page.evaluate(() => document.fonts.ready);
         assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), 'Animal panel overflow');
+        if (panel === 'favorites') {
+          // Each action label stays on one line: side by side on wider screens, stacked full width on phones.
+          const firstCard = cards().first();
+          const detail = await firstCard.getByRole('link', { name: '상세 보기', exact: true }).boundingBox();
+          const remove = await firstCard.getByRole('button', { name: '관심 동물에서 삭제', exact: true }).boundingBox();
+          assert(detail.height <= 48 && remove.height <= 48, `Favorite card actions wrapped / ${width}`);
+          if (width >= 640) assert(Math.abs(detail.y - remove.y) < 1 && remove.x > detail.x, `Favorite card actions not side by side / ${width}`);
+          else assert(Math.abs(detail.width - remove.width) < 1 && remove.y > detail.y, `Favorite card actions not stacked / ${width}`);
+        }
         await page.screenshot({ path: `/tmp/mypage-animals-${panel}-${width}.png`, fullPage: true, animations: 'disabled' });
       }
       await favorites().click();
       await cards().first().getByRole('link', { name: '상세 보기', exact: true }).click();
       await page.waitForURL('**/animals/1');
+      await page.getByRole('button', { name: '관심 동물로 돌아가기', exact: true }).waitFor();
       // Since 669402f the detail page learns it was opened from the My Page favorites tab, for its back link.
       const routeState = await page.evaluate(() => history.state?.usr);
       assert(routeState?.from === 'mypage' && routeState?.tab === 'favoriteAnimals', 'Favorite detail route state changed');
