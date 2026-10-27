@@ -200,7 +200,7 @@ playwright-cli -s=pawbridge-db-e2e run-code --filename=tests/travel-db.browser.j
 
 ## 보호소 신청·관리 UI
 
-개발 서버를 5194 포트로 실행한 뒤 격리된 Playwright CLI 세션에서 실행한다. 기존 설치된 브라우저의 CLI 설정을 사용하며, 테스트는 `/api/` 요청을 모두 가로채므로 운영 데이터에 쓰지 않는다.
+개발 서버를 5194 포트로 실행한 뒤 격리된 Playwright CLI 세션에서 실행한다. 기존 설치된 브라우저의 CLI 설정을 사용하며, 테스트는 `/api/v1/` 요청을 모두 가로채므로 운영 데이터에 쓰지 않는다.
 
 ```bash
 npm run dev -- --port 5194 --strictPort

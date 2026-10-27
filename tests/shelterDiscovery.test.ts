@@ -42,7 +42,7 @@ test('기록 없음과 관측한 0마리를 구분하며 다른 날짜를 추정
 });
 test('목록 복귀는 내부 경로만, 신규 API는 공개 GET만 허용한다', () => {
   for (const value of ['https://evil.test', '//evil.test', '/shelters-other', '/shelters/42']) assert.equal(shelterListReturnTo(value), '/shelters');
-  for (const url of ['/api/shelters/discovery?intakeFrom=2026-09-01', '/api/shelters/42/observations?from=2026-09-01']) {
+  for (const url of ['/api/v1/shelters/discovery?intakeFrom=2026-09-01', '/api/v1/shelters/42/observations?from=2026-09-01']) {
     assert.ok(isPublicShelterRequest(url, 'GET'));
     assert.equal(isPublicShelterRequest(url, 'POST'), false);
   }

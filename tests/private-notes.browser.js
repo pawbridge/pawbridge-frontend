@@ -9,7 +9,7 @@ async (page, accounts) => {
   const receiver = await secondContext.newPage();
   const headers = account => ({ Authorization: `Bearer ${account.token}` });
   const body = '합성 쪽지 검증 🐶\n<script>실행되면 안 됩니다</script>';
-  const notification = async () => (await (await page.request.get(`${api}/api/notes/notifications`, { headers: headers(accounts[1]) })).json()).data;
+  const notification = async () => (await (await page.request.get(`${api}/api/v1/notes/notifications`, { headers: headers(accounts[1]) })).json()).data;
   const waitFor = async condition => {
     for (let i = 0; i < 50; i++) { if (await condition()) return; await page.waitForTimeout(100); }
     throw new Error('Local dev condition timed out');
@@ -28,18 +28,18 @@ async (page, accounts) => {
   try {
     assert(accounts.slice(0, 3).every(account => account.email.startsWith('note-') && account.email.endsWith('@example.invalid')), 'Synthetic account guard missing');
     await waitFor(async () => {
-      const response = await page.request.get(`${api}/api/notes`, { headers: headers(accounts[0]) });
+      const response = await page.request.get(`${api}/api/v1/notes`, { headers: headers(accounts[0]) });
       if ([502, 503, 504].includes(response.status())) return false;
       assert(response.status() === 200, `Local dev readiness/authentication failed: HTTP ${response.status()}`);
       return true;
     });
-    await page.request.delete(`${api}/api/notes/blocks/${accounts[0].userId}`, { headers: headers(accounts[1]) });
-    await page.request.delete(`${api}/api/notes/blocks/${accounts[1].userId}`, { headers: headers(accounts[0]) });
+    await page.request.delete(`${api}/api/v1/notes/blocks/${accounts[0].userId}`, { headers: headers(accounts[1]) });
+    await page.request.delete(`${api}/api/v1/notes/blocks/${accounts[1].userId}`, { headers: headers(accounts[0]) });
     // Remove only notes owned by these three task-created synthetic accounts from a previous failed run.
     for (const account of accounts.slice(0, 2)) {
       for (const box of ['SENT', 'INBOX']) {
-        const list = await (await page.request.get(`${api}/api/notes?box=${box}`, { headers: headers(account) })).json();
-        for (const note of list.data.content) await page.request.delete(`${api}/api/notes/${note.noteId}`, { headers: headers(account) });
+        const list = await (await page.request.get(`${api}/api/v1/notes?box=${box}`, { headers: headers(account) })).json();
+        for (const note of list.data.content) await page.request.delete(`${api}/api/v1/notes/${note.noteId}`, { headers: headers(account) });
       }
     }
     await login(page, accounts[0]); await login(receiver, accounts[1]);
@@ -53,7 +53,7 @@ async (page, accounts) => {
     checks.push('community-author-contact-entry');
     let loseResponse = true;
     const keys = [];
-    await page.route(`${api}/api/notes`, async route => {
+    await page.route(`${api}/api/v1/notes`, async route => {
       if (route.request().method() !== 'POST') return route.continue();
       keys.push(route.request().postDataJSON().requestId);
       if (loseResponse) {
@@ -93,35 +93,35 @@ async (page, accounts) => {
     await receiver.getByRole('button', { name: '쪽지 보내기', exact: true }).click();
     await receiver.waitForURL(/\/notes\/[0-9a-f-]{36}$/);
     const replyId = receiver.url().split('/').pop();
-    const reply = await (await page.request.get(`${api}/api/notes/${replyId}`, { headers: headers(accounts[0]) })).json();
+    const reply = await (await page.request.get(`${api}/api/v1/notes/${replyId}`, { headers: headers(accounts[0]) })).json();
     assert(reply.data.body === '합성 답장 검증' && reply.data.direction === 'INBOX', 'Reply recipient or text mismatched');
     checks.push('real-ui-reply');
     await receiver.goto(`${origin}/notes/${id}`);
     await receiver.getByText(body, { exact: true }).waitFor();
     await receiver.getByRole('button', { name: '즐겨찾기', exact: true }).click();
     await receiver.getByRole('button', { name: '즐겨찾기 해제', exact: true }).waitFor();
-    const senderNote = await (await page.request.get(`${api}/api/notes/${id}`, { headers: headers(accounts[0]) })).json();
+    const senderNote = await (await page.request.get(`${api}/api/v1/notes/${id}`, { headers: headers(accounts[0]) })).json();
     assert(senderNote.data.favorite === false, 'Favorite leaked to other mailbox'); checks.push('independent-favorites');
     page.once('dialog', dialog => dialog.accept());
     await page.getByRole('button', { name: '내 쪽지함에서 삭제' }).click();
     await page.waitForURL(/\/notes(?:\?|$)/);
-    const retained = await page.request.get(`${api}/api/notes/${id}`, { headers: headers(accounts[1]) });
+    const retained = await page.request.get(`${api}/api/v1/notes/${id}`, { headers: headers(accounts[1]) });
     assert(retained.ok(), 'Sender deletion removed recipient original'); checks.push('independent-mailbox-deletion');
-    const foreign = await page.request.get(`${api}/api/notes/${id}`, { headers: headers(accounts[2]) });
+    const foreign = await page.request.get(`${api}/api/v1/notes/${id}`, { headers: headers(accounts[2]) });
     assert(foreign.status() === 404, 'A third member could read a private note'); checks.push('foreign-member-not-found');
     receiver.once('dialog', dialog => dialog.accept());
-    const blockResponse = receiver.waitForResponse(response => response.url() === `${api}/api/notes/blocks/${accounts[0].userId}` && response.request().method() === 'PUT');
+    const blockResponse = receiver.waitForResponse(response => response.url() === `${api}/api/v1/notes/blocks/${accounts[0].userId}` && response.request().method() === 'PUT');
     await receiver.getByRole('button', { name: '회원 차단' }).click();
     assert((await blockResponse).ok(), 'Real block API failed');
     await receiver.getByRole('status').filter({ hasText: '회원을 차단했습니다' }).waitFor();
-    const blocked = await page.request.post(`${api}/api/notes`, { headers: headers(accounts[0]), data: { recipientId: accounts[1].userId, body: '차단 후 전송 검증', requestId: crypto.randomUUID() } });
+    const blocked = await page.request.post(`${api}/api/v1/notes`, { headers: headers(accounts[0]), data: { recipientId: accounts[1].userId, body: '차단 후 전송 검증', requestId: crypto.randomUUID() } });
     assert(blocked.status() === 403, `Block did not prevent delivery: HTTP ${blocked.status()}`); checks.push('bidirectional-block-enforcement');
     await receiver.goto(`${origin}/notes/blocks`);
     await receiver.getByRole('button', { name: '차단 해제' }).click();
     await receiver.getByText('차단한 회원이 없습니다.', { exact: true }).waitFor(); checks.push('block-management-unblock');
     await receiver.locator('header').getByRole('button', { name: '로그아웃' }).first().click();
     await receiver.waitForURL(`${origin}/`);
-    const offline = await page.request.post(`${api}/api/notes`, { headers: headers(accounts[0]), data: { recipientId: accounts[1].userId, body: '로그아웃 동안 보낸 합성 쪽지', requestId: crypto.randomUUID() } });
+    const offline = await page.request.post(`${api}/api/v1/notes`, { headers: headers(accounts[0]), data: { recipientId: accounts[1].userId, body: '로그아웃 동안 보낸 합성 쪽지', requestId: crypto.randomUUID() } });
     assert(offline.ok(), 'Offline note persistence failed');
     await login(receiver, accounts[1]);
     await waitFor(async () => (await receiver.getByRole('button', { name: /^연락 알림/ }).getAttribute('aria-label')).includes('1개'));

@@ -17,11 +17,11 @@ async page => {
   await page.route('**/cms/resource/**', route => failImage
     ? route.fulfill({status:404,body:''})
     : route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#9ac5ae"/></svg>'}));
-  await page.route('**/api/**', route => {
-    const path = '/api/' + route.request().url().split('/api/')[1].split('?')[0];
-    if (path === '/api/places/regions') return route.fulfill({json:{items:[{code:'11',name:'서울'}],fetchedAt}});
-    if (path === '/api/places') return route.fulfill({json:{areaCode:'11',items:[place,{...place,contentId:'124',title:'사진 없는 장소',imageUrl:null}],previewOnly:true,fetchedAt}});
-    if (path === '/api/places/123') return route.fulfill({json:{place,overview:null,conditions:{areas:null,allowedAnimals:null,requirements:null,otherInformation:null,risks:null,facilities:null,providedItems:null},petInformationAvailable:false,source:'KOREA_TOURISM_ORGANIZATION',fetchedAt,petInformationFetchedAt:fetchedAt}});
+  await page.route('**/api/v1/**', route => {
+    const path = '/api/v1/' + route.request().url().split('/api/v1/')[1].split('?')[0];
+    if (path === '/api/v1/places/regions') return route.fulfill({json:{items:[{code:'11',name:'서울'}],fetchedAt}});
+    if (path === '/api/v1/places') return route.fulfill({json:{areaCode:'11',items:[place,{...place,contentId:'124',title:'사진 없는 장소',imageUrl:null}],previewOnly:true,fetchedAt}});
+    if (path === '/api/v1/places/123') return route.fulfill({json:{place,overview:null,conditions:{areas:null,allowedAnimals:null,requirements:null,otherInformation:null,risks:null,facilities:null,providedItems:null},petInformationAvailable:false,source:'KOREA_TOURISM_ORGANIZATION',fetchedAt,petInformationFetchedAt:fetchedAt}});
     return route.abort();
   });
   await page.setViewportSize({width:1440,height:1000});

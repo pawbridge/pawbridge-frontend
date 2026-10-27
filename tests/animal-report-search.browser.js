@@ -12,20 +12,20 @@ async page => {
     province: '서울특별시', district: '마포구', animalType: 'DOG', imageUrls: [],
     createdAt: '2026-10-01T00:00:00', updatedAt: '2026-10-01T00:00:00' };
   let mode = 'ok';
-  await page.unroute('**/api/**');
-  await page.unroute('http://127.0.0.1:15174/api/**');
-  await page.route('http://127.0.0.1:15174/api/**', async route => {
+  await page.unroute('**/api/v1/**');
+  await page.unroute('http://127.0.0.1:15174/api/v1/**');
+  await page.route('http://127.0.0.1:15174/api/v1/**', async route => {
     const request = route.request();
     const [pathname, query = ''] = request.url().split('?');
     const params = Object.fromEntries(query.split('&').filter(Boolean).map(pair => pair.split('=').map(value => decodeURIComponent(value.replace(/\+/g, ' ')))));
-    if (pathname.endsWith('/api/reports') && request.method() === 'GET') {
+    if (pathname.endsWith('/api/v1/reports') && request.method() === 'GET') {
       calls.push(params);
       if (mode === 'error') return route.fulfill({ status: 503, json: { message: '격리 모의 오류' } });
       if (mode === 'loading') await page.waitForTimeout(1500);
       return route.fulfill({ json: { data: { content: mode === 'empty' ? [] : [{ ...fixture, kind: params.kind }],
         totalPages: mode === 'empty' ? 0 : 3 } } });
     }
-    if (pathname.endsWith('/api/reports') && request.method() === 'POST') {
+    if (pathname.endsWith('/api/v1/reports') && request.method() === 'POST') {
       const body = request.postData();
       for (const expected of ['"province":"서울특별시"', '"district":"마포구"', '"animalType":"DOG"', '"species":"푸들"']) {
         if (!body.includes(expected)) throw new Error('등록 요청에서 구조화 필드 누락: ' + expected);
@@ -33,7 +33,7 @@ async page => {
       calls.push({ write: 'local-mock-only' });
       return route.fulfill({ json: { data: fixture } });
     }
-    if (pathname.endsWith('/api/reports/900001')) return route.fulfill({ json: { data: fixture } });
+    if (pathname.endsWith('/api/v1/reports/900001')) return route.fulfill({ json: { data: fixture } });
     return route.fulfill({ json: { data: [] } });
   });
   const check = (condition, message) => { if (!condition) throw new Error(message); };
@@ -49,7 +49,7 @@ async page => {
   check(await search.getByRole('combobox', { name: '시·군·구', exact: true }).evaluate(el => el === document.activeElement), '키보드 지역 이동 실패');
   await search.getByRole('button', { name: '최근 7일', exact: true }).click();
   await search.getByRole('searchbox').fill('파란 목줄');
-  const filteredResponse = page.waitForResponse(response => response.url().startsWith('http://127.0.0.1:15174/api/reports?')
+  const filteredResponse = page.waitForResponse(response => response.url().startsWith('http://127.0.0.1:15174/api/v1/reports?')
     && response.url().includes('animalType=DOG') && response.url().includes('district='));
   await search.getByRole('button', { name: '검색', exact: true }).click();
   await filteredResponse;

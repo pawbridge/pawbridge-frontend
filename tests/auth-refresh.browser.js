@@ -61,12 +61,12 @@ async page => {
       requests.push({ path, sentCookie, contentType: request.headers()['content-type'], body: request.postData(), bearer: authorization.startsWith('Bearer ') });
       return respond(200, null);
     }
-    if (path === '/api/test/protected' && method === 'GET') {
+    if (path === '/api/v1/test/protected' && method === 'GET') {
       requests.push({ path, bearer: authorization === `Bearer ${refreshedToken}` ? 'refreshed' : 'other' });
       if (protectedAcceptsRefreshed && authorization === `Bearer ${refreshedToken}`) return respond(200, { ok: true });
       return respond(401, null);
     }
-    if (path === '/api/animals' && method === 'GET') {
+    if (path === '/api/v1/animals' && method === 'GET') {
       requests.push({ path });
       return respond(401, null);
     }
@@ -95,7 +95,7 @@ async page => {
     const { default: apiClient } = await import('/src/api/client.ts');
     const { getAuthSessionVersion } = await import('/src/store/authStore.ts');
     const before = getAuthSessionVersion();
-    const results = await Promise.allSettled(Array.from({ length: count }, () => apiClient.get('/api/test/protected')));
+    const results = await Promise.allSettled(Array.from({ length: count }, () => apiClient.get('/api/v1/test/protected')));
     return {
       fulfilled: results.filter(result => result.status === 'fulfilled').length,
       versionKept: before === getAuthSessionVersion(),
@@ -103,7 +103,7 @@ async page => {
   }, times);
 
   // 두 번째 탭에도 같은 합성 응답을 쓰도록 브라우저 컨텍스트에 등록한다.
-  await page.context().route(`${api}/api/**`, handler);
+  await page.context().route(`${api}/api/v1/**`, handler);
   // 브라우저가 credentials를 포함해 보낼 때만 전달되는 합성 쿠키다.
   await page.context().addCookies([{ name: 'pb_test_refresh', value: 'synthetic', domain: 'localhost', path: '/api/v1/auth', httpOnly: true, sameSite: 'Lax' }]);
   page.on('pageerror', error => errors.push(error.message));
@@ -152,7 +152,7 @@ async page => {
     assert(countRefresh() === 1, `Expected one refresh, got ${countRefresh()}`);
     state = await storedState();
     assert(state.accessToken === refreshedToken && state.user.id === 901, 'Refreshed token not stored');
-    assert(requests.filter(item => item.path === '/api/test/protected' && item.bearer === 'refreshed').length === 3, 'Retry did not use refreshed token');
+    assert(requests.filter(item => item.path === '/api/v1/test/protected' && item.bearer === 'refreshed').length === 3, 'Retry did not use refreshed token');
     checks.push('401 refreshes once and retries with same session');
 
     // 5. 재시도도 401이면 다시 재발급하지 않고 로그인으로 보낸다.
@@ -200,7 +200,7 @@ async page => {
     await page.reload();
     await page.evaluate(async () => {
       const { default: apiClient } = await import('/src/api/client.ts');
-      await apiClient.get('/api/animals').catch(() => undefined);
+      await apiClient.get('/api/v1/animals').catch(() => undefined);
     });
     assert(countRefresh() === 0, 'Public API refreshed');
     assert(new URL(page.url()).pathname === '/privacy', 'Public API redirected');
@@ -244,7 +244,7 @@ async page => {
     refreshDelay = 300;
     const tabCall = target => target.evaluate(async () => {
       const { default: apiClient } = await import('/src/api/client.ts');
-      const response = await apiClient.get('/api/test/protected');
+      const response = await apiClient.get('/api/v1/test/protected');
       return response.status;
     });
     const statuses = await Promise.all([tabCall(page), tabCall(secondTab)]);
@@ -287,6 +287,6 @@ async page => {
     assert(errors.length === 0, `Page errors: ${errors.join(', ')}`);
     return { checks };
   } finally {
-    await page.context().unroute(`${api}/api/**`, handler);
+    await page.context().unroute(`${api}/api/v1/**`, handler);
   }
 }

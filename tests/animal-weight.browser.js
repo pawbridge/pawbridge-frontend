@@ -25,8 +25,8 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
-    if (request.method() === 'PUT' && path === '/api/animals/100') {
+    if (!path.startsWith('/api/v1/')) return route.continue();
+    if (request.method() === 'PUT' && path === '/api/v1/animals/100') {
       updates.push(request.postDataJSON());
       return route.fulfill({ json: animals[0] });
     }
@@ -34,17 +34,17 @@ async page => {
       unexpected.push(`${request.method()} ${path}`);
       return route.abort();
     }
-    if (path === '/api/animals') return route.fulfill({ json: { content: animals, totalElements: 6, totalPages: 1, number: 0, size: 20, first: true, last: true, empty: false } });
-    if (path === '/api/users/me') return route.fulfill({ json: { code: 200, data: user } });
-    if (/^\/api\/animals\/\d+\/similar$/.test(path)) return route.fulfill({ json: animals });
-    if (/^\/api\/animals\/\d+$/.test(path)) return route.fulfill({ json: animals.find(animal => animal.id === Number(path.split('/').at(-1))) });
+    if (path === '/api/v1/animals') return route.fulfill({ json: { content: animals, totalElements: 6, totalPages: 1, number: 0, size: 20, first: true, last: true, empty: false } });
+    if (path === '/api/v1/users/me') return route.fulfill({ json: { code: 200, data: user } });
+    if (/^\/api\/v1\/animals\/\d+\/similar$/.test(path)) return route.fulfill({ json: animals });
+    if (/^\/api\/v1\/animals\/\d+$/.test(path)) return route.fulfill({ json: animals.find(animal => animal.id === Number(path.split('/').at(-1))) });
     if (path.endsWith('/check')) return route.fulfill({ json: { code: 200, data: false } });
-    if (path === '/api/shelters/1') return route.fulfill({ json: { id: 1, name: '검증 보호소' } });
+    if (path === '/api/v1/shelters/1') return route.fulfill({ json: { id: 1, name: '검증 보호소' } });
     return route.fulfill({ json: [] });
   };
   page.on('pageerror', onError);
   page.on('dialog', onDialog);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   try {
     await page.evaluate(user => localStorage.setItem('auth-storage', JSON.stringify({ state: { user, accessToken: 'local-weight-test-only' }, version: 0 })), user);
     for (const width of [1920, 390]) {
@@ -89,7 +89,7 @@ async page => {
       const input = page.getByText('체중', { exact: true }).locator('..').locator('input');
       await input.waitFor({ state: 'visible' });
       assert(await input.inputValue() === '3(Kg)', `Edit did not preserve the API string / ${width}`);
-      const response = page.waitForResponse(response => response.request().method() === 'PUT' && response.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0] === '/api/animals/100');
+      const response = page.waitForResponse(response => response.request().method() === 'PUT' && response.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0] === '/api/v1/animals/100');
       await page.getByRole('button', { name: '수정하기', exact: true }).click();
       await response;
       await page.waitForURL(`${origin}/animals/100`);
@@ -102,6 +102,6 @@ async page => {
   } finally {
     page.off('pageerror', onError);
     page.off('dialog', onDialog);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }

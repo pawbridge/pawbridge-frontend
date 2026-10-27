@@ -17,28 +17,28 @@ async page => {
     const param = name => decodeURIComponent(query.match(new RegExp(`(?:^|&)${name}=([^&]*)`))?.[1] ?? '');
     requests.push(`${request.method()} ${relative}`);
     if (request.method() === 'GET') {
-      if (path === '/api/users/me') return route.fulfill({ json: { code: 200, data: user() } });
-      if (['/api/v1/mypage/wishlists', '/api/carts', '/api/orders'].includes(path)) {
+      if (path === '/api/v1/users/me') return route.fulfill({ json: { code: 200, data: user() } });
+      if (['/api/v1/mypage/wishlists', '/api/v1/carts', '/api/v1/orders'].includes(path)) {
         if (readMode === 'hold') await new Promise(resolve => { pendingRead = resolve; });
         if (readMode === 'fail') return route.fulfill({ status: 500, json: { message: '검증 조회 실패' } });
         if (path.includes('wishlists')) {
           assert(param('userId') === '10' && param('size') === '20', 'Wishlist request contract');
           return route.fulfill({ json: paged(wishlist, Number(param('page')), 20) });
         }
-        if (path === '/api/carts') return route.fulfill({ json: cart });
+        if (path === '/api/v1/carts') return route.fulfill({ json: cart });
         assert(param('size') === '10', 'Orders page size');
         return route.fulfill({ json: paged(orders.filter(o => !param('status') || o.status === param('status')), Number(param('page')), 10) });
       }
-      if (/^\/api\/orders\/\d+$/.test(path)) return route.fulfill({ json: { ...order(Number(path.split('/').at(-1))), deliveryStatus: 'READY' } });
+      if (/^\/api\/v1\/orders\/\d+$/.test(path)) return route.fulfill({ json: { ...order(Number(path.split('/').at(-1))), deliveryStatus: 'READY' } });
     }
-    if ((request.method() === 'DELETE' && (/^\/api\/wishlists\/\d+$/.test(path) || path === '/api/carts')) || (request.method() === 'POST' && path === '/api/carts/items')) {
+    if ((request.method() === 'DELETE' && (/^\/api\/v1\/wishlists\/\d+$/.test(path) || path === '/api/v1/carts')) || (request.method() === 'POST' && path === '/api/v1/carts/items')) {
       writes.push({ method: request.method(), path, body: request.postData() ? request.postDataJSON() : null });
       if (holdMutation) await new Promise(resolve => { pendingMutation = resolve; });
       if (failMutation) return route.fulfill({ status: 400, json: { message: '검증 변경 실패' } });
-      if (path.startsWith('/api/wishlists/')) wishlist = wishlist.filter(x => x.wishlistId !== Number(path.split('/').at(-1)));
-      else if (path === '/api/carts') cart = [];
+      if (path.startsWith('/api/v1/wishlists/')) wishlist = wishlist.filter(x => x.wishlistId !== Number(path.split('/').at(-1)));
+      else if (path === '/api/v1/carts') cart = [];
       else cart = [cartItem()];
-      return route.fulfill({ json: path === '/api/carts/items' ? cart : {} });
+      return route.fulfill({ json: path === '/api/v1/carts/items' ? cart : {} });
     }
     unexpected.push(`${request.method()} ${path}`);
     return route.abort();
@@ -69,7 +69,7 @@ async page => {
     window.confirm = () => window.__marketConfirm;
   });
   page.on('pageerror', onError);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   await page.route('**/test-market-missing.png', route => route.fulfill({ status: 404, body: '' }));
   try {
     await page.goto(`${origin}/login`);
@@ -188,6 +188,6 @@ async page => {
     assert(errors.length===0 && unexpected.length===0, JSON.stringify({errors,unexpected}));
     return {checks, layouts, mutations:writes.length, pageErrors:errors, unexpectedRequests:unexpected};
   } finally {
-    page.off('pageerror',onError); await page.unroute('**/api/**',handler); await page.unroute('**/test-market-missing.png');
+    page.off('pageerror',onError); await page.unroute('**/api/v1/**',handler); await page.unroute('**/test-market-missing.png');
   }
 }

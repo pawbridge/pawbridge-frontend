@@ -7,21 +7,21 @@ async page => {
   const shown = locator => locator.waitFor({ state: 'visible', timeout: 5000 });
   const hidden = locator => locator.waitFor({ state: 'hidden', timeout: 5000 });
   const checks = [];
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   const emptyPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true };
   page.on('pageerror', onError);
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const path = route.request().url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     if (route.request().method() !== 'GET') {
       errors.push('Unexpected mutation: ' + path);
       return route.abort();
     }
     let body = [];
-    if (path === '/api/users/me') body = { code: 200, data: null };
-    else if (path === '/api/animals' || path === '/api/shelters/discovery') body = emptyPage;
+    if (path === '/api/v1/users/me') body = { code: 200, data: null };
+    else if (path === '/api/v1/animals' || path === '/api/v1/shelters/discovery') body = emptyPage;
     else if (path.endsWith('/stats/today')) body = { rescuedToday: 0 };
-    else if (path === '/api/places/regions') body = { items: [] };
+    else if (path === '/api/v1/places/regions') body = { items: [] };
     else if (path.includes('/posts')) body = { code: 200, data: [] };
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
@@ -190,6 +190,6 @@ async page => {
     throw new Error('Completed: ' + checks.join('; ') + '\n' + error.stack);
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**');
+    await page.unroute('**/api/v1/**');
   }
 }

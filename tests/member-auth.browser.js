@@ -9,28 +9,28 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     seen.push(`${request.method()} ${path}`);
     if (request.method() === 'GET') {
       if (path.endsWith('/stats/status')) return route.fulfill({ json: [{ status: 'ADOPTED', label: '입양', count: 1 }] });
       if (path.endsWith('/stats/today')) return route.fulfill({ json: { date: '2026-09-23', rescuedToday: 0, adoptedToday: 0 } });
-      if (path === '/api/animals') return route.fulfill({ json: { content: [], totalElements: 0, totalPages: 0 } });
-      if (path === '/api/posts/read') return route.fulfill({ json: { code: 200, message: '성공', data: [] } });
+      if (path === '/api/v1/animals') return route.fulfill({ json: { content: [], totalElements: 0, totalPages: 0 } });
+      if (path === '/api/v1/posts/read') return route.fulfill({ json: { code: 200, message: '성공', data: [] } });
       unexpected.push(`GET ${path}`);
       return route.fulfill({ status: 404, json: { message: '테스트에 정의되지 않은 요청' } });
     }
-    if (!['/api/v1/auth/login', '/api/users/signup', '/api/v1/email/send', '/api/v1/email/verify', '/api/auth/password/reset-request', '/api/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
+    if (!['/api/v1/auth/login', '/api/v1/users/signup', '/api/v1/email/send', '/api/v1/email/verify', '/api/v1/auth/password/reset-request', '/api/v1/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
     writes.push({ path, body: request.postDataJSON() });
     if (mode === 'network') return route.abort();
     if (mode !== 'success') return route.fulfill({ status: 400, json: { code: 400, message: mode === 'malformed' ? { detail: 'not a string' } : '서버 테스트 안내', data: null } });
     const data = path === '/api/v1/auth/login'
       ? { userId: 321, email: 'member@example.invalid', name: '검증회원', role: 'ROLE_SHELTER', careRegNo: null, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' }
-      : path === '/api/users/signup' ? { userId: 321, email: 'member@example.invalid', name: '검증회원', nickname: '새별명' }
+      : path === '/api/v1/users/signup' ? { userId: 321, email: 'member@example.invalid', name: '검증회원', nickname: '새별명' }
       : path === '/api/v1/email/verify' ? { verified: true } : null;
     return route.fulfill({ json: { code: 200, data, message: '성공' } });
   };
   await page.addInitScript(() => { window.__authAlerts = []; window.alert = message => window.__authAlerts.push(message); });
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   page.on('pageerror', onError);
   const notice = async (action, expected) => {
     const count = await page.evaluate(() => window.__authAlerts.length);
@@ -91,7 +91,7 @@ async page => {
       mode = 'success';
       await notice(() => page.locator('button[type="submit"]').click(), '회원가입 성공!\n환영합니다, 검증회원님!');
       await page.waitForURL('**/login');
-      lastWrite('/api/users/signup', { email: 'member@example.invalid', name: '검증회원', password: 'test-password', rePassword: 'test-password', role: 'ROLE_USER' });
+      lastWrite('/api/v1/users/signup', { email: 'member@example.invalid', name: '검증회원', password: 'test-password', rePassword: 'test-password', role: 'ROLE_USER' });
       checks.push(`signup/send/verify/errors/payload ${width}`);
 
       await page.goto(`${origin}/reset-password`);
@@ -100,7 +100,7 @@ async page => {
       await notice(() => page.locator('button[type="submit"]').click(), '서버 테스트 안내');
       mode = 'success';
       await notice(() => page.locator('button[type="submit"]').click(), '인증 코드가 이메일로 발송되었습니다.');
-      lastWrite('/api/auth/password/reset-request', { email: 'member@example.invalid' });
+      lastWrite('/api/v1/auth/password/reset-request', { email: 'member@example.invalid' });
       for (let i = 0; i < 6; i++) await page.locator(`#code-${i}`).fill(String(i + 1));
       await page.getByPlaceholder('새 비밀번호를 입력하세요').fill('New-test1!');
       await page.getByPlaceholder('비밀번호를 다시 한번 입력하세요').fill('New-test1!');
@@ -110,7 +110,7 @@ async page => {
       mode = 'success';
       await notice(() => page.locator('button[type="submit"]').click(), '비밀번호가 재설정되었습니다. 새로운 비밀번호로 로그인해주세요.');
       await page.waitForURL('**/login');
-      lastWrite('/api/auth/password/reset', { email: 'member@example.invalid', code: '123456', newPassword: 'New-test1!' });
+      lastWrite('/api/v1/auth/password/reset', { email: 'member@example.invalid', code: '123456', newPassword: 'New-test1!' });
       checks.push(`reset/send/errors/payload ${width}`);
     }
     assert(errors.length === 0, JSON.stringify({ errors, seen }));
@@ -118,6 +118,6 @@ async page => {
     return { checks, mutations: writes.length, pageErrors: errors, unexpectedRequests: unexpected };
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }
