@@ -1,7 +1,7 @@
 // Local-only API fixtures; no live account, API, or DB is used.
 async page => {
   const origin = page.url().match(/^https?:\/\/[^/]+/)[0];
-  const checks = [], errors = [], unexpected = [], updates = [];
+  const checks = [], errors = [], unexpected = [], updates = [], statusChanges = [];
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   const cases = [
     { value: '3(Kg)', label: '3(Kg)' },
@@ -29,6 +29,10 @@ async page => {
     if (request.method() === 'PUT' && path === '/api/v1/animals/100') {
       updates.push(request.postDataJSON());
       return route.fulfill({ json: animals[0] });
+    }
+    if (request.method() === 'PATCH' && path === '/api/v1/animals/100/status') {
+      statusChanges.push(request.postDataJSON());
+      return route.fulfill({ json: { ...animals[0], status: request.postDataJSON().newStatus } });
     }
     if (request.method() !== 'GET') {
       unexpected.push(`${request.method()} ${path}`);
@@ -95,6 +99,26 @@ async page => {
       await page.waitForURL(`${origin}/animals/100`);
       assert(updates.at(-1)?.weight === '3(Kg)', `Edit request changed the weight string / ${width}`);
       checks.push(`edit: raw weight preserved in mock PUT / ${width}`);
+      const sent = updates.at(-1);
+      assert(!('status' in sent) && !('careRegNo' in sent), `Edit PUT carried status or shelter / ${width}`);
+      assert(sent.specialMark === null && sent.imageUrl2 === null && sent.happenDate === '2026-10-01', `Edit PUT did not send the full form / ${width}`);
+      assert(statusChanges.length === 0, `Unchanged status was sent / ${width}`);
+      checks.push(`edit: full PUT without status, untouched status not sent / ${width}`);
+
+      await page.goto(`${origin}/animals/100/edit`);
+      const breed = page.getByText('품종', { exact: true }).locator('..').locator('input');
+      await breed.waitFor({ state: 'visible' });
+      await breed.fill('');
+      await page.locator('label').filter({ hasText: '보호 상태' }).getByRole('button').first().click();
+      await page.getByRole('button', { name: '종료 (입양)', exact: true }).click();
+      const statusResponse = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/v1/animals/100/status'));
+      await page.getByRole('button', { name: '수정하기', exact: true }).click();
+      await statusResponse;
+      await page.waitForURL(`${origin}/animals/100`);
+      assert(updates.at(-1)?.breed === null, `Cleared breed was not sent as null / ${width}`);
+      assert(statusChanges.at(-1)?.newStatus === 'ADOPTED', `Changed status was not sent / ${width}`);
+      checks.push(`edit: cleared field sent as null, changed status sent by PATCH / ${width}`);
+      statusChanges.length = 0;
     }
     assert(errors.length === 0, `Page errors: ${errors.join('; ')}`);
     assert(unexpected.length === 0, `Unexpected mutation: ${unexpected.join('; ')}`);
