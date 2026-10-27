@@ -6,7 +6,7 @@ async page => {
   const definitions = [
     { tab: 'favoriteAnimals', title: '내가 찜한 동물', label: '찜한 동물을', empty: '아직 찜한 동물이 없습니다.', path: '/api/v1/users/me/favorite-animals' },
     { tab: 'registeredAnimals', title: '내 보호소가 등록한 동물', label: '등록한 동물을', empty: '아직 등록한 동물이 없습니다.', path: '/api/v1/users/me/registered-animals' },
-    { tab: 'wishlist', title: '나의 위시리스트', label: '위시리스트를', empty: '찜한 상품이 없습니다.', path: '/api/v1/mypage/wishlists' },
+    { tab: 'wishlist', title: '나의 위시리스트', label: '위시리스트를', empty: '찜한 상품이 없습니다.', path: '/api/v1/users/me/wishlists' },
     { tab: 'cart', title: '나의 장바구니', label: '장바구니를', empty: '장바구니가 비어있습니다.', path: '/api/v1/carts' },
     { tab: 'orders', title: '나의 주문 목록', label: '주문 내역을', empty: '주문 내역이 없습니다.', path: '/api/v1/orders' },
   ];
@@ -32,10 +32,10 @@ async page => {
     const size = selected.tab === 'orders' ? 10 : 20, number = Number(param('page'));
     assert(param('size') === String(size), 'Page size changed');
     if (selected.tab === 'registeredAnimals') assert(param('sort') === 'createdAt,desc', 'Registered sort changed');
-    if (selected.tab === 'wishlist') assert(param('userId') === '10', 'Wishlist user changed');
+    if (selected.tab === 'wishlist') assert(param('userId') === '', 'Wishlist must not send a user id');
     const item = selected.tab === 'orders' ? order : selected.tab === 'registeredAnimals' ? animal : product;
     const data = { content: empty ? [] : [item(number * size + 1)], totalElements: empty ? 0 : 21, totalPages: empty ? 0 : Math.ceil(21 / size), page: number, number, size };
-    return route.fulfill({ json: selected.tab === 'registeredAnimals' ? { code: 200, data } : data });
+    return route.fulfill({ json: ['registeredAnimals', 'wishlist'].includes(selected.tab) ? { code: 200, data } : data });
   };
   const button = name => page.getByRole('button', { name, exact: true });
   const loading = () => page.getByText(`${selected.label} 불러오는 중입니다.`, { exact: true });
