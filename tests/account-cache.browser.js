@@ -21,7 +21,7 @@ async page => {
       if (path === '/api/v1/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });
       if (path === '/api/v1/users/me/registered-animals') return send({ code: 200, data: paged([animal(id)]) });
       if (path === '/api/v1/carts') return send([{ id, skuId: id, skuCode: `SKU-${id}`, productId: id, productName: `계정${id}전용상품`, productImageUrl: '', price: 1000, quantity: 1, stockQuantity: 10 }]);
-      if (path === '/api/v1/mypage/wishlists') return send(paged([{ wishlistId: id, skuId: id, productId: id, productName: `계정${id}전용찜상품`, productStatus: 'ACTIVE', price: 1000, options: {}, createdAt: '2026-09-21T00:00:00' }]));
+      if (path === '/api/v1/users/me/wishlists') return send({ code: 200, data: paged([{ wishlistId: id, skuId: id, productId: id, productName: `계정${id}전용찜상품`, productStatus: 'ACTIVE', price: 1000, options: {}, createdAt: '2026-09-21T00:00:00' }]) });
       if (path === '/api/v1/animals') return send(paged([]));
       if (path === '/api/v1/posts/read') return send({ code: 200, data: [] });
       if (path === '/api/v1/animals/stats/today') return send({ rescueCount: 0, adoptionCount: 0 });
@@ -54,7 +54,7 @@ async page => {
     { tab: '내가 찜한 동물', role: 'ROLE_USER', text: '전용동물', path: '/api/v1/users/me/favorite-animals' },
     { tab: '내 보호소가 등록한 동물', role: 'ROLE_SHELTER', text: '전용동물', path: '/api/v1/users/me/registered-animals' },
     { tab: '나의 장바구니', role: 'ROLE_ADMIN', text: '전용상품', path: '/api/v1/carts' },
-    { tab: '나의 위시리스트', role: 'ROLE_ADMIN', text: '전용찜상품', path: '/api/v1/mypage/wishlists' },
+    { tab: '나의 위시리스트', role: 'ROLE_ADMIN', text: '전용찜상품', path: '/api/v1/users/me/wishlists' },
   ];
   try {
     for (const width of [1920, 390]) for (const logoutPath of ['sidebar', 'header']) for (const c of cases) {

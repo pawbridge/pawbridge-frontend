@@ -18,12 +18,12 @@ async page => {
     requests.push(`${request.method()} ${relative}`);
     if (request.method() === 'GET') {
       if (path === '/api/v1/users/me') return route.fulfill({ json: { code: 200, data: user() } });
-      if (['/api/v1/mypage/wishlists', '/api/v1/carts', '/api/v1/orders'].includes(path)) {
+      if (['/api/v1/users/me/wishlists', '/api/v1/carts', '/api/v1/orders'].includes(path)) {
         if (readMode === 'hold') await new Promise(resolve => { pendingRead = resolve; });
         if (readMode === 'fail') return route.fulfill({ status: 500, json: { message: '검증 조회 실패' } });
         if (path.includes('wishlists')) {
-          assert(param('userId') === '10' && param('size') === '20', 'Wishlist request contract');
-          return route.fulfill({ json: paged(wishlist, Number(param('page')), 20) });
+          assert(param('userId') === '' && param('size') === '20', 'Wishlist request contract');
+          return route.fulfill({ json: { code: 200, data: paged(wishlist, Number(param('page')), 20) } });
         }
         if (path === '/api/v1/carts') return route.fulfill({ json: cart });
         assert(param('size') === '10', 'Orders page size');

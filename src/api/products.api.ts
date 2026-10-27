@@ -1,4 +1,5 @@
 import apiClient from './client';
+import type { ApiResponse } from '../types/response.types';
 import type { 
   Product, 
   ProductSearchParams, 
@@ -308,12 +309,13 @@ const mockWishlistData: WishlistSearchResponse = {
 };
 
 // 위시리스트 목록 조회
-export const getWishlists = async (userId: number, params?: WishlistSearchParams): Promise<WishlistSearchResponse> => {
+// 로그인한 회원 본인의 찜 목록만 조회한다 (회원 ID는 서버가 인증 정보에서 읽음)
+export const getWishlists = async (params?: WishlistSearchParams): Promise<WishlistSearchResponse> => {
   // Mock 데이터 사용 여부 (환경 변수로 제어, 기본값: false = 실제 서버 연동)
   const useMock = import.meta.env.VITE_USE_WISHLIST_MOCK === 'true';
   
   if (useMock) {
-    console.log('[Mock] 위시리스트 목록 조회 - userId:', userId, 'params:', params);
+    console.log('[Mock] 위시리스트 목록 조회 - params:', params);
     // 페이징 시뮬레이션
     const page = params?.page || 0;
     const size = params?.size || 20;
@@ -333,15 +335,10 @@ export const getWishlists = async (userId: number, params?: WishlistSearchParams
   }
   
   // 실제 서버 연동
-  console.log('[API] 위시리스트 목록 조회 - userId:', userId, 'params:', params);
-  const response = await apiClient.get<WishlistSearchResponse>(`/api/v1/mypage/wishlists`, {
-    params: {
-      userId,
-      ...params
-    }
-  });
-  console.log('[API] 위시리스트 목록 응답:', response.data);
-  return response.data;
+  console.log('[API] 위시리스트 목록 조회 - params:', params);
+  const response = await apiClient.get<ApiResponse<WishlistSearchResponse>>('/api/v1/users/me/wishlists', { params });
+  console.log('[API] 위시리스트 목록 응답:', response.data.data);
+  return response.data.data;
 };
 
 // 위시리스트 삭제 (wishlistId로)
