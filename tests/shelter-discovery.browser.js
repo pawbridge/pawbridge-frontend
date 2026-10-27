@@ -43,8 +43,8 @@ async page => {
   await page.screenshot({ path: '/tmp/pawbridge-shelter-desktop.png', fullPage: true });
   await page.getByRole('button', { name: '2페이지', exact: true }).click();
   await page.waitForURL('**page=1**');
-  // Since b9bf345 a shelter's animals are listed on its detail page instead of a shelter-filtered /animals page,
-  // so the old intake-date search context no longer exists; the list request must still carry the shelter.
+  // Since b9bf345 the shelter card links to the shelter detail page, which lists that shelter's animals; the
+  // list request must carry the shelter. The shelter-scoped /animals search is checked below.
   await page.getByRole('link', { name: '보호소 상세 보기 →' }).first().click();
   await page.getByRole('heading', { level: 1, name: sample.name, exact: true }).waitFor();
   await page.getByRole('heading', { name: '보호 중인 동물', exact: true }).waitFor();
