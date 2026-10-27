@@ -9,6 +9,7 @@ async page => {
   let user;
   let release;
   let failNext = false;
+  let serverLogouts = 0;
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   const onError = error => errors.push(error.message);
   const dialogs = () => page.evaluate(() => window.__accountDialogs);
@@ -24,6 +25,14 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
     if (!path.startsWith('/api/v1/')) return route.continue();
     if (path === '/api/v1/users/me' && request.method() === 'GET') {
       return route.fulfill({ json: { code: 200, data: user } });
@@ -36,6 +45,11 @@ async page => {
       failNext = false;
       if (!fail && path.endsWith('/nickname')) user.nickname = body.nickname;
       return route.fulfill({ status: fail ? 400 : 200, json: { code: fail ? 400 : 200, data: null, message: fail ? '테스트 요청 실패' : '성공' } });
+    }
+    // Every logout button also clears the server's keep-signed-in cookie (1482640).
+    if (path === '/api/v1/auth/logout' && request.method() === 'POST') {
+      serverLogouts += 1;
+      return route.fulfill({ json: { code: 200, data: null } });
     }
     unexpected.push(`${request.method()} ${path}`);
     await route.abort();
@@ -158,11 +172,13 @@ async page => {
     }
     await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
     assert(page.url().endsWith('/mypage'), 'Cancelled logout navigated');
+    assert(serverLogouts === 0, 'Cancelled logout reached the server');
     await page.evaluate(() => { window.__acceptAccountLogout = true; });
     await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
     await page.waitForURL('**/login');
     const loggedOut = await page.evaluate(() => JSON.parse(localStorage.getItem('auth-storage')).state);
     assert(loggedOut.user === null && loggedOut.accessToken === null, 'Logout retained authentication');
+    assert(serverLogouts === 1, 'Logout did not clear the server session exactly once');
     checks.push('provider restrictions, role menus, saved tabs, logout');
     assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected.join(', ')}`);
     assert(errors.length === 0, `Page errors: ${errors.join(', ')}`);

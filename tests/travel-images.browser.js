@@ -37,7 +37,7 @@ async page => {
   check(await photo.evaluate(img => getComputedStyle(img).objectFit) === 'contain', 'whole photo and watermark remain visible');
   const box = await photo.boundingBox();
   check(Math.abs(box.width / box.height - 4/3) < .02, 'photo frame remains four by three');
-  check(await page.getByRole('link',{name:'저작권 정책',exact:true}).getAttribute('href') === 'https://api.visitkorea.or.kr/#/useServiceGuide/2', 'official policy link present');
+  check(await page.getByRole('link',{name:'여행정보 저작권 정책',exact:true}).getAttribute('href') === 'https://api.visitkorea.or.kr/#/useServiceGuide/2', 'official policy link present');
   check(await page.locator('a a').count() === 0, 'card does not nest credit links');
   await page.getByRole('heading',{name:place.title,exact:true}).click();
   await page.waitForURL('**/travel/123?areaCode=11');

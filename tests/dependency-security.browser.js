@@ -82,16 +82,18 @@ async (page, origin = 'http://127.0.0.1:5260') => {
       await page.getByRole('button', { name: '합성 작성자에게 연락하기', exact: true }).click();
       await page.getByRole('link', { name: '1:1 대화', exact: true }).click();
       await page.waitForURL(`${origin}/login`);
+      // Login v2 shows social login first; the email form opens behind this toggle.
+      await page.getByRole('button', { name: /이메일로 로그인/ }).click();
       const email = page.getByPlaceholder('이메일 주소를 입력하세요');
       const password = page.getByPlaceholder('비밀번호를 입력하세요', { exact: true });
       await email.fill('member@example.invalid');
       await password.fill('synthetic-password');
-      await page.getByRole('button', { name: '로그인', exact: true }).click();
+      await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
       await page.getByText('합성 로그인 실패', { exact: true }).first().waitFor();
       assert(await password.inputValue() === 'synthetic-password', 'Login failure lost input');
       assert(page.url() === `${origin}/login`, 'Login failure redirected');
       validLogin = true;
-      await page.getByRole('button', { name: '로그인', exact: true }).click();
+      await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
       await page.waitForURL(`${origin}/chats/new?to=902&context=POST&contextId=41`);
       await page.getByLabel('메시지', { exact: true }).waitFor();
       checks.push(`login-error-and-contact-return-${width}`);

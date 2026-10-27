@@ -9,6 +9,15 @@ async page => {
   const paged = content => ({ content, page: 0, number: 0, size: 20, totalElements: content.length, totalPages: 1 });
   const handler = async route => {
     const r = route.request(), path = r.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
+    if (path === '/api/v1/home/videos') return route.fulfill({ json: { code: 200, data: [] } });
     const id = Number(r.headers()['x-user-id'] || 0);
     requests.push({ method: r.method(), path, id });
     const send = json => route.fulfill({ json });
@@ -48,9 +57,10 @@ async page => {
     await page.waitForURL(`${origin}${path}`);
   };
   const login = async id => {
+    await page.getByRole('button', { name: /이메일로 로그인/ }).click();
     await page.getByPlaceholder('이메일 주소를 입력하세요').fill(`member${id}@example.invalid`);
     await page.getByPlaceholder('비밀번호를 입력하세요').fill('mock-password-only');
-    await page.getByRole('button', { name: '로그인', exact: true }).click();
+    await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
     await page.waitForURL(`${origin}/`);
     assert(await page.evaluate(id => JSON.parse(localStorage.getItem('auth-storage')).state.user.id === id, id), 'Wrong signed-in account');
     await navigate('/mypage');
@@ -93,12 +103,12 @@ async page => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     // Independent routes share the same user-scoped entries as MyPage.
     for (const c of [
-      { role: 'ROLE_USER', path: '/favorite-animals', tab: '내가 찜한 동물', text: '전용동물', api: '/api/v1/users/me/favorite-animals' },
+      { role: 'ROLE_USER', path: '/favorite-animals', tab: '관심 동물', text: '전용동물', api: '/api/v1/users/me/favorite-animals' },
       { role: 'ROLE_SHELTER', path: '/registered-animals', tab: '내 보호소가 등록한 동물', text: '전용동물', api: '/api/v1/users/me/registered-animals' },
       { role: 'ROLE_ADMIN', path: '/cart', tab: '나의 장바구니', text: '전용상품', api: '/api/v1/carts' },
     ]) {
       await reset(c.role); await login(101);
-      await page.getByRole('button', { name: c.tab }).click();
+      await page.locator('aside').getByRole('button', { name: c.tab }).click();
       await page.getByText(`계정101${c.text}`, { exact: true }).waitFor();
       await navigate(c.path);
       await page.getByText(`계정101${c.text}`, { exact: true }).waitFor();
@@ -111,16 +121,16 @@ async page => {
     }
     // Animal detail's favorite boolean must also be account-scoped.
     await reset(); await login(101); await navigate('/animals/303');
-    await page.getByTitle('찜 해제', { exact: true }).waitFor();
+    await page.getByRole('button', { name: '관심 동물에서 삭제', exact: true }).waitFor();
     await logout(); await login(202); await navigate('/animals/303');
-    await page.getByTitle('찜하기', { exact: true }).waitFor();
+    await page.getByRole('button', { name: '관심 동물에 추가', exact: true }).waitFor();
     assert(requests.filter(r => r.path === '/api/v1/favorites/303/check' && r.id === 202).length === 1, 'Favorite status reused');
     results.push('animal detail favorite belongs to B');
 
     // B's slow/failed read must never fall back to A's cached list, even transiently.
     for (const mode of ['slow', 'failure']) {
       await reset(); await login(101);
-      await page.getByRole('button', { name: '내가 찜한 동물' }).click();
+      await page.locator('aside').getByRole('button', { name: '관심 동물' }).click();
       await page.getByText('계정101전용동물', { exact: true }).waitFor();
       await page.evaluate(() => { window.__allowLogout = false; });
       await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
@@ -131,7 +141,7 @@ async page => {
       holdRead = { path: '/api/v1/users/me/favorite-animals', id: 202 };
       if (mode === 'failure') failRead = { ...holdRead, status: 500 };
       await startWatching(); await login(202);
-      await page.getByRole('button', { name: '내가 찜한 동물' }).click();
+      await page.locator('aside').getByRole('button', { name: '관심 동물' }).click();
       await waitHeld(); await noOldData(); release();
       if (mode === 'slow') await page.getByText('계정202전용동물', { exact: true }).waitFor();
       else {
@@ -146,12 +156,12 @@ async page => {
       await reset('ROLE_ADMIN'); await login(101);
       holdRead = { path: '/api/v1/users/me/wishlists', id: 101 };
       if (status === 401) failRead = { ...holdRead, status };
-      await page.getByRole('button', { name: '나의 위시리스트' }).click();
+      await page.locator('aside').getByRole('button', { name: '나의 위시리스트' }).click();
       await waitHeld();
       await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
       await page.waitForURL(`${origin}/login`);
       await startWatching(); await login(202);
-      await page.getByRole('button', { name: '나의 위시리스트' }).click();
+      await page.locator('aside').getByRole('button', { name: '나의 위시리스트' }).click();
       await page.getByText('계정202전용찜상품', { exact: true }).waitFor();
       const marker = await page.evaluate(() => window.__documentMarker);
       const response = page.waitForResponse(r => r.url().includes('/api/v1/users/me/wishlists') && r.status() === status);
@@ -166,11 +176,11 @@ async page => {
     let cancelled = false;
     const onFailed = r => { if (r.url().includes('/api/v1/users/me/favorite-animals')) cancelled = true; };
     page.on('requestfailed', onFailed);
-    await page.getByRole('button', { name: '내가 찜한 동물' }).click(); await waitHeld();
+    await page.locator('aside').getByRole('button', { name: '관심 동물' }).click(); await waitHeld();
     await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
     await page.waitForURL(`${origin}/login`);
     await startWatching(); await login(202);
-    await page.getByRole('button', { name: '내가 찜한 동물' }).click();
+    await page.locator('aside').getByRole('button', { name: '관심 동물' }).click();
     await page.getByText('계정202전용동물', { exact: true }).waitFor();
     release(); await page.waitForTimeout(100); await noOldData();
     page.off('requestfailed', onFailed);
@@ -189,10 +199,10 @@ async page => {
 
     // A failed server logout must still clear local auth and cache.
     await reset(); await login(101);
-    await page.getByRole('button', { name: '내가 찜한 동물' }).click();
+    await page.locator('aside').getByRole('button', { name: '관심 동물' }).click();
     await page.getByText('계정101전용동물', { exact: true }).waitFor();
     failLogout = true; await logout(); await startWatching(); await login(202);
-    await page.getByRole('button', { name: '내가 찜한 동물' }).click();
+    await page.locator('aside').getByRole('button', { name: '관심 동물' }).click();
     await page.getByText('계정202전용동물', { exact: true }).waitFor();
     await noOldData(); results.push('failed logout still removes local cache');
     assert(errors.length === 0, `Browser errors: ${errors.join(', ')}`);

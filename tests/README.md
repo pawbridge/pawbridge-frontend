@@ -16,22 +16,55 @@ VITE_API_BASE_URL=https://api.pawbridge.kr npm run build:prod
 
 `lint-regression.browser.js`는 커뮤니티·입양후기 작성/수정 실패 안내와 입력 유지, multipart 계약, 상품 기본 SKU·옵션 변경·재조회, 바로 구매 요청, 결제 SDK의 취소·null·문자열 오류를 실제 브라우저로 조작한다. 1440·390px을 사용한다. API·주소 검색·결제 SDK는 전부 합성이며 외부 요청을 차단한다. 실제 로그인·DB·결제·운영 검증은 아니다.
 
-이미 설치된 Playwright·Chromium만 사용한다. 아래 Vite 서버와 브라우저 실행기는 이 작업 전용이며 다른 서버·VM을 중지하지 않는다.
+공용 브라우저 실행기로 실행한다. 실행기가 `dev-lint` 프로필(합성 `test_` 결제 키)로 5202 개발 서버를 띄우고 종료 시 중지한다.
 
 ```sh
-VITE_API_BASE_URL=http://localhost:28080 VITE_TOSS_CLIENT_KEY=test_local_lint_fixture \
-  CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev -- --host 127.0.0.1 --port 5202 --strictPort
-```
-
-별도 터미널에서 실행하고 개별 검사 이름·개수를 확인한다. 종료 시 브라우저는 실행기가 닫고, 위 전용 Vite만 Ctrl+C로 종료한다.
-
-```sh
-PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
-PAWBRIDGE_CHROMIUM_PATH=/absolute/path/to/installed/chromium \
-node tests/run-lint-regression.browser.cjs
+npm run test:browser -- lint-regression
 ```
 
 스크린샷은 `/tmp/pawbridge-lint-{product,checkout}-{1440,390}.png`에 남는다. 브라우저 회귀는 로컬 별도 검증이며 이번 GitHub Actions에는 추가하지 않았다.
+
+## 공용 브라우저 실행기
+
+`tests/run-browser.mjs`가 `tests/browser-manifest.json`에 등록된 49개 `*.browser.js` 중 모의(mock) 그룹 41개를 실행한다. 매니페스트에는 테스트별 주소(scheme://host:port), 서버 종류(dev·preview), 환경 프로필, 호출 형태, 사전 이동 여부, 그룹, 허용 외부 호스트, fixture가 있다. 환경 프로필은 매니페스트에 한 번만 정의한다.
+
+```sh
+npm run test:browser                                  # 모의 테스트 전체
+npm run test:browser -- login-401 visits              # 선택 실행
+npm run test:browser -- --repeat 3 lost-search        # 반복 실행
+```
+
+- Playwright: 저장소에서 `playwright-core`를 찾고, 없으면 `PAWBRIDGE_PLAYWRIGHT_MODULE`(설치된 playwright 또는 playwright-core 폴더)를 쓴다. 둘 다 없으면 설치하지 않고 종료한다. 브라우저는 시스템 Chrome(`channel: 'chrome'`)이며, `PAWBRIDGE_CHROMIUM_PATH`를 지정하면 그 실행 파일을 쓴다.
+- 시작 전 검사: 프로필마다 `.env` 파일(`loadEnv('browser-test')`)과 프로필 값을 합친 실제 값을 확인한다. `VITE_API_BASE_URL`은 비어 있거나 `http(s)://localhost|127.0.0.1[:port]`, `VITE_TOSS_CLIENT_KEY`는 없거나 `test_`로 시작해야 하고, 채팅·방문자 기능 플래그는 그 프로필이 켠 경우에만 `true`일 수 있다. 같은 포트를 쓰는 테스트는 서버 종류와 프로필이 같아야 한다. 매니페스트의 모든 포트와 28080·28089에 이미 무언가 열려 있으면(127.0.0.1과 ::1 모두 확인) 빌드·서버 기동 전에 중단한다. 셸에서 내보낸 `VITE_*` 변수는 무시한다.
+- 빌드·서버: preview 테스트는 `vite build --mode browser-test --outDir .browser-test-build/<profile>`로 만든 빌드를, dev 테스트는 `vite --mode browser-test` 개발 서버를 쓴다. 둘 다 `scripts/environment-policy.mjs`를 의도적으로 거치지 않으며 `dist`나 운영 빌드를 쓰지 않는다. 개발 서버는 의존성 캐시를 `.browser-test-build/vite-cache`에 따로 두고, 로그인하지 않은 별도 컨텍스트로 `/`를 한 번 열어 예열한다. 예열 뒤 Vite 로그에 `optimized dependencies changed`나 `page reload`가 나오면 실행 전체를 실패로 표시한다.
+- 실행: 테스트는 순서대로 하나씩, 테스트마다 새 브라우저 컨텍스트(1440×1000, 기본 제한 15초, 테스트당 최대 5분)에서 실행한다. 표에 PASS/FAIL/SKIP과 첫 오류 줄을 출력하고, 선택한 모의 테스트가 하나라도 실패하면 exit 1이다. 로그는 `.browser-test-build/logs`, 반환값은 `results`, 실패 화면은 `failures`에 남는다. 실행기가 띄운 서버는 정상 종료·오류·Ctrl+C 모두에서 중지한다.
+- `visits`는 같은 출처 API·`VITE_DAILY_VISITORS_ENABLED=true`·`VITE_VISITOR_TEST_MODE=true` 개발 서버(5192)에서 `(browser, { origin, evidence })`로, `home-videos`는 5214 개발 서버와 합성 API 주소 `http://127.0.0.1:28089`에서 모의 모드로 실행한다. 실행기가 합성 HS512 토큰을 만들어 넘긴다. 기존 `connected` 모드(실제 Gateway·Community 연결)는 이 실행기에서 지원하지 않는다.
+- `map-security`는 `after` 단계로 새 임시 증거 폴더에서 실행한다. 이전 단계 `before.json`과의 자동 비교는 하지 않으며 비교 성공으로 표시하지 않는다.
+
+### 네트워크 보장 범위
+
+Chromium은 `--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1`(테스트의 허용 호스트는 EXCLUDE 추가)와 `--no-proxy-server`로 실행한다. 따라서 브라우저가 보내는 루프백 밖 요청은 차단된다. 허용 목록은 `font-consistency`의 `fonts.googleapis.com`·`fonts.gstatic.com`뿐이며, 허용 목록이 있는 테스트는 별도 브라우저로 실행한다.
+
+앱 자체가 불러오는 외부 자원(Google Fonts, 다음 우편번호 스크립트, `www.pawbridge.kr` 아이콘, 로그인 버튼 이미지 등) 중 테스트가 직접 처리하지 않은 요청은 실행기가 컨텍스트 단계에서 중단하고 표의 DETAIL에 호스트를 기록한다. 테스트가 외부 요청을 `route.continue()` 등으로 네트워크에 보내 Chromium 네트워크 단계까지 도달하면(호스트 해석 차단 또는 실제 서버 응답) 해당 테스트를 실패로 처리한다.
+
+Node 쪽 요청(`route.fetch`, `page.request` 등 Playwright가 Node에서 보내는 요청)은 이 보장에 포함되지 않는다. 예를 들어 `font-consistency`는 `route.fetch()`로 Google Fonts를 실제로 받는다.
+
+### 이 실행기로 실행하지 않는 환경 테스트
+
+아래 8개는 매니페스트에 `group: env`로 등록돼 있고 실행기는 SKIP으로만 표시한다. 실제 로컬 로그인·Gateway·DB 등 이전 로컬 스택이 필요하다. 처리 방침은 결정 대기 중이다.
+
+| 테스트 | 필요한 환경 | 결정 대기 방침 |
+| --- | --- | --- |
+| `chat-login-return` | 로컬 Gateway 실제 로그인 | 삭제 후보 |
+| `chat-existing-room` | 로컬 REST·WebSocket·PostgreSQL | 삭제 후보 |
+| `blocked-author-visibility` | 로컬 로그인·게시글·차단 API | 모의 응답으로 이전 |
+| `private-notes` | 로컬 User·Community·PostgreSQL·SSE | 백엔드 계약 시험으로 이관 |
+| `member-chat` | 로컬 Gateway·PostgreSQL·Redis·WebSocket | 백엔드 계약 시험으로 이관 |
+| `member-chat-recovery` | 위와 같음, 로컬 컨테이너 장애 주입 | 백엔드 계약 시험으로 이관 |
+| `member-chat-security` | 위와 같음, 일회용 티켓·Redis 임대 | 백엔드 계약 시험으로 이관 |
+| `travel-db` | 픽스처 백엔드 127.0.0.1:18081, Gateway 127.0.0.1:18180 | 백엔드 계약 시험으로 이관 |
+
+결정 전까지 채팅·쪽지 계열은 `tests/run-member-chat.browser.cjs`, `tests/run-private-notes.browser.cjs`로, `travel-db`는 아래 동반여행 DB 절차로 실행한다.
 
 ## 쪽지의 실제 개발 환경 검증
 
@@ -67,12 +100,10 @@ Community/User의 새 DB 테스트는 명시한 `PRIVATE_NOTES_PG_TEST_PORT`와 
 
 `private-note-notifications.browser.js`는 합성 로그인 상태와 모의 API만 사용한다. 실제 User·Community·DB·인증·SSE 연동을 검증하지 않는다. 위 단위 검사 24건과 별개로 초기 20개→더 보기 40개, 늦은 갱신 응답의 덮어쓰기 방지, 화면 복귀 갱신, 이전 페이지 삭제·읽음 반영, 부분 실패 후 기존 목록 보존·재시도, 1440/375px 화면·Escape·가로 넘침, 페이지 오류 없음의 7개 검사 묶음을 실행한다.
 
-프론트만 `127.0.0.1:5184`에 기동하고 설치된 Chromium을 전용 Playwright 세션으로 사용한다. Windows 폴더에서 작업하면 위의 polling 설정을 유지한다. 이 실행기의 파일은 함수 표현식이므로 마지막에 세미콜론을 추가하지 않는다.
+공용 실행기가 `127.0.0.1:5184` 개발 서버와 브라우저를 띄운다.
 
 ```sh
-PLAYWRIGHT_MCP_EXECUTABLE_PATH=/absolute/path/to/chromium playwright-cli -s=notes-fix-review open about:blank
-playwright-cli -s=notes-fix-review run-code --filename=tests/private-note-notifications.browser.js --raw
-playwright-cli -s=notes-fix-review close
+npm run test:browser -- private-note-notifications
 ```
 
 스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 현재 GitHub Actions는 환경 정책·빌드 검사만 실행하므로 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다.
@@ -87,18 +118,11 @@ playwright-cli -s=notes-fix-review close
 
 ```sh
 node --experimental-strip-types --test-isolation=none --test tests/adminStatistics.test.ts tests/shelters.test.ts tests/animalStatistics.test.ts tests/authSession.test.ts tests/seo.test.ts tests/environment-policy.test.mjs
-npm run build
-CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=1000 npm run dev -- --host 127.0.0.1 --port 5199 --strictPort
+npm run test:browser -- admin-renewal admin-market
 ```
 
-이미 설치된 Chromium 경로를 지정해 전용 Playwright 세션을 열고 두 스크립트를 순서대로 실행한다. WSL의 Windows 작업 폴더에서 파일 감시가 누락되면 polling 설정을 사용하거나 이 작업의 개발 서버만 다시 실행한다. 다른 서버·VM을 중지하지 않는다.
+공용 실행기가 5199 서버와 브라우저를 띄우고 두 스크립트를 순서대로 실행한다.
 
-```sh
-PLAYWRIGHT_MCP_EXECUTABLE_PATH=/absolute/path/to/chromium playwright-cli -s=admin-renewal open http://127.0.0.1:5199
-playwright-cli -s=admin-renewal run-code --filename=tests/admin-renewal.browser.js --raw
-playwright-cli -s=admin-renewal run-code --filename=tests/admin-market.browser.js --raw
-playwright-cli -s=admin-renewal close
-```
 
 API 가로채기는 fetch/XHR에만 적용한다. Vite의 `/src/api/` 모듈을 가로채면 정상 소스까지 모의 501 응답으로 바뀌어 화면이 비게 된다. 결과의 개별 테스트 이름과 실제 실행 개수를 확인한다. 파일 하나의 성공 표시를 파일 안의 모든 테스트 실행으로 해석하지 않는다. 스크린샷은 `/tmp/admin-renewal-*.png`, `/tmp/admin-market-*.png`에 남긴다.
 
@@ -187,7 +211,7 @@ playwright-cli -s=pawbridge-db-e2e run-code --filename=tests/travel-db.browser.j
 
 이 두 POST 경로와 실패 표시 경로는 localhost 테스트 서버에만 존재한다. 공개 Gateway로 수집을 실행하지 않는다. 미수집 지역 fixture는 마지막 목록 순회 이후에 추가한다. 테스트가 수집 상태를 변경하므로 재실행 전 서버를 종료하고 전용 fixture DB를 새로 준비한다.
 
-사진과 공통 푸터를 회귀 검사할 때는 별도 세션에서 `tests/travel-images.browser.js`를 실행한다. API·이미지 응답은 모의 데이터다. 24개 검사로 홈·여행 목록·상세의 푸터 전용 API 안내, 수집 시각 미표시, 원본 사진 비율, 이미지 실패 대체 표시와 375px 가로 넘침을 확인한다. 실제 관광공사 API 호출이나 운영 배포를 검증하는 테스트는 아니다.
+사진과 공통 푸터를 회귀 검사할 때는 `npm run test:browser -- travel-images`를 실행한다. API·이미지 응답은 모의 데이터다. 24개 검사로 홈·여행 목록·상세의 푸터 전용 API 안내, 수집 시각 미표시, 원본 사진 비율, 이미지 실패 대체 표시와 375px 가로 넘침을 확인한다. 실제 관광공사 API 호출이나 운영 배포를 검증하는 테스트는 아니다.
 
 조건 상태만 회귀 검사할 때는 `tests/travel-list-first.browser.js`를 실행한다. 모의 API 응답을 사용하는 26개 검사이며 위 DB 연결 검사와 구분한다.
 
@@ -200,14 +224,10 @@ playwright-cli -s=pawbridge-db-e2e run-code --filename=tests/travel-db.browser.j
 
 ## 보호소 신청·관리 UI
 
-개발 서버를 5194 포트로 실행한 뒤 격리된 Playwright CLI 세션에서 실행한다. 기존 설치된 브라우저의 CLI 설정을 사용하며, 테스트는 `/api/v1/` 요청을 모두 가로채므로 운영 데이터에 쓰지 않는다.
+공용 실행기가 5194 서버를 띄운다. 테스트는 `/api/v1/` 요청을 모두 가로채므로 운영 데이터에 쓰지 않는다.
 
-```bash
-npm run dev -- --port 5194 --strictPort
-playwright-cli -s=shelter-ui open --config=/path/to/local-playwright-config.json
-playwright-cli -s=shelter-ui run-code --filename=tests/shelter-flow.browser.js
-playwright-cli -s=shelter-ui run-code --filename=tests/shelter-errors.browser.js
-playwright-cli -s=shelter-ui close
+```sh
+npm run test:browser -- shelter-flow shelter-errors
 ```
 
 첫 스크립트: 신청 후 폼 차단, 승인 최종 확인과 요청 본문, 연결 담당자, 검색 복귀, 반려 후 재신청, 390px 가로 넘침 검사. 두 번째: 조회 오류/재시도, 기존 담당자 이력 없음, 409 충돌 후 재조회, 일반 회원 관리자 화면 차단. 실제 게이트웨이·DB와 연결한 E2E 검증을 대체하지 않는다.
@@ -222,13 +242,10 @@ playwright-cli -s=shelter-ui close
 운영 API 연결 검증이나 모든 접근성 항목의 검증을 대신하지 않는다.
 
 ```sh
-npm run dev -- --host 127.0.0.1 --port 5195 --strictPort
-playwright-cli -s=brand open http://127.0.0.1:5195/login --browser=firefox
-playwright-cli -s=brand run-code --filename=tests/brand-theme.browser.js
-playwright-cli -s=brand close
+npm run test:browser -- brand-theme
 ```
 
-스크린샷은 `/tmp/brand-*.png`에 저장한다. 기존에 설치된 Playwright 브라우저를 사용한다.
+스크린샷은 `/tmp/brand-*.png`에 저장한다. 원래 Firefox로 확인하던 시험이며 공용 실행기는 Chrome만 쓴다.
 
 ## 마이페이지 목록 조회 상태
 
@@ -238,16 +255,12 @@ playwright-cli -s=brand close
 캐시가 있는 장바구니의 갱신 실패도 포함한다.
 
 ```sh
-npm run build
-npm run preview -- --host 127.0.0.1 --port 5210 --strictPort
-playwright-cli -s=mypage-list-feedback open about:blank --browser=firefox
-playwright-cli -s=mypage-list-feedback run-code --filename=tests/mypage-list-feedback.browser.js
-playwright-cli -s=mypage-list-feedback close
+npm run test:browser -- mypage-list-feedback
 ```
 
 모든 API 요청과 장바구니 비우기는 모의 처리한다. 실제 계정·운영 데이터는 사용하지 않으며,
 실제 인증 백엔드와의 통합 검증을 대체하지 않는다. 의도한 500 응답의 콘솔 로그는 발생한다.
-스크린샷은 `/tmp/mypage-list-*.png`에 저장한다. 기존 설치된 브라우저를 사용한다.
+스크린샷은 `/tmp/mypage-list-*.png`에 저장한다. 원래 Firefox로 확인하던 시험이며 공용 실행기는 Chrome만 쓴다.
 기존 역할 제한·정렬·선택·탭 전환·상세 복귀는 `mypage-animals.browser.js`(5205),
 `mypage-market.browser.js`(5207)로 회귀 검증한다.
 
@@ -256,27 +269,20 @@ playwright-cli -s=mypage-list-feedback close
 `protected-animal-navigation.browser.js`는 모의 API만 사용한다. v3.1의 단일 범주 버튼, 즉시 호버 열림과 300ms 닫힘 여유·재진입 취소·대각선 이동, 클릭으로 연 메뉴 유지, Enter·Space·Tab·Shift+Tab·Escape와 포커스, 바깥 클릭, 경로 이동·현재 위치를 확인한다. 데스크톱 1920/1440/1280px와 모바일 390/320px, 640px 재배치, reduced motion, 44px 터치 영역과 작은 화면의 내부 스크롤도 검사한다. 모바일 그룹은 접지 않고 세 목적지를 바로 표시한다.
 
 ```sh
-VITE_API_BASE_URL=http://localhost:28080 npm run dev -- --host 127.0.0.1 --port 5198 --strictPort
-playwright-cli -s=protected-nav open http://127.0.0.1:5198 --browser=firefox
-playwright-cli -s=protected-nav run-code --filename=tests/protected-animal-navigation.browser.js
-playwright-cli -s=protected-nav close
+npm run test:browser -- protected-animal-navigation
 ```
 
-운영 화면이나 실제 API 연결 검증을 대신하지 않는다.
+원래 Firefox로 확인하던 시험이며 공용 실행기는 Chrome만 쓴다. 운영 화면이나 실제 API 연결 검증을 대신하지 않는다.
 
 ## 공통 글꼴 검증
 
-`font-consistency.browser.js`는 같은 5198 포트의 로컬 빌드를 검사한다. Chromium의
+`font-consistency.browser.js`는 공용 실행기가 5198 포트에 띄운 로컬 빌드를 검사한다. Chromium의
 DevTools Protocol로 실제 사용 글꼴을 확인하므로 Chrome/Chromium을 사용한다.
 API 요청은 모의 응답으로 처리하며 실제 로그인이나 데이터 변경은 하지 않는다.
 Google Fonts 다운로드는 실제 요청이므로 인터넷 연결이 필요하다.
 
 ```sh
-npm run build
-npm run preview -- --host 127.0.0.1 --port 5198 --strictPort
-playwright-cli -s=font-consistency open about:blank --browser=chrome
-playwright-cli -s=font-consistency run-code --filename=tests/font-consistency.browser.js
-playwright-cli -s=font-consistency close
+npm run test:browser -- font-consistency
 ```
 
 홈·동물검색·실종동물 찾기·보호소 찾기·동반여행·입양후기·커뮤니티·로그인의
@@ -296,23 +302,21 @@ playwright-cli -s=font-consistency close
 node --test tests/dependency-security.test.mjs
 ```
 
-브라우저 실행기는 이미 설치된 Playwright·Chromium의 절대 경로를 요구한다.
-새 브라우저를 설치하지 않으며, 루프백 주소 외에는 실행을 거부한다.
+브라우저 검사는 공용 브라우저 실행기로 실행한다. 기존 실행기가 묶어 돌리던 네 파일은
+각자의 서버·프로필로 따로 실행된다(`dependency-security`: 채팅 플래그 개발 서버 5260,
+`chat-existing-room-cache`: 채팅 플래그 preview 5186, `blocked-author-cache`: 개발 서버 5187,
+`api-response-boundary`: 개발 서버 5211).
 
 ```sh
-VITE_API_BASE_URL=http://localhost:28080 VITE_MEMBER_CHAT_ENABLED=true \
-  npm run dev -- --host 127.0.0.1 --port 5260 --strictPort
-PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
-PAWBRIDGE_CHROMIUM_PATH=/absolute/path/to/installed/chromium \
-  node tests/run-dependency-security.browser.cjs
+npm run test:browser -- dependency-security chat-existing-room-cache blocked-author-cache api-response-boundary
 ```
 
 1440·375px에서 로그인 실패 안내와 작성자 연락 복귀, 실제 XHR의 인증 헤더·JSON·
 multipart·HTTP 오류·연결 실패 처리, 지도 선택·확대·Escape·가로 넘침을 검사한다.
 기존 대화 캐시·차단 작성자 캐시와 중단된 응답의 성공 캐시 방지 회귀도 재사용한다.
 API·인증·폰트·주소검색 SDK·장식 사진은 합성이며 실제 백엔드·결제·R2 연동 또는
-운영 검증이 아니다. 브라우저는 실행기의 finally에서 닫고, 종료 후 위 전용 Vite만
-Ctrl+C로 중지한다. 다른 개발 서버·컨테이너·VM을 중지하지 않는다.
+운영 검증이 아니다. 실행기는 자신이 띄운 서버만 중지하며 다른 개발 서버·컨테이너·VM을
+중지하지 않는다.
 
 ## 지도 D3 보안·화면 호환성
 
@@ -324,25 +328,19 @@ Ctrl+C로 중지한다. 다른 개발 서버·컨테이너·VM을 중지하지 �
 node --test-isolation=none --test tests/mapDependencySecurity.test.mjs
 ```
 
-지도 전용 브라우저 검사는 설치된 Playwright·Chromium과 루프백 Vite만 사용한다.
-아래 변수에는 현재 PC의 기존 설치 경로와 별도 임시 증거 폴더를 지정한다.
+지도 전용 브라우저 검사는 공용 브라우저 실행기로 preview 5262에서 실행한다.
+실행기가 새 임시 증거 폴더를 만들어 `after` 단계로 호출하고, 폴더 경로를 표에 표시한다.
 
 ```sh
-npm run dev -- --host 127.0.0.1 --port 5262 --strictPort
-PAWBRIDGE_PLAYWRIGHT_MODULE=/absolute/path/to/installed/playwright \
-PAWBRIDGE_CHROMIUM_PATH=/absolute/path/to/installed/chromium \
-PAWBRIDGE_MAP_EVIDENCE=/absolute/path/to/temporary/evidence \
-PAWBRIDGE_MAP_PHASE=after node tests/run-map-security.browser.cjs
+npm run test:browser -- map-security
 ```
 
 1440·375px와 밝은·어두운 모드에서 17개 지역, 반응형 SVG, hover·pressed·focus,
 지도 클릭·키보드 지역 선택, 확대/축소 한계, 드래그, 전체 보기, 선택 메뉴,
 Escape·가로 넘침을 검사한다. 로딩·빈 결과·실패 후 재시도도 확인한다.
-라이브러리 변경 **전에** 같은 실행기를 `PAWBRIDGE_MAP_PHASE=before`로 실행해
-동일 증거 폴더에 `before.json`을 저장했다면, 변경 후 지도 크기·색·지역·마커를
-자동 대조한다. 기준 파일이 없으면 동작 검사만 하며 비교 성공으로 표시하지 않는다.
+라이브러리 변경 전후의 `before.json` 자동 대조는 하지 않는다. 결과는 동작 검사이며
+지도 크기·색·지역·마커가 이전과 같다는 비교 성공으로 해석하지 않는다.
 
 통계·폰트·외부 자산은 합성 응답이고 실제 백엔드 연결·운영 검증은 아니다.
-캡처는 픽셀 동일성을 자동 보장하지 않으므로 전후 이미지를 직접 확인한다.
-출력·캡처를 Git에 넣지 않는다. 브라우저는 finally에서 닫으며, 종료 후 위 전용
-Vite만 Ctrl+C로 중지한다.
+캡처는 픽셀 동일성을 자동 보장하지 않으므로 필요하면 이미지를 직접 확인한다.
+출력·캡처를 Git에 넣지 않는다. 브라우저와 서버는 실행기가 종료 시 정리한다.

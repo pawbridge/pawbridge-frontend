@@ -32,7 +32,7 @@ async page => {
  await page.evaluate(()=>{const auth=JSON.parse(localStorage.getItem('auth-storage'));auth.state.user.role='ROLE_ADMIN';localStorage.setItem('auth-storage',JSON.stringify(auth));});
  await page.goto('http://127.0.0.1:5194/admin/shelter-applications');
  await page.getByRole('link',{name:'신청 상세 보기'}).click();
- await page.getByLabel('연결할 보호소 등록번호').fill('123');await page.getByLabel('확인 메모',{exact:true}).fill('공식 연락처로 확인');
+ await page.getByLabel('연결할 보호소 등록번호').fill('123');await page.getByLabel('확인 메모 (필수)',{exact:true}).fill('공식 연락처로 확인');
  await page.getByRole('button',{name:'확인 후 승인하기'}).click();
  if(decisionCount!==0)throw Error('Approval submitted before confirmation');
  await page.getByRole('button',{name:'확인하고 승인',exact:true}).click();
@@ -42,8 +42,8 @@ async page => {
  await page.setViewportSize({width:1920,height:1080});await page.screenshot({path:'/tmp/shelter-detail-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/shelter-detail-mobile.png',fullPage:true});
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile horizontal overflow');
- await page.getByRole('link',{name:'← 보호소 목록으로'}).click();await page.getByLabel('보호소 검색').fill('포우');await page.getByRole('button',{name:'검색',exact:true}).click();await page.getByRole('link',{name:'상세 보기',exact:true}).click();await page.getByRole('link',{name:'← 보호소 목록으로'}).click();if(!page.url().includes('keyword='))throw Error('Search state lost');
- status='PENDING';await page.goto('http://127.0.0.1:5194/admin/shelter-applications/5');await page.getByRole('button',{name:'반려 사유 작성하기'}).click();await page.getByLabel('반려 사유',{exact:true}).fill('소속을 확인해 주세요.');await page.getByRole('button',{name:'사유 전달하고 반려'}).click();await page.getByRole('heading',{name:'처리 결과'}).waitFor();
+ await page.getByRole('link',{name:'보호소 목록으로'}).click();await page.getByLabel('보호소 검색').fill('포우');await page.getByRole('button',{name:'검색',exact:true}).click();await page.getByRole('link',{name:'상세 보기',exact:true}).click();await page.getByRole('link',{name:'보호소 목록으로'}).click();if(!page.url().includes('keyword='))throw Error('Search state lost');
+ status='PENDING';await page.goto('http://127.0.0.1:5194/admin/shelter-applications/5');await page.getByRole('button',{name:'반려 사유 작성하기'}).click();await page.getByLabel('반려 사유 (필수)',{exact:true}).fill('소속을 확인해 주세요.');await page.getByRole('button',{name:'사유 전달하고 반려'}).click();await page.getByRole('heading',{name:'처리 결과'}).waitFor();
  await page.evaluate(user=>localStorage.setItem('auth-storage',JSON.stringify({state:{user,accessToken:'test-only-token'},version:0})),user);
  await page.goto('http://127.0.0.1:5194/mypage');await page.getByRole('button',{name:'내용 보완하고 다시 신청'}).click();if(await page.getByLabel('소속 보호소 이름').inputValue()!=='포우 동물보호센터')throw Error('Resubmit name not preserved');
  await page.getByRole('button',{name:'담당자 신청하기',exact:true}).click();await page.getByText('신청을 검토하고 있습니다.',{exact:false}).waitFor();

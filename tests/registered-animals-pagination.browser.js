@@ -16,6 +16,14 @@ async page => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
     if (!path.startsWith('/api/v1/')) return route.continue();
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
     if (request.method() === 'GET' && path === '/api/v1/users/me') {
       return route.fulfill({ json: { code: 200, data: user() } });
     }

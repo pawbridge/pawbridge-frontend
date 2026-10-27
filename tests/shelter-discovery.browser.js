@@ -19,6 +19,13 @@ async page => {
     if (url.pathname === '/api/v1/shelters/discovery') return route.fulfill({ status: mode === 'error' ? 500 : 200, json: mode === 'error' ? {} : paged(mode === 'empty' ? [] : [sample, { ...sample, id: 2, name: '강동 동물보호센터', protectedCount: 8 }], mode === 'empty' ? 0 : 14) });
     if (url.pathname.endsWith('/observations')) return route.fulfill({ json: [{ date: from, observedAt: `${from}T04:00:00+09:00`, protectedCount: 12 }, { date: today, observedAt: `${today}T04:00:00+09:00`, protectedCount: 0 }] });
     if (url.pathname === '/api/v1/shelters/1') return route.fulfill({ json: sample });
+    if (url.pathname === `/api/v1/shelters/by-care-reg-no/${sample.careRegNo}`) return route.fulfill({ json: sample });
+    if (/^\/api\/v1\/animals\/\d+\/similar$/.test(url.pathname)) return route.fulfill({ json: [] });
+    if (/^\/api\/v1\/animals\/\d+$/.test(url.pathname)) {
+      const id = Number(url.pathname.split('/').at(-1));
+      const preview = sample.animals.find(animal => animal.id === id);
+      return route.fulfill({ json: { ...preview, status: 'PROTECT', shelterId: 1, shelterName: sample.name, careRegNo: sample.careRegNo } });
+    }
     if (url.pathname === '/api/v1/animals') return route.fulfill({ json: paged(sample.animals.map(a => ({ ...a, status: 'PROTECT', shelterId: 1, shelterName: sample.name, apmsNoticeNo: '서울-마포-2026-00001' }))) });
     return route.fulfill({ json: {} });
   });
@@ -29,25 +36,48 @@ async page => {
   if (requests.some(url => url.includes('/observations'))) throw Error('History eagerly fetched');
   await page.getByRole('button', { name: '보호 현황 펼치기 +' }).first().click();
   await page.getByRole('img', { name: /최근 30일 일별/ }).waitFor();
-  await page.getByText('날짜별 수치와 관측 시각 보기', { exact: true }).click();
+  // The toggle for the daily numbers was renamed from '날짜별 수치와 관측 시각 보기'.
+  await page.getByText('날짜별 마릿수 보기', { exact: true }).click();
   if (!(await page.getByRole('cell', { name: '기록 없음', exact: true }).count())) throw Error('Missing days were fabricated');
   await page.getByRole('cell', { name: '0마리', exact: true }).waitFor();
   await page.screenshot({ path: '/tmp/pawbridge-shelter-desktop.png', fullPage: true });
   await page.getByRole('button', { name: '2페이지', exact: true }).click();
   await page.waitForURL('**page=1**');
-  await page.getByRole('link', { name: '이 보호소 동물 보기 →' }).first().click();
+  // Since b9bf345 the shelter card links to the shelter detail page, which lists that shelter's animals; the
+  // list request must carry the shelter. The shelter-scoped /animals search is checked below.
+  await page.getByRole('link', { name: '보호소 상세 보기 →' }).first().click();
+  await page.getByRole('heading', { level: 1, name: sample.name, exact: true }).waitFor();
+  await page.getByRole('heading', { name: '보호 중인 동물', exact: true }).waitFor();
+  await page.getByTestId('shelter-animal-list').waitFor();
+  const animalRequest = [...requests].reverse().find(url => url.startsWith('/api/v1/animals?') && !url.includes('size=1&') && !url.endsWith('size=1'));
+  const animalParams = Object.fromEntries(animalRequest.split('?')[1].split('&').map(part => part.split('=').map(decodeURIComponent)));
+  for (const [key, value] of [['shelterId', '1'], ['status', 'PROTECT']]) if (animalParams[key] !== value) throw Error(`Lost API context: ${key}`);
+  await page.screenshot({ path: '/tmp/pawbridge-shelter-detail-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile detail overflow');
+  await page.screenshot({ path: '/tmp/pawbridge-shelter-detail-mobile.png', fullPage: true });
+  await page.getByRole('link', { name: '← 보호소 목록으로 돌아가기' }).click();
+  if (!page.url().includes('page=1')) throw Error('Lost shelter page on return');
+  // The shelter-scoped search (shelter + intake dates) is still reached from a preview animal: its detail page
+  // returns to that search through '동물 목록으로'.
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.locator(`a[href="/animals/${sample.animals[0].id}"]`).first().click();
+  await page.getByRole('button', { name: '동물 목록으로', exact: true }).click();
   await page.getByRole('heading', { name: '이 보호소의 동물을 만나보세요' }).waitFor();
   await page.getByRole('heading', { name: /검색 결과 3마리/ }).waitFor();
-  const animalRequest = [...requests].reverse().find(url => url.startsWith('/api/v1/animals?'));
-  const animalParams = Object.fromEntries(animalRequest.split('?')[1].split('&').map(part => part.split('=').map(decodeURIComponent)));
-  for (const [key, value] of [['shelterId', '1'], ['intakeFrom', from], ['intakeTo', today], ['status', 'PROTECT']]) if (animalParams[key] !== value) throw Error(`Lost API context: ${key}`);
+  const searchRequest = [...requests].reverse().find(url => url.startsWith('/api/v1/animals?') && url.includes('intakeFrom='));
+  if (!searchRequest) throw Error('Shelter search request missing');
+  const searchParams = Object.fromEntries(searchRequest.split('?')[1].split('&').map(part => part.split('=').map(decodeURIComponent)));
+  for (const [key, value] of [['shelterId', '1'], ['intakeFrom', from], ['intakeTo', today], ['status', 'PROTECT']]) {
+    if (searchParams[key] !== value) throw Error(`Lost search API context: ${key}`);
+  }
   await page.screenshot({ path: '/tmp/pawbridge-shelter-search-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error('Mobile search overflow');
   if (!await page.getByRole('button', { name: '보호중', exact: true }).isDisabled()) throw Error('Protection scope can be changed');
   await page.screenshot({ path: '/tmp/pawbridge-shelter-search-mobile.png', fullPage: true });
   await page.getByRole('link', { name: '← 보호소 목록으로' }).click();
-  if (!page.url().includes('page=1')) throw Error('Lost shelter page on return');
+  if (!page.url().includes('page=1')) throw Error('Lost shelter page on return from search');
   await page.getByRole('heading', { name: sample.name, exact: true }).waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: '보호 현황 펼치기 +' }).first().click();
@@ -65,5 +95,5 @@ async page => {
   await page.getByRole('heading', { name: '보호소를 불러오지 못했어요' }).waitFor();
   mode = 'normal'; await page.getByRole('button', { name: '다시 시도', exact: true }).click();
   await page.getByRole('heading', { name: sample.name, exact: true }).waitFor();
-  return { passed: ['desktop', 'mobile-no-overflow', 'lazy-history', 'missing-vs-zero', 'animal-api-date-contract', 'list-return', 'invalid-range', 'empty', 'error-retry'], requests: requests.length };
+  return { passed: ['desktop', 'mobile-no-overflow', 'lazy-history', 'missing-vs-zero', 'detail-animal-api-context', 'search-animal-api-date-contract', 'list-return', 'invalid-range', 'empty', 'error-retry'], requests: requests.length };
 }

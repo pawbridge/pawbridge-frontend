@@ -8,6 +8,15 @@ async page => {
   const paged = content => ({ content, page: 0, number: 0, size: 20, totalElements: content.length, totalPages: 1 });
   const handler = async route => {
     const r = route.request(), path = r.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
+    if (path === '/api/v1/home/videos') return route.fulfill({ json: { code: 200, data: [] } });
     const id = Number(r.headers()['x-user-id'] || 0);
     requests.push({ method: r.method(), path, id });
     const send = json => route.fulfill({ json });
@@ -36,9 +45,10 @@ async page => {
     await page.waitForURL(`${origin}${path}`);
   };
   const login = async id => {
+    await page.getByRole('button', { name: /이메일로 로그인/ }).click();
     await page.getByPlaceholder('이메일 주소를 입력하세요').fill(`member${id}@example.invalid`);
     await page.getByPlaceholder('비밀번호를 입력하세요').fill('mock-password-only');
-    await page.getByRole('button', { name: '로그인', exact: true }).click();
+    await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
     await page.waitForURL(`${origin}/`);
     assert(await page.evaluate(id => JSON.parse(localStorage.getItem('auth-storage')).state.user.id === id, id), 'Wrong signed-in account');
     await navigate('/mypage');
@@ -51,7 +61,7 @@ async page => {
   page.on('pageerror', e => errors.push(e.message));
   await page.route('**/api/v1/**', handler);
   const cases = [
-    { tab: '내가 찜한 동물', role: 'ROLE_USER', text: '전용동물', path: '/api/v1/users/me/favorite-animals' },
+    { tab: '관심 동물', role: 'ROLE_USER', text: '전용동물', path: '/api/v1/users/me/favorite-animals' },
     { tab: '내 보호소가 등록한 동물', role: 'ROLE_SHELTER', text: '전용동물', path: '/api/v1/users/me/registered-animals' },
     { tab: '나의 장바구니', role: 'ROLE_ADMIN', text: '전용상품', path: '/api/v1/carts' },
     { tab: '나의 위시리스트', role: 'ROLE_ADMIN', text: '전용찜상품', path: '/api/v1/users/me/wishlists' },
@@ -66,7 +76,7 @@ async page => {
       requests.length = 0;
       const marker = await page.evaluate(() => window.__documentMarker);
       await login(101);
-      await page.getByRole('button', { name: c.tab, exact: false }).click();
+      await page.locator('aside').getByRole('button', { name: c.tab, exact: false }).click();
       await page.getByText(`계정101${c.text}`, { exact: true }).waitFor();
       const aRequests = requests.filter(r => r.path === c.path && r.id === 101).length;
       if (logoutPath === 'sidebar') await page.locator('aside').getByRole('button', { name: '로그아웃' }).click();
@@ -77,7 +87,7 @@ async page => {
       }
       await page.waitForURL(`${origin}/login`);
       await login(202);
-      await page.getByRole('button', { name: c.tab, exact: false }).click();
+      await page.locator('aside').getByRole('button', { name: c.tab, exact: false }).click();
       // Allow a potential request/render, then record both the account and displayed data.
       await page.waitForTimeout(400);
       const oldDataVisible = await page.getByText(`계정101${c.text}`, { exact: true }).count() > 0;
