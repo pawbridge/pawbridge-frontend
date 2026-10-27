@@ -5,11 +5,11 @@ async page => {
   const place={contentId:'123',title:'기본 정보만 있는 공원',address:'서울 테스트 주소',imageUrl:null};
   const time='2026-09-12T00:00:00Z';
   let status='PREPARING';
-  await page.route('**/api/**',route=>{
-    const path='/api/'+route.request().url().split('/api/')[1].split('?')[0];
-    if(path==='/api/places/regions')return route.fulfill({json:{items:[{code:'11',name:'서울'}],fetchedAt:time,availability:'READY'}});
-    if(path==='/api/places')return route.fulfill({json:{areaCode:'11',items:[place],previewOnly:true,fetchedAt:null,availability:'PARTIAL'}});
-    if(path==='/api/places/123')return route.fulfill({json:{place,overview:null,
+  await page.route('**/api/v1/**',route=>{
+    const path='/api/v1/'+route.request().url().split('/api/v1/')[1].split('?')[0];
+    if(path==='/api/v1/places/regions')return route.fulfill({json:{items:[{code:'11',name:'서울'}],fetchedAt:time,availability:'READY'}});
+    if(path==='/api/v1/places')return route.fulfill({json:{areaCode:'11',items:[place],previewOnly:true,fetchedAt:null,availability:'PARTIAL'}});
+    if(path==='/api/v1/places/123')return route.fulfill({json:{place,overview:null,
       conditions:{areas:null,allowedAnimals:null,requirements:null,otherInformation:null,risks:null,facilities:null,providedItems:null},
       petInformationAvailable:false,petInformationStatus:status,source:'KOREA_TOURISM_ORGANIZATION',fetchedAt:time,
       petInformationFetchedAt:status==='READY'||status==='STALE'?time:null}});

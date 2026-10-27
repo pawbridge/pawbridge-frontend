@@ -1,6 +1,6 @@
 // Playwright CLI run-code file. Uses isolated mock API responses; never sends live mutations.
 async page => {
- await page.unroute('**/api/**');
+ await page.unroute('**/api/v1/**');
  const errors=[]; page.on('pageerror', e=>errors.push(e.message));
  const user={id:10,userId:10,createdAt:'2026-09-01T10:00:00',nickname:'담당자',provider:'LOCAL',email:'member@example.invalid',name:'예시 담당자',role:'ROLE_USER'};
  let status='PENDING'; let created=false; let decisionCount=0;
@@ -8,17 +8,17 @@ async page => {
  const admin=()=>({application:application(),applicantName:user.name,applicantEmail:user.email,reviewNote:'공식 연락처로 확인'});
  const paged=content=>({content,totalElements:content.length,totalPages:1,number:0,size:20,first:true,last:true,empty:content.length===0});
  const shelter={id:2,careRegNo:'123',name:'포우 동물보호센터',address:'서울특별시 예시구 보호로 12',organizationName:'서울특별시 예시구'};
- await page.route('**/api/**',async route=>{
-  const req=route.request(),path=req.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];if(!path.startsWith('/api/')) return route.continue(); let data={};let enveloped=true;
-  if(path==='/api/users/me')data=user;
-  else if(path==='/api/users/me/shelter-applications'){if(req.method()==='POST'){const body=req.postDataJSON();if(body.shelterName!=='포우 동물보호센터')throw Error('Unexpected shelter input');created=true;status='PENDING';data=application();}else data=paged(created?[application()]:[]);}
+ await page.route('**/api/v1/**',async route=>{
+  const req=route.request(),path=req.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];if(!path.startsWith('/api/v1/')) return route.continue(); let data={};let enveloped=true;
+  if(path==='/api/v1/users/me')data=user;
+  else if(path==='/api/v1/users/me/shelter-applications'){if(req.method()==='POST'){const body=req.postDataJSON();if(body.shelterName!=='포우 동물보호센터')throw Error('Unexpected shelter input');created=true;status='PENDING';data=application();}else data=paged(created?[application()]:[]);}
   else if(path.endsWith('/approve')){decisionCount++;const body=req.postDataJSON();if(body.careRegNo!=='123'||body.note!=='공식 연락처로 확인')throw Error('Wrong approve payload');status='APPROVED';data=admin();}
   else if(path.endsWith('/reject')){decisionCount++;status='REJECTED';data=admin();}
-  else if(path==='/api/admin/users/shelter-applications/5')data=admin();
-  else if(path==='/api/admin/users/shelter-applications')data=paged([admin()]);
-  else if(path==='/api/shelters'){data=paged([shelter]);enveloped=false;}
-  else if(path==='/api/shelters/by-care-reg-no/123'){data=shelter;enveloped=false;}
-  else if(path==='/api/admin/users/shelters/123/members')data=paged([{userId:10,name:user.name,email:user.email,approvalApplicationId:5}]);
+  else if(path==='/api/v1/admin/users/shelter-applications/5')data=admin();
+  else if(path==='/api/v1/admin/users/shelter-applications')data=paged([admin()]);
+  else if(path==='/api/v1/shelters'){data=paged([shelter]);enveloped=false;}
+  else if(path==='/api/v1/shelters/by-care-reg-no/123'){data=shelter;enveloped=false;}
+  else if(path==='/api/v1/admin/users/shelters/123/members')data=paged([{userId:10,name:user.name,email:user.email,approvalApplicationId:5}]);
   else data=[];
   await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(enveloped?{code:200,data}:data)});
  });

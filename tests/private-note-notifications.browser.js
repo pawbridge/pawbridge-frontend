@@ -3,7 +3,7 @@ async (page) => {
   const origin = 'http://127.0.0.1:5184';
   const results = [];
   const errors = [];
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   let failOlderPage = false;
   let holdNextFirstPage = false;
   let releaseFirstPage;
@@ -24,18 +24,18 @@ async (page) => {
     if (!condition) throw new Error(message);
   };
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.route('**/api/**', async (route) => {
+  await page.route('**/api/v1/**', async (route) => {
     if (!['fetch', 'xhr'].includes(route.request().resourceType())) return route.continue();
     const [path, query = ''] = route
       .request()
       .url()
       .replace(/^https?:\/\/[^/]+/, '')
       .split('?');
-    if (path === '/api/notes/stream') {
+    if (path === '/api/v1/notes/stream') {
       // Prevent fixture reconnects from adding unrelated refreshes during this REST regression.
       return route.fulfill({ status: 429, body: '' });
     }
-    if (path === '/api/notes/notifications') {
+    if (path === '/api/v1/notes/notifications') {
       const cursor = query
         .split('&')
         .find((value) => value.startsWith('cursor='))
@@ -60,7 +60,7 @@ async (page) => {
         },
       });
     }
-    if (path === '/api/notes') {
+    if (path === '/api/v1/notes') {
       return route.fulfill({
         json: {
           data: {
@@ -118,7 +118,7 @@ async (page) => {
     observeHeldPage = resolve;
   });
   const delayedRefreshFinished = page.waitForResponse((response) =>
-    response.url().endsWith('/api/notes/notifications'),
+    response.url().endsWith('/api/v1/notes/notifications'),
   );
   holdNextFirstPage = true;
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
@@ -140,7 +140,7 @@ async (page) => {
   results.push('late in-flight refresh cannot overwrite a newly opened page');
 
   const refreshedPage = page.waitForResponse((response) =>
-    response.url().includes('/api/notes/notifications?cursor='),
+    response.url().includes('/api/v1/notes/notifications?cursor='),
   );
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await refreshedPage;

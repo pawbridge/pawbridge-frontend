@@ -60,11 +60,11 @@ async page => {
 
     // API는 1.2초 늦춰도 메뉴 선택과 URL 변경은 즉시 일어나야 한다.
     const slowAPI = async route => {
-      if (!new URL(route.request().url()).pathname.startsWith('/api/')) return route.continue();
+      if (!new URL(route.request().url()).pathname.startsWith('/api/v1/')) return route.continue();
       await new Promise(resolve => setTimeout(resolve, 1200));
       await route.fulfill({ json: { code: 200, data: [] } }).catch(() => {});
     };
-    await page.route('**/api/**', slowAPI);
+    await page.route('**/api/v1/**', slowAPI);
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${origin}/privacy`, { waitUntil: 'domcontentloaded' });
@@ -82,7 +82,7 @@ async page => {
       await page.getByRole('heading', { name: '개인정보처리방침', exact: true }).waitFor();
       checks.push({ width, clickMs, delayedAPIMs: 1200, keyboardLink: true, back: true, overflow: false });
     }
-    await page.unroute('**/api/**', slowAPI);
+    await page.unroute('**/api/v1/**', slowAPI);
     if (errors.length) throw new Error(errors.join('; '));
     return { passed: true, mockedAPI: true, responseBudgetMs: 100, checks, errors };
   } finally {

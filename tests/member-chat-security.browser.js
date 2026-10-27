@@ -8,7 +8,7 @@ async (page, accounts) => {
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     const ticket = async () => {
       for (let attempt = 0; attempt < 4; attempt++) {
-        const response = await fetch('http://localhost:28080/api/chats/connection-ticket', {
+        const response = await fetch('http://localhost:28080/api/v1/chats/connection-ticket', {
           method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: '{}',
         });
         if (response.status === 429) { await delay(2100); continue; }
@@ -22,7 +22,7 @@ async (page, accounts) => {
       const failure = new Promise(resolve => { fail = resolve; });
       let timer;
       const client = new Client({
-        brokerURL: `ws://localhost:${port}/api/chats/socket`, connectHeaders: { ticket: credential },
+        brokerURL: `ws://localhost:${port}/api/v1/chats/socket`, connectHeaders: { ticket: credential },
         reconnectDelay: 0, heartbeatIncoming: 15000, heartbeatOutgoing: 15000, debug: () => {},
       });
       const ready = new Promise((resolve, denied) => {

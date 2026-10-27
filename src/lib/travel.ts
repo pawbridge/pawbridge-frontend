@@ -13,7 +13,7 @@ export const isTravelContentId = (value: string): boolean => value.length >= 1 &
 export function isPublicTravelRequest(url: string, method?: string): boolean {
   return method?.toLowerCase() === 'get'
     && !/[\r\n]/.test(url)
-    && /^\/api\/places(?:\/regions|\/[0-9]{1,20})?(?:\?[^#]*)?$/.test(url);
+    && /^\/api\/v1\/places(?:\/regions|\/[0-9]{1,20})?(?:\?[^#]*)?$/.test(url);
 }
 
 // URLs are one-based for people; the API and Pagination component are zero-based.

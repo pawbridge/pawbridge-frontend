@@ -9,9 +9,9 @@ async page => {
   let release;
   const onError = error => errors.push(error.message);
   page.on('pageerror', onError);
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   const envelope = data => ({ code: 200, data });
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const request = route.request();
     if (!['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
@@ -34,11 +34,11 @@ async page => {
     else if (path.endsWith('/daily-animals')) body = daily;
     else if (path.endsWith('/daily-signups')) body = envelope(daily);
     else if (path.endsWith('/total-users')) body = envelope(1280);
-    else if (path === '/api/shelters/count') body = 363;
+    else if (path === '/api/v1/shelters/count') body = 363;
     else if (path.endsWith('/shelter-applications/stats')) body = envelope({ ...trend, currentPending: mode === 'zero' ? 0 : 5, approvedCount: mode === 'zero' ? 0 : 8, rejectedCount: mode === 'zero' ? 0 : 2 });
     else if (path.endsWith('/posts/stats/period')) body = envelope({ ...trend, byBoardType: mode === 'zero' ? [] : [{ boardType: 'ADOPTION', count: 4 }, { boardType: 'COMMUNICATION', count: total - 4 }] });
     else if (path.endsWith('/animals/stats/status')) body = mode === 'zero' ? [] : [{ status: 'PROTECT', label: '보호중', count: 8 }, { status: 'ADOPTED', label: '입양완료', count: 4 }, { status: 'UNKNOWN', label: '미분류', count: total - 12 }];
-    else if (path === '/api/users/me') body = envelope(null);
+    else if (path === '/api/v1/users/me') body = envelope(null);
     else return route.fulfill({ status: 501, json: { message: 'Unmocked API: ' + path } });
     await route.fulfill({ json: body });
   });
@@ -154,6 +154,6 @@ async page => {
   results.push('guest, user and shelter roles blocked before admin data fetch');
   check(errors.length === 0, 'Page errors: ' + errors.join('; '));
   page.off('pageerror', onError);
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   return { results, normalRenders: 12, screenshotCount: 8, pageErrors: errors, liveApiRequests: 0 };
 }

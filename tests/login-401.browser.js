@@ -26,19 +26,19 @@ async page => {
       requests.push('refresh');
       return route.fulfill({ status: 401, json: { code: 401, data: null, message: '로그인 유지 정보가 없습니다.' } });
     }
-    if (path === '/api/users/me' && request.method() === 'GET') {
+    if (path === '/api/v1/users/me' && request.method() === 'GET') {
       requests.push('profile');
       return route.fulfill({ status: 401, json: { code: 401, data: null, message: '로그인이 필요합니다.' } });
     }
     // 로그인 상태에서 함께 연결되는 쪽지 알림은 이 검사의 대상이 아니다.
-    if (path.startsWith('/api/notes/')) return route.abort();
-    if (path.startsWith('/api/')) {
+    if (path.startsWith('/api/v1/notes/')) return route.abort();
+    if (path.startsWith('/api/v1/')) {
       unexpected.push(`${request.method()} ${path}`);
       return route.abort();
     }
     return route.continue();
   };
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   page.on('pageerror', onError);
   try {
     for (const width of [1920, 390]) {
@@ -79,6 +79,6 @@ async page => {
     return { checks, requests, unexpected, errors };
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }

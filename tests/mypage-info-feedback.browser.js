@@ -23,10 +23,10 @@ async page => {
     localStorage.setItem('auth-storage', JSON.stringify({ state: { user, accessToken: 'feedback-token-only' }, version: 0 }));
   }, profile);
   page.on('pageerror', error => errors.push(error.message));
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (path !== '/api/users/me' || request.method() !== 'GET') {
+    if (path !== '/api/v1/users/me' || request.method() !== 'GET') {
       unexpected.push(`${request.method()} ${path}`);
       return route.abort();
     }
@@ -75,6 +75,6 @@ async page => {
     assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected.join(', ')}`);
     return { checks, requests, pageErrors: errors, unexpectedRequests: unexpected };
   } finally {
-    await page.unroute('**/api/**');
+    await page.unroute('**/api/v1/**');
   }
 }

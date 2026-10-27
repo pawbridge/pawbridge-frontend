@@ -11,23 +11,23 @@ async (page, origin = 'http://127.0.0.1:5187') => {
   const title = '차단 캐시 회귀 검증 글';
   const handler = async route => {
     const url = new URL(route.request().url());
-    if (!url.pathname.startsWith('/api/')) return url.origin === origin ? route.continue() : route.abort();
+    if (!url.pathname.startsWith('/api/v1/')) return url.origin === origin ? route.continue() : route.abort();
     let data = { content: [], nextCursor: null, unreadCount: 0, totalPages: 0, totalElements: 0 };
     if (url.pathname.includes('ticket')) return route.fulfill({ status: 503, json: { message: 'Synthetic stream disabled' } });
-    if (url.pathname === '/api/posts/read') data = [{ postId: 41, title, authorId: 2, authorName: '합성 작성자', boardType: 'COMMUNICATION', imageUrls: [], createdAt: '2026-10-11T01:00:00Z' }];
-    if (url.pathname === '/api/notes/recipients/2') data = { userId: 2, nickname: '합성 작성자', active: true };
-    if (url.pathname === '/api/notes/blocks/2') {
+    if (url.pathname === '/api/v1/posts/read') data = [{ postId: 41, title, authorId: 2, authorName: '합성 작성자', boardType: 'COMMUNICATION', imageUrls: [], createdAt: '2026-10-11T01:00:00Z' }];
+    if (url.pathname === '/api/v1/notes/recipients/2') data = { userId: 2, nickname: '합성 작성자', active: true };
+    if (url.pathname === '/api/v1/notes/blocks/2') {
       blocked = route.request().method() === 'PUT';
       return route.fulfill({ status: 204 });
     }
-    if (url.pathname === '/api/notes/blocks/status') {
+    if (url.pathname === '/api/v1/notes/blocks/status') {
       const memberIds = blocked ? [2] : [];
       if (held) await new Promise(resolve => { releases.add(resolve); });
       data = { memberIds };
     }
-    if (url.pathname === '/api/notes/blocks') data = { content: blocked ? [{ memberId: 2, nickname: '합성 작성자', createdAt: '2026-10-11T01:00:00Z' }] : [], totalPages: 1 };
-    if (url.pathname === '/api/notes') data = { content: [{ noteId, body: '합성 쪽지', counterpartNickname: '합성 작성자', createdAt: '2026-10-11T01:00:00Z' }], totalPages: 1, totalElements: 1 };
-    if (url.pathname === `/api/notes/${noteId}`) data = { noteId, counterpartId: 2, counterpartNickname: '합성 작성자', direction: 'INBOX', body: '합성 쪽지', readAt: '2026-10-11T01:00:00Z', contextHref: '/community', createdAt: '2026-10-11T01:00:00Z' };
+    if (url.pathname === '/api/v1/notes/blocks') data = { content: blocked ? [{ memberId: 2, nickname: '합성 작성자', createdAt: '2026-10-11T01:00:00Z' }] : [], totalPages: 1 };
+    if (url.pathname === '/api/v1/notes') data = { content: [{ noteId, body: '합성 쪽지', counterpartNickname: '합성 작성자', createdAt: '2026-10-11T01:00:00Z' }], totalPages: 1, totalElements: 1 };
+    if (url.pathname === `/api/v1/notes/${noteId}`) data = { noteId, counterpartId: 2, counterpartNickname: '합성 작성자', direction: 'INBOX', body: '합성 쪽지', readAt: '2026-10-11T01:00:00Z', contextHref: '/community', createdAt: '2026-10-11T01:00:00Z' };
     try { return await route.fulfill({ json: { code: 200, data } }); }
     catch (error) { if (!route.request().failure() && !/already handled|closed/.test(error.message)) throw error; }
   };
@@ -48,7 +48,7 @@ async (page, origin = 'http://127.0.0.1:5187') => {
     await page.getByRole('button', { name: '회원 차단', exact: true }).click();
     await page.getByText('회원을 차단했습니다. 차단 관리에서 해제할 수 있습니다.', { exact: true }).waitFor();
     held = true;
-    const checking = page.waitForRequest('**/api/notes/blocks/status**', { timeout: 10000 });
+    const checking = page.waitForRequest('**/api/v1/notes/blocks/status**', { timeout: 10000 });
     await page.getByRole('link', { name: '연락한 글 보기', exact: true }).click();
     await checking;
     if (await page.getByText(title, { exact: true }).count()) throw new Error('Warm unblocked cache exposed a blocked post');

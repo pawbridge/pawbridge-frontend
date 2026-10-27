@@ -13,19 +13,19 @@ async page => {
     const path = relative.split('?')[0];
     const query = relative.split('?')[1] ?? '';
     const param = name => decodeURIComponent(query.match(new RegExp(`(?:^|&)${name}=([^&]*)`))?.[1] ?? '');
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     requests.push(`${request.method()} ${relative}`);
     if (request.method() === 'GET') {
-      if (path === '/api/users/me') return route.fulfill({ json: { code: 200, data: user() } });
-      if (path === '/api/users/me/favorite-animals') return route.fulfill({ json: { code: 200, data: { userId: 10, totalCount: favoriteCount, favorites: Array.from({ length: favoriteCount }, (_, i) => ({ ...animal(i + 1), favoriteId: i + 1, animalId: i + 1, userId: 10, createdAt: '2026-09-01T00:00:00' })) } } });
-      if (path === '/api/users/me/registered-animals') {
+      if (path === '/api/v1/users/me') return route.fulfill({ json: { code: 200, data: user() } });
+      if (path === '/api/v1/users/me/favorite-animals') return route.fulfill({ json: { code: 200, data: { userId: 10, totalCount: favoriteCount, favorites: Array.from({ length: favoriteCount }, (_, i) => ({ ...animal(i + 1), favoriteId: i + 1, animalId: i + 1, userId: 10, createdAt: '2026-09-01T00:00:00' })) } } });
+      if (path === '/api/v1/users/me/registered-animals') {
         const number = Number(param('page'));
         assert(param('size') === '20' && param('sort') === 'createdAt,desc', 'Registered request changed');
         return route.fulfill({ json: { code: 200, data: { content: Array.from({ length: Math.max(0, Math.min(20, registeredCount - number * 20)) }, (_, i) => animal(number * 20 + i + 1)), page: number, size: 20, totalElements: registeredCount, totalPages: Math.ceil(registeredCount / 20) } } });
       }
-      if (/^\/api\/animals\/\d+$/.test(path)) return route.fulfill({ json: animal(Number(path.split('/').at(-1))) });
-      if (/^\/api\/animals\/\d+\/similar$/.test(path)) return route.fulfill({ json: [] });
-      if (/^\/api\/favorites\/\d+\/check$/.test(path)) return route.fulfill({ json: { code: 200, data: false } });
+      if (/^\/api\/v1\/animals\/\d+$/.test(path)) return route.fulfill({ json: animal(Number(path.split('/').at(-1))) });
+      if (/^\/api\/v1\/animals\/\d+\/similar$/.test(path)) return route.fulfill({ json: [] });
+      if (/^\/api\/v1\/favorites\/\d+\/check$/.test(path)) return route.fulfill({ json: { code: 200, data: false } });
     }
     unexpected.push(`${request.method()} ${path}`);
     return route.abort();
@@ -48,7 +48,7 @@ async page => {
     await profile().waitFor();
   };
   page.on('pageerror', onError);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   try {
     await page.goto(`${origin}/login`);
     for (const width of [1920, 390]) {
@@ -57,7 +57,7 @@ async page => {
         favoriteCount = count;
         await reset();
         assert(!requests.some(x => /favorite-animals|registered-animals/.test(x)), 'Inactive animal tab fetched');
-        const response = page.waitForResponse(r => r.url().includes('/api/users/me/favorite-animals'));
+        const response = page.waitForResponse(r => r.url().includes('/api/v1/users/me/favorite-animals'));
         await favorites().click(); await response;
         if (count === 0) {
           await page.getByText('아직 찜한 동물이 없습니다.', { exact: true }).waitFor();
@@ -132,6 +132,6 @@ async page => {
     return { checks, memberAccess: 'pass', pageErrors: errors, unexpectedRequests: unexpected };
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }

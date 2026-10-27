@@ -11,7 +11,7 @@ async page => {
   let failure = false, resume = null, oauthAccessToken = null;
   const handler = async route => {
     const request = route.request(), path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     const params = Object.fromEntries((request.url().split('?')[1] || '').split('&').filter(Boolean).map(pair => pair.split('=').map(value => decodeURIComponent(value.replace(/\+/g, ' ')))));
     if (path === '/api/v1/auth/refresh') {
       writes.push(path);
@@ -21,7 +21,7 @@ async page => {
       writes.push(path);
       return route.fulfill({ json: { code: 200, data: { ...profile, userId: profile.id, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' } } });
     }
-    if (path === '/api/reports' && request.method() === 'GET') {
+    if (path === '/api/v1/reports' && request.method() === 'GET') {
       requests.push(params);
       if (failure) return route.fulfill({ status: 503, json: { message: 'test-only-unavailable' } });
       if (params.keyword === 'loading') await new Promise(resolve => { resume = resolve; });
@@ -29,12 +29,12 @@ async page => {
       const rows = [base, { ...base, reportId: 43, imageUrls: [], title: '아주 긴 동물의 특징을 포함한 제보 제목 '.repeat(8) }, { ...base, reportId: 44, imageUrls: [origin + '/__broken-photo'], title: '갈색 동물의 목격 정보를 확인해 주세요' }].map(report => ({ ...report, kind }));
       return route.fulfill({ json: { data: { content: params.keyword === 'empty' ? [] : rows, totalPages: 3 } } });
     }
-    if (/^\/api\/reports(?:\/\d+)?$/.test(path)) {
+    if (/^\/api\/v1\/reports(?:\/\d+)?$/.test(path)) {
       if (request.method() !== 'GET') writes.push(`${request.method()} ${path}`);
       return route.fulfill({ json: { data: base } });
     }
     if (request.method() !== 'GET') throw new Error('Unexpected write: ' + path);
-    if (path === '/api/users/me') return route.fulfill({ json: { code: 200, data: profile } });
+    if (path === '/api/v1/users/me') return route.fulfill({ json: { code: 200, data: profile } });
     if (path.includes('/posts')) return route.fulfill({ json: { code: 200, data: [] } });
     if (path.endsWith('/stats/today')) return route.fulfill({ json: { rescuedToday: 0 } });
     return route.fulfill({ json: { content: [], totalElements: 0, totalPages: 0, items: [] } });
@@ -50,7 +50,7 @@ async page => {
   // The CLI stops a command at native dialogs. Suppress only alert in this local
   // test context so OAuth completion and all subsequent assertions finish together.
   await page.addInitScript(() => { window.alert = () => {}; window.confirm = () => true; });
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   await page.route('**/__test-photo', route => route.fulfill({ path: 'tests/fixtures/lost-search.png', contentType: 'image/png' }));
   await page.route('**/__broken-photo', route => route.fulfill({ status: 404, body: '' }));
   try {
@@ -81,12 +81,12 @@ async page => {
     await main.getByText('사진이 등록되지 않았어요', { exact: true }).waitFor();
     await main.getByText('사진을 불러오지 못했어요', { exact: true }).waitFor();
     check(await main.getByText('실종일: 2026-09-28', { exact: true }).count() === 3, 'Event day must be distinguished from registration day');
-    const pageResponse = page.waitForResponse(response => response.url().includes('/api/reports?') && response.url().includes('page=1'));
+    const pageResponse = page.waitForResponse(response => response.url().includes('/api/v1/reports?') && response.url().includes('page=1'));
     await main.getByRole('button', { name: '2페이지', exact: true }).click(); await pageResponse;
     await page.waitForURL(origin + '/reports/missing?page=2'); await waitCards();
     check(await page.evaluate(() => new URL(location.href).searchParams.get('page')) === '2', 'Page selection missing in URL');
     await main.getByRole('searchbox', { name: '특징·지역 키워드' }).fill('흰색');
-    const searchResponse = page.waitForResponse(response => response.url().includes('/api/reports?') && response.url().includes('keyword=' + encodeURIComponent('흰색')));
+    const searchResponse = page.waitForResponse(response => response.url().includes('/api/v1/reports?') && response.url().includes('keyword=' + encodeURIComponent('흰색')));
     await main.getByRole('button', { name: '검색', exact: true }).click(); await searchResponse; await waitCards();
     check(!await page.evaluate(() => new URL(location.href).searchParams.has('page')), 'Search must reset page');
     check(requests.some(p => p.kind === 'MISSING' && p.keyword === '흰색' && p.page === '0' && p.size === '12'), 'API search contract');
@@ -195,11 +195,11 @@ async page => {
     await main.getByRole('link', { name: '실종동물 찾기', exact: true }).waitFor();
     checks.push('eight responsive widths, mobile group/current/touch/escape, community separation');
     check(errors.length === 0, errors.join('\n'));
-    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/login', '/api/v1/auth/refresh', 'POST /api/reports', 'PUT /api/reports/42', 'DELETE /api/reports/42']), 'Unexpected mutation traffic');
+    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/login', '/api/v1/auth/refresh', 'POST /api/v1/reports', 'PUT /api/v1/reports/42', 'DELETE /api/v1/reports/42']), 'Unexpected mutation traffic');
     return { checks, apiRequests: requests.length, mockedWrites: writes, pageErrors: errors, scope: 'local build with mocked APIs, not production integration' };
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
     await page.unroute('**/__test-photo'); await page.unroute('**/__broken-photo');
   }
 }

@@ -20,12 +20,12 @@ async page => {
       return route.abort();
     }
     let body = [];
-    if (path === '/api/users/me') body = { code: 200, data: admin ? user : null };
-    else if (path === '/api/products/1') body = { productId: 1, name: '글꼴 검증 상품', description: '테스트 상품 설명', status: 'ACTIVE', categoryId: 1, imageUrl: '', skus: [] };
-    else if (path === '/api/categories') body = [{ categoryId: 1, name: '테스트 분류' }];
-    else if (path === '/api/animals' || path === '/api/shelters/discovery') body = emptyPage;
+    if (path === '/api/v1/users/me') body = { code: 200, data: admin ? user : null };
+    else if (path === '/api/v1/products/1') body = { productId: 1, name: '글꼴 검증 상품', description: '테스트 상품 설명', status: 'ACTIVE', categoryId: 1, imageUrl: '', skus: [] };
+    else if (path === '/api/v1/categories') body = [{ categoryId: 1, name: '테스트 분류' }];
+    else if (path === '/api/v1/animals' || path === '/api/v1/shelters/discovery') body = emptyPage;
     else if (path.endsWith('/stats/today')) body = { rescuedToday: 0 };
-    else if (path === '/api/places/regions') body = { items: [{ code: '11', name: '서울' }] };
+    else if (path === '/api/v1/places/regions') body = { items: [{ code: '11', name: '서울' }] };
     else if (path.includes('/posts')) body = { code: 200, data: [] };
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   };
@@ -42,7 +42,7 @@ async page => {
     } finally { await cdp.detach(); }
   };
   page.on('pageerror', onError);
-  await page.route('**/api/**', mockApi);
+  await page.route('**/api/v1/**', mockApi);
   try {
     // A fresh page with delayed CSS must eventually use Noto instead of retaining fallback.
     await page.route(notoCss, async route => {
@@ -126,7 +126,7 @@ async page => {
     return { count: checks.length, checks, apiMock: true, realFontDownload: true, errors, productionDeployment: false };
   } finally {
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', mockApi);
+    await page.unroute('**/api/v1/**', mockApi);
     await page.unroute(notoCss);
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
   }

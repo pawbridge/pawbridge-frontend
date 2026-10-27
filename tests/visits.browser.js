@@ -13,10 +13,10 @@ async (browser, fixture) => {
     const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 },
       userAgent: 'Mozilla/5.0 Chrome/140.0.0.0 Safari/537.36', ...options });
     ctx.on('page', item => item.on('pageerror', error => console.error('Local page error: ' + error.message.slice(0, 300))));
-    await ctx.route(fixture.origin + '/api/**', async route => {
+    await ctx.route(fixture.origin + '/api/v1/**', async route => {
       const req = route.request(), url = new URL(req.url()), path = url.pathname, method = req.method();
       const reply = (data, status = 200) => route.fulfill({ status, json: { code: status, data } });
-      if (path.startsWith('/api/visits/')) {
+      if (path.startsWith('/api/v1/visits/')) {
         const headers = await req.allHeaders();
         publicHeaders.push(headers);
         const id = (headers.cookie || '').match(/(?:^|;\s*)__Host-pb_visit=([^;]+)/)?.[1];
@@ -35,17 +35,17 @@ async (browser, fixture) => {
         if (failRead && method === 'GET') return reply(null, 503);
         return reply({ date: today, count: method === 'GET' && readCount !== undefined ? readCount : total });
       }
-      if (path === '/api/admin/visits/stats/period') {
+      if (path === '/api/v1/admin/visits/stats/period') {
         return reply({ startDate: url.searchParams.get('startDate'), endDate: url.searchParams.get('endDate'),
           today, collectionStartedAt: shift(today, -2) + 'T03:00:00Z',
           daily: [{ date: shift(today, -2), count: 3 }, { date: shift(today, -1), count: 0 }, { date: today, count: 12 }] });
       }
-      if (path === '/api/animals') return route.fulfill({ json: { content: [], totalPages: 0 } });
+      if (path === '/api/v1/animals') return route.fulfill({ json: { content: [], totalPages: 0 } });
       if (path === '/api/v1/animals/stats/today') return route.fulfill({ json: { rescuedToday: 0 } });
       if (path === '/api/v1/animals/stats/status') return route.fulfill({ json: [] });
       if (path.includes('/notifications')) return reply({ content: [], unreadCount: 0, nextCursor: null });
-      if (path.startsWith('/api/notes')) return reply({ content: [], totalPages: 0 });
-      if (path.startsWith('/api/admin/stats')) return route.fulfill({ json: { daily: [], previousDayCount: 0 } });
+      if (path.startsWith('/api/v1/notes')) return reply({ content: [], totalPages: 0 });
+      if (path.startsWith('/api/v1/admin/stats')) return route.fulfill({ json: { daily: [], previousDayCount: 0 } });
       return reply([]);
     });
     return ctx;

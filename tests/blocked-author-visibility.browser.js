@@ -17,33 +17,33 @@ async (page, accounts, origin = 'http://127.0.0.1:5184') => {
   const reports = [report(923, accounts[1].userId), report(924, accounts[2].userId), report(925, accounts[1].userId, 'SIGHTING')];
   const handler = route => {
     const url = new URL(route.request().url());
-    if (!url.pathname.startsWith('/api/reports')) return route.continue();
+    if (!url.pathname.startsWith('/api/v1/reports')) return route.continue();
     const id = Number(url.pathname.split('/').pop());
     const data = Number.isSafeInteger(id) && id > 0 ? reports.find(item => item.reportId === id)
       : { content: reports.filter(item => item.kind === (url.searchParams.get('kind') || 'MISSING')), totalPages: 1 };
     return route.fulfill({ json: { code: 200, data } });
   };
-  await page.route('**/api/reports**', handler);
+  await page.route('**/api/v1/reports**', handler);
   let statusReads = 0;
-  page.on('request', req => { if (new URL(req.url()).pathname === '/api/notes/blocks/status') statusReads++; });
+  page.on('request', req => { if (new URL(req.url()).pathname === '/api/v1/notes/blocks/status') statusReads++; });
   await visit('/reports/missing');
   await page.getByRole('heading', { name: '합성 제보 923', exact: true }).waitFor();
   if (statusReads) throw new Error('Anonymous page requested private block data');
 
   const posts = [];
   for (const boardType of ['COMMUNICATION', 'PROTECTION']) {
-    const response = await page.request.post(api + '/api/posts', {
+    const response = await page.request.post(api + '/api/v1/posts', {
       headers: { Authorization: `Bearer ${accounts[1].token}` },
       multipart: { title: `합성 차단 검증 ${boardType} ${runId}`, content: '접어야 하는 합성 본문', boardType },
     });
     if (!response.ok()) throw new Error(`Local public-post fixture failed: ${boardType} ${response.status()}`);
     posts.push((await response.json()).data);
   }
-  const ownPost = await request('post', '/api/posts', {
+  const ownPost = await request('post', '/api/v1/posts', {
     multipart: { title: `합성 본인 글 ${runId}`, content: '본인 글은 차단 조회 오류와 무관하게 표시', boardType: 'COMMUNICATION' },
   });
   const ownTitle = (await ownPost.json()).data.title;
-  await request('put', `/api/notes/blocks/${accounts[1].userId}`);
+  await request('put', `/api/v1/notes/blocks/${accounts[1].userId}`);
   await visit('/login');
   await page.getByPlaceholder('이메일 주소를 입력하세요').fill(accounts[0].email);
   await page.getByPlaceholder('비밀번호를 입력하세요', { exact: true }).fill(accounts[0].password);
@@ -85,7 +85,7 @@ async (page, accounts, origin = 'http://127.0.0.1:5184') => {
     }
     if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw new Error('Mobile overflow');
   }
-  const statusRoute = '**/api/notes/blocks/status**';
+  const statusRoute = '**/api/v1/notes/blocks/status**';
   let fail = true;
   await page.route(statusRoute, route => fail ? route.fulfill({ status: 503, json: { message: 'synthetic failure' } }) : route.continue());
   await visit('/community');
@@ -105,6 +105,6 @@ async (page, accounts, origin = 'http://127.0.0.1:5184') => {
   await visit('/reports/missing');
   await page.getByRole('heading', { name: '합성 제보 923', exact: true }).waitFor();
   if (await page.getByText('차단한 회원의 글입니다.', { exact: true }).count()) throw new Error('Unblock left stale folded content');
-  await page.unroute('**/api/reports**', handler);
+  await page.unroute('**/api/v1/reports**', handler);
   return { environment: 'isolated-local-dev', checks: ['anonymous-public-access', 'real-login-and-directional-block-api', 'community-table-grid-detail', 'report-list-detail-missing-sighting-fixtures', 'explicit-expansion', 'desktop-mobile', 'own-post-during-status-failure', 'failure-retry', 'unblock-cache-refresh'], mocked: ['public-report-data', 'status-failure-only'], productionVerified: false };
 }

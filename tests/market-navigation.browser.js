@@ -1,7 +1,7 @@
 // Run with Playwright CLI against a local Vite server on port 5198.
 // All API requests are intercepted; no live authentication or writes are used.
 async page => {
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   const origin = 'http://127.0.0.1:5198';
   const errors = [];
   const requests = [];
@@ -9,17 +9,17 @@ async page => {
   let user = null;
   const onError = error => errors.push(error.message);
   page.on('pageerror', onError);
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
+    if (!path.startsWith('/api/v1/')) return route.continue();
     requests.push(path);
     if (request.method() !== 'GET') throw new Error(`Unexpected mutation: ${path}`);
     let body = [];
-    if (path === '/api/users/me') body = { code: 200, data: user };
-    else if (path === '/api/animals' || path.includes('wishlists') || path.includes('orders')) body = emptyPage;
+    if (path === '/api/v1/users/me') body = { code: 200, data: user };
+    else if (path === '/api/v1/animals' || path.includes('wishlists') || path.includes('orders')) body = emptyPage;
     else if (path.endsWith('/stats/today')) body = { rescuedToday: 0 };
-    else if (path === '/api/places/regions') body = { items: [] };
+    else if (path === '/api/v1/places/regions') body = { items: [] };
     else if (path.includes('/posts')) body = { code: 200, data: [] };
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
@@ -77,7 +77,7 @@ async page => {
     results.push(role ?? 'GUEST');
   }
   page.off('pageerror', onError);
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   if (errors.length) throw new Error(errors.join('\n'));
   return { rolesPassed: results, checks: ['desktop/mobile menu order', 'market and wishlist visibility', 'home shortcut', 'saved tab restore and request gating', 'mobile travel navigation', 'mobile overflow'], pageErrors: errors };
 }

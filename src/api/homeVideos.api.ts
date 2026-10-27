@@ -1,8 +1,8 @@
 import apiClient from './client';
 import type { HomeVideo, SaveVideo, VideoBoard, VideoMetadata } from '../types/homeVideos';
-const base = '/api/admin/videos';
+const base = '/api/v1/admin/videos';
 export async function getHomeVideos(signal?: AbortSignal) {
-  return (await apiClient.get<{ data: HomeVideo[] }>('/api/home/videos', { signal })).data.data;
+  return (await apiClient.get<{ data: HomeVideo[] }>('/api/v1/home/videos', { signal })).data.data;
 }
 export async function getVideoBoard(signal?: AbortSignal) {
   return (await apiClient.get<{ data: VideoBoard }>(base, { signal })).data.data;

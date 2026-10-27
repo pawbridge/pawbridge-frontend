@@ -9,7 +9,7 @@ import type {
   SendNote,
 } from '../types/privateNotes';
 
-const base = '/api/notes';
+const base = '/api/v1/notes';
 export async function getNotes(
   box: 'INBOX' | 'SENT',
   favorites: boolean,
