@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAnimalById, updateAnimal, uploadAnimalImage } from '../api/animals.api';
-import type { UpdateAnimalRequest } from '../api/animals.api';
+import { getAnimalById, updateAnimal, updateAnimalStatus, uploadAnimalImage } from '../api/animals.api';
+import type { AnimalStatusValue, UpdateAnimalRequest } from '../api/animals.api';
+import { animalStatusLabel } from '../lib/animalDisplay';
 import { useAuthStore } from '../store/authStore';
 import { logoutWithoutWaiting } from '../api/auth.api';
 import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import AdminSidebar from '../components/layout/AdminSidebar';
 import { getApiErrorMessage } from '../lib/apiError';
+
+const editableStatuses: AnimalStatusValue[] = [
+  'PROTECT', 'ADOPTION_PENDING', 'ADOPTED', 'RETURNED', 'DONATED', 'RELEASED', 'ESCAPED', 'EUTHANIZED', 'NATURAL_DEATH', 'UNKNOWN',
+];
 
 export default function AnimalEdit() {
   const navigate = useNavigate();
@@ -35,6 +40,7 @@ export default function AnimalEdit() {
   const [breed, setBreed] = useState('');
   const [gender, setGender] = useState<'MALE' | 'FEMALE' | 'UNKNOWN' | ''>('');
   const [neuterStatus, setNeuterStatus] = useState<'YES' | 'NO' | 'UNKNOWN' | ''>('');
+  const [status, setStatus] = useState<AnimalStatusValue | ''>('');
   const [birthYear, setBirthYear] = useState<number | ''>('');
   const [weight, setWeight] = useState('');
   const [color, setColor] = useState('');
@@ -58,6 +64,7 @@ export default function AnimalEdit() {
       setBreed(animal.breed || '');
       setGender((animal.gender as 'MALE' | 'FEMALE' | 'UNKNOWN') || '');
       setNeuterStatus((animal.neuterStatus as 'YES' | 'NO' | 'UNKNOWN') || '');
+      setStatus(editableStatuses.includes(animal.status as AnimalStatusValue) ? animal.status as AnimalStatusValue : '');
       setBirthYear(animal.birthYear || '');
       setWeight(animal.weight ?? '');
       setColor(animal.color || '');
@@ -102,7 +109,14 @@ export default function AnimalEdit() {
   });
 
   const updateAnimalMutation = useMutation({
-    mutationFn: (animalData: UpdateAnimalRequest) => updateAnimal(Number(id!), animalData),
+    // 정보와 상태는 서버에서 다른 명령이다. 상태는 사용자가 바꿨을 때만 보내 다른 사람이 바꾼 상태를 덮어쓰지 않는다.
+    mutationFn: async (animalData: UpdateAnimalRequest) => {
+      const updated = await updateAnimal(Number(id!), animalData);
+      if (status && status !== animal?.status) {
+        return updateAnimalStatus(Number(id!), status);
+      }
+      return updated;
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['animal', id] });
       queryClient.invalidateQueries({ queryKey: ['registeredAnimals'] });
@@ -152,30 +166,23 @@ export default function AnimalEdit() {
         imageUrl = animal.imageUrl;
       }
 
-      // status 타입 변환 (Animal의 status를 UpdateAnimalRequest의 status로 변환)
-      let status: 'PROTECT' | 'ADOPTION_PENDING' | 'ADOPTED' | 'EUTHANIZED' | 'NATURAL_DEATH' | 'RETURNED' | 'DONATED' | 'RELEASED' | 'ESCAPED' | 'UNKNOWN' = 'PROTECT';
-      if (animal?.status) {
-        if (['PROTECT', 'ADOPTION_PENDING', 'ADOPTED', 'EUTHANIZED', 'NATURAL_DEATH', 'RETURNED', 'DONATED', 'RELEASED', 'ESCAPED', 'UNKNOWN'].includes(animal.status)) {
-          status = animal.status as typeof status;
-        }
-      }
-
+      // 빈 칸은 null로 보내 기존 값을 지운다.
       const animalData: UpdateAnimalRequest = {
         species,
-        status,
         noticeStartDate,
         noticeEndDate,
         gender: gender as 'MALE' | 'FEMALE' | 'UNKNOWN',
         neuterStatus: neuterStatus as 'YES' | 'NO' | 'UNKNOWN',
-        ...(breed && { breed }),
-        ...(birthYear && { birthYear: Number(birthYear) }),
-        ...(weight && { weight }),
-        ...(color && { color }),
-        ...(specialMark && { specialMark }),
-        ...(happenDate && { happenDate }),
-        ...(happenPlace && { happenPlace }),
-        ...(imageUrl && { imageUrl }),
-        ...(description && { description }),
+        breed: breed.trim() || null,
+        birthYear: birthYear === '' ? null : Number(birthYear),
+        weight: weight.trim() || null,
+        color: color.trim() || null,
+        specialMark: specialMark.trim() || null,
+        happenDate: happenDate || null,
+        happenPlace: happenPlace.trim() || null,
+        imageUrl: imageUrl || null,
+        imageUrl2: animal?.imageUrl2 || null,
+        description: description.trim() || null,
       };
 
       await updateAnimalMutation.mutateAsync(animalData);
@@ -357,6 +364,17 @@ export default function AnimalEdit() {
                       />
                     </label>
                   </div>
+
+                  <label className="flex flex-col gap-2">
+                    <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">보호 상태</span>
+                    <CustomSelect
+                      value={status}
+                      onChange={(value) => setStatus(value as AnimalStatusValue | '')}
+                      options={editableStatuses.map((value) => ({ value, label: animalStatusLabel(value) }))}
+                      placeholder="보호 상태를 선택하세요"
+                    />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">입양이나 반환이 끝나면 여기서 상태를 바꿔 주세요.</span>
+                  </label>
 
                   <div className="grid grid-cols-2 gap-4">
                     <label className="flex flex-col gap-2">

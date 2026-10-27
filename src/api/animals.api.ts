@@ -138,14 +138,37 @@ export const createAnimal = async (animalData: CreateAnimalRequest): Promise<Ani
   return response.data;
 };
 
-// 동물 수정 요청 타입 (등록과 동일하지만 id는 URL에 포함)
-export type UpdateAnimalRequest = Omit<CreateAnimalRequest, 'careRegNo'> & {
-  careRegNo?: string; // 수정 시에는 선택적
-};
+export type AnimalStatusValue = CreateAnimalRequest['status'];
 
-// 동물 수정
+// 동물 수정 요청 타입: 보호소가 직접 등록한 동물의 정보 항목을 통째로 바꾼다.
+// 선택 항목을 null로 보내면 지운다. 보호소·공고번호·출처는 바꿀 수 없고 상태는 updateAnimalStatus로 바꾼다.
+export interface UpdateAnimalRequest {
+  species: CreateAnimalRequest['species'];
+  noticeStartDate: string;
+  noticeEndDate: string;
+  gender: CreateAnimalRequest['gender'];
+  neuterStatus: CreateAnimalRequest['neuterStatus'];
+  breed: string | null;
+  birthYear: number | null;
+  weight: string | null;
+  color: string | null;
+  specialMark: string | null;
+  happenDate: string | null;
+  happenPlace: string | null;
+  imageUrl: string | null;
+  imageUrl2: string | null;
+  description: string | null;
+}
+
+// 동물 정보 수정
 export const updateAnimal = async (id: number, animalData: UpdateAnimalRequest): Promise<Animal> => {
   const response = await apiClient.put<Animal>(`/api/v1/animals/${id}`, animalData);
+  return response.data;
+};
+
+// 동물 상태 변경 (입양 완료 등)
+export const updateAnimalStatus = async (id: number, newStatus: AnimalStatusValue): Promise<Animal> => {
+  const response = await apiClient.patch<Animal>(`/api/v1/animals/${id}/status`, { newStatus });
   return response.data;
 };
 
