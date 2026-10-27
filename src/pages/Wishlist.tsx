@@ -25,7 +25,7 @@ export default function Wishlist() {
   // 개발 환경에서는 user?.id가 없어도 Mock 데이터 사용 가능
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['wishlists', user?.id || 'mock', currentPage, pageSize],
-    queryFn: () => getWishlists(user?.id || 1, { page: currentPage, size: pageSize }),
+    queryFn: () => getWishlists({ page: currentPage, size: pageSize }),
     enabled: true, // 개발 환경에서도 항상 활성화
   });
 

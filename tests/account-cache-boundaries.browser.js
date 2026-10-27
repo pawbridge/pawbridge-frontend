@@ -33,7 +33,7 @@ async page => {
       if (path === '/api/v1/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });
       if (path === '/api/v1/users/me/registered-animals') return send({ code: 200, data: paged([animal(id)]) });
       if (path === '/api/v1/carts') return send([{ id, skuId: id, skuCode: `SKU-${id}`, productId: id, productName: `계정${id}전용상품`, productImageUrl: '', price: 1000, quantity: 1, stockQuantity: 10 }]);
-      if (path === '/api/v1/mypage/wishlists') return send(paged([{ wishlistId: id, skuId: id, productId: id, productName: `계정${id}전용찜상품`, productStatus: 'ACTIVE', price: 1000, options: {}, createdAt: '2026-09-21T00:00:00' }]));
+      if (path === '/api/v1/users/me/wishlists') return send({ code: 200, data: paged([{ wishlistId: id, skuId: id, productId: id, productName: `계정${id}전용찜상품`, productStatus: 'ACTIVE', price: 1000, options: {}, createdAt: '2026-09-21T00:00:00' }]) });
       if (path === '/api/v1/animals') return send(paged([]));
       if (path === '/api/v1/posts/read') return send({ code: 200, data: [] });
       if (path === '/api/v1/animals/stats/today') return send({ rescueCount: 0, adoptionCount: 0 });
@@ -144,7 +144,7 @@ async page => {
     // Wishlist has no transport cancellation: its old response still reaches the Axios interceptor.
     for (const status of [200, 401]) {
       await reset('ROLE_ADMIN'); await login(101);
-      holdRead = { path: '/api/v1/mypage/wishlists', id: 101 };
+      holdRead = { path: '/api/v1/users/me/wishlists', id: 101 };
       if (status === 401) failRead = { ...holdRead, status };
       await page.getByRole('button', { name: '나의 위시리스트' }).click();
       await waitHeld();
@@ -154,7 +154,7 @@ async page => {
       await page.getByRole('button', { name: '나의 위시리스트' }).click();
       await page.getByText('계정202전용찜상품', { exact: true }).waitFor();
       const marker = await page.evaluate(() => window.__documentMarker);
-      const response = page.waitForResponse(r => r.url().includes('/api/v1/mypage/wishlists') && r.status() === status);
+      const response = page.waitForResponse(r => r.url().includes('/api/v1/users/me/wishlists') && r.status() === status);
       release(); await response; await page.waitForTimeout(200);
       assert(await page.evaluate(() => JSON.parse(localStorage.getItem('auth-storage')).state.user?.id) === 202, 'Old response signed B out');
       assert(marker === await page.evaluate(() => window.__documentMarker), 'Old 401 navigated document');
