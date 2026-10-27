@@ -12,7 +12,7 @@ test('back links preserve region and page without route injection', () => {
   assert.equal(travelListPath('11', 2), '/travel?areaCode=11&page=3');
   assert.equal(travelListPath('11', -1), '/travel?areaCode=11');
   assert.equal(travelListPath('evil', 2), '/travel');
-  assert.equal(isPublicTravelRequest('/api/places?areaCode=11&page=2', 'get'), true);
+  assert.equal(isPublicTravelRequest('/api/v1/places?areaCode=11&page=2', 'get'), true);
 });
 
 test('condition notices distinguish uncollected, failed, stale and successfully empty data', () => {
@@ -32,9 +32,9 @@ test('content IDs preserve all 20 digits and reject route injection', () => {
   for (const value of ['', '1/extra', 'regions', '1\n', '999999999999999999999']) assert.equal(isTravelContentId(value), false, value);
 });
 test('only exact public travel GET requests bypass login redirect', () => {
-  for (const url of ['/api/places', '/api/places?areaCode=1', '/api/places/regions', '/api/places/123']) assert.equal(isPublicTravelRequest(url, 'get'), true, url);
-  for (const url of ['/api/places/admin', '/api/places/123/edit', '/api/orders', 'https://example.com/api/places', '/api/places\n']) assert.equal(isPublicTravelRequest(url, 'get'), false, url);
-  for (const method of ['post', 'delete', undefined]) assert.equal(isPublicTravelRequest('/api/places', method), false);
+  for (const url of ['/api/v1/places', '/api/v1/places?areaCode=1', '/api/v1/places/regions', '/api/v1/places/123']) assert.equal(isPublicTravelRequest(url, 'get'), true, url);
+  for (const url of ['/api/v1/places/admin', '/api/v1/places/123/edit', '/api/v1/orders', 'https://example.com/api/v1/places', '/api/v1/places\n']) assert.equal(isPublicTravelRequest(url, 'get'), false, url);
+  for (const method of ['post', 'delete', undefined]) assert.equal(isPublicTravelRequest('/api/v1/places', method), false);
 });
 test('back links keep a valid region without accepting arbitrary destinations', () => {
   assert.equal(travelListPath('36110'), '/travel?areaCode=36110');

@@ -30,22 +30,22 @@ async page => {
       return route.fulfill({ contentType: 'text/javascript', body: 'export async function loadTossPayments() { return { requestPayment: async () => { throw window.__lintPaymentError; } }; }' });
     }
     if (!['127.0.0.1', 'localhost'].includes(url.hostname)) return route.abort('blockedbyclient');
-    if (!url.pathname.startsWith('/api/') || !['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
+    if (!url.pathname.startsWith('/api/v1/') || !['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
     const headers = { 'access-control-allow-origin': origin, 'access-control-allow-credentials': 'true', 'access-control-allow-headers': 'authorization,content-type,x-user-id', 'access-control-allow-methods': 'GET,POST,PUT,OPTIONS' };
     const respond = data => route.fulfill({ headers, json: { code: 200, data, message: '' } });
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 200, headers });
-    if (url.pathname === '/api/products/1') return route.fulfill({ headers, json: product });
-    if (url.pathname === '/api/orders/direct') {
+    if (url.pathname === '/api/v1/products/1') return route.fulfill({ headers, json: product });
+    if (url.pathname === '/api/v1/orders/direct') {
       writes.push({ path: url.pathname, data: request.postDataJSON() });
       return route.fulfill({ headers, json: { orderId: 15, orderUuid: 'synthetic-local-order', totalAmount: 43000 } });
     }
-    if ((url.pathname === '/api/posts' && request.method() === 'POST') || (url.pathname === '/api/posts/12' && request.method() === 'PUT')) {
+    if ((url.pathname === '/api/v1/posts' && request.method() === 'POST') || (url.pathname === '/api/v1/posts/12' && request.method() === 'PUT')) {
       writes.push({ path: url.pathname, method: request.method(), body: request.postData() });
       if (errorMode === 'network') return route.abort('connectionreset');
       if (errorMode === 'html') return route.fulfill({ status: 500, headers, contentType: 'text/html', body: '<html>gateway unavailable</html>' });
       return route.fulfill({ status: 400, headers, json: { message: errorMode === 'message' ? '서버 검증 안내' : 123 } });
     }
-    if (url.pathname === '/api/posts/read/12') return respond(post);
+    if (url.pathname === '/api/v1/posts/read/12') return respond(post);
     if (url.pathname.includes('/notifications/stream')) return route.fulfill({ headers, body: '', contentType: 'text/event-stream' });
     if (url.pathname.includes('/notifications')) return respond({ content: [], unreadCount: 0, nextCursor: null });
     return respond([]);
@@ -109,7 +109,7 @@ async page => {
       await page.getByRole('button', { name: '확인', exact: true }).click();
     }
     const order = writes.at(-1);
-    assert(order.path === '/api/orders/direct' && order.data.skuId === 12 && order.data.quantity === 2, 'direct-order-contract-' + width);
+    assert(order.path === '/api/v1/orders/direct' && order.data.skuId === 12 && order.data.quantity === 2, 'direct-order-contract-' + width);
     assert(await page.getByPlaceholder('이름을 입력하세요').inputValue() === '로컬 검증', 'payment-error-keeps-form-' + width);
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'checkout-no-overflow-' + width);
     await page.screenshot({ path: '/tmp/pawbridge-lint-checkout-' + width + '.png', fullPage: true });

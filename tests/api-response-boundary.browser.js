@@ -9,7 +9,7 @@ async page => {
   const result = await page.evaluate(async () => {
     const { default: client } = await import('/src/api/client.ts');
     const { queryClient } = await import('/src/lib/queryClient.ts');
-    const request = (status, data) => client.get('/api/response-boundary-test', {
+    const request = (status, data) => client.get('/api/v1/response-boundary-test', {
       adapter: async config => ({ data, status, statusText: '', headers: {}, config, request: {} }),
     });
     const failedKey = ['response-boundary-test', 'interrupted'];

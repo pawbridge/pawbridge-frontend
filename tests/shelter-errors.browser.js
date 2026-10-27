@@ -1,16 +1,16 @@
 // Playwright CLI run-code file. Uses isolated mock API responses; never sends live mutations.
 async page => {
- await page.unroute('**/api/**');
+ await page.unroute('**/api/v1/**');
  const user={id:1,email:'admin@example.invalid',name:'관리자',role:'ROLE_ADMIN'};
  let failMembers=true,conflict=false,approved=false;
  const a=()=>({id:5,userId:10,shelterName:'포우',status:approved?'APPROVED':'PENDING',requestedAt:'2026-09-13T10:00:00',reviewedAt:null,reason:null,careRegNo:approved?'123':null});
  const admin=()=>({application:a(),applicantName:'담당자',applicantEmail:'member@example.invalid',reviewNote:'확인'});
  const paged=content=>({content,totalElements:content.length,totalPages:1,number:0,size:20});
- await page.route('**/api/**',async r=>{
-  const path=r.request().url().replace(/^https?:\/\/[^/]+/,'').split('?')[0];if(!path.startsWith('/api/'))return r.continue();
+ await page.route('**/api/v1/**',async r=>{
+  const path=r.request().url().replace(/^https?:\/\/[^/]+/,'').split('?')[0];if(!path.startsWith('/api/v1/'))return r.continue();
   if(path.endsWith('/members'))return r.fulfill({status:failMembers?500:200,contentType:'application/json',body:JSON.stringify(failMembers?{}:{data:paged([{userId:10,name:'이전 담당자',email:'legacy@example.invalid',approvalApplicationId:null}])})});
   if(path.endsWith('/approve')){conflict=true;approved=true;return r.fulfill({status:409,contentType:'application/json',body:'{}'});}
-  const data=path==='/api/shelters/by-care-reg-no/123'?{id:2,careRegNo:'123',name:'포우'}:path.endsWith('/5')?{data:admin()}:{data:paged([])};
+  const data=path==='/api/v1/shelters/by-care-reg-no/123'?{id:2,careRegNo:'123',name:'포우'}:path.endsWith('/5')?{data:admin()}:{data:paged([])};
   await r.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
  });
  await page.goto('http://127.0.0.1:5194/login');await page.evaluate(user=>localStorage.setItem('auth-storage',JSON.stringify({state:{user,accessToken:'test-only-token'},version:0})),user);

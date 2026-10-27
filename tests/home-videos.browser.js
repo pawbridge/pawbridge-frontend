@@ -17,24 +17,24 @@ async (page, fixture) => {
   }, fixture.adminToken);
   await page.route('https://i.ytimg.com/**', route => route.fulfill({ path: fixture.thumbnailFile, contentType: 'image/webp' }));
   await page.route('https://www.youtube-nocookie.com/**', route => { providerFrames++; return route.fulfill({ body: '<html><head><meta charset="utf-8"></head><body>공식 플레이어 요청 경로 검증용 합성 프레임 — 실제 영상 재생 아님</body></html>', contentType: 'text/html; charset=utf-8' }); });
-  await page.route(api + '/api/**', async route => {
+  await page.route(api + '/api/v1/**', async route => {
     const req = route.request(), url = new URL(req.url()), method = req.method();
     const headers = { 'access-control-allow-origin': origin, 'access-control-allow-credentials': 'true', 'access-control-allow-headers': 'authorization,content-type,x-user-id', 'access-control-allow-methods': 'GET,POST,PUT,OPTIONS' };
     const respond = (data, status = 200) => route.fulfill({ status, headers, json: { code: status, data, message: status === 200 ? '' : '검증용 일시 오류' } });
     if (method === 'OPTIONS') return route.fulfill({ status: 200, headers });
     const path = url.pathname;
-    if (path === '/api/home/videos') {
+    if (path === '/api/v1/home/videos') {
       if (homeState === 'error') return respond(null, 503);
       if (homeState === 'empty') return respond([]);
       if (homeState === 'loading') await new Promise(resolve => setTimeout(resolve, 700));
       if (fixture.mode === 'connected') return route.continue();
       return respond(board.videos.filter(video => video.published && video.available));
     }
-    if (path.startsWith('/api/admin/videos')) {
+    if (path.startsWith('/api/v1/admin/videos')) {
       if (method === 'GET' && adminState === 'error') return respond(null, 503);
       if (method === 'GET' && adminState === 'loading') await new Promise(resolve => setTimeout(resolve, 700));
-      if (method === 'POST' && path === '/api/admin/videos') createRequests++;
-      if (failureOnce && method === 'POST' && path === '/api/admin/videos') { failureOnce = false; return respond(null, 503); }
+      if (method === 'POST' && path === '/api/v1/admin/videos') createRequests++;
+      if (failureOnce && method === 'POST' && path === '/api/v1/admin/videos') { failureOnce = false; return respond(null, 503); }
       if (fixture.mode === 'connected') return route.continue();
       if (method === 'GET') return respond(board);
       const input = req.postDataJSON();
@@ -43,14 +43,14 @@ async (page, fixture) => {
         return respond(meta(new URL(input.url).pathname.slice(1)));
       }
       if (input.revision !== board.revision) return respond(null, 409);
-      if (method === 'POST' && path === '/api/admin/videos' && input.published && board.videos.filter(v => v.published).length >= 3) return respond(null, 409);
+      if (method === 'POST' && path === '/api/v1/admin/videos' && input.published && board.videos.filter(v => v.published).length >= 3) return respond(null, 409);
       if (path.endsWith('/order')) {
         board.videos.sort((a,b) => input.ids.indexOf(a.id) - input.ids.indexOf(b.id));
       } else if (path.endsWith('/publication')) {
         const video = board.videos.find(v => v.id === path.split('/')[4]); video.published = input.published;
       } else if (path.endsWith('/recheck')) {
         const video = board.videos.find(v => v.id === path.split('/')[4]); Object.assign(video, meta(video.videoId));
-      } else if (method === 'POST' && path === '/api/admin/videos') {
+      } else if (method === 'POST' && path === '/api/v1/admin/videos') {
         board.videos.push({ id: '00000000-0000-4000-8000-' + String(board.videos.length+1).padStart(12,'0'), ...meta(new URL(input.url).pathname.slice(1)), published: input.published, position: board.videos.length, createdAt: new Date().toISOString(), checkedAt: new Date().toISOString() });
       } else if (method === 'PUT') {
         const video = board.videos.find(v => v.id === path.split('/')[4]); Object.assign(video, meta(new URL(input.url).pathname.slice(1)), { published: input.published });
@@ -58,12 +58,12 @@ async (page, fixture) => {
       board.revision++; return respond(board);
     }
     // The surrounding adoption services are not part of this feature's isolated contract.
-    if (path === '/api/animals') return route.fulfill({ headers, json: { content: [], totalPages: 0 } });
+    if (path === '/api/v1/animals') return route.fulfill({ headers, json: { content: [], totalPages: 0 } });
     if (path === '/api/v1/animals/stats/today') return route.fulfill({ headers, json: { rescuedToday: 0 } });
     if (path === '/api/v1/animals/stats/status') return route.fulfill({ headers, json: [] });
-    if (path === '/api/posts') return respond([]);
+    if (path === '/api/v1/posts') return respond([]);
     if (path.includes('/notifications')) return respond({ content: [], unreadCount: 0, nextCursor: null });
-    if (path.startsWith('/api/notes')) return respond({ content: [], totalPages: 0 });
+    if (path.startsWith('/api/v1/notes')) return respond({ content: [], totalPages: 0 });
     return respond([]);
   });
   await page.goto(origin + '/admin/videos');

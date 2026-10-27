@@ -4,8 +4,8 @@ async (page) => {
   const expected = ['/animals', '/animals/lost', '/shelters', '/animals/stats', '/travel', '/adoption', '/community'];
   const animals = [77, 78].map(id => ({ id, species: 'DOG', breed: `후보 ${id}`, gender: 'MALE', status: 'PROTECT', happenDate: '2026-09-10', happenPlace: '상주시', shelterName: '테스트 보호소', imageUrl: '/src/assets/image-placeholder.svg', age: '2026', weight: '2', images: [] }));
   let searches = 0;
-  await page.route('**/api/animals/*/similar', route => route.fulfill({ json: [] }));
-  await page.route(/\/api\/animals\/(77|78)$/, route => route.fulfill({ json: animals.find(x => route.request().url().endsWith('/' + x.id)) }));
+  await page.route('**/api/v1/animals/*/similar', route => route.fulfill({ json: [] }));
+  await page.route(/\/api\/v1\/animals\/(77|78)$/, route => route.fulfill({ json: animals.find(x => route.request().url().endsWith('/' + x.id)) }));
   await page.route('**/api/v1/animals/lost-candidates', route => {
     searches++;
     return route.fulfill({ json: { candidates: animals.map(animal => ({ animal, matchedEvidence: [] })) } });

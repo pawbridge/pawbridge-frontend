@@ -12,25 +12,25 @@ import type {
 
 // 일반 사용자용 주문 내역 목록 조회
 export const getOrders = async (params?: OrderListParams): Promise<OrderListResponse> => {
-  const response = await apiClient.get<OrderListResponse>('/api/orders', { params });
+  const response = await apiClient.get<OrderListResponse>('/api/v1/orders', { params });
   return response.data;
 };
 
 // 일반 사용자용 주문 상세 조회
 export const getOrderById = async (orderId: number): Promise<OrderDetail> => {
-  const response = await apiClient.get<OrderDetail>(`/api/orders/${orderId}`);
+  const response = await apiClient.get<OrderDetail>(`/api/v1/orders/${orderId}`);
   return response.data;
 };
 
 // 관리자용 주문 목록 조회
 export const getAdminOrders = async (params?: AdminOrderListParams): Promise<AdminOrderListResponse> => {
-  const response = await apiClient.get<AdminOrderListResponse>('/api/admin/orders', { params });
+  const response = await apiClient.get<AdminOrderListResponse>('/api/v1/admin/orders', { params });
   return response.data;
 };
 
 // 관리자용 주문 상세 조회
 export const getAdminOrderById = async (orderId: number): Promise<AdminOrderDetail> => {
-  const response = await apiClient.get<AdminOrderDetail>(`/api/admin/orders/${orderId}`);
+  const response = await apiClient.get<AdminOrderDetail>(`/api/v1/admin/orders/${orderId}`);
   return response.data;
 };
 
@@ -40,7 +40,7 @@ export const updateOrderStatus = async (
   data: UpdateOrderStatusRequest
 ): Promise<AdminOrderDetail> => {
   const response = await apiClient.patch<AdminOrderDetail>(
-    `/api/admin/orders/${orderId}/status`,
+    `/api/v1/admin/orders/${orderId}/status`,
     data
   );
   return response.data;
@@ -52,7 +52,7 @@ export const updateDeliveryStatus = async (
   data: UpdateDeliveryStatusRequest
 ): Promise<AdminOrderDetail> => {
   const response = await apiClient.patch<AdminOrderDetail>(
-    `/api/admin/orders/${orderId}/delivery-status`,
+    `/api/v1/admin/orders/${orderId}/delivery-status`,
     data
   );
   return response.data;

@@ -32,7 +32,7 @@ function localFaults(fixture) {
     const statuses = {};
     // Starting a JVM container is not application readiness. Probe the peer's authorized REST path.
     for (let attempt = 0; attempt < 60; attempt++) {
-      const ready = await fetch('http://localhost:28180/api/chats', {
+      const ready = await fetch('http://localhost:28180/api/v1/chats', {
         headers: { Authorization: 'Bearer ' + account.token }, signal: AbortSignal.timeout(2000),
       }).then(response => {
         statuses[response.status] = (statuses[response.status] || 0) + 1;
@@ -92,7 +92,7 @@ async function main() {
       if (/^\[chat-check\] security-[a-z-]+$/.test(entry.text())) console.log(entry.text());
     });
     page.on('response', response => {
-      if (new URL(response.url()).pathname === '/api/chats/connection-ticket') {
+      if (new URL(response.url()).pathname === '/api/v1/chats/connection-ticket') {
         console.log('[chat-check] ticket-status ' + response.status());
       }
     });
