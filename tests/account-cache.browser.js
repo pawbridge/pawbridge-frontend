@@ -17,13 +17,13 @@ async page => {
     }
     if (path === '/api/v1/auth/logout' && r.method() === 'POST') return send({ code: 200 });
     if (r.method() === 'GET') {
-      if (path === '/api/users/me') return send({ code: 200, data: user(id) });
-      if (path === '/api/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });
-      if (path === '/api/users/me/registered-animals') return send({ code: 200, data: paged([animal(id)]) });
-      if (path === '/api/carts') return send([{ id, skuId: id, skuCode: `SKU-${id}`, productId: id, productName: `계정${id}전용상품`, productImageUrl: '', price: 1000, quantity: 1, stockQuantity: 10 }]);
+      if (path === '/api/v1/users/me') return send({ code: 200, data: user(id) });
+      if (path === '/api/v1/users/me/favorite-animals') return send({ code: 200, data: { userId: id, totalCount: 1, favorites: [animal(id)] } });
+      if (path === '/api/v1/users/me/registered-animals') return send({ code: 200, data: paged([animal(id)]) });
+      if (path === '/api/v1/carts') return send([{ id, skuId: id, skuCode: `SKU-${id}`, productId: id, productName: `계정${id}전용상품`, productImageUrl: '', price: 1000, quantity: 1, stockQuantity: 10 }]);
       if (path === '/api/v1/mypage/wishlists') return send(paged([{ wishlistId: id, skuId: id, productId: id, productName: `계정${id}전용찜상품`, productStatus: 'ACTIVE', price: 1000, options: {}, createdAt: '2026-09-21T00:00:00' }]));
-      if (path === '/api/animals') return send(paged([]));
-      if (path === '/api/posts/read') return send({ code: 200, data: [] });
+      if (path === '/api/v1/animals') return send(paged([]));
+      if (path === '/api/v1/posts/read') return send({ code: 200, data: [] });
       if (path === '/api/v1/animals/stats/today') return send({ rescueCount: 0, adoptionCount: 0 });
       if (path === '/api/v1/animals/stats/status') return send([]);
     }
@@ -49,11 +49,11 @@ async page => {
     window.__documentMarker = Math.random();
   });
   page.on('pageerror', e => errors.push(e.message));
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   const cases = [
-    { tab: '내가 찜한 동물', role: 'ROLE_USER', text: '전용동물', path: '/api/users/me/favorite-animals' },
-    { tab: '내 보호소가 등록한 동물', role: 'ROLE_SHELTER', text: '전용동물', path: '/api/users/me/registered-animals' },
-    { tab: '나의 장바구니', role: 'ROLE_ADMIN', text: '전용상품', path: '/api/carts' },
+    { tab: '내가 찜한 동물', role: 'ROLE_USER', text: '전용동물', path: '/api/v1/users/me/favorite-animals' },
+    { tab: '내 보호소가 등록한 동물', role: 'ROLE_SHELTER', text: '전용동물', path: '/api/v1/users/me/registered-animals' },
+    { tab: '나의 장바구니', role: 'ROLE_ADMIN', text: '전용상품', path: '/api/v1/carts' },
     { tab: '나의 위시리스트', role: 'ROLE_ADMIN', text: '전용찜상품', path: '/api/v1/mypage/wishlists' },
   ];
   try {
@@ -93,6 +93,6 @@ async page => {
     assert(unexpected.length === 0, `Unexpected API: ${unexpected.join(', ')}`);
     return { results, errors, unexpected };
   } finally {
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }

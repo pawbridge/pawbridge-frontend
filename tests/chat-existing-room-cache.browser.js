@@ -10,9 +10,9 @@ async (page, origin = 'http://127.0.0.1:5186') => {
   const release = () => { releases.forEach(resolve => resolve()); releases.clear(); };
   const handler = async route => {
     const url = new URL(route.request().url());
-    if (!url.pathname.startsWith('/api/')) return url.origin === origin ? route.continue() : route.abort();
+    if (!url.pathname.startsWith('/api/v1/')) return url.origin === origin ? route.continue() : route.abort();
     let data = { content: [], nextCursor: null, unreadCount: 0, totalPages: 0, totalElements: 0 };
-    if (url.pathname === '/api/chats/with/2') {
+    if (url.pathname === '/api/v1/chats/with/2') {
       const response = lookup;
       if (held) {
         await new Promise(resolve => { releases.add(resolve); });
@@ -22,9 +22,9 @@ async (page, origin = 'http://127.0.0.1:5186') => {
       return;
     }
     if (url.pathname.includes('ticket')) return route.fulfill({ status: 503, json: { message: 'Synthetic socket disabled' } });
-    if (url.pathname === '/api/notes/recipients/2') data = { userId: 2, nickname: '합성 상대', active: true };
-    if (url.pathname === `/api/chats/${roomId}`) data = { roomId, counterpartId: 2, counterpartNickname: '합성 상대', canSend: true };
-    if (url.pathname === `/api/chats/${roomId}/messages`) data = {
+    if (url.pathname === '/api/v1/notes/recipients/2') data = { userId: 2, nickname: '합성 상대', active: true };
+    if (url.pathname === `/api/v1/chats/${roomId}`) data = { roomId, counterpartId: 2, counterpartNickname: '합성 상대', canSend: true };
+    if (url.pathname === `/api/v1/chats/${roomId}/messages`) data = {
       content: [{ roomId, sequence: 1, senderId: 2, body: '기존 대화 기록', contextHref: null, createdAt: '2026-10-11T01:00:00Z' }], nextCursor: null,
     };
     return route.fulfill({ json: { code: 200, data } });
@@ -34,7 +34,7 @@ async (page, origin = 'http://127.0.0.1:5186') => {
   })));
   await page.route('**/*', handler);
   page.on('pageerror', recordError);
-  const waitForLookup = () => page.waitForRequest('**/api/chats/with/2', { timeout: 10000 });
+  const waitForLookup = () => page.waitForRequest('**/api/v1/chats/with/2', { timeout: 10000 });
   try {
     await page.goto(`${origin}/chats/new?to=2`, { waitUntil: 'domcontentloaded' });
     const input = page.getByLabel('메시지', { exact: true });
@@ -47,7 +47,7 @@ async (page, origin = 'http://127.0.0.1:5186') => {
     await page.evaluate(() => window.dispatchEvent(new Event('focus')));
     await refreshing;
     if (await input.inputValue() !== '재조회 중에도 보존할 작성 내용') throw new Error('Background refresh lost the draft');
-    const refreshed = page.waitForResponse('**/api/chats/with/2');
+    const refreshed = page.waitForResponse('**/api/v1/chats/with/2');
     held = false; release();
     await (await refreshed).finished();
     if (await input.inputValue() !== '재조회 중에도 보존할 작성 내용') throw new Error('Completed background refresh lost the draft');

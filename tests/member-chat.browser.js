@@ -20,7 +20,7 @@ async (page, accounts, bulkOnly = false) => {
     window.WebSocket = class extends Native {
       constructor(url, protocols) {
         const target = new URL(String(url));
-        if (target.pathname === '/api/chats/socket' && target.port === '28080') target.port = '28180';
+        if (target.pathname === '/api/v1/chats/socket' && target.port === '28080') target.port = '28180';
         super(target.href, protocols);
       }
     };
@@ -39,7 +39,7 @@ async (page, accounts, bulkOnly = false) => {
     const {Client} = await import('/node_modules/@stomp/stompjs/esm6/index.js');
     let response;
     for (let attempt = 0; attempt < 4; attempt++) {
-      response = await fetch('http://localhost:28080/api/chats/connection-ticket', {
+      response = await fetch('http://localhost:28080/api/v1/chats/connection-ticket', {
         method:'POST', headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:'{}',
       });
       if (response.status !== 429) break;
@@ -54,7 +54,7 @@ async (page, accounts, bulkOnly = false) => {
       setTimeout(() => reject(new Error('CONNECT timed out')),5000);
     });
     const client = new Client({
-      brokerURL:'ws://localhost:28080/api/chats/socket', connectHeaders:{ticket:data.ticket},
+      brokerURL:'ws://localhost:28080/api/v1/chats/socket', connectHeaders:{ticket:data.ticket},
       reconnectDelay:0, debug:()=>{}, heartbeatIncoming:15000, heartbeatOutgoing:15000,
       onWebSocketError:()=>failed(new Error('Transport failed')),
       onStompError:()=>failed(new Error('Send rejected')),
@@ -118,7 +118,7 @@ async (page, accounts, bulkOnly = false) => {
   try {
     step('login-and-empty-rooms');
     await login(page,accounts[0]); await login(receiver,accounts[1]);
-    assert((await get('/api/chats',accounts[0])).content.length === 0,'Room created before first message');
+    assert((await get('/api/v1/chats',accounts[0])).content.length === 0,'Room created before first message');
     await page.goto(origin + '/chats/new?to=' + accounts[1].userId);
     await page.getByText(/2,000자 · 연결됨/).waitFor();
     await wait(async () => receiverSubscribed);
@@ -130,18 +130,18 @@ async (page, accounts, bulkOnly = false) => {
     const room = page.url().split('/').pop();
     step('redis-cross-app-receive');
     await receiver.getByRole('status').filter({hasText:'새 메시지가 왔어요'}).waitFor();
-    assert(peerSockets.some(url => url.includes(':28180/api/chats/socket')),'Receiver did not use actual peer gateway');
-    assert((await get('/api/chats/notifications',accounts[1])).unreadCount === 1,'Unread room missing');
+    assert(peerSockets.some(url => url.includes(':28180/api/v1/chats/socket')),'Receiver did not use actual peer gateway');
+    assert((await get('/api/v1/chats/notifications',accounts[1])).unreadCount === 1,'Unread room missing');
     await receiver.getByRole('button',{name:/^연락 알림/}).click();
     const menu = receiver.getByRole('region',{name:'연락 알림 목록'});
     assert(!(await menu.innerText()).includes('합성 채팅 검증'),'Notification exposed body');
-    assert((await get('/api/chats/notifications',accounts[1])).unreadCount === 1,'Notification opening marked read');
+    assert((await get('/api/v1/chats/notifications',accounts[1])).unreadCount === 1,'Notification opening marked read');
     checks.push('actual-two-app-redis-delivery-and-body-free-notification');
     step('visible-read-and-mobile');
     await receiver.bringToFront();
     await menu.locator('a[href="/chats/'+room+'"]').click();
     await receiver.getByText(body,{exact:true}).waitFor();
-    await wait(async () => (await get('/api/chats/notifications',accounts[1])).unreadCount === 0);
+    await wait(async () => (await get('/api/v1/chats/notifications',accounts[1])).unreadCount === 0);
     await page.getByText('읽음',{exact:true}).waitFor();
     await receiver.setViewportSize({width:375,height:812});
     assert(await receiver.evaluate(() => document.documentElement.scrollWidth <= innerWidth),'Mobile horizontal overflow');
@@ -151,13 +151,13 @@ async (page, accounts, bulkOnly = false) => {
     step('fifty-message-cursor-history');
     await page.bringToFront();
     await raw(page,accounts[0],accounts[1].userId,55);
-    await wait(async () => (await get('/api/chats/'+room,accounts[0])).latestSequence === 56);
+    await wait(async () => (await get('/api/v1/chats/'+room,accounts[0])).latestSequence === 56);
     await page.reload();
     await page.getByRole('button',{name:'이전 메시지 50개 더 보기'}).click();
     await wait(async () => await page.locator('[data-sequence]').count() === 56);
     const order = await page.locator('[data-sequence]').evaluateAll(items => items.map(item => Number(item.dataset.sequence)));
     assert(order.every((sequence,n) => sequence === n+1),'History has duplicates or gaps');
-    const content = await get('/api/chats/'+room+'/messages',accounts[0]);
+    const content = await get('/api/v1/chats/'+room+'/messages',accounts[0]);
     assert(content.content.every(message => message.senderId === accounts[0].userId),'Forged sender accepted');
     await page.screenshot({path:'/tmp/pawbridge-member-chat-desktop.png',fullPage:true});
     checks.push('actual-fifty-cursor-history-and-authenticated-sender');
@@ -165,12 +165,12 @@ async (page, accounts, bulkOnly = false) => {
     receiver.once('dialog',dialog => dialog.accept());
     await receiver.getByRole('button',{name:'내 목록에서 숨기기'}).click();
     await receiver.waitForURL(origin+'/chats');
-    assert((await get('/api/chats',accounts[1])).content.length === 0,'Personal hide failed');
-    assert((await get('/api/chats',accounts[0])).content.length === 1,'Hide changed counterpart state');
+    assert((await get('/api/v1/chats',accounts[1])).content.length === 0,'Personal hide failed');
+    assert((await get('/api/v1/chats',accounts[0])).content.length === 1,'Hide changed counterpart state');
     await page.bringToFront();
     await page.waitForTimeout(2200);
     await raw(page,accounts[0],accounts[1].userId,1);
-    await wait(async () => (await get('/api/chats',accounts[1])).content.length === 1);
+    await wait(async () => (await get('/api/v1/chats',accounts[1])).content.length === 1);
     checks.push('personal-hide-and-new-message-restoration');
     step('offline-login-recovery');
     await receiverContext.close();
@@ -179,13 +179,13 @@ async (page, accounts, bulkOnly = false) => {
     receiverContext = await page.context().browser().newContext({viewport:{width:1440,height:1000}});
     await peer(receiverContext); receiver = await receiverContext.newPage();
     await login(receiver,accounts[1]);
-    await wait(async () => (await get('/api/chats/notifications',accounts[1])).unreadCount === 1);
+    await wait(async () => (await get('/api/v1/chats/notifications',accounts[1])).unreadCount === 1);
     assert(await receiver.getByRole('status').filter({hasText:'새 메시지가 왔어요'}).count() === 0,'Initial restore replayed old toast');
     checks.push('offline-login-rest-restoration-without-old-toast');
     step('foreign-room-authorization');
     for (const operation of ['get','put','delete']) {
       const path = operation === 'get' ? '/messages' : operation === 'put' ? '/read' : '/visibility';
-      const response = await page.request[operation](api+'/api/chats/'+room+path,
+      const response = await page.request[operation](api+'/api/v1/chats/'+room+path,
         {headers:headers(accounts[2]),...(operation === 'put' ? {data:{sequence:1}} : {})});
       assert(response.status() === 404,'Foreign room operation accepted');
     }
@@ -195,7 +195,7 @@ async (page, accounts, bulkOnly = false) => {
     await receiver.getByLabel('메시지',{exact:true}).waitFor();
     receiver.once('dialog',dialog => dialog.accept());
     await receiver.getByRole('button',{name:'회원 차단'}).click();
-    await wait(async () => (await get('/api/chats/'+room,accounts[0])).canSend === false);
+    await wait(async () => (await get('/api/v1/chats/'+room,accounts[0])).canSend === false);
     checks.push('shared-private-note-block-disables-chat');
     return {environment:'isolated-local-dev',checks,productionVerified:false};
   } catch (failure) {

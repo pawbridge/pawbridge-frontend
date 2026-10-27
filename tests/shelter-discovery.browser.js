@@ -1,7 +1,7 @@
 // playwright-cli run-code --filename=tests/shelter-discovery.browser.js
 // Only mock API responses. No real account or application mutations.
 async page => {
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   const requests = [];
   let mode = 'normal';
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -10,16 +10,16 @@ async page => {
   const sample = { id: 1, careRegNo: '311100000000001', name: '마포 동물보호센터', address: '서울특별시 마포구', phone: '02-1234-5678', protectedCount: 12,
     animals: [1,2,3].map(id => ({ id, breed: id === 2 ? '한국 고양이' : '믹스견', species: 'DOG', gender: 'MALE', birthYear: 2024, imageUrl: null, happenDate: today })) };
   const paged = (content, count = content.length) => ({ content, totalElements: count, totalPages: count > 12 ? 2 : 1, number: 0, size: 12 });
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const path = route.request().url().replace(/^https?:\/\/[^/]+/, '');
     const url = { pathname: path.split('?')[0], search: path.includes('?') ? '?' + path.split('?')[1] : '' };
-    if (!url.pathname.startsWith('/api/')) return route.continue();
+    if (!url.pathname.startsWith('/api/v1/')) return route.continue();
     requests.push(url.pathname + url.search);
     if (route.request().method() !== 'GET') throw Error('Unexpected mutation');
-    if (url.pathname === '/api/shelters/discovery') return route.fulfill({ status: mode === 'error' ? 500 : 200, json: mode === 'error' ? {} : paged(mode === 'empty' ? [] : [sample, { ...sample, id: 2, name: '강동 동물보호센터', protectedCount: 8 }], mode === 'empty' ? 0 : 14) });
+    if (url.pathname === '/api/v1/shelters/discovery') return route.fulfill({ status: mode === 'error' ? 500 : 200, json: mode === 'error' ? {} : paged(mode === 'empty' ? [] : [sample, { ...sample, id: 2, name: '강동 동물보호센터', protectedCount: 8 }], mode === 'empty' ? 0 : 14) });
     if (url.pathname.endsWith('/observations')) return route.fulfill({ json: [{ date: from, observedAt: `${from}T04:00:00+09:00`, protectedCount: 12 }, { date: today, observedAt: `${today}T04:00:00+09:00`, protectedCount: 0 }] });
-    if (url.pathname === '/api/shelters/1') return route.fulfill({ json: sample });
-    if (url.pathname === '/api/animals') return route.fulfill({ json: paged(sample.animals.map(a => ({ ...a, status: 'PROTECT', shelterId: 1, shelterName: sample.name, apmsNoticeNo: '서울-마포-2026-00001' }))) });
+    if (url.pathname === '/api/v1/shelters/1') return route.fulfill({ json: sample });
+    if (url.pathname === '/api/v1/animals') return route.fulfill({ json: paged(sample.animals.map(a => ({ ...a, status: 'PROTECT', shelterId: 1, shelterName: sample.name, apmsNoticeNo: '서울-마포-2026-00001' }))) });
     return route.fulfill({ json: {} });
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -38,7 +38,7 @@ async page => {
   await page.getByRole('link', { name: '이 보호소 동물 보기 →' }).first().click();
   await page.getByRole('heading', { name: '이 보호소의 동물을 만나보세요' }).waitFor();
   await page.getByRole('heading', { name: /검색 결과 3마리/ }).waitFor();
-  const animalRequest = [...requests].reverse().find(url => url.startsWith('/api/animals?'));
+  const animalRequest = [...requests].reverse().find(url => url.startsWith('/api/v1/animals?'));
   const animalParams = Object.fromEntries(animalRequest.split('?')[1].split('&').map(part => part.split('=').map(decodeURIComponent)));
   for (const [key, value] of [['shelterId', '1'], ['intakeFrom', from], ['intakeTo', today], ['status', 'PROTECT']]) if (animalParams[key] !== value) throw Error(`Lost API context: ${key}`);
   await page.screenshot({ path: '/tmp/pawbridge-shelter-search-desktop.png', fullPage: true });

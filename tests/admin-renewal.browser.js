@@ -1,7 +1,7 @@
 // Local UI contracts only. Every API is intercepted; no production data is changed.
 async page => {
   const origin = 'http://127.0.0.1:5199';
-  await page.unroute('**/api/**');
+  await page.unroute('**/api/v1/**');
   const check = (condition, label) => { if (!condition) throw new Error(label); };
   const results = [];
   const errors = [];
@@ -19,7 +19,7 @@ async page => {
   const paged = content => ({ content, totalElements: content.length, totalPages: content.length ? 1 : 0, number: 0, size: 20, first: true, last: true, empty: !content.length });
   const envelope = data => ({ code: 200, data });
   page.on('pageerror', error => errors.push(error.message));
-  await page.route('**/api/**', async route => {
+  await page.route('**/api/v1/**', async route => {
     const request = route.request();
     if (!['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
@@ -32,23 +32,23 @@ async page => {
       if (path.endsWith('/reject')) applicationStatus = 'REJECTED';
       return route.fulfill({ json: envelope(path.includes('shelter-applications') ? application() : null) });
     }
-    if ((mode === 'members-error' && path === '/api/admin/users') || (mode === 'managers-error' && path.endsWith('/members')) || (mode === 'stats-error' && path.includes('/daily-signups'))) return route.fulfill({ status: 500, json: { message: 'mock failure' } });
-    if (mode === 'loading' && path === '/api/admin/users') await page.waitForTimeout(1800);
+    if ((mode === 'members-error' && path === '/api/v1/admin/users') || (mode === 'managers-error' && path.endsWith('/members')) || (mode === 'stats-error' && path.includes('/daily-signups'))) return route.fulfill({ status: 500, json: { message: 'mock failure' } });
+    if (mode === 'loading' && path === '/api/v1/admin/users') await page.waitForTimeout(1800);
     let body;
-    if (path === '/api/admin/users') body = envelope(paged(mode === 'empty' ? [] : members));
-    else if (/^\/api\/admin\/users\/\d+$/.test(path)) body = envelope(members[0]);
+    if (path === '/api/v1/admin/users') body = envelope(paged(mode === 'empty' ? [] : members));
+    else if (/^\/api\/v1\/admin\/users\/\d+$/.test(path)) body = envelope(members[0]);
     else if (path.endsWith('/stats/total-users')) body = envelope(1248);
     else if (path.endsWith('/stats/today')) body = envelope(7);
     else if (path.endsWith('/daily-signups') || path.endsWith('/daily-animals')) {
       const dates = [];
       for (let date = new Date(params.startDate + 'T00:00:00Z'), index = 0; date.toISOString().slice(0, 10) <= params.endDate; date.setUTCDate(date.getUTCDate() + 1), index++) if (index % 3 !== 1) dates.push({ date: date.toISOString().slice(0, 10), count: mode === 'zero' ? 0 : index + 3 });
       body = path.endsWith('/daily-signups') ? envelope(dates) : dates;
-    } else if (path === '/api/shelters') body = paged([shelter]);
-    else if (path.startsWith('/api/shelters/by-care-reg-no/')) body = shelter;
+    } else if (path === '/api/v1/shelters') body = paged([shelter]);
+    else if (path.startsWith('/api/v1/shelters/by-care-reg-no/')) body = shelter;
     else if (path.endsWith('/members')) body = envelope(paged([{ userId: 2, name: '박소장', email: members[1].email, approvalApplicationId: 42 }]));
-    else if (path === '/api/admin/users/shelter-applications') body = envelope(paged([application()]));
-    else if (path === '/api/admin/users/shelter-applications/42') body = envelope(application());
-    else if (path === '/api/users/me') body = envelope(null);
+    else if (path === '/api/v1/admin/users/shelter-applications') body = envelope(paged([application()]));
+    else if (path === '/api/v1/admin/users/shelter-applications/42') body = envelope(application());
+    else if (path === '/api/v1/users/me') body = envelope(null);
     else return route.fulfill({ status: 501, json: { message: 'Unmocked API: ' + path } });
     return route.fulfill({ json: body });
   });

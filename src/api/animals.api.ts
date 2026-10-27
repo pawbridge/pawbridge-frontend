@@ -36,7 +36,7 @@ const unwrapResponse = <T>(responseData: T | WrappedResponse<T>): T => {
 
 // 동물 목록 조회 (페이지네이션, 필터링, 정렬)
 export const getAnimals = async (params?: AnimalSearchParams, signal?: AbortSignal): Promise<PageResponse<Animal>> => {
-  const response = await apiClient.get<PageResponse<Animal>>('/api/animals', {
+  const response = await apiClient.get<PageResponse<Animal>>('/api/v1/animals', {
     signal,
     params: {
       page: params?.page ?? 0,
@@ -63,7 +63,7 @@ export const getAnimals = async (params?: AnimalSearchParams, signal?: AbortSign
 
 // 동물 상세 조회
 export const getAnimalById = async (id: number): Promise<Animal> => {
-  const response = await apiClient.get<AnimalDetailResponse>(`/api/animals/${id}`);
+  const response = await apiClient.get<AnimalDetailResponse>(`/api/v1/animals/${id}`);
   console.log('getAnimalById 전체 응답:', response);
   console.log('getAnimalById response.data:', response.data);
   
@@ -90,20 +90,20 @@ export const getAnimalById = async (id: number): Promise<Animal> => {
 // 동물 찜하기
 export const addFavorite = async (animalId: number): Promise<{ favoriteId: number }> => {
   const response = await apiClient.post<{ code: number; data: { favoriteId: number }; message: string }>(
-    `/api/favorites/${animalId}`
+    `/api/v1/favorites/${animalId}`
   );
   return response.data.data;
 };
 
 // 동물 찜 제거
 export const removeFavorite = async (animalId: number): Promise<void> => {
-  await apiClient.delete<{ code: number; data: null; message: string }>(`/api/favorites/${animalId}`);
+  await apiClient.delete<{ code: number; data: null; message: string }>(`/api/v1/favorites/${animalId}`);
 };
 
 // 찜 여부 확인
 export const checkFavorite = async (animalId: number, signal?: AbortSignal): Promise<boolean> => {
   const response = await apiClient.get<{ code: number; data: boolean; message: string }>(
-    `/api/favorites/${animalId}/check`, { signal }
+    `/api/v1/favorites/${animalId}/check`, { signal }
   );
   return response.data.data;
 };
@@ -111,7 +111,7 @@ export const checkFavorite = async (animalId: number, signal?: AbortSignal): Pro
 // 동물 등록 요청 타입
 // 명세서 기준: careRegNo를 사용 (shelterId 아님)
 export interface CreateAnimalRequest {
-  careRegNo: string; // 필수: 보호소 등록번호 (/api/users/me에서 획득)
+  careRegNo: string; // 필수: 보호소 등록번호 (/api/v1/users/me에서 획득)
   species: 'DOG' | 'CAT' | 'ETC';
   status: 'PROTECT' | 'ADOPTION_PENDING' | 'ADOPTED' | 'EUTHANIZED' | 'NATURAL_DEATH' | 'RETURNED' | 'DONATED' | 'RELEASED' | 'ESCAPED' | 'UNKNOWN';
   noticeStartDate: string; // 필수: 공고 시작일 (YYYY-MM-DD)
@@ -134,7 +134,7 @@ export interface CreateAnimalRequest {
 
 // 동물 등록
 export const createAnimal = async (animalData: CreateAnimalRequest): Promise<Animal> => {
-  const response = await apiClient.post<Animal>('/api/animals', animalData);
+  const response = await apiClient.post<Animal>('/api/v1/animals', animalData);
   return response.data;
 };
 
@@ -145,7 +145,7 @@ export type UpdateAnimalRequest = Omit<CreateAnimalRequest, 'careRegNo'> & {
 
 // 동물 수정
 export const updateAnimal = async (id: number, animalData: UpdateAnimalRequest): Promise<Animal> => {
-  const response = await apiClient.put<Animal>(`/api/animals/${id}`, animalData);
+  const response = await apiClient.put<Animal>(`/api/v1/animals/${id}`, animalData);
   return response.data;
 };
 
@@ -171,7 +171,7 @@ export const uploadAnimalImage = async (file: File): Promise<AnimalImageUploadRe
     message?: string;
     imageUrl?: string; // 직접 응답인 경우
   }>(
-    '/api/animals/images',
+    '/api/v1/animals/images',
     formData,
     {
       headers: {
@@ -203,7 +203,7 @@ export const uploadAnimalImages = async (files: File[]): Promise<AnimalImagesUpl
   });
   
   const response = await apiClient.post<AnimalImagesUploadResponse>(
-    '/api/animals/images/multiple',
+    '/api/v1/animals/images/multiple',
     formData,
     {
       headers: {
@@ -217,7 +217,7 @@ export const uploadAnimalImages = async (files: File[]): Promise<AnimalImagesUpl
 // 유사 동물 목록 조회
 export const getSimilarAnimals = async (id: number): Promise<Animal[]> => {
   const response = await apiClient.get<Animal[] | { code: number; data: Animal[]; message: string }>(
-    `/api/animals/${id}/similar`
+    `/api/v1/animals/${id}/similar`
   );
   const data = response.data;
 
@@ -236,7 +236,7 @@ export const sendAnimalChatbotMessage = async (
   request: ChatbotMessageRequest
 ): Promise<ChatbotMessageResponse> => {
   const response = await apiClient.post<ChatbotMessageResponse | WrappedResponse<ChatbotMessageResponse>>(
-    `/api/animals/${animalId}/chat/messages`,
+    `/api/v1/animals/${animalId}/chat/messages`,
     request,
     {
       withCredentials: true,
@@ -248,7 +248,7 @@ export const sendAnimalChatbotMessage = async (
 
 // 이미지 삭제
 export const deleteAnimalImage = async (imageUrl: string): Promise<void> => {
-  await apiClient.delete('/api/animals/images', {
+  await apiClient.delete('/api/v1/animals/images', {
     params: { imageUrl },
   });
 };

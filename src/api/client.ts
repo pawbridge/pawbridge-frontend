@@ -39,9 +39,9 @@ const createPreviousSessionError = () => new axios.CanceledError('로그인 정�
 
 function isPublicRequest(requestUrl: string, method?: string): boolean {
   const normalizedMethod = method?.toLowerCase();
-  // 공개 API 경로 패턴: /api/animals 또는 /api/animals/{id}
-  const isPublicAnimalApi = /^\/api\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
-  const isPublicVideoApi = requestUrl === '/api/home/videos' && normalizedMethod === 'get';
+  // 공개 API 경로 패턴: /api/v1/animals 또는 /api/v1/animals/{id}
+  const isPublicAnimalApi = /^\/api\/v1\/animals(\/\d+(\/similar|\/chat\/messages)?)?(\?.*)?$/.test(requestUrl);
+  const isPublicVideoApi = requestUrl === '/api/v1/home/videos' && normalizedMethod === 'get';
   return isPublicVideoApi
     || isPublicAnimalApi
     || isPublicTravelRequest(requestUrl, method)
@@ -49,7 +49,7 @@ function isPublicRequest(requestUrl: string, method?: string): boolean {
 }
 
 function isAuthEndpoint(requestUrl: string): boolean {
-  return requestUrl.startsWith('/api/v1/auth/') || requestUrl.startsWith('/api/auth/');
+  return requestUrl.startsWith('/api/v1/auth/');
 }
 
 function readBearerToken(config: InternalAxiosRequestConfig): string | null {

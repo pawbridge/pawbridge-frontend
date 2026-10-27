@@ -13,8 +13,8 @@ test('telephone and map links cannot turn provider text into a script URL', () =
   assert.ok(shelterMapUrl('주소 / ? #').startsWith('https://map.naver.com/p/search/'));
 });
 test('public GET errors stay on shelter screens without changing protected write handling', () => {
-  assert.equal(isPublicShelterRequest('/api/shelters?keyword=서울', 'get'), true);
-  assert.equal(isPublicShelterRequest('/api/shelters/by-care-reg-no/123456789012345', 'GET'), true);
-  assert.equal(isPublicShelterRequest('/api/shelters', 'POST'), false);
-  assert.equal(isPublicShelterRequest('/api/admin/users/shelters', 'GET'), false);
+  assert.equal(isPublicShelterRequest('/api/v1/shelters?keyword=서울', 'get'), true);
+  assert.equal(isPublicShelterRequest('/api/v1/shelters/by-care-reg-no/123456789012345', 'GET'), true);
+  assert.equal(isPublicShelterRequest('/api/v1/shelters', 'POST'), false);
+  assert.equal(isPublicShelterRequest('/api/v1/admin/users/shelters', 'GET'), false);
 });

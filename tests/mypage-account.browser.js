@@ -24,11 +24,11 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
-    if (!path.startsWith('/api/')) return route.continue();
-    if (path === '/api/users/me' && request.method() === 'GET') {
+    if (!path.startsWith('/api/v1/')) return route.continue();
+    if (path === '/api/v1/users/me' && request.method() === 'GET') {
       return route.fulfill({ json: { code: 200, data: user } });
     }
-    if (request.method() === 'PUT' && ['/api/users/me/nickname', '/api/users/me/password'].includes(path)) {
+    if (request.method() === 'PUT' && ['/api/v1/users/me/nickname', '/api/v1/users/me/password'].includes(path)) {
       const body = request.postDataJSON();
       writes.push({ path, body });
       await new Promise(resolve => { release = resolve; });
@@ -41,7 +41,7 @@ async page => {
     await route.abort();
   };
   page.on('pageerror', onError);
-  await page.route('**/api/**', handler);
+  await page.route('**/api/v1/**', handler);
   const profile = () => page.getByRole('button', { name: '프로필 정보' });
   const password = () => page.getByRole('button', { name: '비밀번호 변경' });
   const nickname = () => page.getByPlaceholder('2~30자의 한글, 영문, 숫자');
@@ -66,7 +66,7 @@ async page => {
     await page.getByRole('button', { name: '변경 중...' }).waitFor();
     assert(await submit().isDisabled(), 'Pending submit must be disabled');
     assert(writes.length === count + 1, 'Submit must send exactly one mutation');
-    assert(writes[count].path === `/api/users/me/${field}`, 'Wrong mutation endpoint');
+    assert(writes[count].path === `/api/v1/users/me/${field}`, 'Wrong mutation endpoint');
     assert(JSON.stringify(writes[count].body) === JSON.stringify(expected), 'Wrong mutation payload');
     release();
     await page.getByRole('button', { name: '변경하기', exact: true }).waitFor();
@@ -170,6 +170,6 @@ async page => {
   } finally {
     if (release) release();
     page.off('pageerror', onError);
-    await page.unroute('**/api/**', handler);
+    await page.unroute('**/api/v1/**', handler);
   }
 }
