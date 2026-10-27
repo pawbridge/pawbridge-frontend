@@ -4,8 +4,9 @@
 //   node tests/run-browser.mjs name1 name2     run the selected tests
 //   node tests/run-browser.mjs --repeat 3 name run the selection three times
 //
-// Network guarantee: Chromium resolves only localhost and 127.0.0.1 (plus a test's allowHosts),
-// so browser requests to other hosts cannot leave the machine. Requests made on the Node side
+// Network guarantee: Chromium resolves only localhost and 127.0.0.1, the Google font hosts the
+// production page loads (so screenshots look like production) and a test's allowHosts, so browser
+// requests to other hosts cannot leave the machine. Requests made on the Node side
 // (route.fetch, page.request) are not covered by this guard.
 import { spawn } from 'node:child_process';
 import { createHmac } from 'node:crypto';
@@ -50,6 +51,15 @@ const rejectionGraceMs = 500;
 // External resources the app itself loads (fonts, address search script, login and site images). Requests to them
 // are aborted quietly; an aborted request to any other host fails the test, so a new external dependency or a call
 // to a real API host (for example api.pawbridge.kr) is caught.
+// Fonts the production page loads from Google (index.html): Noto Sans KR and the Material Symbols
+// icon font. Without them icons render as their names ("menu", "person") and screenshots differ
+// from production. These hosts serve static font files only, so no API call can leave through them.
+const productionFontHosts = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
+function allowedHostsFor(test) {
+  return [...new Set([...productionFontHosts, ...(test.allowHosts || [])])];
+}
+
 const knownAppHosts = new Set([
   'fonts.googleapis.com',
   'fonts.gstatic.com',
@@ -465,7 +475,7 @@ function watchNetwork(context, allowHosts, networkReport) {
 }
 
 async function prepareContext(context, test, networkReport) {
-  const allowHosts = test.allowHosts || [];
+  const allowHosts = allowedHostsFor(test);
   context.setDefaultTimeout(defaultTimeoutMs);
   watchNetwork(context, allowHosts, networkReport);
   // The app itself loads fonts, scripts and images from other hosts (index.html, login buttons).
@@ -588,7 +598,7 @@ async function runOneTest(test, iteration, browserFor) {
   const startedAt = Date.now();
   const networkReport = { attempts: [], abortedHosts: new Set(), pendingChecks: [] };
   const contexts = [];
-  const browser = await browserFor(test.allowHosts || []);
+  const browser = await browserFor(allowedHostsFor(test));
   const fixture = buildFixture(test);
   let page = null;
   let error = null;
@@ -624,7 +634,7 @@ async function runOneTest(test, iteration, browserFor) {
     error = new Error(`Unhandled rejection during the test: ${firstErrorLine(testRejections[0])}`);
   }
   await Promise.all(networkReport.pendingChecks);
-  const unknownHosts = [...networkReport.abortedHosts].filter(host => !knownAppHosts.has(host) && !(test.allowHosts || []).includes(host));
+  const unknownHosts = [...networkReport.abortedHosts].filter(host => !knownAppHosts.has(host) && !allowedHostsFor(test).includes(host));
   if (!error && unknownHosts.length > 0) {
     error = new Error(`Request to an unexpected external host: ${unknownHosts.sort().join(', ')}`);
   }

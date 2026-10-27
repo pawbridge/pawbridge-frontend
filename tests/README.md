@@ -43,9 +43,9 @@ npm run test:browser -- --repeat 3 lost-search        # 반복 실행
 
 ### 네트워크 보장 범위
 
-Chromium은 `--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1`(테스트의 허용 호스트는 EXCLUDE 추가)와 `--no-proxy-server`로 실행한다. 따라서 브라우저가 보내는 루프백 밖 요청은 차단된다. 허용 목록은 `font-consistency`의 `fonts.googleapis.com`·`fonts.gstatic.com`뿐이며, 허용 목록이 있는 테스트는 별도 브라우저로 실행한다.
+Chromium은 `--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1`(테스트의 허용 호스트는 EXCLUDE 추가)와 `--no-proxy-server`로 실행한다. 따라서 브라우저가 보내는 루프백 밖 요청은 차단된다. 모든 테스트에서 운영 화면이 불러오는 Google 글꼴 호스트(`fonts.googleapis.com`·`fonts.gstatic.com`)는 허용한다. 글꼴이 없으면 Material Symbols 아이콘이 이름(`menu`, `person` 등)으로 보여 캡처가 운영 화면과 달라지기 때문이다. 이 두 호스트는 정적 글꼴 파일만 주므로 API 요청이 나갈 수 없다. 테스트별 허용 호스트가 더 있으면 그 테스트는 별도 브라우저로 실행한다.
 
-앱 자체가 불러오는 외부 자원(Google Fonts, 다음 우편번호 스크립트, `www.pawbridge.kr` 아이콘, 로그인 버튼 이미지 등) 중 테스트가 직접 처리하지 않은 요청은 실행기가 컨텍스트 단계에서 중단하고 표의 DETAIL에 호스트를 기록한다. 테스트가 외부 요청을 `route.continue()` 등으로 네트워크에 보내 Chromium 네트워크 단계까지 도달하면(호스트 해석 차단 또는 실제 서버 응답) 해당 테스트를 실패로 처리한다.
+앱 자체가 불러오는 외부 자원(다음 우편번호 스크립트, `www.pawbridge.kr` 아이콘, 로그인 버튼 이미지 등) 중 테스트가 직접 처리하지 않은 요청은 실행기가 컨텍스트 단계에서 중단하고 표의 DETAIL에 호스트를 기록한다. 테스트가 외부 요청을 `route.continue()` 등으로 네트워크에 보내 Chromium 네트워크 단계까지 도달하면(호스트 해석 차단 또는 실제 서버 응답) 해당 테스트를 실패로 처리한다.
 
 Node 쪽 요청(`route.fetch`, `page.request` 등 Playwright가 Node에서 보내는 요청)은 이 보장에 포함되지 않는다. 예를 들어 `font-consistency`는 `route.fetch()`로 Google Fonts를 실제로 받는다.
 
