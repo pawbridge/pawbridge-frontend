@@ -1,0 +1,524 @@
+{
+  "profiles": {
+    "preview-local": {
+      "description": "Preview build; API base is the local Compose gateway address (nothing listens there during a run).",
+      "env": {
+        "VITE_API_BASE_URL": "http://localhost:28080"
+      }
+    },
+    "preview-same-origin": {
+      "description": "Preview build with an empty API base, so API calls go to the page origin.",
+      "env": {
+        "VITE_API_BASE_URL": ""
+      }
+    },
+    "preview-chat": {
+      "description": "preview-local plus the member chat flag.",
+      "env": {
+        "VITE_API_BASE_URL": "http://localhost:28080",
+        "VITE_MEMBER_CHAT_ENABLED": "true"
+      }
+    },
+    "dev-local": {
+      "description": "Dev server; API base is the local Compose gateway address.",
+      "env": {
+        "VITE_API_BASE_URL": "http://localhost:28080"
+      }
+    },
+    "dev-lint": {
+      "description": "dev-local plus a synthetic Toss test client key.",
+      "env": {
+        "VITE_API_BASE_URL": "http://localhost:28080",
+        "VITE_TOSS_CLIENT_KEY": "test_local_lint_fixture"
+      }
+    },
+    "dev-chat": {
+      "description": "dev-local plus the member chat flag.",
+      "env": {
+        "VITE_API_BASE_URL": "http://localhost:28080",
+        "VITE_MEMBER_CHAT_ENABLED": "true"
+      }
+    },
+    "dev-visits": {
+      "description": "Dev server with an empty API base and daily visitor counting in local test mode.",
+      "env": {
+        "VITE_API_BASE_URL": "",
+        "VITE_DAILY_VISITORS_ENABLED": "true",
+        "VITE_VISITOR_TEST_MODE": "true"
+      }
+    },
+    "dev-home-videos": {
+      "description": "Dev server whose API base is the synthetic video API address mocked by the test.",
+      "env": {
+        "VITE_API_BASE_URL": "http://127.0.0.1:28089"
+      }
+    }
+  },
+  "tests": [
+    {
+      "name": "account-cache",
+      "origin": "http://127.0.0.1:5209",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "account-cache-boundaries",
+      "origin": "http://127.0.0.1:5209",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "admin-market",
+      "origin": "http://127.0.0.1:5199",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "admin-renewal",
+      "origin": "http://127.0.0.1:5199",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "admin-statistics-expansion",
+      "origin": "http://127.0.0.1:5202",
+      "server": "dev",
+      "profile": "dev-lint",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "animal-report-navigation",
+      "origin": "http://127.0.0.1:5198",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "animal-report-search",
+      "origin": "http://127.0.0.1:15174",
+      "server": "preview",
+      "profile": "preview-same-origin",
+      "call": "page",
+      "preNavigate": true,
+      "group": "mock"
+    },
+    {
+      "name": "animal-weight",
+      "origin": "http://127.0.0.1:5216",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": true,
+      "group": "mock"
+    },
+    {
+      "name": "api-response-boundary",
+      "origin": "http://127.0.0.1:5211",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": true,
+      "group": "mock"
+    },
+    {
+      "name": "auth-refresh",
+      "origin": "http://localhost:5231",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "blocked-author-cache",
+      "origin": "http://127.0.0.1:5187",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-origin",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "brand-theme",
+      "origin": "http://127.0.0.1:5195",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "chat-existing-room-cache",
+      "origin": "http://127.0.0.1:5186",
+      "server": "preview",
+      "profile": "preview-chat",
+      "call": "page-origin",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "dependency-security",
+      "origin": "http://127.0.0.1:5260",
+      "server": "dev",
+      "profile": "dev-chat",
+      "call": "page-origin",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "font-consistency",
+      "origin": "http://127.0.0.1:5198",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock",
+      "allowHosts": [
+        "fonts.googleapis.com",
+        "fonts.gstatic.com"
+      ]
+    },
+    {
+      "name": "footer-contact",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "header-response",
+      "origin": "http://127.0.0.1:5215",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": true,
+      "group": "mock"
+    },
+    {
+      "name": "home-interrupted-navigation",
+      "origin": "http://127.0.0.1:5212",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "home-videos",
+      "origin": "http://127.0.0.1:5214",
+      "server": "dev",
+      "profile": "dev-home-videos",
+      "call": "page-fixture",
+      "preNavigate": false,
+      "group": "mock",
+      "fixture": {
+        "mode": "mock",
+        "thumbnailFile": "src/assets/home/hero-happy-b.webp",
+        "syntheticTokens": true
+      }
+    },
+    {
+      "name": "lint-regression",
+      "origin": "http://127.0.0.1:5202",
+      "server": "dev",
+      "profile": "dev-lint",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "login-401",
+      "origin": "http://127.0.0.1:5213",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "lost-search",
+      "origin": "http://127.0.0.1:5187",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "lost-search-navigation",
+      "origin": "http://127.0.0.1:5187",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "map-security",
+      "origin": "http://127.0.0.1:5262",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page-origin-evidence-phase",
+      "preNavigate": false,
+      "group": "mock",
+      "fixture": {
+        "evidence": "temporary-directory",
+        "phase": "after"
+      }
+    },
+    {
+      "name": "market-navigation",
+      "origin": "http://127.0.0.1:5198",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "member-auth",
+      "origin": "http://127.0.0.1:5201",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "mypage-account",
+      "origin": "http://127.0.0.1:5201",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "mypage-animals",
+      "origin": "http://127.0.0.1:5205",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "mypage-info-feedback",
+      "origin": "http://127.0.0.1:5201",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "mypage-list-feedback",
+      "origin": "http://127.0.0.1:5210",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "mypage-market",
+      "origin": "http://127.0.0.1:5207",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "private-note-notifications",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "protected-animal-navigation",
+      "origin": "http://127.0.0.1:5198",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "registered-animals-pagination",
+      "origin": "http://127.0.0.1:5203",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "shelter-discovery",
+      "origin": "http://127.0.0.1:5198",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "shelter-errors",
+      "origin": "http://127.0.0.1:5194",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "shelter-flow",
+      "origin": "http://127.0.0.1:5194",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "travel-images",
+      "origin": "http://127.0.0.1:5197",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "travel-list-first",
+      "origin": "http://127.0.0.1:5197",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "travel-pagination",
+      "origin": "http://127.0.0.1:5199",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "visits",
+      "origin": "http://127.0.0.1:5192",
+      "server": "dev",
+      "profile": "dev-visits",
+      "call": "browser-fixture",
+      "preNavigate": false,
+      "group": "mock",
+      "fixture": {
+        "evidence": "temporary-directory"
+      }
+    },
+    {
+      "name": "blocked-author-visibility",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "chat-existing-room",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "chat-login-return",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "member-chat",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts-bulk",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "member-chat-recovery",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts-faults",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "member-chat-security",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "private-notes",
+      "origin": "http://127.0.0.1:5184",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page-accounts",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
+    },
+    {
+      "name": "travel-db",
+      "origin": "http://127.0.0.1:5197",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "env",
+      "note": "not runnable here; needs the fixture backend on 127.0.0.1:18081 and the gateway on 127.0.0.1:18180 (see the travel DB sections of tests/README.md)"
+    }
+  ]
+}

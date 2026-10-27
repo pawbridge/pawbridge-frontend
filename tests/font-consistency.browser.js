@@ -65,7 +65,8 @@ async page => {
       await page.setViewportSize({ width, height: 900 });
       for (const path of paths) {
         await page.goto(origin + path);
-        await page.locator('main, form').first().waitFor();
+        // Login v2 keeps its email form collapsed and has no <main>, so wait for the page heading instead.
+        await page.locator('main, form, h1, h2').first().waitFor();
         await page.evaluate(() => document.fonts.ready);
         for (const dark of [false, true]) {
           await page.evaluate(dark => document.documentElement.classList.toggle('dark', dark), dark);
@@ -82,7 +83,7 @@ async page => {
         if (path !== '/login') {
           const header = await page.locator('header').first().evaluate(element => {
             const logo = getComputedStyle(element.querySelector('h2'));
-            const action = getComputedStyle(element.querySelector('a[href="/signup"]'));
+            const action = getComputedStyle(element.querySelector('a[href="/login"]'));
             const mark = element.querySelector('img[src="/favicon.svg"]');
             const bounds = mark?.getBoundingClientRect();
             return { logo: [logo.fontSize, logo.fontWeight, logo.lineHeight, logo.letterSpacing],

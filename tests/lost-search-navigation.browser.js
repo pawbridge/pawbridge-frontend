@@ -1,7 +1,9 @@
 async (page) => {
   await page.unrouteAll({ behavior: 'ignoreErrors' });
   const check = (ok, message) => { if (!ok) throw new Error(message); };
-  const expected = ['/animals', '/animals/lost', '/shelters', '/animals/stats', '/travel', '/adoption', '/community'];
+  const expectedDesktop = ['보호동물', '실종동물 찾기', '/travel', '/adoption', '/community'];
+  // The mobile menu lists both groups' destinations in place (src/lib/navigationDestinations.ts).
+  const expectedMobile = ['/animals', '/shelters', '/animals/stats', '/reports/missing', '/reports/sightings', '/animals/lost', '/travel', '/adoption', '/community'];
   const animals = [77, 78].map(id => ({ id, species: 'DOG', breed: `후보 ${id}`, gender: 'MALE', status: 'PROTECT', happenDate: '2026-09-10', happenPlace: '상주시', shelterName: '테스트 보호소', imageUrl: '/src/assets/image-placeholder.svg', age: '2026', weight: '2', images: [] }));
   let searches = 0;
   await page.route('**/api/v1/animals/*/similar', route => route.fulfill({ json: [] }));
@@ -12,7 +14,10 @@ async (page) => {
   });
   await page.goto('http://127.0.0.1:5187/animals/lost');
   await page.setViewportSize({ width: 1920, height: 1080 });
-  check(JSON.stringify(await page.locator('header nav').first().locator('a').evaluateAll(xs => xs.map(x => x.getAttribute('href')))) === JSON.stringify(expected), 'desktop menu order');
+  // Since 8e7428b the desktop menu opens 보호동물 and 실종동물 찾기 as groups (buttons), followed by plain links.
+  const desktopMenu = await page.locator('header nav').first().evaluate(nav => [...nav.querySelectorAll(':scope > button, :scope > div > button, :scope > a')]
+    .map(item => item.tagName === 'A' ? item.getAttribute('href') : item.textContent.trim()));
+  check(JSON.stringify(desktopMenu) === JSON.stringify(expectedDesktop), `desktop menu order: ${JSON.stringify(desktopMenu)}`);
   await page.getByLabel('실종동물 사진', { exact: true }).setInputFiles('tests/fixtures/lost-search.png');
   await page.getByAltText('선택한 실종동물 사진').waitFor();
   await page.getByLabel('실종 날짜', { exact: true }).fill('2026-09-08');
@@ -46,12 +51,14 @@ async (page) => {
   await page.getByRole('heading', { name: '확인할 후보 2마리' }).waitFor();
   check(searches === 1, 'detail return reran GPU search');
   await page.getByRole('button', { name: '메뉴 열기', exact: true }).click();
-  check(JSON.stringify(await page.locator('#mobile-navigation a').evaluateAll(xs => xs.map(x => x.getAttribute('href')).filter(x => x !== '/login'))) === JSON.stringify(expected), 'mobile menu order');
+  const mobileMenu = await page.locator('#mobile-navigation a').evaluateAll(xs => xs.map(x => x.getAttribute('href')).filter(x => x !== '/login'));
+  check(JSON.stringify(mobileMenu) === JSON.stringify(expectedMobile), `mobile menu order: ${JSON.stringify(mobileMenu)}`);
   await page.getByRole('button', { name: '메뉴 닫기', exact: true }).click();
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'mobile overflow');
   await page.locator('header').getByRole('link', { name: /PawBridge/ }).click();
   await page.getByRole('button', { name: '메뉴 열기', exact: true }).click();
-  await page.locator('#mobile-navigation').getByRole('link', { name: '실종동물 찾기', exact: true }).click();
+  // In the mobile menu '실종동물 찾기' is now a group heading; its photo search entry is '사진으로 찾기'.
+  await page.locator('#mobile-navigation').getByRole('link', { name: /사진으로 찾기/ }).click();
   check(await page.getByRole('button', { name: '사진으로 후보 찾기', exact: true }).isDisabled(), 'new entry reused previous photo');
   check(await page.getByRole('heading', { name: '확인할 후보 2마리' }).count() === 0, 'new entry reused previous results');
   return { result: 'PASS', searches, restoredScrollY: beforeY, checked: ['desktop/mobile menu order', 'browser-back photo conditions status option results scroll without search', 'second candidate and detail return', 'new entry isolation'] };

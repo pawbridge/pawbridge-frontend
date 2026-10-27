@@ -4,7 +4,7 @@ async page => {
   const checks = [], errors = [], unexpected = [], requests = [];
   const assert = (ok, message) => { if (!ok) throw new Error(message); };
   const definitions = [
-    { tab: 'favoriteAnimals', title: '내가 찜한 동물', label: '찜한 동물을', empty: '아직 찜한 동물이 없습니다.', path: '/api/v1/users/me/favorite-animals' },
+    { tab: 'favoriteAnimals', title: '관심 동물', label: '관심 동물을', empty: '아직 관심 동물이 없습니다', path: '/api/v1/users/me/favorite-animals' },
     { tab: 'registeredAnimals', title: '내 보호소가 등록한 동물', label: '등록한 동물을', empty: '아직 등록한 동물이 없습니다.', path: '/api/v1/users/me/registered-animals' },
     { tab: 'wishlist', title: '나의 위시리스트', label: '위시리스트를', empty: '찜한 상품이 없습니다.', path: '/api/v1/users/me/wishlists' },
     { tab: 'cart', title: '나의 장바구니', label: '장바구니를', empty: '장바구니가 비어있습니다.', path: '/api/v1/carts' },
@@ -18,6 +18,14 @@ async page => {
   const handler = async route => {
     const req = route.request(), relative = req.url().replace(/^https?:\/\/[^/]+/, ''), path = relative.split('?')[0];
     if (!path.startsWith('/api/v1/')) return route.continue();
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
     requests.push({ method: req.method(), relative });
     if (path === '/api/v1/users/me' && req.method() === 'GET') return route.fulfill({ json: { code: 200, data: user() } });
     if (path === '/api/v1/carts' && req.method() === 'DELETE') return route.fulfill({ json: {} });

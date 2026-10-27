@@ -11,6 +11,14 @@ async page => {
     const request = route.request();
     const relative = request.url().replace(/^https?:\/\/[^/]+/, '');
     const path = relative.split('?')[0];
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
     const query = relative.split('?')[1] ?? '';
     const param = name => decodeURIComponent(query.match(new RegExp(`(?:^|&)${name}=([^&]*)`))?.[1] ?? '');
     if (!path.startsWith('/api/v1/')) return route.continue();
@@ -26,17 +34,20 @@ async page => {
       if (/^\/api\/v1\/animals\/\d+$/.test(path)) return route.fulfill({ json: animal(Number(path.split('/').at(-1))) });
       if (/^\/api\/v1\/animals\/\d+\/similar$/.test(path)) return route.fulfill({ json: [] });
       if (/^\/api\/v1\/favorites\/\d+\/check$/.test(path)) return route.fulfill({ json: { code: 200, data: false } });
+      // The animal detail page also loads its shelter's public information.
+      if (/^\/api\/v1\/shelters\/\d+$/.test(path)) return route.fulfill({ json: { id: Number(path.split('/').at(-1)), name: '모의 보호소' } });
     }
     unexpected.push(`${request.method()} ${path}`);
     return route.abort();
   };
   const tab = name => page.getByRole('button', { name, exact: true });
-  const favorites = () => page.getByRole('button', { name: '내가 찜한 동물' });
+  const favorites = () => page.locator('aside').getByRole('button', { name: '관심 동물' });
   const registered = () => page.getByRole('button', { name: '내 보호소가 등록한 동물' });
   const profile = () => page.getByRole('button', { name: '프로필 정보' });
   const next = () => tab('다음');
   const previous = () => tab('이전');
-  const cards = () => page.locator('main a[href^="/animals/"]').filter({ has: page.locator('h3') });
+  // Registered animals are linked cards; favorite animals became article cards with a detail link (669402f).
+  const cards = () => page.locator('main').locator('article, a[href^="/animals/"]').filter({ has: page.locator('h3') });
   const names = () => cards().locator('h3').allTextContents();
   const reset = async (selected = 'profile') => {
     await page.evaluate(({ user, selected }) => {
@@ -60,10 +71,10 @@ async page => {
         const response = page.waitForResponse(r => r.url().includes('/api/v1/users/me/favorite-animals'));
         await favorites().click(); await response;
         if (count === 0) {
-          await page.getByText('아직 찜한 동물이 없습니다.', { exact: true }).waitFor();
+          await page.getByText('아직 관심 동물이 없습니다', { exact: true }).waitFor();
           assert(await cards().count() === 0 && await next().count() === 0, 'Empty favorites show pages');
         } else {
-          await page.getByText(`총 ${count}마리의 동물을 찜했습니다`, { exact: true }).waitFor();
+          await page.getByText(`관심 동물 ${count}마리`, { exact: true }).waitFor();
           for (let number = 0; number < Math.ceil(count / 12); number++) {
             assert(await cards().count() === Math.min(12, count - number * 12), 'Favorite page length changed');
             assert((await names())[0] === `동물 ${number * 12 + 1}`, 'Wrong favorite page');
@@ -79,9 +90,9 @@ async page => {
       assert((await names())[0] === '동물 25', 'Favorite page lost on tab switch');
       await previous().click();
       assert((await names())[0] === '동물 13', 'Favorite previous failed');
-      await tab('1').click();
+      await tab('1페이지').click();
       assert((await names())[0] === '동물 1', 'Favorite numbered page failed');
-      await tab('2').click();
+      await tab('2페이지').click();
       for (const count of [21, 41]) {
         registeredCount = count;
         await reset('registeredAnimals');
@@ -89,7 +100,7 @@ async page => {
         await next().click();
         await cards().locator('h3').first().getByText('동물 21', { exact: true }).waitFor();
         await favorites().click();
-        await page.getByText('총 25마리의 동물을 찜했습니다', { exact: true }).waitFor();
+        await page.getByText('관심 동물 25마리', { exact: true }).waitFor();
         await next().click();
         await registered().click();
         await page.getByText(`총 ${count}마리의 동물을 등록했습니다`, { exact: true }).waitFor();
@@ -100,8 +111,9 @@ async page => {
         assert(await page.getByRole('link', { name: /새 동물 등록/ }).getAttribute('href') === '/animals/new', 'Create link changed');
         await cards().first().click();
         await page.waitForURL('**/animals/21');
-        await page.getByRole('button', { name: '마이페이지', exact: true }).waitFor();
-        await page.getByRole('button', { name: '마이페이지', exact: true }).click();
+        // The detail page's return button reads '동물 목록으로' but goes back to the My Page tab it came from.
+        await page.getByRole('button', { name: '동물 목록으로', exact: true }).waitFor();
+        await page.getByRole('button', { name: '동물 목록으로', exact: true }).click();
         await page.getByText(`총 ${count}마리의 동물을 등록했습니다`, { exact: true }).waitFor();
         assert((await names())[0] === '동물 1', 'Detail return baseline changed');
         checks.push(`registered ${count}, tab persistence and detail return / ${width}`);
@@ -115,11 +127,13 @@ async page => {
         await page.screenshot({ path: `/tmp/mypage-animals-${panel}-${width}.png`, fullPage: true, animations: 'disabled' });
       }
       await favorites().click();
-      await cards().first().click();
+      await cards().first().getByRole('link', { name: '상세 보기', exact: true }).click();
       await page.waitForURL('**/animals/1');
-      assert(!(await page.evaluate(() => history.state?.usr?.from)), 'Favorite detail route state changed');
+      // Since 669402f the detail page learns it was opened from the My Page favorites tab, for its back link.
+      const routeState = await page.evaluate(() => history.state?.usr);
+      assert(routeState?.from === 'mypage' && routeState?.tab === 'favoriteAnimals', 'Favorite detail route state changed');
       await page.goBack();
-      await page.getByText('총 25마리의 동물을 찜했습니다', { exact: true }).waitFor();
+      await page.getByText('관심 동물 25마리', { exact: true }).waitFor();
       assert((await names())[0] === '동물 1', 'Favorite browser return baseline changed');
     }
     role = 'ROLE_USER';
@@ -127,7 +141,7 @@ async page => {
     assert(await registered().count() === 0, 'Member sees shelter menu');
     assert(!requests.some(x => x.includes('/registered-animals')), 'Member fetched shelter animals');
     await favorites().click();
-    await page.getByText('총 25마리의 동물을 찜했습니다', { exact: true }).waitFor();
+    await page.getByText('관심 동물 25마리', { exact: true }).waitFor();
     assert(errors.length === 0 && unexpected.length === 0, JSON.stringify({ errors, unexpected }));
     return { checks, memberAccess: 'pass', pageErrors: errors, unexpectedRequests: unexpected };
   } finally {

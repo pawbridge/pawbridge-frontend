@@ -1,7 +1,8 @@
 // Browser actions are real. In connected mode, video HTTP + JWT Gateway + PostgreSQL are real.
 // Only YouTube provider data (server-side), unrelated homepage APIs and external images are synthesized.
 async (page, fixture) => {
-  const origin = 'http://127.0.0.1:5198';
+  // The shared runner gives this test its own dev server; 5198 serves preview-only tests.
+  const origin = fixture?.origin ?? 'http://127.0.0.1:5198';
   const api = 'http://127.0.0.1:28089';
   const checks = [];
   const assert = (ok, label) => { if (!ok) throw new Error(label); checks.push(label); };
@@ -47,13 +48,13 @@ async (page, fixture) => {
       if (path.endsWith('/order')) {
         board.videos.sort((a,b) => input.ids.indexOf(a.id) - input.ids.indexOf(b.id));
       } else if (path.endsWith('/publication')) {
-        const video = board.videos.find(v => v.id === path.split('/')[4]); video.published = input.published;
+        const video = board.videos.find(v => v.id === path.split('/')[5]); video.published = input.published;
       } else if (path.endsWith('/recheck')) {
-        const video = board.videos.find(v => v.id === path.split('/')[4]); Object.assign(video, meta(video.videoId));
+        const video = board.videos.find(v => v.id === path.split('/')[5]); Object.assign(video, meta(video.videoId));
       } else if (method === 'POST' && path === '/api/v1/admin/videos') {
         board.videos.push({ id: '00000000-0000-4000-8000-' + String(board.videos.length+1).padStart(12,'0'), ...meta(new URL(input.url).pathname.slice(1)), published: input.published, position: board.videos.length, createdAt: new Date().toISOString(), checkedAt: new Date().toISOString() });
       } else if (method === 'PUT') {
-        const video = board.videos.find(v => v.id === path.split('/')[4]); Object.assign(video, meta(new URL(input.url).pathname.slice(1)), { published: input.published });
+        const video = board.videos.find(v => v.id === path.split('/')[5]); Object.assign(video, meta(new URL(input.url).pathname.slice(1)), { published: input.published });
       }
       board.revision++; return respond(board);
     }
