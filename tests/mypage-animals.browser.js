@@ -118,7 +118,7 @@ async page => {
         // Both return controls name the My Page tab the visitor came from.
         const breadcrumb = page.getByRole('navigation', { name: '현재 위치', exact: true });
         await breadcrumb.getByRole('button', { name: '등록한 동물', exact: true }).waitFor();
-        await page.getByRole('button', { name: '등록한 동물로 돌아가기', exact: true }).click();
+        await page.getByRole('button', { name: '등록한 동물 목록으로', exact: true }).click();
         await page.getByText(`총 ${count}마리의 동물을 등록했습니다`, { exact: true }).waitFor();
         assert((await names())[0] === '동물 1', 'Detail return baseline changed');
         checks.push(`registered ${count}, tab persistence and detail return / ${width}`);
@@ -143,7 +143,7 @@ async page => {
       await favorites().click();
       await cards().first().getByRole('link', { name: '상세 보기', exact: true }).click();
       await page.waitForURL('**/animals/1');
-      await page.getByRole('button', { name: '관심 동물로 돌아가기', exact: true }).waitFor();
+      await page.getByRole('button', { name: '관심 동물 목록으로', exact: true }).waitFor();
       // Since 669402f the detail page learns it was opened from the My Page favorites tab, for its back link.
       const routeState = await page.evaluate(() => history.state?.usr);
       assert(routeState?.from === 'mypage' && routeState?.tab === 'favoriteAnimals', 'Favorite detail route state changed');
