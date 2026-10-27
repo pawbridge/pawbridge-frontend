@@ -119,7 +119,7 @@ export default function MyPage() {
   // 위시리스트 조회
   const wishlistsQuery = useQuery({
     queryKey: ['wishlists', user?.id || 'mock', wishlistPage, 20],
-    queryFn: () => getWishlists(user?.id || 1, { page: wishlistPage, size: 20 }),
+    queryFn: () => getWishlists({ page: wishlistPage, size: 20 }),
     enabled: activeTab === 'wishlist',
   });
 
