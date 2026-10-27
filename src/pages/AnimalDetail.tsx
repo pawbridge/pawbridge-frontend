@@ -42,8 +42,9 @@ export default function AnimalDetail() {
     : fromMyRegisteredAnimals ? '등록한 동물'
       : fromMyPage || fromFavorites ? '관심 동물'
         : fromLostSearch ? '실종 검색 결과' : '동물 검색';
+  // Same '… 목록으로' form as the other entry points, using the My Page menu name.
   const returnButtonLabel = shelterReturnTo ? '보호소 동물 목록으로'
-    : fromMyPage || fromFavorites ? `${returnPlace}로 돌아가기` : '동물 목록으로';
+    : fromMyPage || fromFavorites ? `${returnPlace} 목록으로` : '동물 목록으로';
   const returnToSearch = () => {
     if (shelterReturnTo) navigate(shelterReturnTo, { state: { ...location.state?.shelterDetailState, shelterRestoreKey: location.state?.shelterRestoreKey } });
     else if (fromMyPage) navigate('/mypage', { state: { tab: previousTab } });
