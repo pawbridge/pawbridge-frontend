@@ -27,7 +27,8 @@ export default function MyFavoriteAnimalsPanel({ feedback, favoriteAnimals, curr
         {favorites.length ? (
           <div className="mt-8">
             <p className="mb-5 text-sm text-gray-600 dark:text-gray-300">관심 동물 {favoriteAnimals?.totalCount ?? favorites.length}마리</p>
-            <div className="grid gap-5 2xl:grid-cols-2">
+            {/* 마이페이지 본문은 최대 1280px이라 2열이면 카드 글자 칸이 너무 좁아진다. 1열로 둔다. */}
+            <div className="grid gap-5">
               {pageItems.map(favorite => <FavoriteAnimalCard key={favorite.favoriteId} favorite={favorite} fromMyPage />)}
             </div>
             {totalPages > 1 && (
