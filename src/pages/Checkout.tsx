@@ -153,10 +153,6 @@ export default function Checkout() {
   const requestTossPayment = async (orderId: number, orderNumber: string, amount: number) => {
     const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
     
-    // 디버깅: 환경 변수 확인
-    console.log('=== 토스페이먼츠 환경 변수 확인 ===');
-    console.log('VITE_TOSS_CLIENT_KEY:', clientKey);
-    console.log('clientKey 존재 여부:', !!clientKey);
     
     if (!clientKey) {
       alert('결제 설정이 올바르지 않습니다. 관리자에게 문의해주세요.');
@@ -233,18 +229,15 @@ export default function Checkout() {
 
     new window.daum.Postcode({
       oncomplete: (data: DaumPostcodeData) => {
-        console.log('다음 우편번호 응답:', data); // 디버깅용
         
         // 도로명 주소 우선, 없으면 지번 주소 사용
         const address = data.roadAddress || data.jibunAddress;
-        console.log('선택된 주소:', address); // 디버깅용
         
         // 건물명이 있으면 추가
         const fullAddress = data.buildingName 
           ? `${address} (${data.buildingName})`
           : address;
         
-        console.log('최종 주소:', fullAddress); // 디버깅용
         
         setFormData(prev => {
           const newData = {
@@ -252,7 +245,6 @@ export default function Checkout() {
             deliveryAddress: fullAddress,
             deliveryAddressDetail: '', // 상세주소 초기화
           };
-          console.log('업데이트된 formData:', newData); // 디버깅용
           return newData;
         });
         
