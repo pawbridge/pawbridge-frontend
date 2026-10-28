@@ -22,6 +22,8 @@ jobs:
       - name: Lint policy regression
         run: npm run test:lint-policy
       - run: npm run test:environment
+      - name: Icon font subset covers every icon
+        run: npm run test:icons
       - name: Daily visitor contract
         run: npm run test:visits
       - name: Chat connection regressions
