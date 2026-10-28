@@ -169,10 +169,19 @@ async page => {
   results.push('approval/rejection modals, payload, processing lock, back query');
   mode = 'stats-error';
   await page.goto(origin + '/admin/statistics');
-  await page.getByText('통계 조회 실패', { exact: true }).waitFor({ timeout: 15000 });
-  check(await page.getByRole('heading', { name: '기간 합계' }).count() === 0, 'Statistics failure is not zero');
+  // The page opens on the protected-animal statistics (b6bc043); the member trend is what this step checks.
+  await page.getByRole('group', { name: '통계 유형' }).getByRole('button', { name: '회원', exact: true }).click();
+  await page.getByText('회원 가입 추이 조회 실패', { exact: true }).waitFor({ timeout: 15000 });
+  // A failed lookup must read as a failure, never as a zero: no trend chart, and the daily-average card shows its
+  // failure state instead of a number.
+  const dailyAverage = page.getByRole('region', { name: '일평균 가입', exact: true });
+  check(await page.getByRole('heading', { name: '회원 가입 추이', exact: true }).count() === 0, 'Statistics failure is not zero');
+  check(await dailyAverage.getByText('조회 실패', { exact: true }).isVisible(), 'Statistics failure is not zero');
+  check(await dailyAverage.locator('p.text-\\[28px\\]').count() === 0, 'Statistics failure is not zero');
   mode = 'zero';
-  await page.getByRole('button', { name: '다시 불러오기', exact: true }).click();
+  // Each statistics panel now has its own retry; the member trend's retry is the one this step exercises.
+  const memberTrendFailure = page.getByRole('alert').filter({ hasText: '회원 가입 추이 조회 실패' });
+  await memberTrendFailure.getByRole('button', { name: '다시 불러오기', exact: true }).click();
   await page.getByRole('heading', { name: '회원 가입 추이', exact: true }).waitFor();
   await page.getByRole('button', { name: '최근 30일', exact: true }).click();
   await page.getByRole('button', { name: '다음', exact: true }).click();

@@ -268,10 +268,3 @@ export const sendAnimalChatbotMessage = async (
 
   return unwrapResponse(response.data);
 };
-
-// 이미지 삭제
-export const deleteAnimalImage = async (imageUrl: string): Promise<void> => {
-  await apiClient.delete('/api/v1/animals/images', {
-    params: { imageUrl },
-  });
-};

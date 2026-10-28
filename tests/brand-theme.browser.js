@@ -9,10 +9,10 @@ async page => {
   if(!u.pathname.startsWith('/api/v1/'))return route.continue();
   if(req.method()!=='GET'){await route.abort();return;}
   const paged=content=>({content,number:0,size:20,totalElements:120,totalPages:6,first:true,last:false});
-  const animal={id:1,breed:'믹스견',species:'DOG',gender:'MALE',age:2,weight:4,status:'PROTECT',shelterId:1,shelterName:'검증 보호소',neuterStatus:'UNKNOWN',apmsNoticeNo:'서울-강남-2026-00001',images:[],favoriteCount:0,color:'흰색',specialMark:'코 주변 흰 무늬, 빨간 목줄',foundPlace:'서울 강남구',foundDate:'2026-09-22',createdAt:'2026-09-22T10:00:00',noticeEndDate:'2026-09-30'};
+  const animal={id:1,breed:'믹스견',species:'DOG',gender:'MALE',age:2,weight:'4',status:'PROTECT',shelterId:1,shelterName:'검증 보호소',neuterStatus:'UNKNOWN',apmsNoticeNo:'서울-강남-2026-00001',images:[],favoriteCount:0,color:'흰색',specialMark:'코 주변 흰 무늬, 빨간 목줄',foundPlace:'서울 강남구',foundDate:'2026-09-22',createdAt:'2026-09-22T10:00:00',noticeEndDate:'2026-09-30'};
   let data=[];
   if(u.pathname==='/api/v1/animals')data=paged(Array.from({length:4},(_,i)=>({...animal,id:i+1})));
-  else if(u.pathname==='/api/v1/shelters')data=paged([{id:1,careRegNo:'123',name:'검증 보호소',address:'서울특별시 예시구 보호로 12',organizationName:'서울특별시 예시구'}]);
+  else if(u.pathname==='/api/v1/shelters/discovery')data=paged([{id:1,careRegNo:'123',name:'검증 보호소',address:'서울특별시 예시구 보호로 12',phone:null,protectedCount:1,animals:[]}]);
   else if(u.pathname.endsWith('/stats/today'))data={date:'2026-09-22',rescuedToday:169,adoptedToday:5};
   else if(u.pathname.endsWith('/stats/status'))data=[{status:'PROTECT',label:'보호중',count:166},{status:'RETURN',label:'종료(반환)',count:2},{status:'NATURAL_DEATH',label:'종료(자연사)',count:1}];
   else if(u.pathname.endsWith('/stats/regional'))data=['서울특별시','경기도','대전광역시','세종특별자치시','부산광역시','경상남도'].map((region,i)=>({region,count:[100,3000,33,5,500,1000][i]}));

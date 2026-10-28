@@ -9,6 +9,15 @@ async page => {
   const handler = async route => {
     const request = route.request();
     const path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
+    // Signed-in pages open the note stream and load note notifications; answer both so they stay out of the
+    // unexpected list. A 429 with the longest accepted Retry-After (300 s) keeps reconnects rare.
+    if (path === '/api/v1/notes/stream') {
+      return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
+    }
+    if (path === '/api/v1/notes/notifications') {
+      return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
+    }
+    if (path === '/api/v1/home/videos') return route.fulfill({ json: { code: 200, data: [] } });
     if (!path.startsWith('/api/v1/')) return route.continue();
     seen.push(`${request.method()} ${path}`);
     if (request.method() === 'GET') {
@@ -19,7 +28,7 @@ async page => {
       unexpected.push(`GET ${path}`);
       return route.fulfill({ status: 404, json: { message: '테스트에 정의되지 않은 요청' } });
     }
-    if (!['/api/v1/auth/login', '/api/v1/users/signup', '/api/v1/email/send', '/api/v1/email/verify', '/api/v1/auth/password/reset-request', '/api/v1/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
+    if (!['/api/v1/auth/login', '/api/v1/auth/password/reset-request', '/api/v1/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
     writes.push({ path, body: request.postDataJSON() });
     if (mode === 'network') return route.abort();
     if (mode !== 'success') return route.fulfill({ status: 400, json: { code: 400, message: mode === 'malformed' ? { detail: 'not a string' } : '서버 테스트 안내', data: null } });
@@ -51,6 +60,8 @@ async page => {
       await page.setViewportSize({ width, height: width === 1920 ? 1080 : 844 });
       await page.goto(`${origin}/login`);
       await page.evaluate(() => localStorage.clear());
+      // Login v2 shows social login first; the email form opens behind this toggle (df45575).
+      await page.getByRole('button', { name: /이메일로 로그인/ }).click();
       await page.getByPlaceholder('이메일 주소를 입력하세요').fill('member@example.invalid');
       await page.getByPlaceholder('비밀번호를 입력하세요', { exact: true }).fill('test-password');
       for (const [failure, expected] of [['error', '서버 테스트 안내'], ['malformed', '이메일 또는 비밀번호가 일치하지 않습니다.'], ['network', '이메일 또는 비밀번호가 일치하지 않습니다.']]) {
@@ -69,30 +80,11 @@ async page => {
       await page.evaluate(() => localStorage.clear());
       checks.push(`login error/fallback/payload/session ${width}`);
 
+      // Email sign-up was retired: /signup must keep sending people to the login page (App.tsx).
       await page.goto(`${origin}/signup`);
-      await page.getByPlaceholder('이메일 주소를 입력하세요').fill('member@example.invalid');
-      mode = 'error';
-      await notice(() => page.getByRole('button', { name: '인증코드 발송', exact: true }).click(), '서버 테스트 안내');
-      mode = 'success';
-      await notice(() => page.getByRole('button', { name: '인증코드 발송', exact: true }).click(), '인증 코드가 이메일로 발송되었습니다.');
-      lastWrite('/api/v1/email/send', { email: 'member@example.invalid' });
-      for (let i = 0; i < 6; i++) await page.locator(`#verify-code-${i}`).fill(String(i + 1));
-      mode = 'malformed';
-      await notice(() => page.getByRole('button', { name: '인증 확인', exact: true }).click(), '인증 코드 검증에 실패했습니다');
-      mode = 'success';
-      await notice(() => page.getByRole('button', { name: '인증 확인', exact: true }).click(), '이메일 인증이 완료되었습니다!');
-      lastWrite('/api/v1/email/verify', { email: 'member@example.invalid', code: '123456' });
-      await page.getByPlaceholder('이름을 입력하세요').fill('검증회원');
-      await page.getByPlaceholder('비밀번호를 입력하세요', { exact: true }).fill('test-password');
-      await page.getByPlaceholder('비밀번호를 다시 한번 입력하세요').fill('test-password');
-      mode = 'error';
-      await notice(() => page.locator('button[type="submit"]').click(), '서버 테스트 안내');
-      await layout('signup-error', width);
-      mode = 'success';
-      await notice(() => page.locator('button[type="submit"]').click(), '회원가입 성공!\n환영합니다, 검증회원님!');
-      await page.waitForURL('**/login');
-      lastWrite('/api/v1/users/signup', { email: 'member@example.invalid', name: '검증회원', password: 'test-password', rePassword: 'test-password', role: 'ROLE_USER' });
-      checks.push(`signup/send/verify/errors/payload ${width}`);
+      await page.waitForURL(`${origin}/login`);
+      assert(await page.getByPlaceholder('이름을 입력하세요').count() === 0, 'Email sign-up form came back');
+      checks.push(`signup redirects to login ${width}`);
 
       await page.goto(`${origin}/reset-password`);
       await page.getByPlaceholder('이메일 주소를 입력하세요').fill('member@example.invalid');

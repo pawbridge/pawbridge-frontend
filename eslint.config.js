@@ -6,7 +6,8 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // .browser-test-build holds the browser runner's builds and Vite dependency cache.
+  globalIgnores(['dist', '.browser-test-build']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
