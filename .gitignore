@@ -42,5 +42,8 @@ dist-ssr
 
 # PR template
 !.github/pull_request_template.md
+
+# Claude Code 작업 지침
+!CLAUDE.md
 .env.dev
 .env.prod
