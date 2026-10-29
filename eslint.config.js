@@ -21,4 +21,11 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // console.log stays in production bundles and can expose orders or keys in the visitor's console.
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+    },
+  },
 ])

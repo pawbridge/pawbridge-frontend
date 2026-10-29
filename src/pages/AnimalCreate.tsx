@@ -153,8 +153,6 @@ export default function AnimalCreate() {
       if (imageFile) {
         const imageResponse = await uploadImageMutation.mutateAsync(imageFile);
         imageUrl = imageResponse.imageUrl;
-        console.log('이미지 업로드 응답:', imageResponse);
-        console.log('추출된 imageUrl:', imageUrl);
         
         if (!imageUrl) {
           alert('이미지 URL을 받아오지 못했습니다. 다시 시도해주세요.');
@@ -185,8 +183,6 @@ export default function AnimalCreate() {
         ...(description && { description }),
       };
 
-      console.log('동물 등록 요청 데이터:', animalData);
-      console.log('imageUrl 포함 여부:', !!animalData.imageUrl);
 
       await createAnimalMutation.mutateAsync(animalData);
     } catch (error) {
