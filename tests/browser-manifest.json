@@ -519,6 +519,15 @@
       "preNavigate": false,
       "group": "env",
       "note": "not runnable here; needs the fixture backend on 127.0.0.1:18081 and the gateway on 127.0.0.1:18180 (see the travel DB sections of tests/README.md)"
+    },
+    {
+      "name": "site-layout",
+      "origin": "http://127.0.0.1:5241",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
     }
   ]
 }

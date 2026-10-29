@@ -65,6 +65,7 @@ import PrivateNoteDetail from './pages/PrivateNoteDetail';
 import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
 import MemberChats from './pages/MemberChats';
 import VisitTracker from './components/visits/VisitTracker';
+import SiteLayout from './components/layout/SiteLayout';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -172,14 +173,17 @@ function App() {
     <>
     <VisitTracker />
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* 헤더·푸터를 함께 쓰는 화면 */}
+      <Route element={<SiteLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+      </Route>
       <Route path="/login" element={<Login />} />
       {/* New email signup is closed; social login creates the account. */}
       <Route path="/signup" element={<Navigate to="/login" replace />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
       <Route path="/notes" element={<ProtectedRoute><PrivateNotes /></ProtectedRoute>} />
       <Route path="/chats" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
       <Route path="/chats/new" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
