@@ -3,7 +3,7 @@ async page => {
   const origin = 'http://127.0.0.1:5202';
   const checks = [], pageErrors = [], writes = [];
   const assert = (condition, name) => { if (!condition) throw new Error(name); checks.push(name); };
-  let errorMode = 'message', sdkModules = 0;
+  let errorMode = 'message', sdkModules = 0, postcodeScripts = 0;
   const post = { id: 12, postId: 12, title: '기존 제목', content: '기존 내용', boardType: 'ADOPTION', authorId: 7, authorName: '로컬 회원', imageUrls: [], createdAt: '2026-10-07T00:00:00Z', viewCount: 0 };
   const product = { productId: 1, name: '로컬 옵션 검증 상품', description: '합성 상품', imageUrl: origin + '/favicon-96.png', status: 'ACTIVE', skus: [
     { skuId: 11, skuCode: 'LOCAL-S', options: { 크기: 'S' }, price: 10000, stockQuantity: 10, optionValueIds: [] },
@@ -13,10 +13,6 @@ async page => {
   page.on('dialog', dialog => dialog.dismiss());
   await page.addInitScript(() => {
     localStorage.setItem('auth-storage', JSON.stringify({ state: { user: { id: 7, name: '로컬 회원', role: 'ROLE_ADMIN', email: 'lint@example.invalid' }, accessToken: 'synthetic-local-token', refreshToken: null }, version: 0 }));
-    window.daum = { Postcode: class {
-      constructor(config) { this.config = config; }
-      open() { this.config.oncomplete({ roadAddress: '로컬 검증 주소', jibunAddress: '', buildingName: '' }); }
-    } };
     window.__lintPaymentError = { code: 'USER_CANCEL' };
   });
   await page.route('**/*', async route => {
@@ -25,6 +21,11 @@ async page => {
     const parts = /^https?:\/\/([^/:]+)(?::\d+)?(\/[^?]*)?/.exec(request.url());
     if (!parts) return route.abort('blockedbyclient');
     const url = { href: request.url(), hostname: parts[1], pathname: parts[2] || '/' };
+    // The address search script is loaded by the checkout page itself, so serve a synthetic one.
+    if (url.hostname === 't1.daumcdn.net' && url.pathname === '/mapjsapi/bundle/postcode/prod/postcode.v2.js') {
+      postcodeScripts++;
+      return route.fulfill({ contentType: 'text/javascript', body: "window.daum = { Postcode: class { constructor(config) { this.config = config; } open() { this.config.oncomplete({ roadAddress: '로컬 검증 주소', jibunAddress: '', buildingName: '' }); } } };" });
+    }
     if (url.href.includes('tosspayments') && request.resourceType() === 'script') {
       sdkModules++;
       return route.fulfill({ contentType: 'text/javascript', body: 'export async function loadTossPayments() { return { requestPayment: async () => { throw window.__lintPaymentError; } }; }' });
@@ -83,6 +84,8 @@ async page => {
     }
     await page.goto(origin + '/products/1');
     await page.locator('p').filter({ hasText: /^S$/ }).waitFor();
+    assert(!(await page.evaluate(() => Boolean(window.daum))), 'postcode-script-not-loaded-on-product-page-' + width);
+    const postcodeScriptsBeforeCheckout = postcodeScripts;
     assert(await page.getByRole('button', { name: '바로 구매', exact: true }).isEnabled(), 'first-sku-selected-' + width);
     await page.getByRole('button', { name: 'L', exact: true }).click();
     await page.locator('p').filter({ hasText: /^L$/ }).waitFor();
@@ -98,6 +101,9 @@ async page => {
     await page.screenshot({ path: '/tmp/pawbridge-lint-product-' + width + '.png', fullPage: true });
     await page.getByRole('button', { name: '바로 구매', exact: true }).click();
     await page.waitForURL('**/checkout');
+    // Only the checkout page loads the address search script, and it starts on arrival.
+    await page.waitForFunction(() => Boolean(window.daum?.Postcode));
+    assert(postcodeScripts === postcodeScriptsBeforeCheckout + 1, 'postcode-script-loaded-on-checkout-only-' + width);
     await page.getByPlaceholder('이름을 입력하세요').fill('로컬 검증');
     await page.getByPlaceholder('010-0000-0000').fill('01000000000');
     await page.getByRole('button', { name: '주소 찾기', exact: true }).click();

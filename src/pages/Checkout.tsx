@@ -9,7 +9,7 @@ import Footer from '../components/layout/Footer';
 // 다음 우편번호 API 타입 선언
 declare global {
   interface Window {
-    daum: {
+    daum?: {
       Postcode: new (config: {
         oncomplete: (data: DaumPostcodeData) => void;
       }) => { open: () => void };
@@ -24,6 +24,28 @@ interface DaumPostcodeData {
   jibunAddress: string; // 지번 주소
   zonecode: string;     // 우편번호
   buildingName: string; // 건물명
+}
+
+// 주소 검색은 이 화면에서만 쓰므로 모든 페이지의 index.html이 아니라 결제 화면에 들어올 때 받는다.
+const POSTCODE_SCRIPT_URL = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+let postcodeScript: Promise<void> | null = null;
+
+function loadPostcodeScript(): Promise<void> {
+  if (window.daum?.Postcode) return Promise.resolve();
+  postcodeScript ??= new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = POSTCODE_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => {
+      // Forget the failed attempt so the next click can try again.
+      postcodeScript = null;
+      script.remove();
+      reject(new Error('Postcode script failed to load'));
+    };
+    document.head.appendChild(script);
+  });
+  return postcodeScript;
 }
 
 const SHIPPING_FEE = 3000;
@@ -223,10 +245,16 @@ export default function Checkout() {
     }
   };
 
+  // 화면에 들어오면 주소 검색 스크립트를 미리 받아, 버튼을 누를 때는 바로 열리게 한다.
+  useEffect(() => {
+    loadPostcodeScript().catch(() => {});
+  }, []);
+
   // 다음 우편번호 검색
   const handleAddressSearch = () => {
-    // 스크립트 로드 확인
-    if (!window.daum || !window.daum.Postcode) {
+    // 팝업 차단을 피하려고 클릭 처리 안에서 바로 연다. 아직 받는 중이면 다시 받기를 시작하고 안내한다.
+    if (!window.daum?.Postcode) {
+      loadPostcodeScript().catch(() => {});
       alert('주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
