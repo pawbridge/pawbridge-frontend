@@ -38,7 +38,7 @@ function loadPostcodeScript(): Promise<void> {
     script.async = true;
     script.onload = () => resolve();
     script.onerror = () => {
-      // Forget the failed attempt so the next click can try again.
+      // 실패한 시도는 지워 다음 클릭 때 다시 받게 한다.
       postcodeScript = null;
       script.remove();
       reject(new Error('Postcode script failed to load'));
