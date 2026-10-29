@@ -34,8 +34,7 @@ async page => {
     if (mode !== 'success') return route.fulfill({ status: 400, json: { code: 400, message: mode === 'malformed' ? { detail: 'not a string' } : '서버 테스트 안내', data: null } });
     const data = path === '/api/v1/auth/login'
       ? { userId: 321, email: 'member@example.invalid', name: '검증회원', role: 'ROLE_SHELTER', careRegNo: null, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' }
-      : path === '/api/v1/users/signup' ? { userId: 321, email: 'member@example.invalid', name: '검증회원', nickname: '새별명' }
-      : path === '/api/v1/email/verify' ? { verified: true } : null;
+      : null;
     return route.fulfill({ json: { code: 200, data, message: '성공' } });
   };
   await page.addInitScript(() => { window.__authAlerts = []; window.alert = message => window.__authAlerts.push(message); });
