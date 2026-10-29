@@ -18,8 +18,6 @@ import {
 import AnimalSearchCard from '../components/animals/AnimalSearchCard';
 import AnimalSearchFilters from '../components/animals/AnimalSearchFilters';
 import AnimalSearchPagination from '../components/animals/AnimalSearchPagination';
-import Footer from '../components/layout/Footer';
-import Header from '../components/layout/Header';
 
 export default function Animals() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -55,8 +53,7 @@ export default function Animals() {
   const relevanceSearch = hasAnimalRelevanceSearch(filters);
 
   return (
-    <div className="min-h-screen bg-white font-display text-brand-ink dark:bg-background-dark dark:text-text-dark">
-      <Header />
+    <>
       {shelterContext && <section aria-label="선택한 보호소와 접수일" className="bg-brand-soft text-brand-ink">
         <div className="mx-auto max-w-[1504px] space-y-3 px-4 py-6 md:px-6">
           <Link to={shelterReturnTo} className="inline-flex min-h-11 items-center rounded-lg border border-brand-border bg-white px-4 text-sm font-medium">← 보호소 목록으로</Link>
@@ -120,7 +117,6 @@ export default function Animals() {
           {animals.length > 0 && <AnimalSearchPagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />}
         </section>
       </main>
-      <Footer />
-    </div>
+    </>
   );
 }

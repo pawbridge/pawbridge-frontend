@@ -1,11 +1,9 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import Header from '../components/layout/Header';
 import AuthorContact from '../components/contact/AuthorContact';
 import BlockedAuthorContent from '../components/contact/BlockedAuthorContent';
 import { useBlockedAuthors } from '../components/contact/useBlockedAuthors';
-import Footer from '../components/layout/Footer';
 import { reportListPath } from '../lib/reportNavigation';
 import placeholderImg from '../assets/image-placeholder.svg';
 import { deleteAnimalReport, getAnimalReport } from '../api/animalReports.api';
@@ -34,11 +32,7 @@ export default function AnimalReportDetail() {
   const blocks = useBlockedAuthors(report ? [report.authorId] : []);
 
   const shell = (content: React.ReactNode) => (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-light font-display text-brand-ink dark:bg-background-dark dark:text-white">
-      <Header />
-      <main className="flex-grow">{content}</main>
-      <Footer />
-    </div>
+    <main className="flex-grow">{content}</main>
   );
 
   if (isLoading) return shell(<div className="mx-auto max-w-4xl px-4 py-16" role="status">제보를 불러오는 중...</div>);

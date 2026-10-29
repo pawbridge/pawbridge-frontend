@@ -66,41 +66,22 @@ import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
 import MemberChats from './pages/MemberChats';
 import VisitTracker from './components/visits/VisitTracker';
 import SiteLayout from './components/layout/SiteLayout';
+import RequireLogin, { LoginRequiredCard } from './components/layout/RequireLogin';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
   Object.assign(window, { useAuthStore });
 }
 
+// SiteLayout 밖의 로그인 필요 화면에서 쓰는 전체 화면 안내
 function ProtectedRoute({ children }: { children: ReactElement }) {
-  const location = useLocation();
   const token = useAuthStore((state) => state.accessToken);
 
   if (!token) {
     return (
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <div className="fixed inset-0 bg-black/40" />
-        <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-          <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            이 기능은 로그인이 필요합니다. 로그인 후 다시 이용해 주세요.
-          </p>
-          <div className="flex flex-col gap-3">
-            <Link
-              to="/login"
-              state={{ from: location.pathname + location.search }}
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
-            >
-              로그인
-            </Link>
-            <Link
-              to="/"
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              홈으로
-            </Link>
-          </div>
-        </div>
+        <LoginRequiredCard className="relative z-10" />
       </div>
     );
   }
@@ -178,6 +159,19 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/animals" element={<Animals />} />
+        <Route path="/animals/lost" element={<LostAnimalSearch />} />
+        <Route path="/animals/stats" element={<AnimalStats />} />
+        <Route path="/animals/:id" element={<AnimalDetail />} />
+        <Route path="/reports/missing" element={<AnimalReportList kind="MISSING" />} />
+        <Route path="/reports/sightings" element={<AnimalReportList kind="SIGHTING" />} />
+        <Route path="/reports/:id" element={<AnimalReportDetail />} />
+        <Route element={<RequireLogin />}>
+          <Route path="/favorite-animals" element={<FavoriteAnimals />} />
+          <Route path="/registered-animals" element={<RegisteredAnimals />} />
+          <Route path="/reports/new" element={<AnimalReportForm />} />
+          <Route path="/reports/:id/edit" element={<AnimalReportForm />} />
+        </Route>
       </Route>
       <Route path="/login" element={<Login />} />
       {/* New email signup is closed; social login creates the account. */}
@@ -191,15 +185,11 @@ function App() {
       <Route path="/notes/new" element={<ProtectedRoute><PrivateNoteCompose key={location.search} /></ProtectedRoute>} />
       <Route path="/notes/blocks" element={<ProtectedRoute><PrivateNoteBlocks /></ProtectedRoute>} />
       <Route path="/notes/:id" element={<ProtectedRoute><PrivateNoteDetail key={location.pathname} /></ProtectedRoute>} />
-      <Route path="/animals" element={<Animals />} />
-      <Route path="/animals/lost" element={<LostAnimalSearch />} />
 
       <Route path="/shelters" element={<Shelters />} />
       <Route path="/shelters/:registration" element={<ShelterDetail />} />
       <Route path="/travel" element={<Travel />} />
       <Route path="/travel/:contentId" element={<TravelDetail />} />
-      <Route path="/animals/stats" element={<AnimalStats />} />
-      <Route path="/animals/:id" element={<AnimalDetail />} />
       <Route
         path="/animals/new"
         element={
@@ -341,22 +331,6 @@ function App() {
         }
       />
       <Route
-        path="/favorite-animals"
-        element={
-          <ProtectedRoute>
-            <FavoriteAnimals />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/registered-animals"
-        element={
-          <ProtectedRoute>
-            <RegisteredAnimals />
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/cart"
         element={
           <ProtectedRoute>
@@ -428,11 +402,6 @@ function App() {
       />
       {/* 커뮤니티와 독립 실종·목격 제보 */}
       <Route path="/community" element={<CommunityList />} />
-      <Route path="/reports/missing" element={<AnimalReportList kind="MISSING" />} />
-      <Route path="/reports/sightings" element={<AnimalReportList kind="SIGHTING" />} />
-      <Route path="/reports/new" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
-      <Route path="/reports/:id/edit" element={<ProtectedRoute><AnimalReportForm /></ProtectedRoute>} />
-      <Route path="/reports/:id" element={<AnimalReportDetail />} />
       <Route path="/community/reports/new" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/reports/:id/edit" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/reports/:id" element={<LegacyAnimalReportRedirect />} />
