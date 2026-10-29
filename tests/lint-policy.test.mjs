@@ -34,9 +34,15 @@ test('any 위반은 0이 아닌 종료 코드로 CI를 실패시킨다', () => {
 });
 
 test('오류 없이 Hook 의존성 경고만 있어도 실패한다', () => {
-  const result = lint("import { useEffect } from 'react'; export default function Probe({ value }: { value: string }) { useEffect(() => { console.log(value); }, []); return null; }");
+  const result = lint("import { useEffect } from 'react'; export default function Probe({ value }: { value: string }) { useEffect(() => { console.warn(value); }, []); return null; }");
   assert.equal(result.report.errorCount, 0);
   assert.equal(result.report.warningCount, 1);
   assert.equal(result.report.messages[0].ruleId, 'react-hooks/exhaustive-deps');
   assert.equal(result.status, 1);
+});
+
+test('운영 코드의 console.log는 실패한다', () => {
+  const result = lint('export function probe(value: string) { console.log(value); }');
+  assert.equal(result.status, 1);
+  assert.ok(result.report.messages.some(message => message.ruleId === 'no-console'));
 });

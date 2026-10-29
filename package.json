@@ -16,6 +16,7 @@
     "build:dev": "node scripts/build-environment.mjs dev",
     "build:prod": "node scripts/build-environment.mjs prod",
     "test:environment": "node --test tests/environment-policy.test.mjs",
+    "test:icons": "node --test tests/icon-subset.test.mjs",
     "dev:local": "node scripts/start-local.mjs",
     "test:browser": "node tests/run-browser.mjs"
   },

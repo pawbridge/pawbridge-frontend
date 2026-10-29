@@ -76,19 +76,6 @@ export default function OrderComplete() {
     },
   });
 
-  // 디버그: 상태 확인용 (임시)
-  useEffect(() => {
-    console.log('[OrderComplete] state', {
-      paymentStatus: paymentMutation.status,
-      paymentPending: paymentMutation.isPending,
-      paymentConfirmed,
-      paymentError,
-      order,
-      orderLoading: isLoading,
-      orderError: error,
-    });
-  }, [paymentMutation.status, paymentMutation.isPending, paymentConfirmed, paymentError, order, isLoading, error]);
-
   // 결제 승인 처리 (중복 호출 방지)
   useEffect(() => {
     // 이미 호출했거나, 호출 중이면 스킵

@@ -29,8 +29,6 @@ import type {
 // 상품 목록 검색
 export const getProducts = async (params?: ProductSearchParams): Promise<ProductSearchResponse> => {
   const response = await apiClient.get<ProductSearchResponse>('/api/v1/products', { params });
-  console.log('getProducts API 응답:', response.data);
-  console.log('요청 파라미터:', params);
   return response.data;
 };
 
@@ -106,21 +104,17 @@ export const getOptionGroups = async (): Promise<OptionGroupResponse[]> => {
 // 카테고리 목록 조회
 export const getCategories = async (): Promise<CategoryResponse[]> => {
   const response = await apiClient.get<{ code: number; data: CategoryResponse[]; message: string } | CategoryResponse[]>('/api/v1/categories');
-  console.log('getCategories 전체 응답:', response);
-  console.log('getCategories response.data:', response.data);
   
   // 응답 구조 확인: { code, data, message } 형식이거나 직접 배열 형식일 수 있음
   const responseData = response.data;
   
   // { code, data, message } 형식인 경우
   if (responseData && typeof responseData === 'object' && 'code' in responseData && 'data' in responseData && Array.isArray(responseData.data)) {
-    console.log('응답 형식: { code, data, message }');
     return responseData.data;
   }
   
   // 직접 배열인 경우
   if (Array.isArray(responseData)) {
-    console.log('응답 형식: 직접 배열');
     return responseData;
   }
   
@@ -315,7 +309,6 @@ export const getWishlists = async (params?: WishlistSearchParams): Promise<Wishl
   const useMock = import.meta.env.VITE_USE_WISHLIST_MOCK === 'true';
   
   if (useMock) {
-    console.log('[Mock] 위시리스트 목록 조회 - params:', params);
     // 페이징 시뮬레이션
     const page = params?.page || 0;
     const size = params?.size || 20;
@@ -335,9 +328,7 @@ export const getWishlists = async (params?: WishlistSearchParams): Promise<Wishl
   }
   
   // 실제 서버 연동
-  console.log('[API] 위시리스트 목록 조회 - params:', params);
   const response = await apiClient.get<ApiResponse<WishlistSearchResponse>>('/api/v1/users/me/wishlists', { params });
-  console.log('[API] 위시리스트 목록 응답:', response.data.data);
   return response.data.data;
 };
 
@@ -347,13 +338,11 @@ export const deleteWishlist = async (wishlistId: number): Promise<void> => {
   const useMock = import.meta.env.VITE_USE_WISHLIST_MOCK === 'true';
   
   if (useMock) {
-    console.log('[Mock] 위시리스트 삭제 - wishlistId:', wishlistId);
     // 실제로는 아무것도 하지 않음 (UI에서만 제거됨)
     return Promise.resolve();
   }
   
   // 실제 서버 연동
-  console.log('[API] 위시리스트 삭제 - wishlistId:', wishlistId);
   await apiClient.delete(`/api/v1/wishlists/${wishlistId}`);
 };
 

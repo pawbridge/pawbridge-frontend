@@ -9,7 +9,7 @@ import Footer from '../components/layout/Footer';
 // 다음 우편번호 API 타입 선언
 declare global {
   interface Window {
-    daum: {
+    daum?: {
       Postcode: new (config: {
         oncomplete: (data: DaumPostcodeData) => void;
       }) => { open: () => void };
@@ -24,6 +24,28 @@ interface DaumPostcodeData {
   jibunAddress: string; // 지번 주소
   zonecode: string;     // 우편번호
   buildingName: string; // 건물명
+}
+
+// 주소 검색은 이 화면에서만 쓰므로 모든 페이지의 index.html이 아니라 결제 화면에 들어올 때 받는다.
+const POSTCODE_SCRIPT_URL = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+let postcodeScript: Promise<void> | null = null;
+
+function loadPostcodeScript(): Promise<void> {
+  if (window.daum?.Postcode) return Promise.resolve();
+  postcodeScript ??= new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = POSTCODE_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => {
+      // 실패한 시도는 지워 다음 클릭 때 다시 받게 한다.
+      postcodeScript = null;
+      script.remove();
+      reject(new Error('Postcode script failed to load'));
+    };
+    document.head.appendChild(script);
+  });
+  return postcodeScript;
 }
 
 const SHIPPING_FEE = 3000;
@@ -153,10 +175,6 @@ export default function Checkout() {
   const requestTossPayment = async (orderId: number, orderNumber: string, amount: number) => {
     const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
     
-    // 디버깅: 환경 변수 확인
-    console.log('=== 토스페이먼츠 환경 변수 확인 ===');
-    console.log('VITE_TOSS_CLIENT_KEY:', clientKey);
-    console.log('clientKey 존재 여부:', !!clientKey);
     
     if (!clientKey) {
       alert('결제 설정이 올바르지 않습니다. 관리자에게 문의해주세요.');
@@ -223,28 +241,31 @@ export default function Checkout() {
     }
   };
 
+  // 화면에 들어오면 주소 검색 스크립트를 미리 받아, 버튼을 누를 때는 바로 열리게 한다.
+  useEffect(() => {
+    loadPostcodeScript().catch(() => {});
+  }, []);
+
   // 다음 우편번호 검색
   const handleAddressSearch = () => {
-    // 스크립트 로드 확인
-    if (!window.daum || !window.daum.Postcode) {
+    // 팝업 차단을 피하려고 클릭 처리 안에서 바로 연다. 아직 받는 중이면 다시 받기를 시작하고 안내한다.
+    if (!window.daum?.Postcode) {
+      loadPostcodeScript().catch(() => {});
       alert('주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
 
     new window.daum.Postcode({
       oncomplete: (data: DaumPostcodeData) => {
-        console.log('다음 우편번호 응답:', data); // 디버깅용
         
         // 도로명 주소 우선, 없으면 지번 주소 사용
         const address = data.roadAddress || data.jibunAddress;
-        console.log('선택된 주소:', address); // 디버깅용
         
         // 건물명이 있으면 추가
         const fullAddress = data.buildingName 
           ? `${address} (${data.buildingName})`
           : address;
         
-        console.log('최종 주소:', fullAddress); // 디버깅용
         
         setFormData(prev => {
           const newData = {
@@ -252,7 +273,6 @@ export default function Checkout() {
             deliveryAddress: fullAddress,
             deliveryAddressDetail: '', // 상세주소 초기화
           };
-          console.log('업데이트된 formData:', newData); // 디버깅용
           return newData;
         });
         

@@ -64,21 +64,17 @@ export const getAnimals = async (params?: AnimalSearchParams, signal?: AbortSign
 // 동물 상세 조회
 export const getAnimalById = async (id: number): Promise<Animal> => {
   const response = await apiClient.get<AnimalDetailResponse>(`/api/v1/animals/${id}`);
-  console.log('getAnimalById 전체 응답:', response);
-  console.log('getAnimalById response.data:', response.data);
   
   // 응답 구조 확인: { code, data, message } 형식이거나 직접 Animal 형식일 수 있음
   const responseData = response.data;
   
   // { code, data, message } 형식인 경우
   if (responseData && typeof responseData === 'object' && 'code' in responseData && 'data' in responseData) {
-    console.log('응답 형식: { code, data, message }');
     return responseData.data;
   }
   
   // 직접 Animal 객체인 경우
   if (responseData && typeof responseData === 'object' && 'id' in responseData) {
-    console.log('응답 형식: 직접 Animal 객체');
     return responseData;
   }
   
@@ -203,14 +199,11 @@ export const uploadAnimalImage = async (file: File): Promise<AnimalImageUploadRe
     }
   );
   
-  console.log('이미지 업로드 원본 응답:', response.data);
   
   // 응답 구조 확인: 래핑되어 있으면 data.imageUrl, 아니면 직접 imageUrl
   if (response.data.data && response.data.data.imageUrl) {
-    console.log('래핑된 응답에서 imageUrl 추출:', response.data.data.imageUrl);
     return response.data.data;
   } else if (response.data.imageUrl) {
-    console.log('직접 응답에서 imageUrl 추출:', response.data.imageUrl);
     return { imageUrl: response.data.imageUrl };
   } else {
     console.error('이미지 업로드 응답 구조:', response.data);
