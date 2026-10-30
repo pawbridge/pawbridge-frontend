@@ -6,15 +6,19 @@ async page => {
   const assert = (condition, name) => { if (!condition) throw new Error(name); checks.push(name); };
   // Screens rendered inside SiteLayout. Add a route here when its screen moves into the layout.
   const routes = ['/', '/privacy', '/terms', '/animals', '/animals/lost', '/animals/stats', '/animals/1',
-    '/reports/missing', '/reports/sightings', '/reports/1', '/products', '/products/1'];
+    '/reports/missing', '/reports/sightings', '/reports/1', '/products', '/products/1',
+    '/community', '/community/1', '/adoption', '/adoption/3'];
   // Screens inside SiteLayout that need a login (RequireLogin).
   const loginRoutes = ['/favorite-animals', '/registered-animals', '/reports/new', '/reports/1/edit',
-    '/cart', '/checkout', '/order-complete', '/wishlist', '/orders', '/orders/1'];
+    '/cart', '/checkout', '/order-complete', '/wishlist', '/orders', '/orders/1',
+    '/community/new', '/community/1/edit', '/adoption/new', '/adoption/3/edit'];
   const animals = [1, 2, 3].map(id => ({ id, species: 'DOG', breed: `검수 동물 ${id}`, gender: 'MALE', birthYear: 2025, status: 'PROTECT', shelterName: '검수 보호소' }));
   const animal = { id: 1, breed: '믹스견', species: 'DOG', gender: 'MALE', age: 2, weight: '4', status: 'PROTECT', shelterId: 1, shelterName: '검증 보호소', images: [], createdAt: '2026-09-22T10:00:00' };
   const report = (reportId, kind) => ({ reportId, authorId: 7, authorNickname: '합성 작성자', kind, title: `합성 제보 ${reportId}`, occurredOn: '2026-10-11', approximateTime: null, region: '서울', landmark: null, species: '고양이', animalName: null, coatColor: null, animalSize: null, distinguishingFeatures: null, direction: null, description: '합성 본문', imageUrls: [], createdAt: '2026-10-11T01:00:00Z', updatedAt: '2026-10-11T01:00:00Z' });
   const cartItem = { id: 1, skuId: 101, skuCode: 'SKU-101', productId: 1, productName: '검수 장바구니 상품', productImageUrl: '', price: 24000, quantity: 2, stockQuantity: 20 };
   const order = { orderId: 1, orderUuid: 'order-1-20261001000000', totalAmount: 24000, status: 'PAID', deliveryStatus: 'READY', receiverName: '검수 수령인', receiverPhone: '01000000000', deliveryAddress: '검수용 주소', createdAt: '2026-10-01T00:00:00', items: [{ productName: '주문상품 1', skuCode: 'SKU-1', price: 24000, quantity: 1 }] };
+  // Posts are written by the signed-in test member (id 7) so the edit screens open.
+  const post = (id, boardType) => ({ id, postId: id, title: `검수 글 ${id}`, content: '검수 본문', boardType, authorId: 7, authorName: '로컬 회원', imageUrls: [], createdAt: '2026-10-01T00:00:00' });
   // Checkout draws only with the order handed over from the cart (location.state).
   const checkoutState = { cartItems: [cartItem], totalProductPrice: 48000, shippingFee: 3000, totalPrice: 51000 };
   // Shapes follow the API modules (some endpoints are not wrapped in an envelope).
@@ -24,7 +28,9 @@ async page => {
     '/api/v1/animals/stats/status': [{ status: 'PROTECT', label: '보호중', count: 2 }, { status: 'ADOPTED', label: '입양', count: 1 }],
     '/api/v1/animals/stats/today': { date: '2026-10-29', rescuedToday: 3, adoptedToday: 1 },
     '/api/v1/animals/stats/regional': [{ region: '서울특별시', count: 100 }],
-    '/api/v1/posts/read': { code: 200, data: [] },
+    '/api/v1/posts/read': { code: 200, data: [post(1, 'COMMUNICATION'), post(3, 'ADOPTION')] },
+    '/api/v1/posts/read/1': { code: 200, data: post(1, 'COMMUNICATION') },
+    '/api/v1/posts/read/3': { code: 200, data: post(3, 'ADOPTION') },
     '/api/v1/home/videos': { code: 200, data: [] },
     '/api/v1/reports': { code: 200, data: { content: [report(1, 'MISSING')], totalPages: 1 } },
     '/api/v1/reports/1': { code: 200, data: report(1, 'MISSING') },
