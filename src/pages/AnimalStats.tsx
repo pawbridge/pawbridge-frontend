@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getTodayAnimalStats, getAnimalStatusStats, getRegionalAnimalStats } from '../api/animalStats.api';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import RegionalAnimalStats from '../components/statistics/RegionalAnimalStats';
 import StatsDialog from '../components/statistics/StatsDialog';
 import { kstToday, periodStart, validateDateRange } from '../components/statistics/regionalStats';
@@ -40,8 +38,7 @@ export default function AnimalStats() {
     { label: '안락사율 (최근 30일 구조)', value: rates?.euthanasiaRate, unit: '%', loading: recentQuery.isPending, failed: recentQuery.isError },
   ];
 
-  return <div className="flex min-h-screen flex-col bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark">
-    <Header />
+  return <>
     <main className="container mx-auto flex-1 px-4 py-8 md:py-12">
       <nav aria-label="현재 위치" className="mb-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300"><Link to="/" className="py-2 hover:underline">홈</Link><span aria-hidden="true">/</span><span aria-current="page">유기동물 현황</span></nav>
       <h1 className="text-3xl font-black tracking-tight md:text-4xl">유기동물 현황</h1>
@@ -81,7 +78,6 @@ export default function AnimalStats() {
         </>}
       </section>
     </main>
-    <Footer />
     {editingDates && <StatsDialog title="조회 기간 선택" onClose={() => setEditingDates(false)}>
       <form noValidate onSubmit={event => { event.preventDefault(); const error = validateDateRange(draft.start, draft.end, today); setDateError(error); if (!error) { setRange(draft); setPeriod('custom'); setEditingDates(false); } }}>
         <div className="grid gap-4 sm:grid-cols-2">{([{ key: 'start', label: '시작일' }, { key: 'end', label: '종료일' }] as const).map(field => <label key={field.key} className="flex min-w-0 flex-col gap-2 text-sm font-medium">{field.label}<input type="date" value={draft[field.key]} max={today} aria-invalid={!!dateError} aria-describedby={dateError ? 'date-error' : undefined} onChange={event => { setDraft({ ...draft, [field.key]: event.target.value }); setDateError(''); }} className="min-h-11 min-w-0 rounded-lg border-border-light bg-card-light text-text-light focus:border-brand-focus focus:ring-brand-focus dark:border-border-dark dark:bg-card-dark dark:text-text-dark" /></label>)}</div>
@@ -89,5 +85,5 @@ export default function AnimalStats() {
         <div className="mt-6 flex justify-end gap-2"><button type="button" className={control} onClick={() => setEditingDates(false)}>취소</button><button type="submit" className={`${control} border-brand-focus bg-brand text-brand-ink`}>기간 적용</button></div>
       </form>
     </StatsDialog>}
-  </div>;
+  </>;
 }

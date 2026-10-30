@@ -5,15 +5,29 @@ async page => {
   const checks = [], pageErrors = [];
   const assert = (condition, name) => { if (!condition) throw new Error(name); checks.push(name); };
   // Screens rendered inside SiteLayout. Add a route here when its screen moves into the layout.
-  const routes = ['/', '/privacy', '/terms'];
+  const routes = ['/', '/privacy', '/terms', '/animals', '/animals/lost', '/animals/stats', '/animals/1',
+    '/reports/missing', '/reports/sightings', '/reports/1'];
+  // Screens inside SiteLayout that need a login (RequireLogin).
+  const loginRoutes = ['/favorite-animals', '/registered-animals', '/reports/new', '/reports/1/edit'];
   const animals = [1, 2, 3].map(id => ({ id, species: 'DOG', breed: `검수 동물 ${id}`, gender: 'MALE', birthYear: 2025, status: 'PROTECT', shelterName: '검수 보호소' }));
+  const animal = { id: 1, breed: '믹스견', species: 'DOG', gender: 'MALE', age: 2, weight: '4', status: 'PROTECT', shelterId: 1, shelterName: '검증 보호소', images: [], createdAt: '2026-09-22T10:00:00' };
+  const report = (reportId, kind) => ({ reportId, authorId: 7, authorNickname: '합성 작성자', kind, title: `합성 제보 ${reportId}`, occurredOn: '2026-10-11', approximateTime: null, region: '서울', landmark: null, species: '고양이', animalName: null, coatColor: null, animalSize: null, distinguishingFeatures: null, direction: null, description: '합성 본문', imageUrls: [], createdAt: '2026-10-11T01:00:00Z', updatedAt: '2026-10-11T01:00:00Z' });
+  // Shapes follow the API modules (some endpoints are not wrapped in an envelope).
   const fixtures = {
     '/api/v1/animals': { content: animals, totalElements: 3, totalPages: 1 },
-    '/api/v1/animals/stats/status': [{ status: 'PROTECT', count: 2 }, { status: 'ADOPTED', count: 1 }],
-    '/api/v1/animals/stats/today': { rescuedToday: 3 },
+    '/api/v1/animals/1': animal,
+    '/api/v1/animals/stats/status': [{ status: 'PROTECT', label: '보호중', count: 2 }, { status: 'ADOPTED', label: '입양', count: 1 }],
+    '/api/v1/animals/stats/today': { date: '2026-10-29', rescuedToday: 3, adoptedToday: 1 },
+    '/api/v1/animals/stats/regional': [{ region: '서울특별시', count: 100 }],
     '/api/v1/posts/read': { code: 200, data: [] },
     '/api/v1/home/videos': { code: 200, data: [] },
+    '/api/v1/reports': { code: 200, data: { content: [report(1, 'MISSING')], totalPages: 1 } },
+    '/api/v1/reports/1': { code: 200, data: report(1, 'MISSING') },
+    '/api/v1/users/me/favorite-animals': { code: 200, data: { userId: 7, totalCount: 0, favorites: [] } },
+    '/api/v1/users/me/registered-animals': { code: 200, data: { content: [], number: 0, size: 20, totalElements: 0, totalPages: 0 } },
+    '/api/v1/favorites/1/check': { code: 200, data: false },
   };
+  const member = { state: { user: { id: 7, name: '로컬 회원', role: 'ROLE_USER', email: 'layout@example.invalid' }, accessToken: 'synthetic-local-token', refreshToken: null }, version: 0 };
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.route('**/*', async route => {
     const request = route.request();
@@ -28,9 +42,26 @@ async page => {
   // The site header is the only banner landmark; a <header> inside <main> is not one.
   const banners = () => page.getByRole('banner').count();
   const footers = () => page.getByRole('contentinfo').count();
+  const signIn = async signedIn => {
+    await page.goto(origin + '/terms');
+    await page.evaluate(value => { localStorage.clear(); if (value) localStorage.setItem('auth-storage', value); }, signedIn ? JSON.stringify(member) : null);
+  };
+  // A logged-out visit to a login screen keeps the header and footer and shows the login card in the page area.
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await signIn(false);
+  for (const route of loginRoutes) {
+    await page.goto(origin + route);
+    const login = page.getByRole('main').getByRole('link', { name: '로그인', exact: true });
+    await login.waitFor();
+    assert(await banners() === 1 && await footers() === 1, `login-card-keeps-layout-${route}`);
+    await login.click();
+    await page.waitForURL('**/login');
+    assert(await page.evaluate(() => history.state?.usr?.from) === route, `login-card-returns-to-${route}`);
+  }
+  await signIn(true);
   for (const width of [1920, 390]) {
     await page.setViewportSize({ width, height: 1080 });
-    for (const route of routes) {
+    for (const route of [...routes, ...loginRoutes]) {
       await page.goto(origin + route);
       await page.locator('main').first().waitFor();
       assert(await banners() === 1, `one-header-${route}-${width}`);
