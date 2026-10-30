@@ -8,7 +8,7 @@ import MyPageSidebar, { type MyPageTab } from '../components/mypage/MyPageSideba
 import MyProfilePanel from '../components/mypage/MyProfilePanel';
 import MyPasswordPanel from '../components/mypage/MyPasswordPanel';
 import MyPageInfoState from '../components/mypage/MyPageInfoState';
-import MyShelterApplications from '../components/shelter/MyShelterApplications';
+import MyShelterApplications from '../components/shelters/MyShelterApplications';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';

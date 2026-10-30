@@ -3,8 +3,8 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getApplication, approveApplication, rejectApplication } from '../api/shelter.api';
 import { useAuthStore } from '../store/authStore';
-import { AdminShelterLayout, Status } from '../components/shelter/ShelterUI';
-import { date, errorMessage } from '../components/shelter/shelterView';
+import { AdminShelterLayout, Status } from '../components/shelters/ShelterUI';
+import { date, errorMessage } from '../components/shelters/shelterApplicationDisplay';
 import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
 import StatsDialog from '../components/statistics/StatsDialog';
 

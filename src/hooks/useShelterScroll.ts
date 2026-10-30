@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
-import { readShelterView, saveShelterView } from '../utils/shelterView';
+import { readShelterView, saveShelterView } from '../utils/shelterViewSnapshot';
 
 export default function useShelterScroll(ready: boolean, resetOnMount = false) {
   const location = useLocation();

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getShelters } from '../api/shelter.api';
-import { AdminShelterLayout } from '../components/shelter/ShelterUI';
+import { AdminShelterLayout } from '../components/shelters/ShelterUI';
 import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
 
 function ShelterList() {
