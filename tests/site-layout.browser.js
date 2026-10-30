@@ -4,19 +4,27 @@ async page => {
   const origin = 'http://127.0.0.1:5241';
   const checks = [], pageErrors = [];
   const assert = (condition, name) => { if (!condition) throw new Error(name); checks.push(name); };
+  const noteId = '00000000-0000-4000-8000-000000000001';
   // Screens rendered inside SiteLayout. Add a route here when its screen moves into the layout.
   const routes = ['/', '/privacy', '/terms', '/animals', '/animals/lost', '/animals/stats', '/animals/1',
     '/reports/missing', '/reports/sightings', '/reports/1', '/products', '/products/1',
-    '/community', '/community/1', '/adoption', '/adoption/3'];
+    '/community', '/community/1', '/adoption', '/adoption/3',
+    '/shelters', '/shelters/311000201900001', '/travel', '/travel/1000'];
   // Screens inside SiteLayout that need a login (RequireLogin).
   const loginRoutes = ['/favorite-animals', '/registered-animals', '/reports/new', '/reports/1/edit',
     '/cart', '/checkout', '/order-complete', '/wishlist', '/orders', '/orders/1',
-    '/community/new', '/community/1/edit', '/adoption/new', '/adoption/3/edit'];
+    '/community/new', '/community/1/edit', '/adoption/new', '/adoption/3/edit',
+    // /chats is left out: with the chat flag off (dev-local) it shows the 404 page, which has no <main>.
+    '/notes', '/notes/new', '/notes/blocks', `/notes/${noteId}`, '/mypage'];
   const animals = [1, 2, 3].map(id => ({ id, species: 'DOG', breed: `검수 동물 ${id}`, gender: 'MALE', birthYear: 2025, status: 'PROTECT', shelterName: '검수 보호소' }));
   const animal = { id: 1, breed: '믹스견', species: 'DOG', gender: 'MALE', age: 2, weight: '4', status: 'PROTECT', shelterId: 1, shelterName: '검증 보호소', images: [], createdAt: '2026-09-22T10:00:00' };
   const report = (reportId, kind) => ({ reportId, authorId: 7, authorNickname: '합성 작성자', kind, title: `합성 제보 ${reportId}`, occurredOn: '2026-10-11', approximateTime: null, region: '서울', landmark: null, species: '고양이', animalName: null, coatColor: null, animalSize: null, distinguishingFeatures: null, direction: null, description: '합성 본문', imageUrls: [], createdAt: '2026-10-11T01:00:00Z', updatedAt: '2026-10-11T01:00:00Z' });
   const cartItem = { id: 1, skuId: 101, skuCode: 'SKU-101', productId: 1, productName: '검수 장바구니 상품', productImageUrl: '', price: 24000, quantity: 2, stockQuantity: 20 };
   const order = { orderId: 1, orderUuid: 'order-1-20261001000000', totalAmount: 24000, status: 'PAID', deliveryStatus: 'READY', receiverName: '검수 수령인', receiverPhone: '01000000000', deliveryAddress: '검수용 주소', createdAt: '2026-10-01T00:00:00', items: [{ productName: '주문상품 1', skuCode: 'SKU-1', price: 24000, quantity: 1 }] };
+  const note = { noteId, body: '검수 쪽지', direction: 'INBOX', createdAt: '2026-10-01T00:00:00Z', readAt: null, favorite: false, counterpartId: 8, counterpartNickname: '다른 회원', canReply: true, contextHref: null };
+  const place = { contentId: '1000', title: '검수 여행지', address: '테스트 주소', imageUrl: null };
+  const shelter = { id: 2, careRegNo: '311000201900001', name: '검수 보호소', address: '서울특별시 예시구 보호로 12', organizationName: '서울특별시 예시구' };
+  const emptyPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 12 };
   // Posts are written by the signed-in test member (id 7) so the edit screens open.
   const post = (id, boardType) => ({ id, postId: id, title: `검수 글 ${id}`, content: '검수 본문', boardType, authorId: 7, authorName: '로컬 회원', imageUrls: [], createdAt: '2026-10-01T00:00:00' });
   // Checkout draws only with the order handed over from the cart (location.state).
@@ -43,6 +51,16 @@ async page => {
     '/api/v1/users/me/wishlists': { code: 200, data: { content: [], page: 0, number: 0, size: 20, totalElements: 0, totalPages: 0 } },
     '/api/v1/orders': { content: [order], page: 0, number: 0, size: 10, totalElements: 1, totalPages: 1 },
     '/api/v1/orders/1': order,
+    '/api/v1/users/me': { code: 200, data: { userId: 7, email: 'layout@example.invalid', name: '로컬 회원', nickname: '로컬 회원', provider: 'KAKAO', role: 'ROLE_USER', createdAt: '2026-09-01T00:00:00' } },
+    '/api/v1/notes': { code: 200, data: { content: [note], totalElements: 1, totalPages: 1, number: 0, size: 20 } },
+    [`/api/v1/notes/${noteId}`]: { code: 200, data: note },
+    '/api/v1/notes/blocks': { code: 200, data: emptyPage },
+    '/api/v1/places/regions': { items: [{ code: '11', name: '서울' }], fetchedAt: null, availability: 'READY' },
+    '/api/v1/places': { areaCode: '11', items: [place], previewOnly: true, fetchedAt: null, availability: 'PARTIAL', page: 0, size: 10, totalElements: 1, totalPages: 1 },
+    '/api/v1/places/1000': { place, overview: null, conditions: {}, petInformationAvailable: false, petInformationStatus: 'PREPARING', fetchedAt: null, petInformationFetchedAt: null },
+    '/api/v1/shelters/discovery': emptyPage,
+    '/api/v1/shelters/by-care-reg-no/311000201900001': shelter,
+    '/api/v1/shelters/2/observations': [],
   };
   const member = { state: { user: { id: 7, name: '로컬 회원', role: 'ROLE_USER', email: 'layout@example.invalid' }, accessToken: 'synthetic-local-token', refreshToken: null }, version: 0 };
   page.on('pageerror', error => pageErrors.push(error.message));

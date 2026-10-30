@@ -172,6 +172,10 @@ function App() {
         <Route path="/community/:id" element={<CommunityDetail />} />
         <Route path="/adoption" element={<AdoptionList />} />
         <Route path="/adoption/:id" element={<AdoptionDetail />} />
+        <Route path="/shelters" element={<Shelters />} />
+        <Route path="/shelters/:registration" element={<ShelterDetail />} />
+        <Route path="/travel" element={<Travel />} />
+        <Route path="/travel/:contentId" element={<TravelDetail />} />
         <Route element={<RequireLogin />}>
           <Route path="/favorite-animals" element={<FavoriteAnimals />} />
           <Route path="/registered-animals" element={<RegisteredAnimals />} />
@@ -187,6 +191,14 @@ function App() {
           <Route path="/community/:id/edit" element={<CommunityEdit />} />
           <Route path="/adoption/new" element={<AdoptionCreate />} />
           <Route path="/adoption/:id/edit" element={<AdoptionEdit />} />
+          <Route path="/notes" element={<PrivateNotes />} />
+          <Route path="/notes/new" element={<PrivateNoteCompose key={location.search} />} />
+          <Route path="/notes/blocks" element={<PrivateNoteBlocks />} />
+          <Route path="/notes/:id" element={<PrivateNoteDetail key={location.pathname} />} />
+          <Route path="/chats" element={<MemberChats />} />
+          <Route path="/chats/new" element={<MemberChats />} />
+          <Route path="/chats/:roomId" element={<MemberChats />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
@@ -194,18 +206,7 @@ function App() {
       <Route path="/signup" element={<Navigate to="/login" replace />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
-      <Route path="/notes" element={<ProtectedRoute><PrivateNotes /></ProtectedRoute>} />
-      <Route path="/chats" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
-      <Route path="/chats/new" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
-      <Route path="/chats/:roomId" element={<ProtectedRoute><MemberChats /></ProtectedRoute>} />
-      <Route path="/notes/new" element={<ProtectedRoute><PrivateNoteCompose key={location.search} /></ProtectedRoute>} />
-      <Route path="/notes/blocks" element={<ProtectedRoute><PrivateNoteBlocks /></ProtectedRoute>} />
-      <Route path="/notes/:id" element={<ProtectedRoute><PrivateNoteDetail key={location.pathname} /></ProtectedRoute>} />
 
-      <Route path="/shelters" element={<Shelters />} />
-      <Route path="/shelters/:registration" element={<ShelterDetail />} />
-      <Route path="/travel" element={<Travel />} />
-      <Route path="/travel/:contentId" element={<TravelDetail />} />
       <Route
         path="/animals/new"
         element={
@@ -333,14 +334,6 @@ function App() {
             <AdminRoute>
               <AdminStatistics />
             </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/mypage"
-        element={
-          <ProtectedRoute>
-            <MyPage />
           </ProtectedRoute>
         }
       />
