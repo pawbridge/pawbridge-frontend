@@ -28,6 +28,7 @@ async page => {
       writes.push({ path, method: request.method(), body: request.postData() ? request.postDataJSON() : null });
       if (mode === 'pending') await new Promise(resolve => { releaseMutation = resolve; });
       if (mode === 'delete-error') return route.fulfill({ status: 500, json: { message: 'mock failure' } });
+      if (mode === 'nickname-conflict') return route.fulfill({ status: 409, json: { status: 409, message: '이미 사용 중인 닉네임입니다.', data: null } });
       if (path.endsWith('/approve')) applicationStatus = 'APPROVED';
       if (path.endsWith('/reject')) applicationStatus = 'REJECTED';
       return route.fulfill({ json: envelope(path.includes('shelter-applications') ? application() : null) });
@@ -109,6 +110,16 @@ async page => {
   await edit.waitFor({ state: 'hidden' });
   check(writes[0].method === 'PUT' && writes[0].body.role === 'ROLE_SHELTER', 'Existing user update contract');
   results.push('member search/filter/validation/update contract/pending modal');
+  mode = 'nickname-conflict';
+  await page.getByRole('button', { name: '수정', exact: true }).click();
+  await edit.getByRole('button', { name: '저장', exact: true }).click();
+  const conflict = edit.getByRole('alert');
+  await conflict.getByText('이미 사용 중인 닉네임입니다.', { exact: false }).waitFor();
+  check(!(await conflict.textContent()).includes('신청'), 'Member edit error must not use shelter-application wording');
+  mode = 'normal';
+  await edit.getByRole('button', { name: '취소', exact: true }).click();
+  await edit.waitFor({ state: 'hidden' });
+  results.push('member edit shows server error message');
   mode = 'delete-error';
   await page.getByRole('button', { name: '삭제', exact: true }).click();
   const deletion = page.getByRole('dialog', { name: '회원을 삭제하시겠어요?' });
@@ -219,7 +230,7 @@ async page => {
       check(await page.getByRole('heading', { level: 1 }).count() === 0, 'Denied route must not render admin page: ' + path);
     }
   }
-  check(writes.length === 4, 'Shared/public/access regression must not send extra writes');
+  check(writes.length === 5, 'Shared/public/access regression must not send extra writes');
   results.push('logged-out and non-admin access blocked on three representative routes');
   check(errors.length === 0, 'Page errors: ' + errors.join('; '));
   return { results, screensRendered: 24, screenshotCount: 16, mockedMutationCount: writes.length, pageErrors: errors };

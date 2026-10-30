@@ -4,7 +4,7 @@ async page => {
   await page.unroute('**/api/v1/**');
   const check = (condition, label) => { if (!condition) throw new Error(label); };
   const errors = [], writes = [], results = [];
-  let fail = '', empty = false, failDelivery = false, release, pending = false;
+  let fail = '', empty = false, failDelivery = false, failCreate = false, release, pending = false;
   const image = origin + '/favicon-96.png';
   const posts = [{ id: 12, title: '함께한 첫 산책', content: '입양 후 일상을 기록합니다.', authorId: 3, authorName: '예시 회원', authorNickname: '포우친구', boardType: 'ADOPTION', createdAt: '2026-10-01T10:00:00', imageUrls: [image], viewCount: 24 }];
   let categories = [{ id: 1, name: '강아지', description: '용품 분류', parentId: null, children: [{ id: 2, name: '산책용품', description: '', parentId: 1, children: [] }] }];
@@ -25,6 +25,7 @@ async page => {
       if (pending) await new Promise(resolve => { release = resolve; });
       if (failDelivery && path.endsWith('/delivery-status')) return route.fulfill({ status: 500, json: { message: 'mock failure' } });
       if (path === '/api/v1/images') return route.fulfill({ json: { imageUrl: image } });
+      if (failCreate && path === '/api/v1/products') return route.fulfill({ status: 400, json: { message: 'Invalid Input Value', code: 'C001', errors: [] } });
       if (path === '/api/v1/products' || path === '/api/v1/products/1') return route.fulfill({ json: product });
       if (path === '/api/v1/admin/orders/1/status') order = { ...order, status: json.status };
       if (path === '/api/v1/admin/orders/1/delivery-status') order = { ...order, deliveryStatus: json.deliveryStatus };
@@ -95,6 +96,12 @@ async page => {
   for (const index of [1, 2]) { await page.getByLabel('가격 ' + index + ' (원)').fill('19000'); await page.getByLabel('재고 ' + index + ' (개)').fill('12'); }
   const imageResponse = await page.request.get(image);
   await page.getByLabel('대표 이미지 선택').setInputFiles({ name: 'local-test.png', mimeType: 'image/png', buffer: await imageResponse.body() });
+  failCreate = true;
+  await page.getByRole('button', { name: '상품 등록', exact: true }).click();
+  await page.getByText('상품 등록 또는 이미지 업로드에 실패했습니다. 입력 내용은 유지됩니다.', { exact: true }).waitFor();
+  check(await page.getByLabel('상품명 (필수)').inputValue() === '새 상품', 'Failed create keeps input');
+  failCreate = false;
+  results.push('product create failure: Korean notice, input kept');
   await page.getByRole('button', { name: '상품 등록', exact: true }).click();
   await page.waitForURL('**/admin/products');
   const created = writes.find(write => write.path === '/api/v1/products' && write.method === 'POST');
