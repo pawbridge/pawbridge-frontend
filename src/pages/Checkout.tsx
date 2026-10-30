@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { createOrder, createDirectOrder } from '../api/products.api';
 import type { CartItem, CreateOrderRequest, DirectOrderRequest } from '../types/api.types';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 
 // 다음 우편번호 API 타입 선언
 declare global {
@@ -361,7 +359,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+    <>
       {paymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
@@ -385,8 +383,6 @@ export default function Checkout() {
           </div>
         </div>
       )}
-
-      <Header />
 
       <main className="flex flex-1 justify-center py-10 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-4xl flex flex-col gap-8">
@@ -615,8 +611,6 @@ export default function Checkout() {
           </div>
         </div>
       </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }

@@ -3,8 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProductById, addToCart } from '../api/products.api';
 import type { ProductSku } from '../types/api.types';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import placeholderImg from '../assets/image-placeholder.svg';
 
 export default function ProductDetail() {
@@ -144,37 +142,29 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-            <p className="text-gray-500">상품 정보를 불러오는 중...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
+          <p className="text-gray-500">상품 정보를 불러오는 중...</p>
+        </div>
+      </main>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
-            <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
-            <button
-              onClick={() => navigate('/products')}
-              className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
-            >
-              상품 목록으로
-            </button>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <main className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
+          <button
+            onClick={() => navigate('/products')}
+            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
+          >
+            상품 목록으로
+          </button>
+        </div>
+      </main>
     );
   }
 
@@ -193,185 +183,179 @@ export default function ProductDetail() {
     : placeholderImg;
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
-      <Header />
-      
-      <main className="flex-1 px-4 sm:px-10 lg:px-20 py-5">
-        <div className="max-w-6xl mx-auto">
-          {/* 상품 정보 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 mt-6">
-            {/* 이미지 갤러리 */}
-            <div className="flex flex-col gap-4">
-              <div className="aspect-square w-full bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden">
-                {resolvedMainImage ? (
-                  <img
-                    src={resolvedMainImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = placeholderImg;
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="material-symbols-outlined text-6xl text-gray-400">image</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* 상품 정보 */}
-            <div className="flex flex-col">
-              {product.categoryName && (
-                <div className="mb-2">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand/10 text-brand-accent">
-                    {product.categoryName}
-                  </span>
+    <main className="flex-1 px-4 sm:px-10 lg:px-20 py-5">
+      <div className="max-w-6xl mx-auto">
+        {/* 상품 정보 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 mt-6">
+          {/* 이미지 갤러리 */}
+          <div className="flex flex-col gap-4">
+            <div className="aspect-square w-full bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden">
+              {resolvedMainImage ? (
+                <img
+                  src={resolvedMainImage}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = placeholderImg;
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-6xl text-gray-400">image</span>
                 </div>
               )}
-              <h1 className="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight">
-                {product.name}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-base font-normal leading-normal pt-3">
-                {product.description}
-              </p>
-
-              {/* 옵션 선택 */}
-              <div className="mt-6 space-y-4">
-                {Object.entries(optionGroups).map(([optionName, values]) => (
-                  <div key={optionName}>
-                    <label className="block text-sm font-bold mb-3">{optionName}</label>
-                    <div className="flex flex-wrap gap-2">
-                      {values.map((value) => {
-                        // 해당 옵션의 재고 확인
-                        const skuWithOption = product.skus?.find(
-                          sku => sku.options && sku.options[optionName] === value
-                        );
-                        const isOutOfStock = skuWithOption?.stockQuantity === 0;
-                        const isSelected = selectedOptions[optionName] === value;
-                        
-                        return (
-                          <button
-                            key={value}
-                            type="button"
-                            onClick={() => !isOutOfStock && handleOptionChange(optionName, value)}
-                            disabled={isOutOfStock}
-                            className={`
-                              px-4 py-2 rounded-full text-sm font-medium transition-all
-                              ${isSelected 
-                                ? 'bg-brand text-brand-ink ring-2 ring-brand-focus ring-offset-2'
-                                : 'bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700'
-                              }
-                              ${isOutOfStock 
-                                ? 'opacity-40 cursor-not-allowed line-through' 
-                                : 'cursor-pointer'
-                              }
-                            `}
-                          >
-                            {value}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* 선택된 옵션 및 수량 */}
-              {selectedSku && (
-                <div className="mt-6 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {getSelectedOptionText()}
-                      </p>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                        재고 {selectedSku.stockQuantity}개
-                      </p>
-                    </div>
-                    <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
-                      <button
-                        className="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-l-md"
-                        onClick={() => handleQuantityChange(-1)}
-                        disabled={quantity <= 1}
-                      >
-                        -
-                      </button>
-                      <input
-                        type="text"
-                        className="w-12 text-center border-0 bg-transparent focus:ring-0 p-0"
-                        value={quantity}
-                        readOnly
-                      />
-                      <button
-                        className="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-r-md"
-                        onClick={() => handleQuantityChange(1)}
-                        disabled={quantity >= selectedSku.stockQuantity}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <div className="border-t border-gray-300 dark:border-gray-700 my-4"></div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-base font-medium">총 상품 금액</span>
-                    <span className="text-2xl font-bold text-brand-accent">
-                      ₩{formatPrice(selectedSku.price * quantity)}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* 버튼 */}
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <button
-                  className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={handleAddToCart}
-                  disabled={!selectedSku || selectedSku.stockQuantity <= 0 || addToCartMutation.isPending}
-                >
-                  <span className="material-symbols-outlined">add_shopping_cart</span>
-                  <span>장바구니 담기</span>
-                </button>
-                <button
-                  className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-brand text-brand-ink gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={handleBuyNow}
-                  disabled={!selectedSku || selectedSku.stockQuantity <= 0}
-                >
-                  바로 구매
-                </button>
-              </div>
             </div>
           </div>
 
-          {/* 상품 상세 정보 탭 */}
-          <div className="w-full mt-16 border-t border-gray-200 dark:border-gray-700">
-            <div className="border-b border-gray-200 dark:border-gray-700">
-              <nav className="-mb-px flex gap-6">
-                <span className="shrink-0 border-b-2 border-brand-focus px-1 py-4 text-sm font-medium text-brand-accent cursor-pointer">
-                  상세 정보
+          {/* 상품 정보 */}
+          <div className="flex flex-col">
+            {product.categoryName && (
+              <div className="mb-2">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand/10 text-brand-accent">
+                  {product.categoryName}
                 </span>
-                <span className="shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 cursor-pointer">
-                  리뷰
-                </span>
-                <span className="shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 cursor-pointer">
-                  배송/교환 정보
-                </span>
-              </nav>
-            </div>
-            <div className="py-10">
-              <div className="space-y-8">
-                <h3 className="text-xl font-bold">상품 상세 정보</h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {product.description}
-                </p>
               </div>
+            )}
+            <h1 className="text-text-light dark:text-text-dark tracking-tight text-3xl font-bold leading-tight">
+              {product.name}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 text-base font-normal leading-normal pt-3">
+              {product.description}
+            </p>
+
+            {/* 옵션 선택 */}
+            <div className="mt-6 space-y-4">
+              {Object.entries(optionGroups).map(([optionName, values]) => (
+                <div key={optionName}>
+                  <label className="block text-sm font-bold mb-3">{optionName}</label>
+                  <div className="flex flex-wrap gap-2">
+                    {values.map((value) => {
+                      // 해당 옵션의 재고 확인
+                      const skuWithOption = product.skus?.find(
+                        sku => sku.options && sku.options[optionName] === value
+                      );
+                      const isOutOfStock = skuWithOption?.stockQuantity === 0;
+                      const isSelected = selectedOptions[optionName] === value;
+                      
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => !isOutOfStock && handleOptionChange(optionName, value)}
+                          disabled={isOutOfStock}
+                          className={`
+                            px-4 py-2 rounded-full text-sm font-medium transition-all
+                            ${isSelected 
+                              ? 'bg-brand text-brand-ink ring-2 ring-brand-focus ring-offset-2'
+                              : 'bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700'
+                            }
+                            ${isOutOfStock 
+                              ? 'opacity-40 cursor-not-allowed line-through' 
+                              : 'cursor-pointer'
+                            }
+                          `}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 선택된 옵션 및 수량 */}
+            {selectedSku && (
+              <div className="mt-6 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {getSelectedOptionText()}
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                      재고 {selectedSku.stockQuantity}개
+                    </p>
+                  </div>
+                  <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg">
+                    <button
+                      className="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-l-md"
+                      onClick={() => handleQuantityChange(-1)}
+                      disabled={quantity <= 1}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="text"
+                      className="w-12 text-center border-0 bg-transparent focus:ring-0 p-0"
+                      value={quantity}
+                      readOnly
+                    />
+                    <button
+                      className="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-r-md"
+                      onClick={() => handleQuantityChange(1)}
+                      disabled={quantity >= selectedSku.stockQuantity}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <div className="border-t border-gray-300 dark:border-gray-700 my-4"></div>
+                <div className="flex justify-between items-center">
+                  <span className="text-base font-medium">총 상품 금액</span>
+                  <span className="text-2xl font-bold text-brand-accent">
+                    ₩{formatPrice(selectedSku.price * quantity)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* 버튼 */}
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddToCart}
+                disabled={!selectedSku || selectedSku.stockQuantity <= 0 || addToCartMutation.isPending}
+              >
+                <span className="material-symbols-outlined">add_shopping_cart</span>
+                <span>장바구니 담기</span>
+              </button>
+              <button
+                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-brand text-brand-ink gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleBuyNow}
+                disabled={!selectedSku || selectedSku.stockQuantity <= 0}
+              >
+                바로 구매
+              </button>
             </div>
           </div>
         </div>
-      </main>
 
-      <Footer />
-    </div>
+        {/* 상품 상세 정보 탭 */}
+        <div className="w-full mt-16 border-t border-gray-200 dark:border-gray-700">
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <nav className="-mb-px flex gap-6">
+              <span className="shrink-0 border-b-2 border-brand-focus px-1 py-4 text-sm font-medium text-brand-accent cursor-pointer">
+                상세 정보
+              </span>
+              <span className="shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 cursor-pointer">
+                리뷰
+              </span>
+              <span className="shrink-0 border-b-2 border-transparent px-1 py-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 cursor-pointer">
+                배송/교환 정보
+              </span>
+            </nav>
+          </div>
+          <div className="py-10">
+            <div className="space-y-8">
+              <h3 className="text-xl font-bold">상품 상세 정보</h3>
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+                {product.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
 
