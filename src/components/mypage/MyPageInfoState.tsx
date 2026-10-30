@@ -1,4 +1,3 @@
-
 type MyPageInfoStateProps =
   | { variant: 'loading' }
   | { variant: 'error'; isRetrying: boolean; onRetry: () => void };
