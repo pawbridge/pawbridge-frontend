@@ -168,6 +168,10 @@ function App() {
         <Route path="/reports/:id" element={<AnimalReportDetail />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/community" element={<CommunityList />} />
+        <Route path="/community/:id" element={<CommunityDetail />} />
+        <Route path="/adoption" element={<AdoptionList />} />
+        <Route path="/adoption/:id" element={<AdoptionDetail />} />
         <Route element={<RequireLogin />}>
           <Route path="/favorite-animals" element={<FavoriteAnimals />} />
           <Route path="/registered-animals" element={<RegisteredAnimals />} />
@@ -179,6 +183,10 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/orders/:orderId" element={<OrderDetail />} />
+          <Route path="/community/new" element={<CommunityCreate />} />
+          <Route path="/community/:id/edit" element={<CommunityEdit />} />
+          <Route path="/adoption/new" element={<AdoptionCreate />} />
+          <Route path="/adoption/:id/edit" element={<AdoptionEdit />} />
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
@@ -357,47 +365,10 @@ function App() {
           </ProtectedRoute>
         }
       />
-      {/* 커뮤니티와 독립 실종·목격 제보 */}
-      <Route path="/community" element={<CommunityList />} />
+      {/* 예전 커뮤니티 제보 주소는 독립 실종·목격 제보 주소로 넘긴다 */}
       <Route path="/community/reports/new" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/reports/:id/edit" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/reports/:id" element={<LegacyAnimalReportRedirect />} />
-      <Route path="/community/:id" element={<CommunityDetail />} />
-      <Route
-        path="/community/new"
-        element={
-          <ProtectedRoute>
-            <CommunityCreate />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/community/:id/edit"
-        element={
-          <ProtectedRoute>
-            <CommunityEdit />
-          </ProtectedRoute>
-        }
-      />
-      {/* 입양 후기 */}
-      <Route path="/adoption" element={<AdoptionList />} />
-      <Route path="/adoption/:id" element={<AdoptionDetail />} />
-      <Route
-        path="/adoption/new"
-        element={
-          <ProtectedRoute>
-            <AdoptionCreate />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/adoption/:id/edit"
-        element={
-          <ProtectedRoute>
-            <AdoptionEdit />
-          </ProtectedRoute>
-        }
-      />
       <Route path="/admin/shelters" element={<AdminRoute><AdminShelters /></AdminRoute>} />
       <Route path="/admin/shelters/:registration" element={<AdminRoute><AdminShelterDetail /></AdminRoute>} />
       <Route path="/admin/shelter-applications" element={<AdminRoute><AdminShelterApplications /></AdminRoute>} />
