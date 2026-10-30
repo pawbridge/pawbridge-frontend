@@ -166,11 +166,19 @@ function App() {
         <Route path="/reports/missing" element={<AnimalReportList kind="MISSING" />} />
         <Route path="/reports/sightings" element={<AnimalReportList kind="SIGHTING" />} />
         <Route path="/reports/:id" element={<AnimalReportDetail />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
         <Route element={<RequireLogin />}>
           <Route path="/favorite-animals" element={<FavoriteAnimals />} />
           <Route path="/registered-animals" element={<RegisteredAnimals />} />
           <Route path="/reports/new" element={<AnimalReportForm />} />
           <Route path="/reports/:id/edit" element={<AnimalReportForm />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-complete" element={<OrderComplete />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/:orderId" element={<OrderDetail />} />
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
@@ -206,8 +214,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/products" element={<Products />} />
-      <Route path="/products/:id" element={<ProductDetail />} />
       <Route
         path="/products/new"
         element={
@@ -327,55 +333,6 @@ function App() {
         element={
           <ProtectedRoute>
             <MyPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/checkout"
-        element={
-          <ProtectedRoute>
-            <Checkout />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/order-complete"
-        element={
-          <ProtectedRoute>
-            <OrderComplete />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/wishlist"
-        element={
-          <ProtectedRoute>
-            <Wishlist />
-          </ProtectedRoute>
-        }
-      />
-      {/* 주문 내역 (일반 사용자용) */}
-      <Route
-        path="/orders"
-        element={
-          <ProtectedRoute>
-            <Orders />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/orders/:orderId"
-        element={
-          <ProtectedRoute>
-            <OrderDetail />
           </ProtectedRoute>
         }
       />
