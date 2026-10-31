@@ -83,7 +83,16 @@ async page => {
   await page.keyboard.press('Escape');
   await menuDialog.waitFor({ state: 'hidden' });
   check(await menu.evaluate(el => el === document.activeElement), 'Menu trigger focus restoration');
-  results.push('mobile menu keyboard, Escape, focus return, background lock');
+  // Browser back with the full-screen menu open closes the menu (the admin frame stays mounted across screens).
+  await page.evaluate(() => { history.pushState({}, '', '/admin/dashboard'); dispatchEvent(new PopStateEvent('popstate')); });
+  await page.waitForURL('**/admin/dashboard');
+  await menu.click();
+  await menuDialog.waitFor();
+  await page.goBack();
+  await page.waitForURL('**/admin/users');
+  await page.getByRole('heading', { level: 1, name: '회원 관리' }).waitFor();
+  check(await menuDialog.isHidden(), 'Mobile menu closes on browser back');
+  results.push('mobile menu keyboard, Escape, focus return, background lock, closes on back');
   await page.getByLabel('회원 검색', { exact: true }).fill('shelter@');
   check(await page.getByText('조회된 회원 1명').isVisible(), 'Email search');
   await page.getByLabel('회원 검색', { exact: true }).fill('');

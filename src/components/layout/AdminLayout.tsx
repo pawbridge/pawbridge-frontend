@@ -17,6 +17,8 @@ export default function AdminLayout() {
   const location = useLocation();
   const { pathname } = location;
   const [menuOpen, setMenuOpen] = useState(false);
+  // 틀이 화면 사이에서 유지되므로, 브라우저 뒤로가기 등으로 주소가 바뀌면 모바일 메뉴를 직접 닫는다.
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
   useEffect(() => {
     const media = window.matchMedia('(min-width: 1024px)');
     const onChange = () => { if (media.matches) setMenuOpen(false); };
