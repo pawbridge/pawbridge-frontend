@@ -11,7 +11,7 @@ interface CreateSku {
   stockQuantity: number;
   optionValueIds: number[];
 }
-import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
 import AdminProductImage from '../../components/admin/AdminProductImage';
 import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
@@ -341,7 +341,7 @@ export default function ProductCreate() {
 
 
   const busy = uploadImageMutation.isPending || createProductMutation.isPending;
-  return <AdminLayout title="상품 등록" description="상품 기본 정보, 옵션 조합과 재고를 등록합니다.">
+  return <><AdminPageHeader title="상품 등록" description="상품 기본 정보, 옵션 조합과 재고를 등록합니다." />
     {isLoadingCategories ? <AdminLoading label="카테고리를 불러오는 중입니다." /> : categoriesError ? <AdminError title="카테고리 조회 실패" /> : <form onSubmit={e => { e.preventDefault(); void handleSubmit(); }}>
       <fieldset disabled={busy} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
@@ -374,5 +374,5 @@ export default function ProductCreate() {
         </section>
       </fieldset>
     </form>}
-  </AdminLayout>;
+  </>;
 }

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getProductById, getProducts, updateProduct, deleteProduct, getCategories, uploadImage } from '../../api/products.api';
 import type { Product, UpdateProductRequest, UpdateSku, CategoryResponse, ProductStatus } from '../../types/api.types';
-import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
 import AdminProductImage from '../../components/admin/AdminProductImage';
 import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
 import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
@@ -172,7 +172,7 @@ export default function ProductEdit() {
 
 
   const busy = uploadImageMutation.isPending || updateProductMutation.isPending;
-  return <AdminLayout title="상품 수정" description="현재 상품의 기본 정보와 SKU별 가격·재고를 수정합니다.">
+  return <><AdminPageHeader title="상품 수정" description="현재 상품의 기본 정보와 SKU별 가격·재고를 수정합니다." />
     {!valid ? <AdminError title="올바르지 않은 상품 번호입니다." /> : isLoadingProduct ? <AdminLoading /> : productError || !product ? <AdminError title="상품 조회 실패" retry={() => void refetch()} /> : categoriesError ? <AdminError title="카테고리 조회 실패" /> : categoriesLoading ? <AdminLoading /> : <form onSubmit={handleSubmit}>
       <fieldset disabled={busy || showDeleteModal} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
@@ -200,6 +200,6 @@ export default function ProductEdit() {
       </fieldset>
     </form>}
     {showDeleteModal && product && <AdminDeleteDialog name={product.name} run={() => deleteProduct(Number(productId))} refresh={async () => { await getProducts({ page: 0, size: 20 }); navigate('/admin/products'); }} onClose={() => setShowDeleteModal(false)} />}
-  </AdminLayout>;
+  </>;
 }
 

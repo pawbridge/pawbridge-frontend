@@ -1,6 +1,6 @@
 // Error boundaries on mocked data: a screen that throws while drawing shows a guidance card instead of a blank page.
-// Inside SiteLayout the header and footer stay and moving to another address draws again;
-// outside it (admin) the top-level boundary shows the same card on its own.
+// Inside SiteLayout and AdminLayout the surrounding frame stays and moving to another address draws again;
+// anything outside them (here the site header) reaches the top-level boundary, which shows the same card on its own.
 async page => {
   const origin = 'http://127.0.0.1:5263';
   const checks = [], pageErrors = [];
@@ -51,15 +51,34 @@ async page => {
   await Promise.all([page.waitForEvent('load'), card().getByRole('button', { name: '새로고침', exact: true }).click()]);
   await card().waitFor();
   assert(await page.evaluate(() => window.reloadProbe) === undefined, 'reload-button-reloads');
-  // Outside SiteLayout (admin): the top-level boundary shows the card without the site header.
+  // Admin screens: the card takes the admin page area, the admin sidebar and top bar stay.
   await page.evaluate(value => localStorage.setItem('auth-storage', value), JSON.stringify(admin));
   for (const width of [1920, 390]) {
     await page.setViewportSize({ width, height: 1080 });
     await page.goto(origin + '/admin/users');
     await card().waitFor();
-    assert(await banners() === 0, `root-card-alone-${width}`);
+    assert(await page.getByRole('main').getByRole('alert').count() === 1, `admin-card-in-main-${width}`);
+    assert(await page.getByRole('link', { name: '메인페이지', exact: true }).isVisible(), `admin-card-keeps-top-bar-${width}`);
+    assert(await banners() === 1, `admin-card-keeps-admin-header-${width}`);
   }
-  // "홈으로" leaves the broken screen for the home page.
+  // Moving with the admin menu clears the error and draws the new screen.
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  assert(await page.getByRole('navigation', { name: '관리자 메뉴' }).isVisible(), 'admin-card-keeps-sidebar');
+  await page.getByRole('navigation', { name: '관리자 메뉴' }).getByRole('link', { name: '대시보드', exact: true }).click();
+  await page.waitForURL('**/admin/dashboard');
+  await page.getByRole('heading', { level: 1, name: '대시보드' }).waitFor();
+  assert(await card().count() === 0, 'admin-card-cleared-on-move');
+  // Outside both layouts: a header that throws (a stored user name that is not text) reaches the top-level boundary.
+  const brokenMember = { state: { user: { id: 7, name: { broken: true }, email: 'member@example.invalid', role: 'ROLE_USER' }, accessToken: 'synthetic-local-token', refreshToken: null }, version: 0 };
+  await page.evaluate(value => localStorage.setItem('auth-storage', value), JSON.stringify(brokenMember));
+  for (const width of [1920, 390]) {
+    await page.setViewportSize({ width, height: 1080 });
+    await page.goto(origin + '/terms');
+    await card().waitFor();
+    assert(await banners() === 0 && await footers() === 0, `root-card-alone-${width}`);
+  }
+  // "홈으로" loads the app again from the home page.
+  await page.evaluate(() => localStorage.clear());
   await card().getByRole('link', { name: '홈으로', exact: true }).click();
   await page.waitForURL(origin + '/');
   await page.getByRole('banner').waitFor();
