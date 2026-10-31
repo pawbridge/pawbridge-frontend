@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { applyAnimalSearchFilters, readAnimalSearch, writeAnimalSearch, defaultAnimalSearch, animalSearchReturnTo, hasAnimalRelevanceSearch, relevanceAnimalSearchSort, visibleAnimalSearchPages } from '../src/utils/animalSearch.ts';
+import { applyAnimalSearchFilters, readAnimalSearch, writeAnimalSearch, defaultAnimalSearch, animalSearchReturnTo, hasAnimalRelevanceSearch, relevanceAnimalSearchSort, visibleAnimalSearchPages } from '../src/lib/animalSearch.ts';
 
 test('검색어·필터·정렬·페이지를 URL로 왕복 복원한다', () => {
   const filters = { ...defaultAnimalSearch, keyword: '믹스 & 흰색 + #', species: 'DOG', breed: '믹스견', gender: 'UNKNOWN' as const, region: '경기도', city: '수원시', status: 'PROTECT' as const, minAge: 0, maxAge: 5, page: 2, sort: 'age,asc' };

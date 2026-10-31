@@ -1,4 +1,4 @@
-import { animalRegions } from '../utils/animalRegions.ts';
+import { animalRegions } from './animalRegions.ts';
 
 // Only report selectors include the 2026 Incheon districts. APMS selectors stay unchanged.
 // https://www.incheon.go.kr/IC01070101

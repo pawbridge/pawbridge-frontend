@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { AnimalSearchParams } from '../../types/api.types';
-import { defaultAnimalSearch } from '../../utils/animalSearch';
-import { animalRegions } from '../../utils/animalRegions';
+import { defaultAnimalSearch } from '../../lib/animalSearch';
+import { animalRegions } from '../../lib/animalRegions';
 
 type SearchMode = 'feature' | 'notice';
 type Picker = 'breed' | 'region' | null;

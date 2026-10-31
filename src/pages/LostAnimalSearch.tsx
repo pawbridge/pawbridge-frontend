@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { readLostSearchSession, saveLostSearchSession, clearLostSearchSession } from '../utils/lostSearchSession';
+import { readLostSearchSession, saveLostSearchSession, clearLostSearchSession } from '../lib/lostSearchSession';
 import { findLostCandidates } from '../api/lostSearch.api';
 import type { LostCandidate } from '../api/lostSearch.api';
 import placeholder from '../assets/image-placeholder.svg';

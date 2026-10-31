@@ -1,4 +1,4 @@
-import { shelterSearch, shelterSearchParams } from '../lib/shelters.ts';
+import { shelterSearch, shelterSearchParams } from './shelters.ts';
 
 export function koreaToday(now = new Date()): string {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);

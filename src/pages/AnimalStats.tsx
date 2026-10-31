@@ -1,4 +1,4 @@
-import { outcomeRates } from '../utils/animalStatistics';
+import { outcomeRates } from '../lib/animalStatistics';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
