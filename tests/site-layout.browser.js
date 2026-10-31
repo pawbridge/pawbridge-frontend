@@ -98,7 +98,8 @@ async page => {
     await page.setViewportSize({ width, height: 1080 });
     for (const route of [...routes, ...loginRoutes.filter(route => route !== '/checkout')]) {
       await page.goto(origin + route);
-      await page.locator('main').first().waitFor();
+      // Screen code loads on first visit; skip the empty placeholder main (aria-busy) and wait for the screen itself.
+      await page.locator('main:not([aria-busy])').first().waitFor();
       assert(await banners() === 1, `one-header-${route}-${width}`);
       assert(await footers() === 1, `one-footer-${route}-${width}`);
     }
@@ -113,6 +114,8 @@ async page => {
     await page.getByRole('banner').evaluate(header => { header.dataset.layoutProbe = 'kept'; });
     await page.getByRole('contentinfo').getByRole('link', { name: '이용약관', exact: true }).click();
     await page.waitForURL('**/terms');
+    // The URL changes before the terms screen arrives; check the header once the new screen is drawn.
+    await page.getByRole('heading', { level: 1, name: '이용약관' }).waitFor();
     assert(await page.getByRole('banner').getAttribute('data-layout-probe') === 'kept', `header-kept-on-move-${width}`);
     if (width === 390) {
       const menuButton = page.getByRole('button', { name: '메뉴 열기' });
@@ -120,7 +123,8 @@ async page => {
       assert(await page.getByRole('navigation', { name: '모바일 메뉴' }).isVisible(), 'mobile-menu-opens');
       await page.evaluate(() => { history.pushState({}, '', '/privacy'); dispatchEvent(new PopStateEvent('popstate')); });
       await page.waitForURL('**/privacy');
-      await page.getByRole('heading', { level: 1 }).waitFor();
+      // Wait for the privacy screen itself: its code loads on first visit, and the previous screen stays until then.
+      await page.getByRole('heading', { level: 1, name: '개인정보처리방침' }).waitFor();
       assert(!(await page.getByRole('navigation', { name: '모바일 메뉴' }).isVisible()), 'mobile-menu-closes-after-move');
     }
   }

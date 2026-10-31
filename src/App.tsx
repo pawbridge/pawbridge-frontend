@@ -1,73 +1,77 @@
-import Shelters from './pages/Shelters';
-import ShelterDetail from './pages/ShelterDetail';
-import AdminShelters from './pages/admin/AdminShelters';
-import AdminShelterDetail from './pages/admin/AdminShelterDetail';
-import AdminShelterApplications from './pages/admin/AdminShelterApplications';
-import AdminShelterApplicationDetail from './pages/admin/AdminShelterApplicationDetail';
 import { Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
-import type { ReactElement } from 'react';
+import { lazy, Suspense, type ReactElement } from 'react';
 import { useAuthStore } from './store/authStore.ts';
 import Home from './pages/Home.tsx';
-import Login from './pages/Login.tsx';
-import ResetPassword from './pages/ResetPassword.tsx';
-import Animals from './pages/Animals.tsx';
-import LostAnimalSearch from './pages/LostAnimalSearch.tsx';
-import AnimalDetail from './pages/AnimalDetail.tsx';
-import AnimalCreate from './pages/AnimalCreate.tsx';
-import AnimalEdit from './pages/AnimalEdit.tsx';
-import Products from './pages/Products.tsx';
-import ProductDetail from './pages/ProductDetail.tsx';
-import ProductCreate from './pages/admin/ProductCreate.tsx';
-import ProductEdit from './pages/admin/ProductEdit.tsx';
-import AdminProductList from './pages/admin/AdminProductList.tsx';
-import AdminDashboard from './pages/admin/AdminDashboard.tsx';
-import AdminCategoryManagement from './pages/admin/AdminCategoryManagement.tsx';
-import AdminOptionGroupManagement from './pages/admin/AdminOptionGroupManagement.tsx';
-import Cart from './pages/Cart.tsx';
-import Checkout from './pages/Checkout.tsx';
-import OrderComplete from './pages/OrderComplete.tsx';
-import Wishlist from './pages/Wishlist.tsx';
-import Orders from './pages/Orders.tsx';
-import OrderDetail from './pages/OrderDetail.tsx';
-import AdminOrderList from './pages/admin/AdminOrderList.tsx';
-import AdminOrderDetail from './pages/admin/AdminOrderDetail.tsx';
-import AdminUserManagement from './pages/admin/AdminUserManagement.tsx';
-import AdminUserDetail from './pages/admin/AdminUserDetail.tsx';
-import AdminPostManagement from './pages/admin/AdminPostManagement.tsx';
-import AdminPostDetail from './pages/admin/AdminPostDetail.tsx';
-import AdminStatistics from './pages/admin/AdminStatistics.tsx';
-import AdminVideoManagement from './pages/admin/AdminVideoManagement';
-import MyPage from './pages/MyPage.tsx';
-import FavoriteAnimals from './pages/FavoriteAnimals.tsx';
-import RegisteredAnimals from './pages/RegisteredAnimals.tsx';
-import NotFound from './pages/NotFound.tsx';
-import CommunityList from './pages/CommunityList.tsx';
-import CommunityDetail from './pages/CommunityDetail.tsx';
-import CommunityCreate from './pages/CommunityCreate.tsx';
-import AnimalReportForm from './pages/AnimalReportForm.tsx';
-import AnimalReportDetail from './pages/AnimalReportDetail.tsx';
-import AnimalReportList from './pages/AnimalReportList.tsx';
-import LegacyAnimalReportRedirect from './pages/LegacyAnimalReportRedirect.tsx';
-import CommunityEdit from './pages/CommunityEdit.tsx';
-import AdoptionList from './pages/AdoptionList.tsx';
-import AdoptionDetail from './pages/AdoptionDetail.tsx';
-import AdoptionCreate from './pages/AdoptionCreate.tsx';
-import AdoptionEdit from './pages/AdoptionEdit.tsx';
-import OAuthCallback from './pages/OAuthCallback.tsx';
-import AnimalStats from './pages/AnimalStats.tsx';
-import Travel from './pages/Travel.tsx';
-import TravelDetail from './pages/TravelDetail.tsx';
-import Privacy from './pages/Privacy.tsx';
-import Terms from './pages/Terms.tsx';
-import PrivateNotes from './pages/PrivateNotes';
-import PrivateNoteCompose from './pages/PrivateNoteCompose';
-import PrivateNoteDetail from './pages/PrivateNoteDetail';
-import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
-import MemberChats from './pages/MemberChats';
 import VisitTracker from './components/visits/VisitTracker';
 import SiteLayout from './components/layout/SiteLayout';
 import AdminLayout from './components/layout/AdminLayout';
 import RequireLogin, { LoginRequiredCard } from './components/layout/RequireLogin';
+import PageLoading from './components/common/PageLoading';
+
+// 화면 코드는 처음 들어갈 때 따로 받아 온다(첫 화면 크기를 줄임). 홈은 가장 많이 들어오는 첫 화면이라 바로 싣는다.
+// import() 경로는 고정 문자열로 둔다(빌드 도구가 화면별 파일을 미리 나눌 수 있게).
+const Shelters = lazy(() => import('./pages/Shelters'));
+const ShelterDetail = lazy(() => import('./pages/ShelterDetail'));
+const AdminShelters = lazy(() => import('./pages/admin/AdminShelters'));
+const AdminShelterDetail = lazy(() => import('./pages/admin/AdminShelterDetail'));
+const AdminShelterApplications = lazy(() => import('./pages/admin/AdminShelterApplications'));
+const AdminShelterApplicationDetail = lazy(() => import('./pages/admin/AdminShelterApplicationDetail'));
+const Login = lazy(() => import('./pages/Login.tsx'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword.tsx'));
+const Animals = lazy(() => import('./pages/Animals.tsx'));
+const LostAnimalSearch = lazy(() => import('./pages/LostAnimalSearch.tsx'));
+const AnimalDetail = lazy(() => import('./pages/AnimalDetail.tsx'));
+const AnimalCreate = lazy(() => import('./pages/AnimalCreate.tsx'));
+const AnimalEdit = lazy(() => import('./pages/AnimalEdit.tsx'));
+const Products = lazy(() => import('./pages/Products.tsx'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail.tsx'));
+const ProductCreate = lazy(() => import('./pages/admin/ProductCreate.tsx'));
+const ProductEdit = lazy(() => import('./pages/admin/ProductEdit.tsx'));
+const AdminProductList = lazy(() => import('./pages/admin/AdminProductList.tsx'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.tsx'));
+const AdminCategoryManagement = lazy(() => import('./pages/admin/AdminCategoryManagement.tsx'));
+const AdminOptionGroupManagement = lazy(() => import('./pages/admin/AdminOptionGroupManagement.tsx'));
+const Cart = lazy(() => import('./pages/Cart.tsx'));
+const Checkout = lazy(() => import('./pages/Checkout.tsx'));
+const OrderComplete = lazy(() => import('./pages/OrderComplete.tsx'));
+const Wishlist = lazy(() => import('./pages/Wishlist.tsx'));
+const Orders = lazy(() => import('./pages/Orders.tsx'));
+const OrderDetail = lazy(() => import('./pages/OrderDetail.tsx'));
+const AdminOrderList = lazy(() => import('./pages/admin/AdminOrderList.tsx'));
+const AdminOrderDetail = lazy(() => import('./pages/admin/AdminOrderDetail.tsx'));
+const AdminUserManagement = lazy(() => import('./pages/admin/AdminUserManagement.tsx'));
+const AdminUserDetail = lazy(() => import('./pages/admin/AdminUserDetail.tsx'));
+const AdminPostManagement = lazy(() => import('./pages/admin/AdminPostManagement.tsx'));
+const AdminPostDetail = lazy(() => import('./pages/admin/AdminPostDetail.tsx'));
+const AdminStatistics = lazy(() => import('./pages/admin/AdminStatistics.tsx'));
+const AdminVideoManagement = lazy(() => import('./pages/admin/AdminVideoManagement'));
+const MyPage = lazy(() => import('./pages/MyPage.tsx'));
+const FavoriteAnimals = lazy(() => import('./pages/FavoriteAnimals.tsx'));
+const RegisteredAnimals = lazy(() => import('./pages/RegisteredAnimals.tsx'));
+const NotFound = lazy(() => import('./pages/NotFound.tsx'));
+const CommunityList = lazy(() => import('./pages/CommunityList.tsx'));
+const CommunityDetail = lazy(() => import('./pages/CommunityDetail.tsx'));
+const CommunityCreate = lazy(() => import('./pages/CommunityCreate.tsx'));
+const AnimalReportForm = lazy(() => import('./pages/AnimalReportForm.tsx'));
+const AnimalReportDetail = lazy(() => import('./pages/AnimalReportDetail.tsx'));
+const AnimalReportList = lazy(() => import('./pages/AnimalReportList.tsx'));
+const LegacyAnimalReportRedirect = lazy(() => import('./pages/LegacyAnimalReportRedirect.tsx'));
+const CommunityEdit = lazy(() => import('./pages/CommunityEdit.tsx'));
+const AdoptionList = lazy(() => import('./pages/AdoptionList.tsx'));
+const AdoptionDetail = lazy(() => import('./pages/AdoptionDetail.tsx'));
+const AdoptionCreate = lazy(() => import('./pages/AdoptionCreate.tsx'));
+const AdoptionEdit = lazy(() => import('./pages/AdoptionEdit.tsx'));
+const OAuthCallback = lazy(() => import('./pages/OAuthCallback.tsx'));
+const AnimalStats = lazy(() => import('./pages/AnimalStats.tsx'));
+const Travel = lazy(() => import('./pages/Travel.tsx'));
+const TravelDetail = lazy(() => import('./pages/TravelDetail.tsx'));
+const Privacy = lazy(() => import('./pages/Privacy.tsx'));
+const Terms = lazy(() => import('./pages/Terms.tsx'));
+const PrivateNotes = lazy(() => import('./pages/PrivateNotes'));
+const PrivateNoteCompose = lazy(() => import('./pages/PrivateNoteCompose'));
+const PrivateNoteDetail = lazy(() => import('./pages/PrivateNoteDetail'));
+const PrivateNoteBlocks = lazy(() => import('./pages/PrivateNoteBlocks'));
+const MemberChats = lazy(() => import('./pages/MemberChats'));
 
 // 개발 환경에서만 window에 등록 (디버깅용)
 if (import.meta.env.DEV) {
@@ -154,6 +158,8 @@ function App() {
   return (
     <>
     <VisitTracker />
+    {/* 공통 틀 밖 화면(로그인, 동물 등록 등)을 받아 오는 동안. 틀 안 화면은 각 틀이 따로 기다린다. */}
+    <Suspense fallback={<PageLoading fullScreen />}>
     <Routes>
       {/* 헤더·푸터를 함께 쓰는 화면 */}
       <Route element={<SiteLayout />}>
@@ -251,6 +257,7 @@ function App() {
       <Route path="/community/reports/:id" element={<LegacyAnimalReportRedirect />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </Suspense>
     </>
   );
 }

@@ -51,6 +51,15 @@ async page => {
   await Promise.all([page.waitForEvent('load'), card().getByRole('button', { name: '새로고침', exact: true }).click()]);
   await card().waitFor();
   assert(await page.evaluate(() => window.reloadProbe) === undefined, 'reload-button-reloads');
+  // A screen whose code cannot be downloaded (for example an old file after a deploy) shows the same card in the page area.
+  await page.route('**/assets/Privacy-*.js', route => route.abort('failed'));
+  await page.goto(origin + '/terms');
+  await page.getByRole('heading', { level: 1 }).waitFor();
+  await page.getByRole('contentinfo').getByRole('link', { name: '개인정보처리방침', exact: true }).click();
+  await page.waitForURL('**/privacy');
+  await card().waitFor();
+  assert(await banners() === 1 && await footers() === 1, 'chunk-failure-card-keeps-layout');
+  await page.unroute('**/assets/Privacy-*.js');
   // Admin screens: the card takes the admin page area, the admin sidebar and top bar stay.
   await page.evaluate(value => localStorage.setItem('auth-storage', value), JSON.stringify(admin));
   for (const width of [1920, 390]) {

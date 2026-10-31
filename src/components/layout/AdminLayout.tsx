@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
@@ -8,9 +8,11 @@ import { adminSection } from '../../lib/adminNavigation';
 import ManagementBreadcrumb from '../common/ManagementBreadcrumb';
 import ErrorBoundary from '../common/ErrorBoundary';
 import { ScreenErrorCard } from '../common/ScreenErrorFallback';
+import { PageLoadingStatus } from '../common/PageLoading';
 
 // 관리자 화면 묶음의 공통 틀(사이드바·상단바). 화면은 <Outlet /> 자리에 AdminPageHeader와 자기 내용만 그린다.
 // 화면이 그리다 오류를 내면 사이드바·상단바는 두고 내용 자리에만 안내 카드를 보여 준다. 다른 주소로 이동하면 다시 그린다.
+// 화면 코드를 처음 받아 오는 동안에는 내용 자리만 비워 둔다.
 export default function AdminLayout() {
   const location = useLocation();
   const { pathname } = location;
@@ -34,7 +36,9 @@ export default function AdminLayout() {
       </header>
       <main className="min-w-0 flex-1 space-y-6 p-4 lg:space-y-8 lg:p-8">
         <ErrorBoundary resetKey={location.key} fallback={<ScreenErrorCard />}>
-          <Outlet />
+          <Suspense fallback={<PageLoadingStatus />}>
+            <Outlet />
+          </Suspense>
         </ErrorBoundary>
       </main>
       <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-brand-border bg-surface-light p-4 text-xs lg:hidden dark:border-stone-700 dark:bg-surface-dark"><span>PawBridge · 관리자</span><Link className={adminControl} to="/">사용자 화면으로</Link></footer>
