@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateUser } from '../../api/user.api';
 import type { AdminUserListItem, UpdateUserRequest, UserRole } from '../../types/user.types';
 import { userRoleLabels, validateAdminUser } from '../../lib/adminUsers';
-import { errorMessage } from '../shelter/shelterView';
+import { getApiErrorMessage } from '../../lib/apiError';
 import StatsDialog from '../statistics/StatsDialog';
 import { adminControl, adminInput, adminPrimary } from './AdminUI';
 
@@ -26,7 +26,7 @@ export default function AdminUserEditDialog({ member, onClose, onSaved }: { memb
         <div><label htmlFor="member-role" className="text-sm font-medium">회원 유형</label><select id="member-role" className={adminInput} value={form.role} onChange={event => setForm({ ...form, role: event.target.value as UserRole })}>{Object.entries(userRoleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
         <div><label htmlFor="member-registration" className="text-sm font-medium">보호소 등록번호{form.role === 'ROLE_SHELTER' ? ' (필수)' : ''}</label><input id="member-registration" className={adminInput} value={form.careRegNo || ''} aria-invalid={!!errors.careRegNo} aria-describedby="registration-help" onChange={event => setForm({ ...form, careRegNo: event.target.value })} /><p id="registration-help" className={`mt-2 text-xs ${errors.careRegNo ? 'text-red-700 dark:text-red-300' : 'text-brand-muted dark:text-stone-300'}`}>{errors.careRegNo || '보호소 회원에게는 소속을 확인한 등록번호가 필요합니다.'}</p></div>
       </fieldset>
-      {mutation.isError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{errorMessage(mutation.error)} 입력 내용을 유지했습니다. 다시 확인한 뒤 저장해 주세요.</p>}
+      {mutation.isError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{getApiErrorMessage(mutation.error, '회원 정보를 저장하지 못했습니다.')} 입력 내용을 유지했습니다. 다시 확인한 뒤 저장해 주세요.</p>}
       <div className="flex flex-wrap justify-end gap-3"><button type="button" className={adminControl} disabled={mutation.isPending} onClick={onClose}>취소</button><button className={adminPrimary} disabled={mutation.isPending}>{mutation.isPending ? '저장 중…' : '저장'}</button></div>
     </form>
   </StatsDialog>;

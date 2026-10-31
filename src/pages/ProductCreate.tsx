@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createProduct, getOptionGroups, getCategories, uploadImage } from '../api/products.api';
-import { errorMessage } from '../components/shelter/shelterView';
 import type { OptionGroupResponse, CategoryResponse } from '../types/api.types';
 
 // SKU 생성용 타입
@@ -253,9 +252,8 @@ export default function ProductCreate() {
       setNotice('상품이 등록되었습니다.');
       navigate('/admin/products');
     },
-    onError: (error: unknown) => {
-      const message = errorMessage(error);
-      setNotice(message);
+    onError: () => {
+      setNotice('상품 등록에 실패했습니다. 입력 내용을 확인해 주세요.');
     },
   });
 
@@ -321,9 +319,8 @@ export default function ProductCreate() {
           optionValueIds: s.optionValueIds,
         })),
       });
-    } catch (error: unknown) {
-      const message = errorMessage(error);
-      setNotice(message);
+    } catch {
+      setNotice('상품 등록 또는 이미지 업로드에 실패했습니다. 입력 내용은 유지됩니다.');
     }
   };
 

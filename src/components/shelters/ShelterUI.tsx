@@ -1,4 +1,4 @@
-import { panel, control, labels, errorMessage } from './shelterView';
+import { panel, control, labels, errorMessage } from './shelterApplicationDisplay';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminLayout from '../layout/AdminLayout';

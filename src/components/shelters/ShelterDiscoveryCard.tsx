@@ -4,7 +4,7 @@ import type { ShelterAnimalPreview, ShelterDiscovery } from '../../api/publicShe
 import { shelterAnimalUrl, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../../utils/shelterDiscovery';
 import ShelterHistory from './ShelterHistory';
 import { shelterDetailUrl } from '../../utils/shelterDetail';
-import { readShelterView, saveShelterView } from '../../utils/shelterView';
+import { readShelterView, saveShelterView } from '../../utils/shelterViewSnapshot';
 
 function Preview({ animal, returnTo }: { animal: ShelterAnimalPreview; returnTo: string }) {
   const [failed, setFailed] = useState(false);

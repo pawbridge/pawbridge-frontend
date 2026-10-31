@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readShelterAnimals, writeShelterAnimals, shelterAnimalRequest, shelterLastValidPage, shelterPageCount, shelterDetailReturnTo, shelterDetailPath, shelterDetailUrl } from '../src/utils/shelterDetail.ts';
-import { readShelterView, saveShelterView } from '../src/utils/shelterView.ts';
+import { readShelterView, saveShelterView } from '../src/utils/shelterViewSnapshot.ts';
 
 test('보호소 상세는 기간 전체 보호중 동물을 12마리씩 조회한다', () => {
   assert.deepEqual(shelterAnimalRequest(59, readShelterAnimals(new URLSearchParams())), {
