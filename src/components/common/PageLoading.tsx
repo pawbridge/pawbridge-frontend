@@ -1,4 +1,4 @@
-// 화면 코드를 받아 오는 동안의 알림. 대개 순간이라 눈에 보이는 표시 없이 화면 읽기 프로그램에만 알린다.
+// 화면 코드를 받아 오는 동안의 상태 문구. 대개 순간이라 눈에 보이는 표시 없이 화면 읽기 프로그램용 문구만 둔다.
 export function PageLoadingStatus() {
   return <p role="status" className="sr-only">화면을 불러오는 중입니다.</p>;
 }
