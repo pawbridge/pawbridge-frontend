@@ -120,7 +120,8 @@ async page => {
       assert(await page.getByRole('navigation', { name: '모바일 메뉴' }).isVisible(), 'mobile-menu-opens');
       await page.evaluate(() => { history.pushState({}, '', '/privacy'); dispatchEvent(new PopStateEvent('popstate')); });
       await page.waitForURL('**/privacy');
-      await page.getByRole('heading', { level: 1 }).waitFor();
+      // Wait for the privacy screen itself: its code loads on first visit, and the previous screen stays until then.
+      await page.getByRole('heading', { level: 1, name: '개인정보처리방침' }).waitFor();
       assert(!(await page.getByRole('navigation', { name: '모바일 메뉴' }).isVisible()), 'mobile-menu-closes-after-move');
     }
   }

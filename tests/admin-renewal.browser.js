@@ -203,6 +203,8 @@ async page => {
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto(origin + '/animals/new');
   const breadcrumb = page.getByRole('navigation', { name: '현재 위치', exact: true });
+  // The screen code loads on first visit, so wait for the breadcrumb before checking it.
+  await breadcrumb.waitFor();
   check(await breadcrumb.getByRole('link', { name: '홈', exact: true }).isVisible(), 'Public breadcrumb keeps home link');
   await breadcrumb.getByRole('button').click();
   check(await breadcrumb.getByRole('link', { name: '마이페이지', exact: true }).isVisible(), 'Public breadcrumb keeps collapsed ancestors');
