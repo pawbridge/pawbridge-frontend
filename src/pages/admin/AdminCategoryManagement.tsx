@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCategories, createCategory, updateCategory, deleteCategory } from '../api/products.api';
-import type { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+import { getCategories, createCategory, updateCategory, deleteCategory } from '../../api/products.api';
+import type { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
 interface CategoryTreeNodeProps {
   category: CategoryResponse;

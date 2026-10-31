@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getAdminOrders } from '../api/orders.api';
-import type { OrderStatus, DeliveryStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminOrderLabels, adminDeliveryLabels } from '../lib/adminMarket';
-import { adminDate } from '../lib/adminUsers';
+import { getAdminOrders } from '../../api/orders.api';
+import type { OrderStatus, DeliveryStatus } from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminOrderLabels, adminDeliveryLabels } from '../../lib/adminMarket';
+import { adminDate } from '../../lib/adminUsers';
 
 export default function AdminOrderList() {
   const [keyword, setKeyword] = useState('');

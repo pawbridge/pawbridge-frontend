@@ -8,17 +8,17 @@ import {
   createOptionValue,
   updateOptionValue,
   deleteOptionValue,
-} from '../api/products.api';
+} from '../../api/products.api';
 import type {
   OptionGroupResponse,
   OptionValue,
   UpdateOptionGroupRequest,
   CreateOptionValueRequest,
   UpdateOptionValueRequest,
-} from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+} from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
 export default function AdminOptionGroupManagement() {
   const [notice, setNotice] = useState('');

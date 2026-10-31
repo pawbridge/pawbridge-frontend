@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getAdminPostById } from '../api/post.api';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminImage, AdminDetailFields, AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminPostEditDialog from '../components/admin/AdminPostEditDialog';
-import { adminBoardLabels } from '../lib/adminPosts';
-import { adminDate } from '../lib/adminUsers';
+import { getAdminPostById } from '../../api/post.api';
+import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminImage, AdminDetailFields, AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminPostEditDialog from '../../components/admin/AdminPostEditDialog';
+import { adminBoardLabels } from '../../lib/adminPosts';
+import { adminDate } from '../../lib/adminUsers';
 
 export default function AdminPostDetail() {
   const { postId } = useParams();

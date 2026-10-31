@@ -1,12 +1,12 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminEmpty, AdminError, AdminImage, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import VideoDialog from '../components/video/VideoDialog';
-import { getVideoBoard, previewVideo, publishVideo, recheckVideo, reorderVideos, saveVideo } from '../api/homeVideos.api';
-import type { HomeVideo, VideoBoard, VideoMetadata } from '../types/homeVideos';
-import { videoDuration, videoThumbnail } from '../lib/homeVideos';
+import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminEmpty, AdminError, AdminImage, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import VideoDialog from '../../components/video/VideoDialog';
+import { getVideoBoard, previewVideo, publishVideo, recheckVideo, reorderVideos, saveVideo } from '../../api/homeVideos.api';
+import type { HomeVideo, VideoBoard, VideoMetadata } from '../../types/homeVideos';
+import { videoDuration, videoThumbnail } from '../../lib/homeVideos';
 
 const key = ['admin-videos'];
 function message(error: unknown) {

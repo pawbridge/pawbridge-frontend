@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { deletePost, getAdminPosts } from '../api/post.api';
-import type { BoardType, PostResponse } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminPostEditDialog from '../components/admin/AdminPostEditDialog';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { adminBoardLabels } from '../lib/adminPosts';
-import { adminDate } from '../lib/adminUsers';
+import { deletePost, getAdminPosts } from '../../api/post.api';
+import type { BoardType, PostResponse } from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminPostEditDialog from '../../components/admin/AdminPostEditDialog';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { adminBoardLabels } from '../../lib/adminPosts';
+import { adminDate } from '../../lib/adminUsers';
 
 export default function AdminPostManagement() {
   const client = useQueryClient();

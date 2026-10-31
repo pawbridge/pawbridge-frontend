@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getAdminUserById } from '../api/user.api';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminUserEditDialog from '../components/admin/AdminUserEditDialog';
-import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminDate, userRoleLabels } from '../lib/adminUsers';
+import { getAdminUserById } from '../../api/user.api';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminUserEditDialog from '../../components/admin/AdminUserEditDialog';
+import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminDate, userRoleLabels } from '../../lib/adminUsers';
 
 export default function AdminUserDetail() {
   const { userId = '' } = useParams();

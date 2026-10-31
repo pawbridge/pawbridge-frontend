@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteUser, getAdminUsers } from '../api/user.api';
-import type { AdminUserListItem, UserRole } from '../types/user.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminUserEditDialog from '../components/admin/AdminUserEditDialog';
-import StatsDialog from '../components/statistics/StatsDialog';
-import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminDate, userRoleLabels } from '../lib/adminUsers';
+import { deleteUser, getAdminUsers } from '../../api/user.api';
+import type { AdminUserListItem, UserRole } from '../../types/user.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminUserEditDialog from '../../components/admin/AdminUserEditDialog';
+import StatsDialog from '../../components/statistics/StatsDialog';
+import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminDate, userRoleLabels } from '../../lib/adminUsers';
 
 export default function AdminUserManagement() {
   const client = useQueryClient();

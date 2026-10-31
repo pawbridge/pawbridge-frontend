@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import AdminLayout from '../components/layout/AdminLayout';
-import { getTotalUserCount, getDailySignupStats, getDailyAnimalStats, getTodayPostCount } from '../api/stats.api';
-import { AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminTrend from '../components/admin/AdminTrend';
-import { fillAdminDays, kstToday, shiftDay } from '../lib/adminStatistics';
+import AdminLayout from '../../components/layout/AdminLayout';
+import { getTotalUserCount, getDailySignupStats, getDailyAnimalStats, getTodayPostCount } from '../../api/stats.api';
+import { AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminTrend from '../../components/admin/AdminTrend';
+import { fillAdminDays, kstToday, shiftDay } from '../../lib/adminStatistics';
 
 export default function AdminDashboard() {
   const today = kstToday();
