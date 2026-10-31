@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAdminOrderById, updateOrderStatus, updateDeliveryStatus } from '../api/orders.api';
-import type { AdminOrderDetail as Order, OrderStatus, DeliveryStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import StatsDialog from '../components/statistics/StatsDialog';
-import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminOrderLabels, adminDeliveryLabels } from '../lib/adminMarket';
-import { adminDate } from '../lib/adminUsers';
+import { getAdminOrderById, updateOrderStatus, updateDeliveryStatus } from '../../api/orders.api';
+import type { AdminOrderDetail as Order, OrderStatus, DeliveryStatus } from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import StatsDialog from '../../components/statistics/StatsDialog';
+import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminOrderLabels, adminDeliveryLabels } from '../../lib/adminMarket';
+import { adminDate } from '../../lib/adminUsers';
 
 function OrderEditor({ order, refresh }: { order: Order; refresh: () => Promise<Order> }) {
   const [status, setStatus] = useState(order.status);

@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { getDailySignupStats, getDailyAnimalStats, getTotalUserCount, getIntakeTrend,
-  getShelterApplicationStats, getPostPeriodStats, getRegisteredShelterCount } from '../api/stats.api';
-import type { AdminPeriodTrend, ShelterApplicationStats, PostPeriodStats, PostStatsBoardType } from '../api/stats.api';
-import { getAnimalStatusStats } from '../api/animalStats.api';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminTrend from '../components/admin/AdminTrend';
-import AdminVisitStatistics from '../components/visits/AdminVisitStatistics';
-import { AdminError, AdminLoading, AdminPagination, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminTrendChanges, fillAdminDays, kstToday, separateAdminPreviousDay, shiftDay, validAdminRange } from '../lib/adminStatistics';
+  getShelterApplicationStats, getPostPeriodStats, getRegisteredShelterCount } from '../../api/stats.api';
+import type { AdminPeriodTrend, ShelterApplicationStats, PostPeriodStats, PostStatsBoardType } from '../../api/stats.api';
+import { getAnimalStatusStats } from '../../api/animalStats.api';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminTrend from '../../components/admin/AdminTrend';
+import AdminVisitStatistics from '../../components/visits/AdminVisitStatistics';
+import { AdminError, AdminLoading, AdminPagination, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminTrendChanges, fillAdminDays, kstToday, separateAdminPreviousDay, shiftDay, validAdminRange } from '../../lib/adminStatistics';
 
 type Area = 'animals' | 'members' | 'shelters' | 'community' | 'visits';
 type Trend = AdminPeriodTrend | ShelterApplicationStats | PostPeriodStats;

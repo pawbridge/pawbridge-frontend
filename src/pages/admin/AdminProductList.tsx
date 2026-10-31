@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProducts, deleteProduct } from '../api/products.api';
-import type { ProductListItem, ProductStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminImage, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { adminProductLabels } from '../lib/adminMarket';
+import { getProducts, deleteProduct } from '../../api/products.api';
+import type { ProductListItem, ProductStatus } from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminImage, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { adminProductLabels } from '../../lib/adminMarket';
 
 export default function AdminProductList() {
   const client = useQueryClient();

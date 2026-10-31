@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getShelter, getShelterMembers } from '../api/shelter.api';
-import { useAuthStore } from '../store/authStore';
-import { AdminShelterLayout } from '../components/shelters/ShelterUI';
-import { AdminDetailFields, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminPanel } from '../components/admin/AdminUI';
+import { getShelter, getShelterMembers } from '../../api/shelter.api';
+import { useAuthStore } from '../../store/authStore';
+import { AdminShelterLayout } from '../../components/shelters/ShelterUI';
+import { AdminDetailFields, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminPanel } from '../../components/admin/AdminUI';
 
 function Detail() {
   const { registration = '' } = useParams();

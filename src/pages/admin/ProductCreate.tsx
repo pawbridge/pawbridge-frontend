@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createProduct, getOptionGroups, getCategories, uploadImage } from '../api/products.api';
-import type { OptionGroupResponse, CategoryResponse } from '../types/api.types';
+import { createProduct, getOptionGroups, getCategories, uploadImage } from '../../api/products.api';
+import type { OptionGroupResponse, CategoryResponse } from '../../types/api.types';
 
 // SKU 생성용 타입
 interface CreateSku {
@@ -11,9 +11,9 @@ interface CreateSku {
   stockQuantity: number;
   optionValueIds: number[];
 }
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminProductImage from '../components/admin/AdminProductImage';
-import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminProductImage from '../../components/admin/AdminProductImage';
+import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
 // 선택된 옵션 값으로부터 SKU 조합 생성
 function generateSkuCombinations(selectedOptionGroups: Map<number, number[]>): Array<number[]> {

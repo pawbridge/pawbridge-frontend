@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getProductById, getProducts, updateProduct, deleteProduct, getCategories, uploadImage } from '../api/products.api';
-import type { Product, UpdateProductRequest, UpdateSku, CategoryResponse, ProductStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminProductImage from '../components/admin/AdminProductImage';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminProductLabels } from '../lib/adminMarket';
+import { getProductById, getProducts, updateProduct, deleteProduct, getCategories, uploadImage } from '../../api/products.api';
+import type { Product, UpdateProductRequest, UpdateSku, CategoryResponse, ProductStatus } from '../../types/api.types';
+import AdminLayout from '../../components/layout/AdminLayout';
+import AdminProductImage from '../../components/admin/AdminProductImage';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminProductLabels } from '../../lib/adminMarket';
 
 export default function ProductEdit() {
   const navigate = useNavigate();
