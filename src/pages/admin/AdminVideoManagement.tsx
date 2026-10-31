@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import AdminLayout from '../../components/layout/AdminLayout';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
 import { AdminEmpty, AdminError, AdminImage, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 import VideoDialog from '../../components/video/VideoDialog';
 import { getVideoBoard, previewVideo, publishVideo, recheckVideo, reorderVideos, saveVideo } from '../../api/homeVideos.api';
@@ -130,7 +130,7 @@ export default function AdminVideoManagement() {
       || (status === 'HIDDEN' && !video.published) || (status === 'UNAVAILABLE' && !video.available);
     return matchesText && matchesStatus;
   });
-  return <AdminLayout title="영상 관리" description="홈에 소개할 영상을 직접 선정하고 관리하세요.">
+  return <><AdminPageHeader title="영상 관리" description="홈에 소개할 영상을 직접 선정하고 관리하세요." />
     <div className="flex flex-wrap gap-3"><button type="button" className={adminPrimary} disabled={!board.data || !!busyId} onClick={() => { setForm({ revision: board.data!.revision }); setNotice(''); }}>영상 등록</button>
       <button type="button" className={adminControl} disabled={!board.data || !!busyId || videos.filter(v => v.published).length < 2} onClick={() => setOrder(board.data)}>노출 순서</button></div>
     {notice && <p role="status" className="text-sm">{notice}</p>}
@@ -167,5 +167,5 @@ export default function AdminVideoManagement() {
     </>}
     {form && <VideoForm video={form.video} revision={form.revision} onClose={() => setForm(undefined)} onSaved={accepted} />}
     {order && <VideoOrder board={order} onClose={() => setOrder(undefined)} onSaved={accepted} />}
-  </AdminLayout>;
+  </>;
 }

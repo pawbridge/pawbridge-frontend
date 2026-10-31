@@ -66,6 +66,7 @@ import PrivateNoteBlocks from './pages/PrivateNoteBlocks';
 import MemberChats from './pages/MemberChats';
 import VisitTracker from './components/visits/VisitTracker';
 import SiteLayout from './components/layout/SiteLayout';
+import AdminLayout from './components/layout/AdminLayout';
 import RequireLogin, { LoginRequiredCard } from './components/layout/RequireLogin';
 
 // 개발 환경에서만 window에 등록 (디버깅용)
@@ -223,149 +224,31 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/products/new"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <ProductCreate />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/products"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminProductList />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/products/:productId/edit"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <ProductEdit />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/dashboard"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/categories"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminCategoryManagement />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/option-groups"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminOptionGroupManagement />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminUserManagement />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/users/:userId"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminUserDetail />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/videos"
-        element={<ProtectedRoute><AdminRoute><AdminVideoManagement /></AdminRoute></ProtectedRoute>}
-      />
-      <Route
-        path="/admin/posts"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminPostManagement />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/posts/:postId"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminPostDetail />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/statistics"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminStatistics />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      {/* 주문 관리 (관리자용) */}
-      <Route
-        path="/admin/orders"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminOrderList />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/orders/:orderId"
-        element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminOrderDetail />
-            </AdminRoute>
-          </ProtectedRoute>
-        }
-      />
+      {/* 관리자 화면: 공통 틀(사이드바·상단바)과 관리자 확인을 한 번만 둔다 */}
+      <Route element={<AdminRoute><AdminLayout /></AdminRoute>}>
+        <Route path="/products/new" element={<ProductCreate />} />
+        <Route path="/admin/products" element={<AdminProductList />} />
+        <Route path="/admin/products/:productId/edit" element={<ProductEdit />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/categories" element={<AdminCategoryManagement />} />
+        <Route path="/admin/option-groups" element={<AdminOptionGroupManagement />} />
+        <Route path="/admin/users" element={<AdminUserManagement />} />
+        <Route path="/admin/users/:userId" element={<AdminUserDetail />} />
+        <Route path="/admin/videos" element={<AdminVideoManagement />} />
+        <Route path="/admin/posts" element={<AdminPostManagement />} />
+        <Route path="/admin/posts/:postId" element={<AdminPostDetail />} />
+        <Route path="/admin/statistics" element={<AdminStatistics />} />
+        <Route path="/admin/orders" element={<AdminOrderList />} />
+        <Route path="/admin/orders/:orderId" element={<AdminOrderDetail />} />
+        <Route path="/admin/shelters" element={<AdminShelters />} />
+        <Route path="/admin/shelters/:registration" element={<AdminShelterDetail />} />
+        <Route path="/admin/shelter-applications" element={<AdminShelterApplications />} />
+        <Route path="/admin/shelter-applications/:id" element={<AdminShelterApplicationDetail />} />
+      </Route>
       {/* 예전 커뮤니티 제보 주소는 독립 실종·목격 제보 주소로 넘긴다 */}
       <Route path="/community/reports/new" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/reports/:id/edit" element={<LegacyAnimalReportRedirect />} />
       <Route path="/community/reports/:id" element={<LegacyAnimalReportRedirect />} />
-      <Route path="/admin/shelters" element={<AdminRoute><AdminShelters /></AdminRoute>} />
-      <Route path="/admin/shelters/:registration" element={<AdminRoute><AdminShelterDetail /></AdminRoute>} />
-      <Route path="/admin/shelter-applications" element={<AdminRoute><AdminShelterApplications /></AdminRoute>} />
-      <Route path="/admin/shelter-applications/:id" element={<AdminRoute><AdminShelterApplicationDetail /></AdminRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
     </>
