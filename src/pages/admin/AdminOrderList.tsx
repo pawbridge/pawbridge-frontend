@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getAdminOrders } from '../api/orders.api';
-import type { OrderStatus, DeliveryStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminOrderLabels, adminDeliveryLabels } from '../lib/adminMarket';
-import { adminDate } from '../lib/adminUsers';
+import { getAdminOrders } from '../../api/orders.api';
+import type { OrderStatus, DeliveryStatus } from '../../types/api.types';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminOrderLabels, adminDeliveryLabels } from '../../lib/adminMarket';
+import { adminDate } from '../../lib/adminUsers';
 
 export default function AdminOrderList() {
   const [keyword, setKeyword] = useState('');
@@ -17,7 +17,7 @@ export default function AdminOrderList() {
   const [page, setPage] = useState(0);
   const query = useQuery({ queryKey: ['admin-orders', keyword, status, delivery, sortBy, sortOrder, page], queryFn: () => getAdminOrders({ page, size: 20, sortBy, sortOrder, ...(keyword && { keyword }), ...(status && { status }), ...(delivery && { deliveryStatus: delivery }) }) });
   const reset = () => { setKeyword(''); setStatus(''); setDelivery(''); setSortBy('createdAt'); setSortOrder('desc'); setPage(0); };
-  return <AdminLayout title="주문 관리" description="주문과 배송 상태를 확인합니다.">
+  return <><AdminPageHeader title="주문 관리" description="주문과 배송 상태를 확인합니다." />
     <section className={`${adminPanel} space-y-4`}><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="text-sm font-medium">주문 검색<input className={adminInput} value={keyword} onChange={e => { setKeyword(e.target.value); setPage(0); }} /></label>
       <label className="text-sm font-medium">주문 상태<select className={adminInput} value={status} onChange={e => { setStatus(e.target.value as OrderStatus | ''); setPage(0); }}><option value="">전체</option>{Object.entries(adminOrderLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -32,6 +32,6 @@ export default function AdminOrderList() {
       </AdminRecord>)}</ul>}
       <AdminPagination page={page} total={query.data?.totalPages ?? 0} onChange={setPage} />
     </section>}
-  </AdminLayout>;
+  </>;
 }
 

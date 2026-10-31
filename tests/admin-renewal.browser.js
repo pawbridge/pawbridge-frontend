@@ -28,6 +28,7 @@ async page => {
       writes.push({ path, method: request.method(), body: request.postData() ? request.postDataJSON() : null });
       if (mode === 'pending') await new Promise(resolve => { releaseMutation = resolve; });
       if (mode === 'delete-error') return route.fulfill({ status: 500, json: { message: 'mock failure' } });
+      if (mode === 'nickname-conflict') return route.fulfill({ status: 409, json: { status: 409, message: '이미 사용 중인 닉네임입니다.', data: null } });
       if (path.endsWith('/approve')) applicationStatus = 'APPROVED';
       if (path.endsWith('/reject')) applicationStatus = 'REJECTED';
       return route.fulfill({ json: envelope(path.includes('shelter-applications') ? application() : null) });
@@ -82,7 +83,16 @@ async page => {
   await page.keyboard.press('Escape');
   await menuDialog.waitFor({ state: 'hidden' });
   check(await menu.evaluate(el => el === document.activeElement), 'Menu trigger focus restoration');
-  results.push('mobile menu keyboard, Escape, focus return, background lock');
+  // Browser back with the full-screen menu open closes the menu (the admin frame stays mounted across screens).
+  await page.evaluate(() => { history.pushState({}, '', '/admin/dashboard'); dispatchEvent(new PopStateEvent('popstate')); });
+  await page.waitForURL('**/admin/dashboard');
+  await menu.click();
+  await menuDialog.waitFor();
+  await page.goBack();
+  await page.waitForURL('**/admin/users');
+  await page.getByRole('heading', { level: 1, name: '회원 관리' }).waitFor();
+  check(await menuDialog.isHidden(), 'Mobile menu closes on browser back');
+  results.push('mobile menu keyboard, Escape, focus return, background lock, closes on back');
   await page.getByLabel('회원 검색', { exact: true }).fill('shelter@');
   check(await page.getByText('조회된 회원 1명').isVisible(), 'Email search');
   await page.getByLabel('회원 검색', { exact: true }).fill('');
@@ -109,6 +119,16 @@ async page => {
   await edit.waitFor({ state: 'hidden' });
   check(writes[0].method === 'PUT' && writes[0].body.role === 'ROLE_SHELTER', 'Existing user update contract');
   results.push('member search/filter/validation/update contract/pending modal');
+  mode = 'nickname-conflict';
+  await page.getByRole('button', { name: '수정', exact: true }).click();
+  await edit.getByRole('button', { name: '저장', exact: true }).click();
+  const conflict = edit.getByRole('alert');
+  await conflict.getByText('이미 사용 중인 닉네임입니다.', { exact: false }).waitFor();
+  check(!(await conflict.textContent()).includes('신청'), 'Member edit error must not use shelter-application wording');
+  mode = 'normal';
+  await edit.getByRole('button', { name: '취소', exact: true }).click();
+  await edit.waitFor({ state: 'hidden' });
+  results.push('member edit shows server error message');
   mode = 'delete-error';
   await page.getByRole('button', { name: '삭제', exact: true }).click();
   const deletion = page.getByRole('dialog', { name: '회원을 삭제하시겠어요?' });
@@ -192,6 +212,8 @@ async page => {
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto(origin + '/animals/new');
   const breadcrumb = page.getByRole('navigation', { name: '현재 위치', exact: true });
+  // The screen code loads on first visit, so wait for the breadcrumb before checking it.
+  await breadcrumb.waitFor();
   check(await breadcrumb.getByRole('link', { name: '홈', exact: true }).isVisible(), 'Public breadcrumb keeps home link');
   await breadcrumb.getByRole('button').click();
   check(await breadcrumb.getByRole('link', { name: '마이페이지', exact: true }).isVisible(), 'Public breadcrumb keeps collapsed ancestors');
@@ -219,7 +241,7 @@ async page => {
       check(await page.getByRole('heading', { level: 1 }).count() === 0, 'Denied route must not render admin page: ' + path);
     }
   }
-  check(writes.length === 4, 'Shared/public/access regression must not send extra writes');
+  check(writes.length === 5, 'Shared/public/access regression must not send extra writes');
   results.push('logged-out and non-admin access blocked on three representative routes');
   check(errors.length === 0, 'Page errors: ' + errors.join('; '));
   return { results, screensRendered: 24, screenshotCount: 16, mockedMutationCount: writes.length, pageErrors: errors };

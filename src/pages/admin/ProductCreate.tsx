@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createProduct, getOptionGroups, getCategories, uploadImage } from '../api/products.api';
-import { errorMessage } from '../components/shelter/shelterView';
-import type { OptionGroupResponse, CategoryResponse } from '../types/api.types';
+import { createProduct, getOptionGroups, getCategories, uploadImage } from '../../api/products.api';
+import type { OptionGroupResponse, CategoryResponse } from '../../types/api.types';
 
 // SKU 생성용 타입
 interface CreateSku {
@@ -12,9 +11,9 @@ interface CreateSku {
   stockQuantity: number;
   optionValueIds: number[];
 }
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminProductImage from '../components/admin/AdminProductImage';
-import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import AdminProductImage from '../../components/admin/AdminProductImage';
+import { AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
 // 선택된 옵션 값으로부터 SKU 조합 생성
 function generateSkuCombinations(selectedOptionGroups: Map<number, number[]>): Array<number[]> {
@@ -253,9 +252,8 @@ export default function ProductCreate() {
       setNotice('상품이 등록되었습니다.');
       navigate('/admin/products');
     },
-    onError: (error: unknown) => {
-      const message = errorMessage(error);
-      setNotice(message);
+    onError: () => {
+      setNotice('상품 등록에 실패했습니다. 입력 내용을 확인해 주세요.');
     },
   });
 
@@ -321,9 +319,8 @@ export default function ProductCreate() {
           optionValueIds: s.optionValueIds,
         })),
       });
-    } catch (error: unknown) {
-      const message = errorMessage(error);
-      setNotice(message);
+    } catch {
+      setNotice('상품 등록 또는 이미지 업로드에 실패했습니다. 입력 내용은 유지됩니다.');
     }
   };
 
@@ -344,7 +341,7 @@ export default function ProductCreate() {
 
 
   const busy = uploadImageMutation.isPending || createProductMutation.isPending;
-  return <AdminLayout title="상품 등록" description="상품 기본 정보, 옵션 조합과 재고를 등록합니다.">
+  return <><AdminPageHeader title="상품 등록" description="상품 기본 정보, 옵션 조합과 재고를 등록합니다." />
     {isLoadingCategories ? <AdminLoading label="카테고리를 불러오는 중입니다." /> : categoriesError ? <AdminError title="카테고리 조회 실패" /> : <form onSubmit={e => { e.preventDefault(); void handleSubmit(); }}>
       <fieldset disabled={busy} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
@@ -377,5 +374,5 @@ export default function ProductCreate() {
         </section>
       </fieldset>
     </form>}
-  </AdminLayout>;
+  </>;
 }

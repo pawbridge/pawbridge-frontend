@@ -8,17 +8,17 @@ import {
   createOptionValue,
   updateOptionValue,
   deleteOptionValue,
-} from '../api/products.api';
+} from '../../api/products.api';
 import type {
   OptionGroupResponse,
   OptionValue,
   UpdateOptionGroupRequest,
   CreateOptionValueRequest,
   UpdateOptionValueRequest,
-} from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+} from '../../types/api.types';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
 export default function AdminOptionGroupManagement() {
   const [notice, setNotice] = useState('');
@@ -241,7 +241,7 @@ export default function AdminOptionGroupManagement() {
   );
 
   const busy = createMutation.isPending || updateMutation.isPending || createValueMutation.isPending || updateValueMutation.isPending;
-  return <AdminLayout title="옵션 그룹 관리" description="상품 옵션 그룹과 선택 가능한 값을 관리합니다.">
+  return <><AdminPageHeader title="옵션 그룹 관리" description="상품 옵션 그룹과 선택 가능한 값을 관리합니다." />
     {notice && <p role="status" className={adminPanel}>{notice}</p>}
     {isLoading ? <AdminLoading /> : error ? <AdminError title="옵션 그룹 조회 실패" retry={() => void refetch()} /> : <fieldset disabled={busy || !!deleting} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <section className={`${adminPanel} space-y-4`}><h2 className="text-xl font-bold">옵션 그룹</h2>
@@ -265,6 +265,6 @@ export default function AdminOptionGroupManagement() {
       </section> : <AdminEmpty title="옵션 그룹을 선택해 주세요." />}
     </fieldset>}
     {deleting && <AdminDeleteDialog name={deleting.name} run={() => deleting.kind === 'group' ? deleteOptionGroup(deleting.id) : deleteOptionValue(deleting.id)} refresh={async () => { const result = await refetch(); if (result.isError) throw new Error('refresh failed'); if (deleting.kind === 'group') { setSelectedGroup(null); setIsEditMode(false); } }} onClose={() => setDeleting(null)} />}
-  </AdminLayout>;
+  </>;
 }
 

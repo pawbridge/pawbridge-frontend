@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { getDailySignupStats, getDailyAnimalStats, getTotalUserCount, getIntakeTrend,
-  getShelterApplicationStats, getPostPeriodStats, getRegisteredShelterCount } from '../api/stats.api';
-import type { AdminPeriodTrend, ShelterApplicationStats, PostPeriodStats, PostStatsBoardType } from '../api/stats.api';
-import { getAnimalStatusStats } from '../api/animalStats.api';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminTrend from '../components/admin/AdminTrend';
-import AdminVisitStatistics from '../components/visits/AdminVisitStatistics';
-import { AdminError, AdminLoading, AdminPagination, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminTrendChanges, fillAdminDays, kstToday, separateAdminPreviousDay, shiftDay, validAdminRange } from '../lib/adminStatistics';
+  getShelterApplicationStats, getPostPeriodStats, getRegisteredShelterCount } from '../../api/stats.api';
+import type { AdminPeriodTrend, ShelterApplicationStats, PostPeriodStats, PostStatsBoardType } from '../../api/stats.api';
+import { getAnimalStatusStats } from '../../api/animalStats.api';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import AdminTrend from '../../components/admin/AdminTrend';
+import AdminVisitStatistics from '../../components/visits/AdminVisitStatistics';
+import { AdminError, AdminLoading, AdminPagination, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminTrendChanges, fillAdminDays, kstToday, separateAdminPreviousDay, shiftDay, validAdminRange } from '../../lib/adminStatistics';
 
 type Area = 'animals' | 'members' | 'shelters' | 'community' | 'visits';
 type Trend = AdminPeriodTrend | ShelterApplicationStats | PostPeriodStats;
@@ -105,7 +105,7 @@ export default function AdminStatistics() {
     if (!validAdminRange(next.start, next.end) || next.end > today) { setRangeError('시작일과 종료일을 확인해 주세요. 오늘까지 최대 366일을 조회할 수 있습니다.'); return; }
     setRange(next); setDraft(next); setRangeError('');
   };
-  return <AdminLayout title={area === 'visits' ? '방문 통계' : '통계'} description={area === 'visits' ? '하루 기준으로 같은 브라우저의 중복을 제외한 방문 추이를 확인하세요.' : '보호동물·회원·보호소·커뮤니티의 집계 기준을 구분하여 확인하세요.'}>
+  return <><AdminPageHeader title={area === 'visits' ? '방문 통계' : '통계'} description={area === 'visits' ? '하루 기준으로 같은 브라우저의 중복을 제외한 방문 추이를 확인하세요.' : '보호동물·회원·보호소·커뮤니티의 집계 기준을 구분하여 확인하세요.'} />
     <section className={`${adminPanel} space-y-5`}>
       <div role="group" aria-label="통계 유형" className="grid grid-cols-2 gap-2 sm:grid-cols-5">{areas.map(([value, label]) => <button key={value} className={area === value ? adminPrimary : adminControl} aria-pressed={area === value} onClick={() => setArea(value)}>{label}</button>)}</div>
       <form className="flex flex-col items-end gap-4 sm:flex-row" onSubmit={event => { event.preventDefault(); apply(draft); }}>
@@ -118,5 +118,5 @@ export default function AdminStatistics() {
     </section>
     {area === 'visits' ? <AdminVisitStatistics key={`visits-${range.start}-${range.end}`} start={range.start} end={range.end} />
       : <StatisticsContent key={`${area}-${range.start}-${range.end}`} area={area} range={range} />}
-  </AdminLayout>;
+  </>;
 }

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { ShelterAnimalPreview, ShelterDiscovery } from '../../api/publicShelters.api';
-import { shelterAnimalUrl, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../../utils/shelterDiscovery';
+import { shelterAnimalUrl, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../../lib/shelterDiscovery';
 import ShelterHistory from './ShelterHistory';
-import { shelterDetailUrl } from '../../utils/shelterDetail';
-import { readShelterView, saveShelterView } from '../../utils/shelterView';
+import { shelterDetailUrl } from '../../lib/shelterDetail';
+import { readShelterView, saveShelterView } from '../../lib/shelterViewSnapshot';
 
 function Preview({ animal, returnTo }: { animal: ShelterAnimalPreview; returnTo: string }) {
   const [failed, setFailed] = useState(false);

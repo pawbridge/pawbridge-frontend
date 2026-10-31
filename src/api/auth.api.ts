@@ -5,13 +5,8 @@ import type { ApiResponse } from '../types/response.types.ts';
 import type {
   LoginRequest,
   LoginResponse,
-  SignupRequest,
-  SignupResponse,
   SendResetCodeRequest,
   ResetPasswordRequest,
-  SendVerificationCodeRequest,
-  VerifyCodeRequest,
-  EmailVerifiedResponse,
 } from '../types/auth.types.ts';
 
 // 로그인. 서버가 Refresh Token을 HttpOnly 쿠키로 저장하도록 쿠키 전송을 허용한다.
@@ -19,15 +14,6 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
   const response = await apiClient.post<ApiResponse<LoginResponse>>(AUTH_LOGIN_PATH, credentials, {
     withCredentials: true,
   });
-  return response.data.data;
-};
-
-// 회원가입
-export const signup = async (userData: SignupRequest): Promise<SignupResponse> => {
-  const response = await apiClient.post<ApiResponse<SignupResponse>>(
-    '/api/v1/users/signup',
-    userData
-  );
   return response.data.data;
 };
 
@@ -79,24 +65,4 @@ export const resetPassword = async (data: ResetPasswordRequest): Promise<void> =
     '/api/v1/auth/password/reset',
     data
   );
-};
-
-// 이메일 인증 코드 발송
-export const sendEmailVerificationCode = async (data: SendVerificationCodeRequest): Promise<void> => {
-  await apiClient.post<ApiResponse<null>>(
-    '/api/v1/email/send',
-    data,
-    {
-      timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
-    }
-  );
-};
-
-// 이메일 인증 코드 검증
-export const verifyEmailCode = async (data: VerifyCodeRequest): Promise<EmailVerifiedResponse> => {
-  const response = await apiClient.post<ApiResponse<EmailVerifiedResponse>>(
-    '/api/v1/email/verify',
-    data
-  );
-  return response.data.data;
 };

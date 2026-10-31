@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAdminOrderById, updateOrderStatus, updateDeliveryStatus } from '../api/orders.api';
-import type { AdminOrderDetail as Order, OrderStatus, DeliveryStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import StatsDialog from '../components/statistics/StatsDialog';
-import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import { adminOrderLabels, adminDeliveryLabels } from '../lib/adminMarket';
-import { adminDate } from '../lib/adminUsers';
+import { getAdminOrderById, updateOrderStatus, updateDeliveryStatus } from '../../api/orders.api';
+import type { AdminOrderDetail as Order, OrderStatus, DeliveryStatus } from '../../types/api.types';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import StatsDialog from '../../components/statistics/StatsDialog';
+import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import { adminOrderLabels, adminDeliveryLabels } from '../../lib/adminMarket';
+import { adminDate } from '../../lib/adminUsers';
 
 function OrderEditor({ order, refresh }: { order: Order; refresh: () => Promise<Order> }) {
   const [status, setStatus] = useState(order.status);
@@ -52,7 +52,7 @@ export default function AdminOrderDetail() {
   const valid = Number.isSafeInteger(Number(orderId)) && Number(orderId) > 0;
   const query = useQuery({ queryKey: ['admin-order', orderId], queryFn: () => getAdminOrderById(Number(orderId)), enabled: valid });
   const order = query.data;
-  return <AdminLayout title="주문 상세" description="주문·배송 정보와 상품별 금액을 확인합니다.">
+  return <><AdminPageHeader title="주문 상세" description="주문·배송 정보와 상품별 금액을 확인합니다." />
     <Link to="/admin/orders" className={adminControl}>주문 목록으로</Link>
     {!valid ? <AdminError title="올바르지 않은 주문 번호입니다." /> : query.isPending ? <AdminLoading /> : query.isError || !order ? <AdminError title="주문 상세 조회 실패" retry={() => void query.refetch()} /> : <>
       <OrderEditor key={order.orderId} order={order} refresh={async () => { const latest = await query.refetch(); if (latest.isError || !latest.data) throw new Error('refresh failed'); return latest.data; }} />
@@ -62,6 +62,6 @@ export default function AdminOrderDetail() {
       </div>
       <section className={`${adminPanel} space-y-4`}><h2 className="text-xl font-bold">주문 상품과 금액</h2><ul className="space-y-4">{order.items.map((item, index) => <li key={item.orderItemId ?? index} className="space-y-2 border-b border-brand-border pb-4"><p className="break-words text-sm font-medium">{item.productName} · {item.skuCode}</p><p className="text-sm">{item.price.toLocaleString()}원 × {item.quantity}개 = {(item.price * item.quantity).toLocaleString()}원</p></li>)}</ul><p className="text-sm">상품 합계 {order.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString()}원 · 결제 금액 {order.totalAmount.toLocaleString()}원</p></section>
     </>}
-  </AdminLayout>;
+  </>;
 }
 

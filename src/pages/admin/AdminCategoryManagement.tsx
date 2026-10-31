@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCategories, createCategory, updateCategory, deleteCategory } from '../api/products.api';
-import type { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
+import { getCategories, createCategory, updateCategory, deleteCategory } from '../../api/products.api';
+import type { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } from '../../types/api.types';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 
 interface CategoryTreeNodeProps {
   category: CategoryResponse;
@@ -297,7 +297,7 @@ export default function AdminCategoryManagement() {
   ];
 
   const busy = createMutation.isPending || updateMutation.isPending;
-  return <AdminLayout title="카테고리 관리" description="상품 분류를 만들고 상하위 관계를 관리합니다.">
+  return <><AdminPageHeader title="카테고리 관리" description="상품 분류를 만들고 상하위 관계를 관리합니다." />
     {notice && <p role="status" className={adminPanel}>{notice}</p>}
     {isLoading ? <AdminLoading /> : error ? <AdminError title="카테고리 조회 실패" retry={() => void refetch()} /> : <fieldset disabled={busy || !!deleting} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <section className={`${adminPanel} space-y-4`}><h2 className="text-xl font-bold">카테고리</h2>
@@ -318,6 +318,6 @@ export default function AdminCategoryManagement() {
       </section> : <AdminEmpty title="카테고리를 선택해 주세요." />}
     </fieldset>}
     {deleting && <AdminDeleteDialog name={deleting.name} run={() => deleteCategory(deleting.id)} refresh={async () => { const result = await refetch(); if (result.isError) throw new Error('refresh failed'); setSelectedCategory(null); setIsEditMode(false); }} onClose={() => setDeleting(null)} />}
-  </AdminLayout>;
+  </>;
 }
 

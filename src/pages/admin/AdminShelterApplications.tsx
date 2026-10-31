@@ -1,11 +1,11 @@
 import { Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getApplications } from '../api/shelter.api';
-import type { ApplicationStatus } from '../api/shelter.api';
-import { useAuthStore } from '../store/authStore';
-import { AdminShelterLayout, Status } from '../components/shelter/ShelterUI';
-import { labels, date } from '../components/shelter/shelterView';
-import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminPrimary } from '../components/admin/AdminUI';
+import { getApplications } from '../../api/shelter.api';
+import type { ApplicationStatus } from '../../api/shelter.api';
+import { useAuthStore } from '../../store/authStore';
+import { AdminShelterLayout, Status } from '../../components/shelters/ShelterUI';
+import { labels, date } from '../../components/shelters/shelterApplicationDisplay';
+import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminPrimary } from '../../components/admin/AdminUI';
 
 export default function AdminShelterApplications() {
   const location = useLocation();

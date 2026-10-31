@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { shelterObservations } from '../../api/publicShelters.api';
-import { koreaToday, observationDays, shiftDate } from '../../utils/shelterDiscovery';
+import { koreaToday, observationDays, shiftDate } from '../../lib/shelterDiscovery';
 
 export default function ShelterHistory({ shelterId }: { shelterId: number }) {
   const to = koreaToday();

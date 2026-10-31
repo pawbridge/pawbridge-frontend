@@ -6,13 +6,11 @@ import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAn
 import { publicShelterById } from '../api/publicShelters.api';
 import { shelterTelephone } from '../lib/shelters';
 import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel } from '../lib/animalDisplay';
-import { readLostSearchSession } from '../utils/lostSearchSession';
-import { animalSearchReturnTo } from '../utils/animalSearch';
+import { readLostSearchSession } from '../lib/lostSearchSession';
+import { animalSearchReturnTo } from '../lib/animalSearch';
 import { useAuthStore } from '../store/authStore';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
-import { shelterDetailPath, shelterDetailUrl } from '../utils/shelterDetail';
+import { shelterDetailPath, shelterDetailUrl } from '../lib/shelterDetail';
 import useShelterScroll from '../hooks/useShelterScroll';
 import AnimalChatbot from '../components/common/AnimalChatbot';
 
@@ -119,21 +117,17 @@ export default function AnimalDetail() {
   };
 
   if (isLoading) return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-background-dark"><Header />
-      <main role="status" className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-20 text-center text-brand-ink dark:text-text-dark">동물 정보를 불러오는 중입니다…</main><Footer />
-    </div>
+    <main role="status" className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-20 text-center text-brand-ink dark:text-text-dark">동물 정보를 불러오는 중입니다…</main>
   );
   if (isError || !animal) return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-background-dark"><Header />
-      <main className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-20 text-center text-brand-ink dark:text-text-dark">
-        <h1 className="text-2xl font-bold">동물 정보를 볼 수 없습니다</h1>
-        <p className="mt-3 text-gray-600 dark:text-gray-300">잠시 후 다시 시도하거나 목록으로 돌아가 주세요.</p>
-        <div className="mt-6 flex justify-center gap-3">
-          <button onClick={() => void refetch()} className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-brand-ink">다시 시도</button>
-          <button onClick={returnToSearch} className="min-h-11 rounded-lg border border-border-light px-5">목록으로</button>
-        </div>
-      </main><Footer />
-    </div>
+    <main className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-20 text-center text-brand-ink dark:text-text-dark">
+      <h1 className="text-2xl font-bold">동물 정보를 볼 수 없습니다</h1>
+      <p className="mt-3 text-gray-600 dark:text-gray-300">잠시 후 다시 시도하거나 목록으로 돌아가 주세요.</p>
+      <div className="mt-6 flex justify-center gap-3">
+        <button onClick={() => void refetch()} className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-brand-ink">다시 시도</button>
+        <button onClick={returnToSearch} className="min-h-11 rounded-lg border border-border-light px-5">목록으로</button>
+      </div>
+    </main>
   );
 
   const images = [animal.imageUrl, animal.imageUrl2].filter((image): image is string => !!image);
@@ -151,8 +145,7 @@ export default function AnimalDetail() {
     : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-brand-ink dark:bg-background-dark dark:text-text-dark">
-      <Header />
+    <>
       <main className="mx-auto w-full max-w-[1368px] flex-1 px-4 pb-16 pt-7 sm:px-6">
         <nav aria-label="현재 위치" className="mb-7 flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
           <Link to="/" className="hover:underline">홈</Link><span aria-hidden="true">/</span>
@@ -259,8 +252,7 @@ export default function AnimalDetail() {
         </section>
       </main>
       <AnimalChatbot animalId={animal.id} animalName={animal.name || animal.breed || '보호 동물'} />
-      <Footer />
-    </div>
+    </>
   );
 }
 

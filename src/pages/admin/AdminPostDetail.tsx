@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getAdminPostById } from '../api/post.api';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminImage, AdminDetailFields, AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminPostEditDialog from '../components/admin/AdminPostEditDialog';
-import { adminBoardLabels } from '../lib/adminPosts';
-import { adminDate } from '../lib/adminUsers';
+import { getAdminPostById } from '../../api/post.api';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import { AdminImage, AdminDetailFields, AdminError, AdminLoading, adminControl, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminPostEditDialog from '../../components/admin/AdminPostEditDialog';
+import { adminBoardLabels } from '../../lib/adminPosts';
+import { adminDate } from '../../lib/adminUsers';
 
 export default function AdminPostDetail() {
   const { postId } = useParams();
@@ -14,7 +14,7 @@ export default function AdminPostDetail() {
   const [editing, setEditing] = useState(false);
   const query = useQuery({ queryKey: ['admin-post', postId], queryFn: () => getAdminPostById(Number(postId)), enabled: valid });
   const post = query.data;
-  return <AdminLayout title="게시글 상세" description="글과 첨부 이미지를 확인합니다.">
+  return <><AdminPageHeader title="게시글 상세" description="글과 첨부 이미지를 확인합니다." />
     <Link to="/admin/posts" className={adminControl}>게시글 목록으로</Link>
     {!valid ? <AdminError title="올바르지 않은 게시글 번호입니다." /> : query.isPending ? <AdminLoading /> : query.isError || !post ? <AdminError title="게시글 상세 조회 실패" retry={() => void query.refetch()} /> : <>
       <section className={`${adminPanel} space-y-6`}>
@@ -25,5 +25,5 @@ export default function AdminPostDetail() {
       </section>
       {editing && <AdminPostEditDialog post={post} onClose={() => setEditing(false)} />}
     </>}
-  </AdminLayout>;
+  </>;
 }

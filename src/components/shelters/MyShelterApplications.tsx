@@ -5,7 +5,7 @@ import { getMyApplications, submitApplication } from '../../api/shelter.api';
 import { useAuthStore } from '../../store/authStore';
 import { logoutWithoutWaiting } from '../../api/auth.api';
 import { Status, Pagination, Feedback } from './ShelterUI';
-import { control, input, panel, date } from './shelterView';
+import { control, input, panel, date } from './shelterApplicationDisplay';
 export default function MyShelterApplications({ role }: { role: string; }) {
   const userId = useAuthStore(s => s.user?.id);
   const navigate = useNavigate();

@@ -6,7 +6,7 @@ import ShelterLayout from '../components/shelters/ShelterLayout';
 import { shelterMapUrl, shelterTelephone } from '../lib/shelters';
 import ShelterAnimals, { ShelterAnimalSummary } from '../components/shelters/ShelterAnimals';
 import ShelterHistory from '../components/shelters/ShelterHistory';
-import { shelterDetailReturnTo } from '../utils/shelterDetail';
+import { shelterDetailReturnTo } from '../lib/shelterDetail';
 
 function AddressActions({ name, address }: { name: string; address?: string }) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');

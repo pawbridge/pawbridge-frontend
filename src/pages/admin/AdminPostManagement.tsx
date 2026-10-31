@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { deletePost, getAdminPosts } from '../api/post.api';
-import type { BoardType, PostResponse } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminPostEditDialog from '../components/admin/AdminPostEditDialog';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { adminBoardLabels } from '../lib/adminPosts';
-import { adminDate } from '../lib/adminUsers';
+import { deletePost, getAdminPosts } from '../../api/post.api';
+import type { BoardType, PostResponse } from '../../types/api.types';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import { AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminPostEditDialog from '../../components/admin/AdminPostEditDialog';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { adminBoardLabels } from '../../lib/adminPosts';
+import { adminDate } from '../../lib/adminUsers';
 
 export default function AdminPostManagement() {
   const client = useQueryClient();
@@ -22,7 +22,7 @@ export default function AdminPostManagement() {
   const total = Math.ceil(filtered.length / 20);
   const currentPage = Math.min(page, Math.max(0, total - 1));
   const reset = () => { setKeyword(''); setBoard(''); setPage(0); };
-  return <AdminLayout title="게시글 관리" description="게시판별 글을 확인하고 수정·삭제합니다.">
+  return <><AdminPageHeader title="게시글 관리" description="게시판별 글을 확인하고 수정·삭제합니다." />
     <section className={adminPanel}><div className="grid gap-4 sm:grid-cols-[200px_1fr_auto] sm:items-end">
       <label className="text-sm font-medium">게시판<select className={adminInput} value={board} onChange={e => { setBoard(e.target.value as BoardType | ''); setPage(0); }}><option value="">전체 게시판</option>{Object.entries(adminBoardLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
       <label className="text-sm font-medium">제목·내용·작성자 검색<input className={adminInput} value={keyword} onChange={e => { setKeyword(e.target.value); setPage(0); }} /></label>
@@ -41,5 +41,5 @@ export default function AdminPostManagement() {
     </section>}
     {editing && <AdminPostEditDialog post={editing} onClose={() => setEditing(null)} />}
     {deleting && <AdminDeleteDialog name={deleting.title} run={() => deletePost(deleting.postId ?? deleting.id)} refresh={async () => { await client.invalidateQueries({ queryKey: ['admin-posts'] }); const result = await query.refetch(); if (result.isError) throw new Error('refresh failed'); }} onClose={() => setDeleting(null)} />}
-  </AdminLayout>;
+  </>;
 }

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProducts, deleteProduct } from '../api/products.api';
-import type { ProductListItem, ProductStatus } from '../types/api.types';
-import AdminLayout from '../components/layout/AdminLayout';
-import { AdminImage, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../components/admin/AdminUI';
-import AdminDeleteDialog from '../components/admin/AdminDeleteDialog';
-import { adminProductLabels } from '../lib/adminMarket';
+import { getProducts, deleteProduct } from '../../api/products.api';
+import type { ProductListItem, ProductStatus } from '../../types/api.types';
+import { AdminPageHeader } from '../../components/layout/AdminLayout';
+import { AdminImage, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
+import { adminProductLabels } from '../../lib/adminMarket';
 
 export default function AdminProductList() {
   const client = useQueryClient();
@@ -16,7 +16,7 @@ export default function AdminProductList() {
   const [deleting, setDeleting] = useState<ProductListItem | null>(null);
   const params = { page, size: 20, sortBy: 'createdAt' as const, sortOrder: 'desc' as const, ...(keyword && { keyword }), ...(status && { status }) };
   const query = useQuery({ queryKey: ['admin-products', params], queryFn: () => getProducts(params) });
-  return <AdminLayout title="상품 목록" description="상품의 판매 상태와 SKU별 가격·재고를 확인합니다.">
+  return <><AdminPageHeader title="상품 목록" description="상품의 판매 상태와 SKU별 가격·재고를 확인합니다." />
     <Link to="/products/new" className={adminPrimary}>상품 등록</Link>
     <section className={adminPanel}><div className="grid gap-4 sm:grid-cols-[1fr_200px_auto] sm:items-end">
       <label className="text-sm font-medium">상품 검색<input className={adminInput} value={keyword} onChange={e => { setKeyword(e.target.value); setPage(0); }} /></label>
@@ -31,6 +31,6 @@ export default function AdminProductList() {
       <AdminPagination page={page} total={query.data?.totalPages ?? 0} onChange={setPage} />
     </section>}
     {deleting && <AdminDeleteDialog name={deleting.name} run={() => deleteProduct(deleting.id)} refresh={async () => { await client.invalidateQueries({ queryKey: ['admin-products'] }); const result = await query.refetch(); if (result.isError) throw new Error('refresh failed'); if (!result.data?.items.length && page > 0) setPage(page - 1); }} onClose={() => setDeleting(null)} />}
-  </AdminLayout>;
+  </>;
 }
 

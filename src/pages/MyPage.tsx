@@ -8,7 +8,7 @@ import MyPageSidebar, { type MyPageTab } from '../components/mypage/MyPageSideba
 import MyProfilePanel from '../components/mypage/MyProfilePanel';
 import MyPasswordPanel from '../components/mypage/MyPasswordPanel';
 import MyPageInfoState from '../components/mypage/MyPageInfoState';
-import MyShelterApplications from '../components/shelter/MyShelterApplications';
+import MyShelterApplications from '../components/shelters/MyShelterApplications';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -17,8 +17,6 @@ import { getWishlists, deleteWishlist, addToCart, getCart, clearCart } from '../
 import { getOrders } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
 import { logoutWithoutWaiting } from '../api/auth.api';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import { canSeePetMarket } from '../lib/petMarket';
 import type { UpdateNicknameRequest, PasswordUpdateRequest } from '../types/user.types';
 import type { OrderStatus } from '../types/api.types';
@@ -409,158 +407,152 @@ export default function MyPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark">
-      <Header />
+    <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+        {/* 사이드바 */}
+        <MyPageSidebar
+          userInfo={userInfo}
+          activeTab={activeTab}
+          showPetMarket={showPetMarket}
+          showShelterApplication={showShelterApplication}
+          onTabChange={setActiveTab}
+          onLogout={handleLogout}
+        />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-          {/* 사이드바 */}
-          <MyPageSidebar
-            userInfo={userInfo}
-            activeTab={activeTab}
-            showPetMarket={showPetMarket}
-            showShelterApplication={showShelterApplication}
-            onTabChange={setActiveTab}
-            onLogout={handleLogout}
-          />
+        {/* 메인 콘텐츠 */}
+        <div className="flex-1 md:w-3/4 lg:w-4/5">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-text-main dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+              마이페이지
+            </h1>
+          </div>
 
-          {/* 메인 콘텐츠 */}
-          <div className="flex-1 md:w-3/4 lg:w-4/5">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-text-main dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
-                마이페이지
-              </h1>
-            </div>
+          <div className="bg-white dark:bg-gray-800/20 p-6 sm:p-8 rounded-xl shadow-sm">
+            {activeTab === 'shelter' && <MyShelterApplications key={user?.id} role={userInfo.role} />}
+            {activeTab === 'profile' && (
+              <MyProfilePanel
+                userInfo={userInfo}
+                providerLabel={getProviderLabel(userInfo.provider)}
+                roleLabel={getRoleLabel(userInfo.role)}
+                joinedAtLabel={formatDate(userInfo.createdAt)}
+                nickname={nicknameInput}
+                onNicknameChange={setNicknameInput}
+                onSubmit={handleNicknameSubmit}
+                isPending={updateNicknameMutation.isPending}
+              />
+            )}
 
-            <div className="bg-white dark:bg-gray-800/20 p-6 sm:p-8 rounded-xl shadow-sm">
-              {activeTab === 'shelter' && <MyShelterApplications key={user?.id} role={userInfo.role} />}
-              {activeTab === 'profile' && (
-                <MyProfilePanel
-                  userInfo={userInfo}
-                  providerLabel={getProviderLabel(userInfo.provider)}
-                  roleLabel={getRoleLabel(userInfo.role)}
-                  joinedAtLabel={formatDate(userInfo.createdAt)}
-                  nickname={nicknameInput}
-                  onNicknameChange={setNicknameInput}
-                  onSubmit={handleNicknameSubmit}
-                  isPending={updateNicknameMutation.isPending}
-                />
-              )}
+            {activeTab === 'password' && (
+              <MyPasswordPanel
+                provider={userInfo.provider}
+                providerLabel={getProviderLabel(userInfo.provider)}
+                value={passwordData}
+                onChange={setPasswordData}
+                onSubmit={handlePasswordSubmit}
+                isPending={updatePasswordMutation.isPending}
+              />
+            )}
 
-              {activeTab === 'password' && (
-                <MyPasswordPanel
-                  provider={userInfo.provider}
-                  providerLabel={getProviderLabel(userInfo.provider)}
-                  value={passwordData}
-                  onChange={setPasswordData}
-                  onSubmit={handlePasswordSubmit}
-                  isPending={updatePasswordMutation.isPending}
-                />
-              )}
+            {activeTab === 'favoriteAnimals' && (
+              <MyFavoriteAnimalsPanel
+                feedback={{
+                  isLoading: favoriteAnimalsQuery.isLoading,
+                  isError: favoriteAnimalsQuery.isError,
+                  isFetching: favoriteAnimalsQuery.isFetching,
+                  isFetched: favoriteAnimalsQuery.isFetched,
+                  onRetry: () => { void favoriteAnimalsQuery.refetch({ cancelRefetch: false }); },
+                }}
+                favoriteAnimals={favoriteAnimals}
+                currentPage={favoriteAnimalsPage}
+                onPageChange={setFavoriteAnimalsPage}
+              />
+            )}
 
-              {activeTab === 'favoriteAnimals' && (
-                <MyFavoriteAnimalsPanel
-                  feedback={{
-                    isLoading: favoriteAnimalsQuery.isLoading,
-                    isError: favoriteAnimalsQuery.isError,
-                    isFetching: favoriteAnimalsQuery.isFetching,
-                    isFetched: favoriteAnimalsQuery.isFetched,
-                    onRetry: () => { void favoriteAnimalsQuery.refetch({ cancelRefetch: false }); },
-                  }}
-                  favoriteAnimals={favoriteAnimals}
-                  currentPage={favoriteAnimalsPage}
-                  onPageChange={setFavoriteAnimalsPage}
-                />
-              )}
+            {activeTab === 'registeredAnimals' && (
+              <MyRegisteredAnimalsPanel
+                feedback={{
+                  isLoading: registeredAnimalsQuery.isLoading,
+                  isError: registeredAnimalsQuery.isError,
+                  isFetching: registeredAnimalsQuery.isFetching,
+                  isFetched: registeredAnimalsQuery.isFetched,
+                  onRetry: () => { void registeredAnimalsQuery.refetch({ cancelRefetch: false }); },
+                }}
+                registeredAnimals={registeredAnimals}
+                currentPage={registeredPage}
+                onPageChange={setRegisteredPage}
+              />
+            )}
 
-              {activeTab === 'registeredAnimals' && (
-                <MyRegisteredAnimalsPanel
-                  feedback={{
-                    isLoading: registeredAnimalsQuery.isLoading,
-                    isError: registeredAnimalsQuery.isError,
-                    isFetching: registeredAnimalsQuery.isFetching,
-                    isFetched: registeredAnimalsQuery.isFetched,
-                    onRetry: () => { void registeredAnimalsQuery.refetch({ cancelRefetch: false }); },
-                  }}
-                  registeredAnimals={registeredAnimals}
-                  currentPage={registeredPage}
-                  onPageChange={setRegisteredPage}
-                />
-              )}
+            {activeTab === 'wishlist' && (
+              <MyWishlistPanel
+                feedback={{
+                  isLoading: wishlistsQuery.isLoading,
+                  isError: wishlistsQuery.isError,
+                  isFetching: wishlistsQuery.isFetching,
+                  isFetched: wishlistsQuery.isFetched,
+                  onRetry: () => { void wishlistsQuery.refetch({ cancelRefetch: false }); },
+                }}
+                wishlists={wishlists}
+                filteredAndSortedWishlist={filteredAndSortedWishlist}
+                selectedWishlistItems={selectedWishlistItems}
+                hideSoldOut={hideSoldOut}
+                sortOption={sortOption}
+                wishlistPage={wishlistPage}
+                onSelectAll={handleSelectAllWishlist}
+                onSelectItem={handleSelectWishlistItem}
+                onHideSoldOutChange={setHideSoldOut}
+                onSortChange={setSortOption}
+                onPageChange={setWishlistPage}
+                onDeleteSelected={handleDeleteSelectedWishlist}
+                onDeleteItem={handleDeleteWishlistItem}
+                onAddToCart={(skuId) => addToCartMutation.mutate(skuId)}
+                isDeletingSelected={deleteSelectedWishlistMutation.isPending}
+                isDeletingItem={deleteWishlistItemMutation.isPending}
+                isAddingToCart={addToCartMutation.isPending}
+              />
+            )}
 
-              {activeTab === 'wishlist' && (
-                <MyWishlistPanel
-                  feedback={{
-                    isLoading: wishlistsQuery.isLoading,
-                    isError: wishlistsQuery.isError,
-                    isFetching: wishlistsQuery.isFetching,
-                    isFetched: wishlistsQuery.isFetched,
-                    onRetry: () => { void wishlistsQuery.refetch({ cancelRefetch: false }); },
-                  }}
-                  wishlists={wishlists}
-                  filteredAndSortedWishlist={filteredAndSortedWishlist}
-                  selectedWishlistItems={selectedWishlistItems}
-                  hideSoldOut={hideSoldOut}
-                  sortOption={sortOption}
-                  wishlistPage={wishlistPage}
-                  onSelectAll={handleSelectAllWishlist}
-                  onSelectItem={handleSelectWishlistItem}
-                  onHideSoldOutChange={setHideSoldOut}
-                  onSortChange={setSortOption}
-                  onPageChange={setWishlistPage}
-                  onDeleteSelected={handleDeleteSelectedWishlist}
-                  onDeleteItem={handleDeleteWishlistItem}
-                  onAddToCart={(skuId) => addToCartMutation.mutate(skuId)}
-                  isDeletingSelected={deleteSelectedWishlistMutation.isPending}
-                  isDeletingItem={deleteWishlistItemMutation.isPending}
-                  isAddingToCart={addToCartMutation.isPending}
-                />
-              )}
+            {activeTab === 'cart' && (
+              <MyCartPanel
+                feedback={{
+                  isLoading: cartQuery.isLoading,
+                  isError: cartQuery.isError,
+                  isFetching: cartQuery.isFetching,
+                  isFetched: cartQuery.isFetched,
+                  onRetry: () => { void cartQuery.refetch({ cancelRefetch: false }); },
+                }}
+                cartItems={cartItems}
+                totalProductPrice={totalProductPrice}
+                shippingFee={shippingFee}
+                totalPrice={totalPrice}
+                freeShippingThreshold={FREE_SHIPPING_THRESHOLD}
+                onClearCart={handleClearCart}
+                onOrder={handleOrder}
+                isClearingCart={clearCartMutation.isPending}
+              />
+            )}
 
-              {activeTab === 'cart' && (
-                <MyCartPanel
-                  feedback={{
-                    isLoading: cartQuery.isLoading,
-                    isError: cartQuery.isError,
-                    isFetching: cartQuery.isFetching,
-                    isFetched: cartQuery.isFetched,
-                    onRetry: () => { void cartQuery.refetch({ cancelRefetch: false }); },
-                  }}
-                  cartItems={cartItems}
-                  totalProductPrice={totalProductPrice}
-                  shippingFee={shippingFee}
-                  totalPrice={totalPrice}
-                  freeShippingThreshold={FREE_SHIPPING_THRESHOLD}
-                  onClearCart={handleClearCart}
-                  onOrder={handleOrder}
-                  isClearingCart={clearCartMutation.isPending}
-                />
-              )}
+            {activeTab === 'orders' && (
+              <MyOrdersPanel
+                feedback={{
+                  isLoading: ordersQuery.isLoading,
+                  isError: ordersQuery.isError,
+                  isFetching: ordersQuery.isFetching,
+                  isFetched: ordersQuery.isFetched,
+                  onRetry: () => { void ordersQuery.refetch({ cancelRefetch: false }); },
+                }}
+                ordersData={ordersData}
+                statusFilter={statusFilter}
+                ordersPage={ordersPage}
+                onStatusChange={handleOrderStatusChange}
+                onPageChange={setOrdersPage}
+                onOrderDetail={(orderId) => navigate(`/orders/${orderId}`)}
+              />
+            )}
 
-              {activeTab === 'orders' && (
-                <MyOrdersPanel
-                  feedback={{
-                    isLoading: ordersQuery.isLoading,
-                    isError: ordersQuery.isError,
-                    isFetching: ordersQuery.isFetching,
-                    isFetched: ordersQuery.isFetched,
-                    onRetry: () => { void ordersQuery.refetch({ cancelRefetch: false }); },
-                  }}
-                  ordersData={ordersData}
-                  statusFilter={statusFilter}
-                  ordersPage={ordersPage}
-                  onStatusChange={handleOrderStatusChange}
-                  onPageChange={setOrdersPage}
-                  onOrderDetail={(orderId) => navigate(`/orders/${orderId}`)}
-                />
-              )}
-
-            </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </main>
   );
 }
