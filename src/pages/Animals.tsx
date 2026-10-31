@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
 import { publicShelterById } from '../api/publicShelters.api';
-import { shelterListReturnTo } from '../utils/shelterDiscovery';
+import { shelterListReturnTo } from '../lib/shelterDiscovery';
 import { getAnimals } from '../api/animals.api';
 import type { AnimalSearchParams } from '../types/api.types';
 import {
@@ -14,7 +14,7 @@ import {
   relevanceAnimalSearchSort,
   visibleAnimalSearchPages,
   writeAnimalSearch,
-} from '../utils/animalSearch';
+} from '../lib/animalSearch';
 import AnimalSearchCard from '../components/animals/AnimalSearchCard';
 import AnimalSearchFilters from '../components/animals/AnimalSearchFilters';
 import AnimalSearchPagination from '../components/animals/AnimalSearchPagination';

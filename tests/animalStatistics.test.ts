@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { outcomeRates } from '../src/utils/animalStatistics.ts';
+import { outcomeRates } from '../src/lib/animalStatistics.ts';
 
 test('보호 중인 동물까지 분모에 포함하고 소수점 한 자리로 표시한다', () => {
   assert.deepEqual(outcomeRates([

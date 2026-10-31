@@ -6,7 +6,7 @@ import ShelterLayout from '../components/shelters/ShelterLayout';
 import ShelterDiscoveryCard from '../components/shelters/ShelterDiscoveryCard';
 import AnimalSearchPagination from '../components/animals/AnimalSearchPagination';
 import useShelterScroll from '../hooks/useShelterScroll';
-import { koreaToday, readShelterDiscovery, shiftDate, validIntakeRange, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../utils/shelterDiscovery';
+import { koreaToday, readShelterDiscovery, shiftDate, validIntakeRange, writeShelterDiscovery, type ShelterDiscoveryFilters } from '../lib/shelterDiscovery';
 
 const inputClass = 'mt-2 block h-11 w-full rounded-lg border-brand-border bg-white text-base text-brand-ink focus:border-brand-focus focus:ring-brand-focus';
 function SearchForm({ filters, onSearch }: { filters: ShelterDiscoveryFilters; onSearch: (next: ShelterDiscoveryFilters) => void }) {

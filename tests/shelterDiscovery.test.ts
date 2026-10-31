@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { koreaToday, readShelterDiscovery, writeShelterDiscovery, validIntakeRange, shelterAnimalUrl, shelterListReturnTo, observationDays } from '../src/utils/shelterDiscovery.ts';
-import { readAnimalSearch, writeAnimalSearch } from '../src/utils/animalSearch.ts';
+import { koreaToday, readShelterDiscovery, writeShelterDiscovery, validIntakeRange, shelterAnimalUrl, shelterListReturnTo, observationDays } from '../src/lib/shelterDiscovery.ts';
+import { readAnimalSearch, writeAnimalSearch } from '../src/lib/animalSearch.ts';
 import { isPublicShelterRequest } from '../src/lib/shelters.ts';
 
 test('최근 30일은 한국시간 오늘을 포함하고 월·연도 경계를 넘는다', () => {

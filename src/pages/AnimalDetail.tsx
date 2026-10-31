@@ -6,11 +6,11 @@ import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAn
 import { publicShelterById } from '../api/publicShelters.api';
 import { shelterTelephone } from '../lib/shelters';
 import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel } from '../lib/animalDisplay';
-import { readLostSearchSession } from '../utils/lostSearchSession';
-import { animalSearchReturnTo } from '../utils/animalSearch';
+import { readLostSearchSession } from '../lib/lostSearchSession';
+import { animalSearchReturnTo } from '../lib/animalSearch';
 import { useAuthStore } from '../store/authStore';
 import AnimalCardSimple from '../components/common/AnimalCardSimple';
-import { shelterDetailPath, shelterDetailUrl } from '../utils/shelterDetail';
+import { shelterDetailPath, shelterDetailUrl } from '../lib/shelterDetail';
 import useShelterScroll from '../hooks/useShelterScroll';
 import AnimalChatbot from '../components/common/AnimalChatbot';
 

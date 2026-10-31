@@ -5,11 +5,11 @@ import { getAnimals } from '../../api/animals.api';
 import AnimalCardSimple from '../common/AnimalCardSimple';
 import AnimalSearchPagination from '../animals/AnimalSearchPagination';
 import useShelterScroll from '../../hooks/useShelterScroll';
-import { koreaToday, shiftDate, validIntakeRange } from '../../utils/shelterDiscovery';
+import { koreaToday, shiftDate, validIntakeRange } from '../../lib/shelterDiscovery';
 import {
   maxShelterAnimalPages, readShelterAnimals, shelterAnimalPageSize, shelterAnimalRequest,
   shelterLastValidPage, shelterPageCount, shelterSpecies, writeShelterAnimals, type ShelterAnimalFilters,
-} from '../../utils/shelterDetail';
+} from '../../lib/shelterDetail';
 
 const speciesLabels = { '': '전체', DOG: '개', CAT: '고양이', ETC: '기타' };
 const selectClass = 'mt-2 h-12 w-full rounded-lg border-brand-border bg-white px-3 text-sm text-brand-ink dark:bg-card-dark dark:text-text-dark';

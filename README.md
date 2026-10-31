@@ -75,7 +75,7 @@ src/
 ├── hooks/           # 커스텀 훅
 ├── store/           # Zustand 스토어
 ├── types/           # TypeScript 타입 정의
-├── utils/           # 유틸리티 함수
+├── lib/             # 화면 밖 함수(API 오류 문구, 검색 조건 저장 등)
 ├── constants/       # 상수 정의
 └── assets/          # 이미지, 폰트 등 정적 파일
 ```

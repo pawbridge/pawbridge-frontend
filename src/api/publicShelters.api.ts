@@ -1,7 +1,7 @@
 import api from './client';
 import type { PageResponse } from '../types/api.types';
 import type { Shelter } from './shelter.api';
-import type { ShelterDiscoveryFilters } from '../utils/shelterDiscovery';
+import type { ShelterDiscoveryFilters } from '../lib/shelterDiscovery';
 
 export interface ShelterAnimalPreview {
   id: number; breed: string | null; species: string; gender: string;
