@@ -528,6 +528,15 @@
       "call": "page",
       "preNavigate": false,
       "group": "mock"
+    },
+    {
+      "name": "error-boundary",
+      "origin": "http://127.0.0.1:5263",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
     }
   ]
 }
