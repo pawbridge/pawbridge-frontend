@@ -112,13 +112,13 @@ function loadManifest() {
     if (!['dev', 'preview'].includes(test.server)) {
       abort(`${test.name}: server must be dev or preview`);
     }
-    if (!['mock', 'env'].includes(test.group)) {
-      abort(`${test.name}: group must be mock or env`);
+    if (test.group !== 'mock') {
+      abort(`${test.name}: group must be mock`);
     }
     if (!manifest.profiles[test.profile]) {
       abort(`${test.name}: unknown profile ${test.profile}`);
     }
-    if (test.group === 'mock' && !callKinds.has(test.call)) {
+    if (!callKinds.has(test.call)) {
       abort(`${test.name}: unknown call kind ${test.call}`);
     }
     if (!fs.existsSync(testFilePath(test))) {
@@ -712,7 +712,7 @@ function printTable(rows) {
 
 function selectTests(manifest, names) {
   if (names.length === 0) {
-    return manifest.tests.filter(test => test.group === 'mock');
+    return manifest.tests;
   }
   const byName = new Map(manifest.tests.map(test => [test.name, test]));
   const unknown = names.filter(name => !byName.has(name));
@@ -738,19 +738,6 @@ async function main() {
 
   const selected = selectTests(manifest, names);
   const rows = [];
-  const runnable = [];
-  for (const test of selected) {
-    if (test.group === 'env') {
-      console.log(`SKIP ${test.name}: ${test.note}`);
-      rows.push({ name: test.name, iteration: 1, status: 'SKIP', seconds: '-', detail: test.note });
-      continue;
-    }
-    runnable.push(test);
-  }
-  if (runnable.length === 0) {
-    printTable(rows);
-    return 0;
-  }
 
   const manifestPorts = [...new Set(manifest.tests.map(test => Number(new URL(test.origin).port)))];
   const busy = await findListeningPorts([...manifestPorts, ...reservedApiPorts]);
@@ -764,7 +751,7 @@ async function main() {
     fs.mkdirSync(directory, { recursive: true });
   }
   const serverTests = new Map();
-  for (const test of runnable) {
+  for (const test of selected) {
     if (!serverTests.has(test.origin)) {
       serverTests.set(test.origin, test);
     }
@@ -786,7 +773,7 @@ async function main() {
   }
 
   for (let iteration = 1; iteration <= repeat; iteration++) {
-    for (const test of runnable) {
+    for (const test of selected) {
       if (interruptedBy) {
         break;
       }
