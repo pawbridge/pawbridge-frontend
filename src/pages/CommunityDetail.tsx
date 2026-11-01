@@ -232,6 +232,7 @@ export default function CommunityDetail() {
           {/* 댓글 작성 */}
           <div className="mb-6">
             <textarea
+              aria-label="댓글"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder={user ? "댓글을 입력하세요..." : "로그인 후 댓글을 작성할 수 있습니다."}

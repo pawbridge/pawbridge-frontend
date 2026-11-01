@@ -245,6 +245,7 @@ export default function Wishlist() {
                 <span>품절 상품 숨기기</span>
               </label>
               <select
+                aria-label="정렬"
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value as SortOption)}
                 className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-brand-focus focus:ring-brand-focus py-2 pl-3 pr-8 cursor-pointer"
@@ -314,6 +315,7 @@ export default function Wishlist() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => handleSelectItem(item.wishlistId, e.target.checked)}
+                          aria-label={`${item.productName} 선택`}
                           className="rounded-md text-brand-ink border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-brand-focus focus:ring-offset-0"
                         />
                       </div>

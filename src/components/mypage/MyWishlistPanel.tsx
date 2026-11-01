@@ -89,6 +89,7 @@ export default function MyWishlistPanel({
                   <span>품절 상품 숨기기</span>
                 </label>
                 <select
+                  aria-label="정렬"
                   value={sortOption}
                   onChange={(e) => onSortChange(e.target.value as WishlistSortOption)}
                   className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-brand-focus focus:ring-brand-focus py-2 pl-3 pr-8 cursor-pointer"
@@ -126,6 +127,7 @@ export default function MyWishlistPanel({
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => onSelectItem(item.wishlistId, e.target.checked)}
+                          aria-label={`${item.productName} 선택`}
                           className="absolute top-2 left-2 z-10 rounded-md text-brand-ink border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-brand-focus focus:ring-offset-0"
                         />
                         <Link to={`/products/${item.productId}`}>

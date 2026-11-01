@@ -210,6 +210,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                   if (errorMessage) setErrorMessage('');
                 }}
                 maxLength={MAX_QUESTION_LENGTH}
+                aria-label="질문"
                 placeholder="궁금한 점을 입력하세요"
                 className="min-w-0 flex-1 rounded-xl border-border-light bg-white text-sm text-text-light placeholder:text-gray-400 focus:border-brand-focus focus:ring-brand-focus dark:border-border-dark dark:bg-brand-ink dark:text-text-dark"
                 disabled={isSending}

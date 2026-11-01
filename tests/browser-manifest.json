@@ -539,6 +539,15 @@
       "group": "mock"
     },
     {
+      "name": "form-labels",
+      "origin": "http://127.0.0.1:5267",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "accessible-names",
       "origin": "http://127.0.0.1:5266",
       "server": "preview",

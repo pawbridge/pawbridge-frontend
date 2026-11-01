@@ -91,6 +91,14 @@ async page => {
     await setUser();
     const info = await page.locator('main input[readonly]').evaluateAll(inputs => inputs.map(input => input.value));
     assert(info.slice(0, 5).join('|') === 'member@example.invalid|테스트회원|기존별명|이메일 가입|일반 회원', 'Profile metadata changed');
+    // Every field is named by its visible label, and the browser can offer saved values for the editable ones.
+    for (const label of ['이메일 주소', '이름', '닉네임', '가입 경로', '권한', '가입일시']) {
+      assert(await page.getByLabel(label, { exact: true }).count() === 1, `Profile field not labelled: ${label}`);
+    }
+    assert(await page.getByLabel('새 닉네임', { exact: true }).getAttribute('autocomplete') === 'nickname', 'Nickname autocomplete missing');
+    await password().click();
+    assert(await page.getByLabel('현재 비밀번호', { exact: true }).getAttribute('autocomplete') === 'current-password', 'Current password not labelled');
+    assert(await page.getByLabel('새 비밀번호', { exact: true }).getAttribute('autocomplete') === 'new-password', 'New password not labelled');
     for (const width of [1920, 390]) {
       await page.setViewportSize({ width, height: width === 1920 ? 1080 : 844 });
       await profile().click();

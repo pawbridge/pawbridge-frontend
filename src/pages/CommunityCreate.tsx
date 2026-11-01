@@ -231,9 +231,9 @@ export default function CommunityCreate() {
 
             {/* Multi-Image Uploader */}
             <div>
-              <label className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2">
+              <p className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2">
                 사진 첨부 <span className="text-gray-500 dark:text-gray-400 font-normal">(선택)</span>
-              </label>
+              </p>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-400 dark:border-gray-600 px-6 py-10 bg-white/50 dark:bg-gray-800/50">
                 <div className="text-center">
                   <span aria-hidden="true" className="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">image</span>
