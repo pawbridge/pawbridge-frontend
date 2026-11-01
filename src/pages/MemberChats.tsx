@@ -164,7 +164,7 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
     <p className="mt-3 text-sm text-brand-muted dark:text-gray-400">{roomId ? '같은 두 회원의 대화를 이어갑니다.' : '첫 메시지를 보내면 대화가 시작됩니다.'}</p>
     {history.isError && <p role="alert" className="mt-4">기록을 불러오지 못했어요. <button className={contactButton} onClick={() => void history.refetch()}>다시 시도</button></p>}
     <div ref={viewport} className="mt-4 max-h-[min(55dvh,560px)] min-h-48 overflow-y-auto overscroll-contain"
-      aria-label="대화 메시지" tabIndex={0} onScroll={() => {
+      role="region" aria-label="대화 메시지" tabIndex={0} onScroll={() => {
         const element = viewport.current!;
         stickToBottom.current = element.scrollHeight - element.scrollTop - element.clientHeight < 80;
       }}>

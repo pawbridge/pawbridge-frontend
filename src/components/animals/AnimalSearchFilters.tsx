@@ -213,6 +213,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset, shelter
                 <div><h3 id="animal-picker-title" className="text-lg font-bold text-brand-ink dark:text-text-dark">{picker === 'breed' ? '품종 입력' : '지역 선택'}</h3><p className="mt-1 text-xs text-brand-muted dark:text-gray-300">{picker === 'breed' ? '품종명을 직접 입력하세요. 일부만 입력해도 검색할 수 있습니다.' : '시·도와 시·군·구를 차례로 선택하세요.'}</p></div>
                 <button type="button" onClick={() => setPicker(null)} className="flex size-11 items-center justify-center rounded-lg text-xl text-brand-muted dark:text-gray-300 hover:bg-stone-50 dark:hover:bg-stone-800" aria-label="닫기">×</button>
               </div>
+              {/* eslint-disable-next-line jsx-a11y/no-autofocus -- 대화상자를 열면 바로 입력할 수 있게 포커스를 칸으로 옮긴다 */}
               <div className="px-5"><input aria-labelledby="animal-picker-title" value={picker === 'breed' ? breedDraft : pickerQuery} onChange={(event) => picker === 'breed' ? setBreedDraft(event.target.value) : setPickerQuery(event.target.value)} onKeyDown={(event) => { if (picker === 'breed' && event.key === 'Enter') applyBreed(); }} placeholder={picker === 'breed' ? '예: 말티즈, 믹스견' : '지역명 검색'} className={fieldClass} autoFocus /></div>
 
               {picker === 'region' && (
