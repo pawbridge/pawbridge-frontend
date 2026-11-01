@@ -177,11 +177,12 @@ export default function CommunityEdit() {
                         src={URL.createObjectURL(file)}
                       />
                       <button
-                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                         onClick={() => removeFile(index)}
                         type="button"
+                        aria-label={`사진 ${index + 1} 삭제`}
                       >
-                        <span className="material-symbols-outlined text-base">close</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-base">close</span>
                       </button>
                     </div>
                   ))}
@@ -192,7 +193,7 @@ export default function CommunityEdit() {
             {/* File Upload Button */}
             <div className="flex flex-col gap-4">
               <label className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-brand-focus dark:hover:border-brand-focus transition-colors cursor-pointer p-4">
-                <span className="material-symbols-outlined text-brand-accent text-2xl">add_photo_alternate</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-brand-accent text-2xl">add_photo_alternate</span>
                 <span className="text-gray-700 dark:text-gray-300 font-medium">
                   이미지 추가
                 </span>

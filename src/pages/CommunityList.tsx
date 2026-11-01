@@ -171,7 +171,7 @@ export default function CommunityList() {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-6">
           <div className="w-full md:max-w-xs">
             <label className="relative flex items-center">
-              <span className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
+              <span aria-hidden="true" className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
               <input
                 className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-focus"
                 placeholder="제목, 내용으로 검색 (Enter)"
@@ -184,14 +184,14 @@ export default function CommunityList() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
-              <span className="material-symbols-outlined text-lg">lock</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-lg">lock</span>
               <span>열람은 누구나 · 작성은 로그인 후</span>
             </div>
             <button
               onClick={handleWriteClick}
               className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
             >
-              <span className="material-symbols-outlined text-base">edit</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-base">edit</span>
               <span>글쓰기</span>
             </button>
           </div>
@@ -225,13 +225,17 @@ export default function CommunityList() {
                 {filtered.map((post, idx) => (
                   <tr
                     key={post.id}
-                    onClick={() => navigate(`/community/${post.id}`)}
+                    // 행 어디를 눌러도 열리게 하는 마우스 편의. 키보드·화면 읽기 프로그램은 제목 링크로 연다.
+                    // 제목 링크를 누르면 링크가 이미 이동하므로(preventDefault) 여기서 한 번 더 이동하지 않는다.
+                    onClick={event => { if (!event.defaultPrevented) navigate(`/community/${post.id}`); }}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                   >
                     <BlockedAuthorContent state={blocks} authorId={post.authorId} tableColumns={4}>
                     <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{filtered.length - idx}</td>
                     <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
-                      {post.title}
+                      <Link to={`/community/${post.id}`} className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
+                        {post.title}
+                      </Link>
                     </th>
                     <td className="px-6 py-4 text-center" onClick={event => event.stopPropagation()}><AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /></td>
                     <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
@@ -255,7 +259,7 @@ export default function CommunityList() {
                     />
                   ) : (
                     <div className="w-full aspect-square rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
                     </div>
                   )}
                   <div>

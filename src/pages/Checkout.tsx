@@ -363,7 +363,7 @@ export default function Checkout() {
       {paymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-            <span className="material-symbols-outlined text-4xl text-brand-accent mx-auto">
+            <span aria-hidden="true" className="material-symbols-outlined text-4xl text-brand-accent mx-auto">
               {paymentModal.type === 'cancel' ? 'info' : 'error'}
             </span>
             <p className="text-lg font-bold text-text-light dark:text-text-dark">
@@ -412,7 +412,7 @@ export default function Checkout() {
                         >
                           {!state.directOrder.product.imageUrl && (
                             <div className="w-full h-full flex items-center justify-center">
-                              <span className="material-symbols-outlined text-xl text-gray-400">image</span>
+                              <span aria-hidden="true" className="material-symbols-outlined text-xl text-gray-400">image</span>
                             </div>
                           )}
                         </div>
@@ -442,7 +442,7 @@ export default function Checkout() {
                           >
                             {!item.productImageUrl && (
                               <div className="w-full h-full flex items-center justify-center">
-                                <span className="material-symbols-outlined text-xl text-gray-400">image</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-xl text-gray-400">image</span>
                               </div>
                             )}
                           </div>

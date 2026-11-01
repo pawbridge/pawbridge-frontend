@@ -100,7 +100,7 @@ export default function Products() {
       <main className="container mx-auto px-4 py-8 flex-1">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
             <p className="text-gray-500">상품을 불러오는데 실패했습니다.</p>
             <button
               onClick={() => window.location.reload()}
@@ -191,7 +191,7 @@ export default function Products() {
           {/* 상품 목록 */}
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">
+              <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 mb-4">
                 inventory_2
               </span>
               <p className="text-lg text-gray-500 mb-4">검색 결과가 없습니다</p>
@@ -216,18 +216,19 @@ export default function Products() {
 
           {/* 페이지네이션 */}
           {totalPages > 1 && (
-            <nav aria-label="Pagination" className="flex items-center justify-center gap-2 mt-12">
+            <nav aria-label="페이지 이동" className="flex items-center justify-center gap-2 mt-12">
               {/* 이전 버튼 */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 0}
+                aria-label="이전 페이지"
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${
                   currentPage === 0
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
                     : 'bg-secondary-light dark:bg-secondary-dark text-gray-500 hover:bg-brand/20 hover:text-brand-accent'
                 }`}
               >
-                <span className="material-symbols-outlined text-xl">chevron_left</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-xl">chevron_left</span>
               </button>
 
               {/* 페이지 번호 */}
@@ -262,13 +263,14 @@ export default function Products() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={!data?.hasNext}
+                aria-label="다음 페이지"
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${
                   !data?.hasNext
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
                     : 'bg-secondary-light dark:bg-secondary-dark text-gray-500 hover:bg-brand/20 hover:text-brand-accent'
                 }`}
               >
-                <span className="material-symbols-outlined text-xl">chevron_right</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-xl">chevron_right</span>
               </button>
             </nav>
           )}

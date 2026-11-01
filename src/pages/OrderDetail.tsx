@@ -121,7 +121,7 @@ export default function OrderDetail() {
           onClick={() => navigate('/orders')}
           className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border-color rounded-lg text-text-main font-bold hover:bg-gray-50 transition-colors dark:bg-stone-800 dark:border-stone-700 dark:text-white dark:hover:bg-stone-800"
         >
-          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[20px]">arrow_back</span>
           목록으로 돌아가기
         </button>
       </div>

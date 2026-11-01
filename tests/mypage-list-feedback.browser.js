@@ -63,7 +63,7 @@ async page => {
   const layout = async () => {
     assert(await page.locator('header').count() === 1 && await page.locator('footer').count() === 1, 'Page shell missing');
     assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), `${selected.tab} overflow`);
-    assert(await button('person 프로필 정보').count() === 1 || await page.getByRole('button', { name: '프로필 정보' }).count() === 1, 'Sidebar missing');
+    assert(await button('프로필 정보').count() === 1, 'Sidebar missing');
   };
   const success = async (number = 0) => {
     if (empty) return page.getByText(selected.empty, { exact: true }).waitFor();
