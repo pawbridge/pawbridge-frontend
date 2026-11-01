@@ -9,6 +9,9 @@ async page => {
   const base = { reportId: 42, authorId: 901, authorNickname: '검증회원', kind: 'MISSING', occurredOn: '2026-09-28', approximateTime: null, region: '서울 마포구', landmark: '공원 입구', species: '개', animalName: '콩이', coatColor: '흰색', animalSize: '소형', distinguishingFeatures: '파란 목줄', direction: null, description: '보호자가 등록한 실종 동물 정보입니다.', title: '파란 목줄을 한 콩이를 찾습니다', imageUrls: [origin + '/__test-photo'], createdAt: '2026-09-30T10:00:00', updatedAt: '2026-09-30T10:00:00' };
   Object.assign(base, { province: '서울특별시', district: '마포구', animalType: 'DOG' });
   let failure = false, resume = null, oauthAccessToken = null;
+  const memberToken = 'test.' + btoa(JSON.stringify({ userId: profile.id, sub: profile.email, name: 'Test Member', role: 'ROLE_USER' })) + '.test';
+  // 소셜 로그인 버튼이 여는 백엔드 주소는 공급자를 거치지 않고 곧바로 콜백으로 돌려보낸다.
+  const socialSignIn = route => route.fulfill({ status: 302, headers: { location: origin + '/oauth/callback' } });
   const handler = async route => {
     const request = route.request(), path = request.url().replace(/^https?:\/\/[^/]+/, '').split('?')[0];
     if (!path.startsWith('/api/v1/')) return route.continue();
@@ -16,10 +19,6 @@ async page => {
     if (path === '/api/v1/auth/refresh') {
       writes.push(path);
       return route.fulfill({ json: { code: 200, data: { accessToken: oauthAccessToken } } });
-    }
-    if (path === '/api/v1/auth/login') {
-      writes.push(path);
-      return route.fulfill({ json: { code: 200, data: { ...profile, userId: profile.id, accessToken: 'test-only-token', refreshToken: 'test-only-refresh' } } });
     }
     if (path === '/api/v1/reports' && request.method() === 'GET') {
       requests.push(params);
@@ -53,6 +52,7 @@ async page => {
   await page.route('**/api/v1/**', handler);
   await page.route('**/__test-photo', route => route.fulfill({ path: 'tests/fixtures/lost-search.png', contentType: 'image/png' }));
   await page.route('**/__broken-photo', route => route.fulfill({ status: 404, body: '' }));
+  await page.route('http://localhost:28080/oauth2/authorization/google', socialSignIn);
   try {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto(origin + '/reports/missing'); await resetAuth(null); await page.reload(); await waitCards();
@@ -119,24 +119,19 @@ async page => {
     await page.goto(origin + '/community/reports/new?kind=SIGHTING');
     await page.waitForURL(origin + '/reports/new?kind=SIGHTING');
     await page.getByRole('main').getByRole('link', { name: '로그인', exact: true }).click();
-    // 소셜 로그인 화면 적용 이후 이메일 로그인은 접힌 상태로 시작한다.
-    await page.getByRole('button', { name: /이메일로 로그인/ }).click();
-    await page.getByPlaceholder('이메일 주소를 입력하세요').fill(profile.email);
-    await page.getByPlaceholder('비밀번호를 입력하세요', { exact: true }).fill('test-only-password');
-    await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
+    oauthAccessToken = memberToken;
+    await page.getByRole('button', { name: /구글/ }).click();
     await page.waitForURL(origin + '/reports/new?kind=SIGHTING');
     await main.getByRole('heading', { name: '목격 제보하기', exact: true }).waitFor();
     await main.getByRole('link', { name: '취소', exact: true }).click(); await page.waitForURL(origin + '/reports/sightings'); await waitCards();
     await page.goto(origin + '/community/reports/42/edit');
     await page.waitForURL(origin + '/reports/42/edit'); await main.getByRole('heading', { name: '제보 수정', exact: true }).waitFor();
     await main.getByRole('link', { name: '취소', exact: true }).click(); await waitCards();
-    checks.push('legacy detail/new/edit, guest write gate, password login returns kind, cancel list');
+    checks.push('legacy detail/new/edit, guest write gate, social login returns kind, cancel list');
 
     await resetAuth(null);
-    const jwt = await page.evaluate(user => 'test.' + btoa(JSON.stringify({ userId: user.id, sub: user.email, name: 'Test Member', role: 'ROLE_USER' })) + '.test', profile);
     await page.evaluate(() => sessionStorage.setItem('pawbridge-report-login-return', '/reports/new?kind=MISSING'));
     // 소셜 로그인 콜백은 주소 토큰 없이 돌아오고, 합성 재발급 응답으로 로그인한다.
-    oauthAccessToken = jwt;
     await page.goto(origin + '/oauth/callback');
     await page.waitForURL(origin + '/reports/new?kind=MISSING');
     await main.getByRole('heading', { name: '실종 동물 알리기', exact: true }).waitFor();
@@ -195,11 +190,12 @@ async page => {
     await main.getByRole('link', { name: '실종동물 찾기', exact: true }).waitFor();
     checks.push('eight responsive widths, mobile group/current/touch/escape, community separation');
     check(errors.length === 0, errors.join('\n'));
-    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/login', '/api/v1/auth/refresh', 'POST /api/v1/reports', 'PUT /api/v1/reports/42', 'DELETE /api/v1/reports/42']), 'Unexpected mutation traffic');
+    check(JSON.stringify(writes) === JSON.stringify(['/api/v1/auth/refresh', '/api/v1/auth/refresh', 'POST /api/v1/reports', 'PUT /api/v1/reports/42', 'DELETE /api/v1/reports/42']), 'Unexpected mutation traffic');
     return { checks, apiRequests: requests.length, mockedWrites: writes, pageErrors: errors, scope: 'local build with mocked APIs, not production integration' };
   } finally {
     page.off('pageerror', onError);
     await page.unroute('**/api/v1/**', handler);
     await page.unroute('**/__test-photo'); await page.unroute('**/__broken-photo');
+    await page.unroute('http://localhost:28080/oauth2/authorization/google', socialSignIn);
   }
 }

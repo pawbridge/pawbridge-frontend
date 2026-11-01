@@ -2,7 +2,7 @@ import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestCo
 import { isPublicShelterRequest } from '../lib/shelters';
 import { isPublicTravelRequest } from '../lib/travel';
 import { getAuthSessionVersion, useAuthStore } from '../store/authStore.ts';
-import { AUTH_LOGIN_PATH, AUTH_LOGOUT_PATH, refreshAccessToken } from './authSession.ts';
+import { AUTH_LOGOUT_PATH, refreshAccessToken } from './authSession.ts';
 import { isSessionEndedRefreshFailure } from './sessionRefresh.ts';
 
 declare module 'axios' {
@@ -157,8 +157,6 @@ apiClient.interceptors.response.use(
         case 401: {
           const requestUrl = error.config?.url || '';
           const method = error.config?.method?.toLowerCase();
-          // 로그인 실패는 Login의 오류 안내로 전달하고 현재 입력을 유지한다.
-          if (requestUrl === AUTH_LOGIN_PATH && method === 'post') break;
           // 로그아웃을 부른 화면이 결과와 무관하게 로그인 상태를 정리하고 이동한다.
           if (requestUrl === AUTH_LOGOUT_PATH && method === 'post') break;
 

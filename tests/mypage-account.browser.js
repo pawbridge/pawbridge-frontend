@@ -37,13 +37,13 @@ async page => {
     if (path === '/api/v1/users/me' && request.method() === 'GET') {
       return route.fulfill({ json: { code: 200, data: user } });
     }
-    if (request.method() === 'PUT' && ['/api/v1/users/me/nickname', '/api/v1/users/me/password'].includes(path)) {
+    if (request.method() === 'PUT' && path === '/api/v1/users/me/nickname') {
       const body = request.postDataJSON();
       writes.push({ path, body });
       await new Promise(resolve => { release = resolve; });
       const fail = failNext;
       failNext = false;
-      if (!fail && path.endsWith('/nickname')) user.nickname = body.nickname;
+      if (!fail) user.nickname = body.nickname;
       return route.fulfill({ status: fail ? 400 : 200, json: { code: fail ? 400 : 200, data: null, message: fail ? '테스트 요청 실패' : '성공' } });
     }
     // Every logout button also clears the server's keep-signed-in cookie (1482640).
@@ -57,9 +57,7 @@ async page => {
   page.on('pageerror', onError);
   await page.route('**/api/v1/**', handler);
   const profile = () => page.getByRole('button', { name: '프로필 정보' });
-  const password = () => page.getByRole('button', { name: '비밀번호 변경' });
   const nickname = () => page.getByPlaceholder('2~30자의 한글, 영문, 숫자');
-  const passwords = () => page.locator('main input[type="password"]');
   const submit = () => page.locator('main button[type="submit"]');
   const cancel = () => page.getByRole('button', { name: '취소', exact: true });
   const setUser = async (provider = 'LOCAL', role = 'ROLE_USER', tab = 'profile') => {
@@ -84,7 +82,7 @@ async page => {
     assert(JSON.stringify(writes[count].body) === JSON.stringify(expected), 'Wrong mutation payload');
     release();
     await page.getByRole('button', { name: '변경하기', exact: true }).waitFor();
-    assert((await dialogs()).at(-1) === (fail ? '테스트 요청 실패' : `${field === 'nickname' ? '닉네임이' : '비밀번호가'} 변경되었습니다.`), 'Wrong result feedback');
+    assert((await dialogs()).at(-1) === (fail ? '테스트 요청 실패' : '닉네임이 변경되었습니다.'), 'Wrong result feedback');
   };
   try {
     await page.goto(`${origin}/login`);
@@ -96,34 +94,15 @@ async page => {
       assert(await page.getByLabel(label, { exact: true }).count() === 1, `Profile field not labelled: ${label}`);
     }
     assert(await page.getByLabel('새 닉네임', { exact: true }).getAttribute('autocomplete') === 'nickname', 'Nickname autocomplete missing');
-    await password().click();
-    assert(await page.getByLabel('현재 비밀번호', { exact: true }).getAttribute('autocomplete') === 'current-password', 'Current password not labelled');
-    assert(await page.getByLabel('새 비밀번호', { exact: true }).getAttribute('autocomplete') === 'new-password', 'New password not labelled');
     for (const width of [1920, 390]) {
       await page.setViewportSize({ width, height: width === 1920 ? 1080 : 844 });
       await profile().click();
       await nickname().fill('작성중별명');
-      await password().click();
-      await passwords().nth(0).fill('old-test-only');
-      await passwords().nth(1).fill('new-test-only');
-      await profile().click();
-      await value(nickname(), '작성중별명', 'Nickname lost during tab switch');
+      await value(nickname(), '작성중별명', 'Nickname draft not kept');
       await cancel().click();
       await value(nickname(), '', 'Nickname cancel failed');
-      await password().click();
-      await value(passwords().nth(0), 'old-test-only', 'Current password lost during tab switch');
-      await value(passwords().nth(1), 'new-test-only', 'New password lost during tab switch');
-      await cancel().click();
-      await value(passwords().nth(0), '', 'Password cancel failed');
-      await value(passwords().nth(1), '', 'Password cancel failed');
       assert(writes.length === 0, 'Typing or cancelling must not submit');
-      for (const tab of ['profile', 'password']) {
-        await (tab === 'profile' ? profile() : password()).click();
-        assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), `Overflow at ${width}`);
-        await page.mouse.move(0, 0);
-        await page.evaluate(() => document.fonts.ready);
-        await page.screenshot({ path: `/tmp/mypage-${tab}-${width}.png`, fullPage: true, animations: 'disabled' });
-      }
+      assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), `Overflow at ${width}`);
       checks.push(`draft preservation/cancel/layout ${width}`);
     }
     await profile().click();
@@ -142,30 +121,13 @@ async page => {
     await nickname().fill('다른별명');
     await submitMutation('nickname', { nickname: '다른별명' }, true);
     await value(nickname(), '다른별명', 'Failed nickname must retain draft');
-    await password().click();
-    for (const [current, next] of [['', ''], ['old-test-only', ''], ['', 'new-test-only']]) {
-      await passwords().nth(0).fill(current);
-      await passwords().nth(1).fill(next);
-      const count = writes.length;
-      const notices = (await dialogs()).length;
-      await submit().click();
-      assert(writes.length === count && (await dialogs()).length === notices + 1, 'Incomplete password was submitted');
-    }
-    const body = { currentPassword: 'old-test-only', newPassword: 'new-test-only' };
-    for (const fail of [true, false]) {
-      await passwords().nth(0).fill(body.currentPassword);
-      await passwords().nth(1).fill(body.newPassword);
-      await submitMutation('password', body, fail);
-      await value(passwords().nth(0), fail ? body.currentPassword : '', 'Wrong current password reset');
-      await value(passwords().nth(1), fail ? body.newPassword : '', 'Wrong new password reset');
-    }
-    checks.push('nickname and password validation/payload/pending/success/error');
-    for (const provider of ['GOOGLE', 'KAKAO', null, 'LOCAL']) {
+    checks.push('nickname validation/payload/pending/success/error');
+    // Password change belonged to email login, which production no longer offers: no account sees the menu,
+    // and a tab saved from the old menu falls back to the profile.
+    for (const provider of ['GOOGLE', 'NAVER', null, 'LOCAL']) {
       await setUser(provider, 'ROLE_USER', 'password');
-      await page.getByRole('heading', { name: '비밀번호 변경', exact: true }).waitFor();
-      const blocked = provider === 'GOOGLE' || provider === 'KAKAO';
-      assert(await passwords().count() === (blocked ? 0 : 2), 'Wrong provider restriction');
-      if (blocked) await page.getByText(`${provider === 'GOOGLE' ? '구글' : '카카오'} 가입 계정은 비밀번호를 변경할 수 없습니다.`).waitFor();
+      await page.getByRole('heading', { name: '프로필 정보', exact: true }).waitFor();
+      assert(await page.getByRole('button', { name: '비밀번호 변경' }).count() === 0, 'Password menu still shown: ' + provider);
     }
     for (const role of ['ROLE_USER', 'ROLE_SHELTER', 'ROLE_ADMIN']) {
       await setUser('LOCAL', role);

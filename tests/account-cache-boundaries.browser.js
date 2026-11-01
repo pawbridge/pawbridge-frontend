@@ -2,9 +2,12 @@
 async page => {
   const origin = 'http://127.0.0.1:5209';
   const results = [], requests = [], unexpected = [], errors = [];
-  let role = 'ROLE_USER';
+  let role = 'ROLE_USER', signingIn = null;
+  // Social sign-in ends on /oauth/callback, which asks the refresh endpoint for the account's access token.
+  const encode = value => btoa(unescape(encodeURIComponent(JSON.stringify(value)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const token = id => [encode({ alg: 'none' }), encode({ sub: `member${id}@example.invalid`, userId: id, name: `회원${id}`, role, careRegNo: `shelter-${id}` }), 'synthetic'].join('.');
   let held = null, holdRead = null, failRead = null, failLogout = false, holdLogout = false;
-  const user = id => ({ id, userId: id, name: `회원${id}`, nickname: `회원${id}`, email: `member${id}@example.invalid`, role, provider: 'LOCAL', careRegNo: `shelter-${id}` });
+  const user = id => ({ id, userId: id, name: `회원${id}`, nickname: `회원${id}`, email: `member${id}@example.invalid`, role, provider: 'GOOGLE', careRegNo: `shelter-${id}` });
   const animal = id => ({ id, animalId: id, favoriteId: id, breed: `계정${id}전용동물`, species: 'DOG', gender: 'UNKNOWN', age: 2, status: 'PROTECT', shelterName: '모의 보호소', images: [], favoriteCount: 0 });
   const paged = content => ({ content, page: 0, number: 0, size: 20, totalElements: content.length, totalPages: 1 });
   const handler = async route => {
@@ -21,9 +24,8 @@ async page => {
     const id = Number(r.headers()['x-user-id'] || 0);
     requests.push({ method: r.method(), path, id });
     const send = json => route.fulfill({ json });
-    if (path === '/api/v1/auth/login' && r.method() === 'POST') {
-      const account = r.postDataJSON().email.includes('101') ? 101 : 202;
-      return send({ code: 200, data: { ...user(account), accessToken: `mock-${account}`, refreshToken: `mock-refresh-${account}` } });
+    if (path === '/api/v1/auth/refresh' && r.method() === 'POST' && signingIn) {
+      return send({ code: 200, data: { accessToken: token(signingIn) } });
     }
     if (path === '/api/v1/auth/logout' && r.method() === 'POST') {
       if (holdLogout) await new Promise(resolve => { held = resolve; });
@@ -56,12 +58,12 @@ async page => {
     await page.evaluate(path => { history.pushState({}, '', path); dispatchEvent(new PopStateEvent('popstate')); }, path);
     await page.waitForURL(`${origin}${path}`);
   };
+  // The real sign-in comes back with a page load; switching accounts inside one document is the stricter case.
   const login = async id => {
-    await page.getByRole('button', { name: /이메일로 로그인/ }).click();
-    await page.getByPlaceholder('이메일 주소를 입력하세요').fill(`member${id}@example.invalid`);
-    await page.getByPlaceholder('비밀번호를 입력하세요').fill('mock-password-only');
-    await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
+    signingIn = id;
+    await page.evaluate(() => { history.pushState({}, '', '/oauth/callback'); dispatchEvent(new PopStateEvent('popstate')); });
     await page.waitForURL(`${origin}/`);
+    signingIn = null;
     assert(await page.evaluate(id => JSON.parse(localStorage.getItem('auth-storage')).state.user.id === id, id), 'Wrong signed-in account');
     await navigate('/mypage');
     await page.locator('aside').getByText(`member${id}@example.invalid`, { exact: true }).waitFor();

@@ -4,12 +4,18 @@ async (page, origin = 'http://127.0.0.1:5260') => {
   const errors = [], unexpected = [], probes = [], checks = [];
   let publicAssetsMocked = 0;
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
-  let validLogin = false;
+  // Social sign-in ends on /oauth/callback, which asks the refresh endpoint for an access token.
+  const encode = value => btoa(unescape(encodeURIComponent(JSON.stringify(value)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const accessToken = [encode({ alg: 'none' }), encode({ sub: 'member@example.invalid', userId: 901, name: '합성 사용자', role: 'ROLE_USER' }), 'synthetic'].join('.');
   const recordError = error => errors.push(error.message);
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
   const handler = async route => {
     const request = route.request(), url = new URL(request.url());
     if (!url.pathname.startsWith('/api/v1/')) {
+      // The provider round trip is skipped: the backend's sign-in address sends the browser straight back.
+      if (url.origin === 'http://localhost:28080' && url.pathname === '/oauth2/authorization/google') {
+        return route.fulfill({ status: 302, headers: { location: `${origin}/oauth/callback` } });
+      }
       if (url.origin === origin || url.protocol === 'data:') return route.continue();
       if (request.method() === 'GET' && (['fonts.googleapis.com', 'fonts.gstatic.com'].includes(url.hostname)
         || (url.hostname === 'www.pawbridge.kr' && ['/favicon-96.png', '/apple-touch-icon.png'].includes(url.pathname)))) {
@@ -33,13 +39,7 @@ async (page, origin = 'http://127.0.0.1:5260') => {
       return route.fulfill({ status: 204 });
     }
     if (path === '/api/v1/visits/today') return route.fulfill({ json: { data: { date: today, count: 0 } } });
-    if (path === '/api/v1/auth/login') return route.fulfill({
-      status: validLogin ? 200 : 401,
-      json: validLogin ? { code: 200, data: {
-        userId: 901, name: '합성 사용자', email: 'member@example.invalid', role: 'ROLE_USER',
-        accessToken: 'synthetic-test-token', refreshToken: 'synthetic-refresh',
-      } } : { code: 401, data: null, message: '합성 로그인 실패' },
-    });
+    if (path === '/api/v1/auth/refresh') return route.fulfill({ json: { code: 200, data: { accessToken } } });
     if (path.startsWith('/api/v1/dependency-probe/')) {
       probes.push({ path, method: request.method(), headers: request.headers(), body: request.postData() });
       if (path.endsWith('/network')) return route.abort();
@@ -73,7 +73,6 @@ async (page, origin = 'http://127.0.0.1:5260') => {
   await page.route('**/*', handler);
   try {
     for (const width of [1440, 375]) {
-      validLogin = false;
       await page.setViewportSize({ width, height: 1000 });
       await page.goto(`${origin}/login`, { waitUntil: 'domcontentloaded' });
       await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
@@ -82,21 +81,10 @@ async (page, origin = 'http://127.0.0.1:5260') => {
       await page.getByRole('button', { name: '합성 작성자에게 연락하기', exact: true }).click();
       await page.getByRole('link', { name: '1:1 대화', exact: true }).click();
       await page.waitForURL(`${origin}/login`);
-      // Login v2 shows social login first; the email form opens behind this toggle.
-      await page.getByRole('button', { name: /이메일로 로그인/ }).click();
-      const email = page.getByPlaceholder('이메일 주소를 입력하세요');
-      const password = page.getByPlaceholder('비밀번호를 입력하세요', { exact: true });
-      await email.fill('member@example.invalid');
-      await password.fill('synthetic-password');
-      await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
-      await page.getByText('합성 로그인 실패', { exact: true }).first().waitFor();
-      assert(await password.inputValue() === 'synthetic-password', 'Login failure lost input');
-      assert(page.url() === `${origin}/login`, 'Login failure redirected');
-      validLogin = true;
-      await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
+      await page.getByRole('button', { name: /구글/ }).click();
       await page.waitForURL(`${origin}/chats/new?to=902&context=POST&contextId=41`);
       await page.getByLabel('메시지', { exact: true }).waitFor();
-      checks.push(`login-error-and-contact-return-${width}`);
+      checks.push(`contact-return-after-social-login-${width}`);
 
       const result = await page.evaluate(async () => {
         const { default: client } = await import('/src/api/client.ts');
@@ -117,7 +105,7 @@ async (page, origin = 'http://127.0.0.1:5260') => {
       assert(result.failure.status === 422 && result.failure.message === '합성 검증 오류', 'HTTP error contract changed');
       assert(result.network === 'ERR_NETWORK', 'Failed XHR resolved or changed error contract');
       const latest = probes.slice(-5);
-      assert(latest.every(p => p.headers.authorization === 'Bearer synthetic-test-token' && p.headers['x-user-id'] === '901'), 'Auth headers changed');
+      assert(latest.every(p => p.headers.authorization === `Bearer ${accessToken}` && p.headers['x-user-id'] === '901'), 'Auth headers changed');
       const json = latest.find(p => p.method === 'POST' && p.path.endsWith('/json'));
       assert(JSON.parse(json.body).text === '합성 JSON', 'JSON body changed');
       const multipart = latest.find(p => p.path.endsWith('/multipart'));

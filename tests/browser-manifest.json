@@ -245,15 +245,6 @@
       "group": "mock"
     },
     {
-      "name": "login-401",
-      "origin": "http://127.0.0.1:5213",
-      "server": "preview",
-      "profile": "preview-local",
-      "call": "page",
-      "preNavigate": false,
-      "group": "mock"
-    },
-    {
       "name": "lost-search",
       "origin": "http://127.0.0.1:5187",
       "server": "dev",
@@ -287,15 +278,6 @@
     {
       "name": "market-navigation",
       "origin": "http://127.0.0.1:5198",
-      "server": "preview",
-      "profile": "preview-local",
-      "call": "page",
-      "preNavigate": false,
-      "group": "mock"
-    },
-    {
-      "name": "member-auth",
-      "origin": "http://127.0.0.1:5201",
       "server": "preview",
       "profile": "preview-local",
       "call": "page",
@@ -577,6 +559,15 @@
     {
       "name": "community-keyboard",
       "origin": "http://127.0.0.1:5264",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "login-social-only",
+      "origin": "http://127.0.0.1:5271",
       "server": "preview",
       "profile": "preview-local",
       "call": "page",

@@ -6,19 +6,18 @@ import MyFavoriteAnimalsPanel from '../components/mypage/MyFavoriteAnimalsPanel'
 import MyRegisteredAnimalsPanel from '../components/mypage/MyRegisteredAnimalsPanel';
 import MyPageSidebar, { type MyPageTab } from '../components/mypage/MyPageSidebar';
 import MyProfilePanel from '../components/mypage/MyProfilePanel';
-import MyPasswordPanel from '../components/mypage/MyPasswordPanel';
 import MyPageInfoState from '../components/mypage/MyPageInfoState';
 import MyShelterApplications from '../components/shelters/MyShelterApplications';
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getMyInfo, updateNickname, updatePassword, getFavoriteAnimals, getRegisteredAnimals } from '../api/user.api';
+import { getMyInfo, updateNickname, getFavoriteAnimals, getRegisteredAnimals } from '../api/user.api';
 import { getWishlists, deleteWishlist, addToCart, getCart, clearCart } from '../api/products.api';
 import { getOrders } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
 import { logoutWithoutWaiting } from '../api/auth.api';
 import { canSeePetMarket } from '../lib/petMarket';
-import type { UpdateNicknameRequest, PasswordUpdateRequest } from '../types/user.types';
+import type { UpdateNicknameRequest } from '../types/user.types';
 import type { OrderStatus } from '../types/api.types';
 
 export default function MyPage() {
@@ -39,7 +38,7 @@ export default function MyPage() {
     }
     // 2. sessionStorage에서 확인 (뒤로가기 시)
     const savedTab = sessionStorage.getItem('mypageActiveTab');
-    if (savedTab && ['shelter', 'profile', 'password', 'favoriteAnimals', 'registeredAnimals', 'wishlist', 'cart', 'orders'].includes(savedTab)) {
+    if (savedTab && ['shelter', 'profile', 'favoriteAnimals', 'registeredAnimals', 'wishlist', 'cart', 'orders'].includes(savedTab)) {
       return savedTab as MyPageTab;
     }
     // 3. 기본값
@@ -67,10 +66,6 @@ export default function MyPage() {
     sessionStorage.setItem('mypageActiveTab', activeTab);
   }, [activeTab]);
   const [nicknameInput, setNicknameInput] = useState('');
-  const [passwordData, setPasswordData] = useState<PasswordUpdateRequest>({
-    currentPassword: '',
-    newPassword: '',
-  });
 
   // Favorite animals states
   const [favoriteAnimalsPage, setFavoriteAnimalsPage] = useState(0);
@@ -159,18 +154,6 @@ export default function MyPage() {
     },
   });
 
-  // 비밀번호 변경 mutation
-  const updatePasswordMutation = useMutation({
-    mutationFn: (data: PasswordUpdateRequest) => updatePassword(data),
-    onSuccess: () => {
-      alert('비밀번호가 변경되었습니다.');
-      setPasswordData({ currentPassword: '', newPassword: '' });
-    },
-    onError: (error) => {
-      alert(getApiErrorMessage(error, '비밀번호 변경에 실패했습니다.'));
-    },
-  });
-
   // 위시리스트 선택 삭제 mutation
   const deleteSelectedWishlistMutation = useMutation({
     mutationFn: async (wishlistIds: number[]) => {
@@ -233,16 +216,6 @@ export default function MyPage() {
       return;
     }
     updateNicknameMutation.mutate({ nickname: nicknameInput });
-  };
-
-  // 비밀번호 변경 핸들러
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!passwordData.currentPassword || !passwordData.newPassword) {
-      alert('현재 비밀번호와 새 비밀번호를 입력해주세요.');
-      return;
-    }
-    updatePasswordMutation.mutate(passwordData);
   };
 
   // 로그아웃 핸들러
@@ -439,17 +412,6 @@ export default function MyPage() {
                 onNicknameChange={setNicknameInput}
                 onSubmit={handleNicknameSubmit}
                 isPending={updateNicknameMutation.isPending}
-              />
-            )}
-
-            {activeTab === 'password' && (
-              <MyPasswordPanel
-                provider={userInfo.provider}
-                providerLabel={getProviderLabel(userInfo.provider)}
-                value={passwordData}
-                onChange={setPasswordData}
-                onSubmit={handlePasswordSubmit}
-                isPending={updatePasswordMutation.isPending}
               />
             )}
 
