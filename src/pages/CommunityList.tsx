@@ -171,7 +171,7 @@ export default function CommunityList() {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-6">
           <div className="w-full md:max-w-xs">
             <label className="relative flex items-center">
-              <span className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
+              <span aria-hidden="true" className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
               <input
                 className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-focus"
                 placeholder="제목, 내용으로 검색 (Enter)"
@@ -184,14 +184,14 @@ export default function CommunityList() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
-              <span className="material-symbols-outlined text-lg">lock</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-lg">lock</span>
               <span>열람은 누구나 · 작성은 로그인 후</span>
             </div>
             <button
               onClick={handleWriteClick}
               className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
             >
-              <span className="material-symbols-outlined text-base">edit</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-base">edit</span>
               <span>글쓰기</span>
             </button>
           </div>
@@ -255,7 +255,7 @@ export default function CommunityList() {
                     />
                   ) : (
                     <div className="w-full aspect-square rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
                     </div>
                   )}
                   <div>

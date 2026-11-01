@@ -99,7 +99,7 @@ async page => {
       await page.getByLabel(/전체 선택/).check();
       assert(await wishCards().count() === 2 && await page.getByLabel(/전체 선택/).isChecked(), 'Visible select all');
       await page.getByLabel(/전체 선택/).uncheck(); assert(await button('선택 삭제').isDisabled(), 'Empty selection deletion');
-      await page.getByLabel('품절 상품 숨기기').uncheck(); assert(await button('block 품절').isDisabled(), 'Sold-out add enabled');
+      await page.getByLabel('품절 상품 숨기기').uncheck(); assert(await button('품절').isDisabled(), 'Sold-out add enabled');
       await page.waitForFunction(() => [...document.querySelectorAll('main img')].every(i => i.complete && i.naturalWidth > 0));
       assert((await wishCards().first().locator('a').first().getAttribute('href')).startsWith('/products/'), 'Product link');
       await page.mouse.move(0,0); await page.evaluate(() => document.fonts.ready);

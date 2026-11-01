@@ -63,6 +63,7 @@ export default function MyPageSidebar({
             }`}
           >
             <span
+              aria-hidden="true"
               className={`material-symbols-outlined ${
                 activeTab === 'profile' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
               }`}
@@ -90,6 +91,7 @@ export default function MyPageSidebar({
             }`}
           >
             <span
+              aria-hidden="true"
               className={`material-symbols-outlined ${
                 activeTab === 'favoriteAnimals' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
               }`}
@@ -118,6 +120,7 @@ export default function MyPageSidebar({
               }`}
             >
               <span
+                aria-hidden="true"
                 className={`material-symbols-outlined ${
                   activeTab === 'registeredAnimals' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
                 }`}
@@ -147,6 +150,7 @@ export default function MyPageSidebar({
             }`}
           >
             <span
+              aria-hidden="true"
               className={`material-symbols-outlined ${
                 activeTab === 'wishlist' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
               }`}
@@ -174,6 +178,7 @@ export default function MyPageSidebar({
             }`}
           >
             <span
+              aria-hidden="true"
               className={`material-symbols-outlined ${
                 activeTab === 'cart' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
               }`}
@@ -201,6 +206,7 @@ export default function MyPageSidebar({
             }`}
           >
             <span
+              aria-hidden="true"
               className={`material-symbols-outlined ${
                 activeTab === 'orders' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
               }`}
@@ -229,6 +235,7 @@ export default function MyPageSidebar({
             }`}
           >
             <span
+              aria-hidden="true"
               className={`material-symbols-outlined ${
                 activeTab === 'password' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
               }`}
@@ -253,7 +260,7 @@ export default function MyPageSidebar({
             onClick={onLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
           >
-            <span className="material-symbols-outlined text-red-500">logout</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-red-500">logout</span>
             <p className="text-red-500 text-sm font-medium leading-normal">로그아웃</p>
           </button>
         </div>

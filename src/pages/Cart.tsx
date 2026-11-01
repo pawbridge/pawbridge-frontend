@@ -77,7 +77,7 @@ export default function Cart() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
           <p className="text-gray-500 mb-4">장바구니를 불러오는데 실패했습니다.</p>
           <p className="text-gray-400 text-sm mb-4">로그인이 필요합니다.</p>
           <button
@@ -100,7 +100,7 @@ export default function Cart() {
             장바구니
           </h1>
           <div className="flex flex-col items-center justify-center text-center gap-8 py-16 px-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <span className="material-symbols-outlined text-6xl text-brand-accent">shopping_cart_off</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-brand-accent">shopping_cart_off</span>
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl font-bold text-text-light dark:text-text-dark">장바구니가 비어있습니다.</h2>
               <p className="text-gray-500 dark:text-gray-400">마음에 드는 상품을 담아보세요.</p>
@@ -161,7 +161,7 @@ export default function Cart() {
                       >
                         {!item.productImageUrl && (
                           <div className="w-full h-full flex items-center justify-center">
-                            <span className="material-symbols-outlined text-2xl text-gray-400">image</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-2xl text-gray-400">image</span>
                           </div>
                         )}
                       </div>
