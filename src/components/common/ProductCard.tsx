@@ -55,7 +55,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
           />
         ) : (
           <div className="h-56 w-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
-            <span className="material-symbols-outlined text-4xl text-gray-400">image</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-4xl text-gray-400">image</span>
           </div>
         )}
         
@@ -95,7 +95,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
                 : 'bg-brand/20 text-brand-accent hover:bg-brand hover:text-brand-ink'
             }`}
           >
-            <span className="material-symbols-outlined text-xl">add_shopping_cart</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-xl">add_shopping_cart</span>
           </button>
         </div>
       </div>

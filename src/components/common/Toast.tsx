@@ -35,7 +35,7 @@ export default function Toast({ message, type = 'info', isVisible, onClose, dura
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
       <div className={`${typeStyles[type]} flex items-center gap-3 px-4 py-3 rounded-lg shadow-xl shadow-gray-900/20`}>
-        <span className="material-symbols-outlined text-xl">{iconMap[type]}</span>
+        <span aria-hidden="true" className="material-symbols-outlined text-xl">{iconMap[type]}</span>
         <span className="text-sm font-medium">{message}</span>
       </div>
     </div>

@@ -260,9 +260,10 @@ export default function ResetPassword() {
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
+                      aria-label={showNewPassword ? '새 비밀번호 숨기기' : '새 비밀번호 보기'}
                       className="text-gray-400 flex border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 items-center justify-center pr-[15px] rounded-r-lg border-l-0"
                     >
-                      <span className="material-symbols-outlined text-2xl">
+                      <span aria-hidden="true" className="material-symbols-outlined text-2xl">
                         {showNewPassword ? 'visibility' : 'visibility_off'}
                       </span>
                     </button>
@@ -294,9 +295,10 @@ export default function ResetPassword() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? '비밀번호 확인 숨기기' : '비밀번호 확인 보기'}
                       className="text-gray-400 flex border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 items-center justify-center pr-[15px] rounded-r-lg border-l-0"
                     >
-                      <span className="material-symbols-outlined text-2xl">
+                      <span aria-hidden="true" className="material-symbols-outlined text-2xl">
                         {showConfirmPassword ? 'visibility' : 'visibility_off'}
                       </span>
                     </button>

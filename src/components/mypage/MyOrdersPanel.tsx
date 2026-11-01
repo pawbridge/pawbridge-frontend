@@ -154,7 +154,7 @@ export default function MyOrdersPanel({
           </div>
         ) : (
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">receipt_long</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">receipt_long</span>
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">주문 내역이 없습니다.</p>
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">상품을 주문하고 주문 내역을 확인해보세요.</p>
             <Link
@@ -162,7 +162,7 @@ export default function MyOrdersPanel({
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑하러 가기
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
         )}

@@ -155,7 +155,7 @@ export default function ProductDetail() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
           <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
           <button
             onClick={() => navigate('/products')}
@@ -201,7 +201,7 @@ export default function ProductDetail() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-6xl text-gray-400">image</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-400">image</span>
                 </div>
               )}
             </div>
@@ -316,7 +316,7 @@ export default function ProductDetail() {
                 onClick={handleAddToCart}
                 disabled={!selectedSku || selectedSku.stockQuantity <= 0 || addToCartMutation.isPending}
               >
-                <span className="material-symbols-outlined">add_shopping_cart</span>
+                <span aria-hidden="true" className="material-symbols-outlined">add_shopping_cart</span>
                 <span>장바구니 담기</span>
               </button>
               <button
