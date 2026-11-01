@@ -46,3 +46,21 @@ test('운영 코드의 console.log는 실패한다', () => {
   assert.equal(result.status, 1);
   assert.ok(result.report.messages.some(message => message.ruleId === 'no-console'));
 });
+
+test('칸과 연결되지 않은 이름표는 실패한다', () => {
+  const result = lint('export default function Probe() { return <div><label>이름</label><input /></div>; }');
+  assert.equal(result.status, 1);
+  assert.ok(result.report.messages.some(message => message.ruleId === 'jsx-a11y/label-has-associated-control'));
+});
+
+test('이름표를 htmlFor로 연결한 칸은 통과한다', () => {
+  const result = lint('export default function Probe() { return <div><label htmlFor="probe-name">이름</label><input id="probe-name" /></div>; }');
+  assert.equal(result.status, 0);
+  assert.equal(result.report.errorCount, 0);
+});
+
+test('키보드로 쓸 수 없는 클릭 요소는 실패한다', () => {
+  const result = lint('export default function Probe({ open }: { open: () => void }) { return <div onClick={open}>열기</div>; }');
+  assert.equal(result.status, 1);
+  assert.ok(result.report.messages.some(message => message.ruleId === 'jsx-a11y/click-events-have-key-events'));
+});

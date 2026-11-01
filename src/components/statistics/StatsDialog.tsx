@@ -26,6 +26,7 @@ export default function StatsDialog({ title, onClose, children, busy = false, co
       <div className="p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className={`min-w-0 break-words font-bold ${headingClassName}`}>{title}</h2>
+          {/* eslint-disable-next-line jsx-a11y/no-autofocus -- 대화상자를 열면 포커스를 대화상자 안으로 옮긴다 */}
           <button autoFocus type="button" aria-label="닫기" disabled={busy} onClick={onClose} className={`${closeIcon ? 'flex size-11 shrink-0 items-center justify-center rounded-full' : `min-h-11 border ${compact || fullScreen ? 'rounded-2xl border-brand-border font-medium' : 'rounded-lg border-border-light font-semibold'} px-4 text-sm`} disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus dark:border-border-dark`}>{closeIcon ? <img src={closeIcon} width="24" height="24" alt="" /> : '닫기'}</button>
         </div>
         {children}

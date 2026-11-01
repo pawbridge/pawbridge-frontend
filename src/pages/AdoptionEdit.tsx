@@ -179,7 +179,7 @@ export default function AdoptionEdit() {
                   {form.files.map((file, index) => (
                     <div key={index} className="relative group aspect-square rounded-lg overflow-hidden">
                       <img
-                        alt={`Uploaded image ${index + 1}`}
+                        alt={`첨부 ${index + 1}번 미리보기`}
                         className="w-full h-full object-cover"
                         src={URL.createObjectURL(file)}
                       />

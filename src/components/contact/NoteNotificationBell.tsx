@@ -19,6 +19,8 @@ export default function NoteNotificationBell() {
     return () => document.removeEventListener('pointerdown', close);
   }, []);
   return (
+    // Escape로 알림 창을 닫는다. 키 입력은 안쪽 버튼·목록에서 올라오고, 이 div 자체는 조작 요소가 아니다.
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       ref={container}
       className="relative"
