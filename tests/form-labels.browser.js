@@ -34,7 +34,7 @@ async page => {
     await page.setViewportSize({ width, height: 1080 });
     // Login: an email field with the login identifier hint, and the page's own messages instead of the browser's.
     await page.goto(origin + '/login');
-    await page.getByRole('button', { name: /이메일로 로그인$/ }).first().click();
+    await page.getByRole('button', { name: /이메일로 가입한 기존 회원/ }).click();
     assert(await field('이메일').getAttribute('type') === 'email', `login-email-type-${width}`);
     await autocomplete('이메일', 'username', `login-email-autocomplete-${width}`);
     await autocomplete('비밀번호', 'current-password', `login-password-autocomplete-${width}`);
