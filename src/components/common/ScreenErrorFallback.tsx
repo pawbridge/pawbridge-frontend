@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 // 화면을 그리다 오류가 났을 때의 안내 카드. 모양은 LoginRequiredCard와 같다.
 // 라우터 밖(main.tsx 최상위)에서도 쓰므로 Link 대신 <a>로 홈에 간다(앱을 새로 불러와 상태도 초기화).
 export function ScreenErrorCard() {
@@ -28,6 +30,15 @@ export function ScreenErrorCard() {
 
 // 카드를 화면 본문(main) 자리에 놓는다. fullScreen은 공통 틀 없이 화면 전체를 쓸 때(최상위 경계).
 export default function ScreenErrorFallback({ fullScreen = false }: { fullScreen?: boolean }) {
+  // 최상위 경계는 라우터 밖에 있어 주소가 바뀌어도 카드를 지우지 못한다.
+  // 뒤로·앞으로 가기로 주소만 바뀌고 카드가 남지 않도록, 바뀐 주소를 새로 불러온다.
+  useEffect(() => {
+    if (!fullScreen) return;
+    const reload = () => window.location.reload();
+    window.addEventListener('popstate', reload);
+    return () => window.removeEventListener('popstate', reload);
+  }, [fullScreen]);
+
   return (
     <main className={`w-full flex-1 px-4 ${fullScreen ? 'flow-root min-h-screen bg-background-light font-display dark:bg-background-dark' : ''}`}>
       <ScreenErrorCard />

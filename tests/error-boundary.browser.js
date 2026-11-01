@@ -1,6 +1,7 @@
 // Error boundaries on mocked data: a screen that throws while drawing shows a guidance card instead of a blank page.
 // Inside SiteLayout and AdminLayout the surrounding frame stays and moving to another address draws again;
 // anything outside them (here the site header) reaches the top-level boundary, which shows the same card on its own.
+// A screen file that fails to download (an old name after a deploy) reloads the page once; the top-level card reloads on browser Back.
 async page => {
   const origin = 'http://127.0.0.1:5263';
   const checks = [], pageErrors = [];
@@ -51,13 +52,25 @@ async page => {
   await Promise.all([page.waitForEvent('load'), card().getByRole('button', { name: '새로고침', exact: true }).click()]);
   await card().waitFor();
   assert(await page.evaluate(() => window.reloadProbe) === undefined, 'reload-button-reloads');
-  // A screen whose code cannot be downloaded (for example an old file after a deploy) shows the same card in the page area.
+  // A screen whose code cannot be downloaded (an old file name after a deploy) reloads the page once,
+  // which picks up the new file names and draws the screen.
+  const privacyLink = () => page.getByRole('contentinfo').getByRole('link', { name: '개인정보처리방침', exact: true });
+  await page.goto(origin + '/terms');
+  await page.getByRole('heading', { level: 1 }).waitFor();
+  await page.evaluate(() => { sessionStorage.clear(); window.reloadProbe = 'before'; });
+  await page.route('**/assets/Privacy-*.js', route => route.abort('failed'), { times: 1 });
+  await Promise.all([page.waitForEvent('load'), privacyLink().click()]);
+  await page.getByRole('heading', { level: 1, name: '개인정보처리방침' }).waitFor();
+  assert(await page.evaluate(() => window.reloadProbe) === undefined && await card().count() === 0, 'chunk-failure-reloads-once');
+  // If the file still fails right after that reload, it does not reload again and shows the card in the page area.
   await page.route('**/assets/Privacy-*.js', route => route.abort('failed'));
   await page.goto(origin + '/terms');
   await page.getByRole('heading', { level: 1 }).waitFor();
-  await page.getByRole('contentinfo').getByRole('link', { name: '개인정보처리방침', exact: true }).click();
+  await page.evaluate(() => { window.reloadProbe = 'before'; });
+  await privacyLink().click();
   await page.waitForURL('**/privacy');
   await card().waitFor();
+  assert(await page.evaluate(() => window.reloadProbe) === 'before', 'chunk-failure-no-reload-loop');
   assert(await banners() === 1 && await footers() === 1, 'chunk-failure-card-keeps-layout');
   await page.unroute('**/assets/Privacy-*.js');
   // Admin screens: the card takes the admin page area, the admin sidebar and top bar stay.
@@ -86,7 +99,19 @@ async page => {
     await card().waitFor();
     assert(await banners() === 0 && await footers() === 0, `root-card-alone-${width}`);
   }
+  // The top-level card sits outside the router, so browser Back loads the previous address again
+  // instead of changing only the address and keeping the card.
+  // pushState stands in for an in-app move made before the error; the stored user is repaired so the reload can draw.
+  await page.evaluate(() => history.pushState(null, '', '/privacy'));
+  await page.evaluate(() => localStorage.clear());
+  await page.goBack();
+  await page.waitForURL('**/terms');
+  await page.getByRole('heading', { level: 1, name: '이용약관' }).waitFor();
+  assert(await card().count() === 0 && await banners() === 1, 'root-card-back-loads-previous-address');
   // "홈으로" loads the app again from the home page.
+  await page.evaluate(value => localStorage.setItem('auth-storage', value), JSON.stringify(brokenMember));
+  await page.goto(origin + '/terms');
+  await card().waitFor();
   await page.evaluate(() => localStorage.clear());
   await card().getByRole('link', { name: '홈으로', exact: true }).click();
   await page.waitForURL(origin + '/');

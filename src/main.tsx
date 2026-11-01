@@ -12,6 +12,10 @@ import MemberChatProvider from './components/contact/MemberChatProvider.tsx'
 import { refreshExpiredSessionOnStartup } from './api/authSession.ts'
 import ErrorBoundary from './components/common/ErrorBoundary.tsx'
 import ScreenErrorFallback from './components/common/ScreenErrorFallback.tsx'
+import { installStaleChunkReload } from './lib/staleChunkReload.ts'
+
+// 배포 뒤 옛 화면 파일을 받지 못하면 페이지를 한 번 새로 불러온다.
+installStaleChunkReload()
 
 // 소셜 로그인 콜백은 새 세션을 직접 받으므로 이전 토큰을 재발급하지 않는다.
 if (window.location.pathname !== '/oauth/callback') {
