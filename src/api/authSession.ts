@@ -5,6 +5,7 @@ import { createSessionRefresher, isSessionEndedRefreshFailure, type RefreshLockM
 import type { ApiResponse } from '../types/response.types.ts';
 
 // 쿠키 Path(/api/v1/auth)는 서버 내부 경로 변환 전의 주소로 비교되므로 v1 주소를 직접 호출한다.
+export const AUTH_LOGIN_PATH = '/api/v1/auth/login';
 export const AUTH_REFRESH_PATH = '/api/v1/auth/refresh';
 export const AUTH_LOGOUT_PATH = '/api/v1/auth/logout';
 

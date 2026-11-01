@@ -575,6 +575,15 @@
       "group": "mock"
     },
     {
+      "name": "test-account-login",
+      "origin": "http://127.0.0.1:5272",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "animal-form-bell",
       "origin": "http://127.0.0.1:5269",
       "server": "preview",

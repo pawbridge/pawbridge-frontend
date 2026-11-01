@@ -147,7 +147,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
 const privatePathPatterns = [
   /^\/notes(?:\/|$)/,
   /^\/admin(?:\/|$)/,
-  /^\/(?:login|signup|reset-password|oauth\/callback)\/?$/,
+  /^\/(?:login|login\/test|signup|reset-password|oauth\/callback)\/?$/,
   /^\/(?:mypage|favorite-animals|registered-animals|cart|checkout|order-complete|wishlist|orders)(?:\/|$)/,
   /^\/animals\/new\/?$/,
   /^\/animals\/[^/]+\/edit\/?$/,
