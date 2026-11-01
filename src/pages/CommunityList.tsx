@@ -225,13 +225,17 @@ export default function CommunityList() {
                 {filtered.map((post, idx) => (
                   <tr
                     key={post.id}
-                    onClick={() => navigate(`/community/${post.id}`)}
+                    // 행 어디를 눌러도 열리게 하는 마우스 편의. 키보드·화면 읽기 프로그램은 제목 링크로 연다.
+                    // 제목 링크를 누르면 링크가 이미 이동하므로(preventDefault) 여기서 한 번 더 이동하지 않는다.
+                    onClick={event => { if (!event.defaultPrevented) navigate(`/community/${post.id}`); }}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                   >
                     <BlockedAuthorContent state={blocks} authorId={post.authorId} tableColumns={4}>
                     <td className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">{filtered.length - idx}</td>
                     <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white" scope="row">
-                      {post.title}
+                      <Link to={`/community/${post.id}`} className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
+                        {post.title}
+                      </Link>
                     </th>
                     <td className="px-6 py-4 text-center" onClick={event => event.stopPropagation()}><AuthorContact memberId={post.authorId} nickname={post.authorName || `작성자 ${post.authorId}`} contextType="POST" contextId={post.id} /></td>
                     <td className="px-6 py-4 text-center">{new Date(post.createdAt).toLocaleDateString('ko-KR')}</td>
