@@ -424,83 +424,12 @@
     },
     {
       "name": "blocked-author-visibility",
-      "origin": "http://127.0.0.1:5184",
+      "origin": "http://127.0.0.1:5188",
       "server": "dev",
       "profile": "dev-local",
-      "call": "page-accounts",
+      "call": "page-origin",
       "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "chat-existing-room",
-      "origin": "http://127.0.0.1:5184",
-      "server": "dev",
-      "profile": "dev-local",
-      "call": "page-accounts",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "chat-login-return",
-      "origin": "http://127.0.0.1:5184",
-      "server": "dev",
-      "profile": "dev-local",
-      "call": "page-accounts",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "member-chat",
-      "origin": "http://127.0.0.1:5184",
-      "server": "dev",
-      "profile": "dev-local",
-      "call": "page-accounts-bulk",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "member-chat-recovery",
-      "origin": "http://127.0.0.1:5184",
-      "server": "dev",
-      "profile": "dev-local",
-      "call": "page-accounts-faults",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "member-chat-security",
-      "origin": "http://127.0.0.1:5184",
-      "server": "dev",
-      "profile": "dev-local",
-      "call": "page-accounts",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "private-notes",
-      "origin": "http://127.0.0.1:5184",
-      "server": "dev",
-      "profile": "dev-local",
-      "call": "page-accounts",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; use tests/run-member-chat.browser.cjs or run-private-notes.browser.cjs (needs the old local stack)"
-    },
-    {
-      "name": "travel-db",
-      "origin": "http://127.0.0.1:5197",
-      "server": "preview",
-      "profile": "preview-local",
-      "call": "page",
-      "preNavigate": false,
-      "group": "env",
-      "note": "not runnable here; needs the fixture backend on 127.0.0.1:18081 and the gateway on 127.0.0.1:18180 (see the travel DB sections of tests/README.md)"
+      "group": "mock"
     },
     {
       "name": "site-layout",

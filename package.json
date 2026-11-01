@@ -17,6 +17,7 @@
     "build:prod": "node scripts/build-environment.mjs prod",
     "test:environment": "node --test tests/environment-policy.test.mjs",
     "test:icons": "node --test tests/icon-subset.test.mjs",
+    "test:unit": "node --experimental-strip-types --test-isolation=none --test tests/adminStatistics.test.ts tests/animalDisplay.test.ts tests/animalSearch.test.ts tests/apiError.test.ts tests/authSession.test.ts tests/blockedAuthorCache.test.mjs tests/dependency-security.test.mjs tests/homeVideos.test.ts tests/mapDependencySecurity.test.mjs tests/noteNotificationWindow.test.ts tests/privateNoteStream.test.ts tests/reportNavigation.test.ts tests/reportSearch.test.ts tests/sessionRefresh.test.ts tests/shelterDetail.test.ts tests/shelterDiscovery.test.ts tests/shelters.test.ts tests/travel.test.ts",
     "dev:local": "node scripts/start-local.mjs",
     "test:browser": "node tests/run-browser.mjs"
   },
