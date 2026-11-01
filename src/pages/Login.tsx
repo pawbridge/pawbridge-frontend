@@ -181,7 +181,7 @@ export default function Login() {
 
             {showEmailLogin && (
               <div id="email-login-form" className="mt-5">
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6">
                   <div className="flex flex-col gap-4">
                     {/* Email Input */}
                     <label className="flex flex-col w-full">
@@ -189,7 +189,8 @@ export default function Login() {
                         이메일
                       </p>
                       <input
-                        type="text"
+                        type="email"
+                        autoComplete="username"
                         value={email}
                         onChange={(e) => {
                           setEmail(e.target.value);
@@ -223,6 +224,7 @@ export default function Login() {
                       <div className="relative w-full h-12">
                         <input
                           type={showPassword ? 'text' : 'password'}
+                          autoComplete="current-password"
                           value={password}
                           onChange={(e) => {
                             setPassword(e.target.value);

@@ -170,6 +170,7 @@ export default function ResetPassword() {
                   </p>
                   <input
                     type="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-gray-300 bg-background-light dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-white h-14 p-[15px] text-base font-normal leading-normal placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-2 focus:ring-brand-focus"
@@ -217,14 +218,16 @@ export default function ResetPassword() {
             <form onSubmit={handleStep2Submit} className="flex flex-col gap-6">
               {/* 인증 코드 */}
               <div className="flex flex-col gap-2">
-                <label className="text-gray-900 dark:text-white text-base font-medium leading-normal">
+                <p id="reset-code-label" className="text-gray-900 dark:text-white text-base font-medium leading-normal">
                   인증 코드
-                </label>
-                <div className="flex justify-between gap-2">
+                </p>
+                <div role="group" aria-labelledby="reset-code-label" className="flex justify-between gap-2">
                   {code.map((digit, index) => (
                     <input
                       key={index}
                       id={`code-${index}`}
+                      aria-label={`인증 코드 ${index + 1}번째 자리`}
+                      autoComplete={index === 0 ? 'one-time-code' : 'off'}
                       type="number"
                       min="0"
                       max="9"
@@ -251,6 +254,7 @@ export default function ResetPassword() {
                   <div className="flex w-full items-stretch rounded-lg">
                     <input
                       type={showNewPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-focus border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
@@ -285,6 +289,7 @@ export default function ResetPassword() {
                   <div className="flex w-full items-stretch rounded-lg">
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-focus border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"

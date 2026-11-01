@@ -30,6 +30,7 @@ export default function MyOrdersPanel({
         </h2>
         <div className="min-w-[200px]">
           <select
+            aria-label="주문 상태"
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value as OrderStatus | 'ALL')}
             className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-text-light dark:text-text-dark rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-focus"
