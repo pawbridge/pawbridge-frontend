@@ -56,6 +56,8 @@ async page => {
     await page.keyboard.press('Tab');
     assert(await cartButton.evaluate(element => element === document.activeElement), `tab-order-link-then-cart-${width}`);
     // A click anywhere else on the card (here the image area) still opens the detail page.
+    // Mouse clicks use viewport coordinates, so bring the card into view first (the Tab walk may have scrolled away).
+    await card('검수 상품 1').scrollIntoViewIfNeeded();
     const box = await card('검수 상품 1').boundingBox();
     await page.mouse.click(box.x + box.width / 2, box.y + 40);
     await page.waitForURL('**/products/1');
