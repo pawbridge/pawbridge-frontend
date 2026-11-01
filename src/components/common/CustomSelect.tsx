@@ -88,7 +88,7 @@ export default function CustomSelect({
         <span className={selectedOption ? '' : 'text-brand-muted'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted dark:text-gray-400 pointer-events-none transition-transform z-10">
+        <span aria-hidden="true" className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted dark:text-gray-400 pointer-events-none transition-transform z-10">
           {isOpen ? 'expand_less' : 'expand_more'}
         </span>
       </button>
@@ -131,7 +131,7 @@ export default function CustomSelect({
                   <div className="flex items-center justify-between">
                     <span>{option.label}</span>
                     {value === option.value && (
-                      <span className="material-symbols-outlined text-[18px] text-brand-accent">
+                      <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-brand-accent">
                         check
                       </span>
                     )}

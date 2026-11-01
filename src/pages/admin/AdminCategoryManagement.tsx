@@ -41,6 +41,7 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
           <div className="flex min-w-0 items-center gap-2">
             {hasChildren && (
               <span
+                aria-hidden="true"
                 className={`material-symbols-outlined text-text-sub dark:text-gray-400 transition-transform text-[20px] ${
                   isOpen ? 'rotate-90' : ''
                 }`}

@@ -33,11 +33,13 @@ export default function MyPasswordPanel({
       ) : (
         <form onSubmit={onSubmit} className="mt-8 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="mypage-current-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               현재 비밀번호
             </label>
             <input
+              id="mypage-current-password"
               type="password"
+              autoComplete="current-password"
               value={value.currentPassword}
               onChange={(e) => onChange({ ...value, currentPassword: e.target.value })}
               className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"
@@ -45,11 +47,13 @@ export default function MyPasswordPanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="mypage-new-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               새 비밀번호
             </label>
             <input
+              id="mypage-new-password"
               type="password"
+              autoComplete="new-password"
               value={value.newPassword}
               onChange={(e) => onChange({ ...value, newPassword: e.target.value })}
               className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"

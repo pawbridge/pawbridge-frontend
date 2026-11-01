@@ -155,7 +155,7 @@ export default function ProductDetail() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
           <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
           <button
             onClick={() => navigate('/products')}
@@ -201,7 +201,7 @@ export default function ProductDetail() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-6xl text-gray-400">image</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-400">image</span>
                 </div>
               )}
             </div>
@@ -227,8 +227,8 @@ export default function ProductDetail() {
             <div className="mt-6 space-y-4">
               {Object.entries(optionGroups).map(([optionName, values]) => (
                 <div key={optionName}>
-                  <label className="block text-sm font-bold mb-3">{optionName}</label>
-                  <div className="flex flex-wrap gap-2">
+                  <p className="block text-sm font-bold mb-3">{optionName}</p>
+                  <div role="group" aria-label={optionName} className="flex flex-wrap gap-2">
                     {values.map((value) => {
                       // 해당 옵션의 재고 확인
                       const skuWithOption = product.skus?.find(
@@ -281,12 +281,14 @@ export default function ProductDetail() {
                       className="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-l-md"
                       onClick={() => handleQuantityChange(-1)}
                       disabled={quantity <= 1}
+                      aria-label="수량 줄이기"
                     >
                       -
                     </button>
                     <input
                       type="text"
                       className="w-12 text-center border-0 bg-transparent focus:ring-0 p-0"
+                      aria-label="수량"
                       value={quantity}
                       readOnly
                     />
@@ -294,6 +296,7 @@ export default function ProductDetail() {
                       className="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-r-md"
                       onClick={() => handleQuantityChange(1)}
                       disabled={quantity >= selectedSku.stockQuantity}
+                      aria-label="수량 늘리기"
                     >
                       +
                     </button>
@@ -316,7 +319,7 @@ export default function ProductDetail() {
                 onClick={handleAddToCart}
                 disabled={!selectedSku || selectedSku.stockQuantity <= 0 || addToCartMutation.isPending}
               >
-                <span className="material-symbols-outlined">add_shopping_cart</span>
+                <span aria-hidden="true" className="material-symbols-outlined">add_shopping_cart</span>
                 <span>장바구니 담기</span>
               </button>
               <button

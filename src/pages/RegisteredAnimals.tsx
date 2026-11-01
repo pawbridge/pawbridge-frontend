@@ -120,7 +120,7 @@ export default function RegisteredAnimals() {
                   </div>
                 ) : (
                   <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-6xl text-gray-400">pets</span>
+                    <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-400">pets</span>
                   </div>
                 )}
 
@@ -132,12 +132,12 @@ export default function RegisteredAnimals() {
 
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-base">category</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-base">category</span>
                       <span>{animal.species || '종 정보 없음'}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-base">
+                      <span aria-hidden="true" className="material-symbols-outlined text-base">
                         {animal.gender === 'MALE' ? 'male' :
                          animal.gender === 'FEMALE' ? 'female' : 'help'}
                       </span>
@@ -148,20 +148,20 @@ export default function RegisteredAnimals() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-base">cake</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-base">cake</span>
                       <span>{animal.age ? `${animal.age}세` : animal.birthYear ? `${animal.birthYear}년생` : '나이 정보 없음'}</span>
                     </div>
 
                     {animal.apmsNoticeNo && (
                       <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-base">tag</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-base">tag</span>
                         <span className="line-clamp-1 text-xs">{animal.apmsNoticeNo}</span>
                       </div>
                     )}
 
                     {animal.favoriteCount !== undefined && animal.favoriteCount > 0 && (
                       <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-base text-red-500">favorite</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-base text-red-500">favorite</span>
                         <span>{animal.favoriteCount}명이 찜했습니다</span>
                       </div>
                     )}
@@ -170,7 +170,7 @@ export default function RegisteredAnimals() {
                   {animal.createdAt && (
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <p className="text-xs text-gray-500 dark:text-gray-500 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm">schedule</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-sm">schedule</span>
                         등록일: {new Date(animal.createdAt).toLocaleDateString('ko-KR', {
                           year: 'numeric',
                           month: 'long',
@@ -193,7 +193,7 @@ export default function RegisteredAnimals() {
                 disabled={currentPage === 0}
                 className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-text-main dark:text-white border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                <span className="material-symbols-outlined">chevron_left</span>
+                <span aria-hidden="true" className="material-symbols-outlined">chevron_left</span>
               </button>
 
               <div className="flex items-center gap-1">
@@ -222,14 +222,14 @@ export default function RegisteredAnimals() {
                 disabled={currentPage >= totalPages - 1}
                 className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-text-main dark:text-white border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                <span className="material-symbols-outlined">chevron_right</span>
+                <span aria-hidden="true" className="material-symbols-outlined">chevron_right</span>
               </button>
             </div>
           )}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <span className="material-symbols-outlined text-7xl text-gray-300 dark:text-gray-600 mb-4">
+          <span aria-hidden="true" className="material-symbols-outlined text-7xl text-gray-300 dark:text-gray-600 mb-4">
             pets
           </span>
           <h3 className="text-xl font-bold text-text-main dark:text-white mb-2">

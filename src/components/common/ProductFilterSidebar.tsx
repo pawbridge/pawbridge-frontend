@@ -91,7 +91,7 @@ export default function ProductFilterSidebar({
       <div className="flex flex-col gap-6 p-4 bg-card-light dark:bg-card-dark rounded-xl shadow-sm">
         {/* 검색 */}
         <div className="relative">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span aria-hidden="true" className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             search
           </span>
           <input
@@ -99,6 +99,7 @@ export default function ProductFilterSidebar({
             value={localKeyword}
             onChange={(e) => setLocalKeyword(e.target.value)}
             onKeyPress={handleKeyPress}
+            aria-label="상품 검색"
             placeholder="상품 검색..."
             className="form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border-none bg-background-light dark:bg-secondary-dark h-10 placeholder:text-gray-500 pl-10 pr-4 text-sm font-normal"
           />
@@ -127,7 +128,7 @@ export default function ProductFilterSidebar({
                   : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
               }`}
             >
-              <span className="material-symbols-outlined">grid_view</span>
+              <span aria-hidden="true" className="material-symbols-outlined">grid_view</span>
               <p className={`text-sm ${!filters.categoryId ? 'font-bold' : 'font-medium'}`}>
                 전체
               </p>
@@ -149,7 +150,7 @@ export default function ProductFilterSidebar({
                         : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
                     }`}
                   >
-                    <span className="material-symbols-outlined">{getCategoryIcon(category.name)}</span>
+                    <span aria-hidden="true" className="material-symbols-outlined">{getCategoryIcon(category.name)}</span>
                     <p className={`text-sm ${filters.categoryId === category.id ? 'font-bold' : 'font-medium'}`}>
                       {category.name}
                     </p>
@@ -189,6 +190,7 @@ export default function ProductFilterSidebar({
           <div className="flex gap-2 px-3">
             <input
               type="number"
+              aria-label="최소 가격"
               placeholder="최소"
               value={localMinPrice}
               onChange={(e) => setLocalMinPrice(e.target.value)}
@@ -198,6 +200,7 @@ export default function ProductFilterSidebar({
             <span className="self-center text-gray-400">~</span>
             <input
               type="number"
+              aria-label="최대 가격"
               placeholder="최대"
               value={localMaxPrice}
               onChange={(e) => setLocalMaxPrice(e.target.value)}

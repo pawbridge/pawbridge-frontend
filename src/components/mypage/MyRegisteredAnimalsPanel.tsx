@@ -25,7 +25,7 @@ export default function MyRegisteredAnimalsPanel({
           to="/animals/new"
           className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
         >
-          <span className="material-symbols-outlined text-[18px]">add</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span>
           새 동물 등록
         </Link>
       </div>
@@ -51,7 +51,7 @@ export default function MyRegisteredAnimalsPanel({
                         <img src={animal.imageUrl} alt={animal.breed || '동물'} className="w-full h-48 object-cover" />
                       ) : (
                         <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-5xl text-gray-400">pets</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-gray-400">pets</span>
                         </div>
                       )}
                       <div className="p-4">
@@ -150,7 +150,7 @@ export default function MyRegisteredAnimalsPanel({
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mt-8">
-                <span className="material-symbols-outlined text-7xl text-gray-300 dark:text-gray-600 mb-4">
+                <span aria-hidden="true" className="material-symbols-outlined text-7xl text-gray-300 dark:text-gray-600 mb-4">
                   pets
                 </span>
                 <h3 className="text-xl font-bold text-text-main dark:text-white mb-2">
@@ -164,7 +164,7 @@ export default function MyRegisteredAnimalsPanel({
           })()
         ) : (
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">pets</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">pets</span>
             <p className="text-gray-500 dark:text-gray-400">아직 등록한 동물이 없습니다.</p>
           </div>
         )}

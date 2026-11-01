@@ -90,7 +90,7 @@ async page => {
     await page.getByRole('button', { name: 'L', exact: true }).click();
     await page.locator('p').filter({ hasText: /^L$/ }).waitFor();
     assert(await page.getByText('₩20,000', { exact: true }).count() === 1, 'option-updates-price-' + width);
-    await page.getByRole('button', { name: '+', exact: true }).click();
+    await page.getByRole('button', { name: '수량 늘리기', exact: true }).click();
     await page.getByText('₩40,000', { exact: true }).waitFor();
     await page.evaluate(async () => {
       const { queryClient } = await import('/src/lib/queryClient.ts');

@@ -164,12 +164,14 @@ export default function ResetPassword() {
             
             <form onSubmit={handleStep1Submit} className="w-full">
               <div className="flex flex-col gap-4 py-3">
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="reset-email" className="block text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
                     이메일
-                  </p>
+                  </label>
                   <input
+                    id="reset-email"
                     type="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-gray-300 bg-background-light dark:bg-gray-800 dark:border-gray-600 text-gray-900 dark:text-white h-14 p-[15px] text-base font-normal leading-normal placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-brand-focus focus:ring-2 focus:ring-brand-focus"
@@ -179,7 +181,7 @@ export default function ResetPassword() {
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.email}</p>
                   )}
-                </label>
+                </div>
               </div>
 
               <div className="flex py-3">
@@ -217,14 +219,16 @@ export default function ResetPassword() {
             <form onSubmit={handleStep2Submit} className="flex flex-col gap-6">
               {/* 인증 코드 */}
               <div className="flex flex-col gap-2">
-                <label className="text-gray-900 dark:text-white text-base font-medium leading-normal">
+                <p id="reset-code-label" className="text-gray-900 dark:text-white text-base font-medium leading-normal">
                   인증 코드
-                </label>
-                <div className="flex justify-between gap-2">
+                </p>
+                <div role="group" aria-labelledby="reset-code-label" className="flex justify-between gap-2">
                   {code.map((digit, index) => (
                     <input
                       key={index}
                       id={`code-${index}`}
+                      aria-label={`인증 코드 ${index + 1}번째 자리`}
+                      autoComplete={index === 0 ? 'one-time-code' : 'off'}
                       type="number"
                       min="0"
                       max="9"
@@ -244,13 +248,15 @@ export default function ResetPassword() {
 
               {/* 새 비밀번호 */}
               <div className="flex flex-col gap-1">
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="reset-new-password" className="block text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
                     새 비밀번호
-                  </p>
+                  </label>
                   <div className="flex w-full items-stretch rounded-lg">
                     <input
+                      id="reset-new-password"
                       type={showNewPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-focus border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
@@ -260,14 +266,15 @@ export default function ResetPassword() {
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
+                      aria-label={showNewPassword ? '새 비밀번호 숨기기' : '새 비밀번호 보기'}
                       className="text-gray-400 flex border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 items-center justify-center pr-[15px] rounded-r-lg border-l-0"
                     >
-                      <span className="material-symbols-outlined text-2xl">
+                      <span aria-hidden="true" className="material-symbols-outlined text-2xl">
                         {showNewPassword ? 'visibility' : 'visibility_off'}
                       </span>
                     </button>
                   </div>
-                </label>
+                </div>
                 <p className="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal pt-1 px-1">
                   8~20자 영문, 숫자, 특수문자를 조합하여 입력해주세요.
                 </p>
@@ -278,13 +285,15 @@ export default function ResetPassword() {
 
               {/* 비밀번호 확인 */}
               <div className="flex flex-col gap-2">
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="reset-confirm-password" className="block text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
                     비밀번호 확인
-                  </p>
+                  </label>
                   <div className="flex w-full items-stretch rounded-lg">
                     <input
+                      id="reset-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
+                      autoComplete="new-password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-0 focus:border-brand-focus border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 h-14 placeholder:text-gray-400 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
@@ -294,14 +303,15 @@ export default function ResetPassword() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? '비밀번호 확인 숨기기' : '비밀번호 확인 보기'}
                       className="text-gray-400 flex border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-gray-800 items-center justify-center pr-[15px] rounded-r-lg border-l-0"
                     >
-                      <span className="material-symbols-outlined text-2xl">
+                      <span aria-hidden="true" className="material-symbols-outlined text-2xl">
                         {showConfirmPassword ? 'visibility' : 'visibility_off'}
                       </span>
                     </button>
                   </div>
-                </label>
+                </div>
                 {errors.confirmPassword && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword}</p>
                 )}

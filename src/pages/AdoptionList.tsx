@@ -75,7 +75,7 @@ export default function AdoptionList() {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
-            <span className="material-symbols-outlined text-lg">lock</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-lg">lock</span>
             <span>로그인이 필요한 서비스입니다.</span>
           </div>
           <button
@@ -113,7 +113,7 @@ export default function AdoptionList() {
                   </div>
                 ) : (
                   <div className="overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 aspect-video flex items-center justify-center">
-                    <span className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                    <span aria-hidden="true" className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
                   </div>
                 )}
                 <div>
