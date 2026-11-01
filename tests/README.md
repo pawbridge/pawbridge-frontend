@@ -60,7 +60,7 @@ Node 쪽 요청(`route.fetch`, `page.request` 등 Playwright가 Node에서 보�
 npm run test:browser -- private-note-notifications
 ```
 
-스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 현재 GitHub Actions는 환경 정책·빌드 검사만 실행하므로 이 Node 단위 검사와 모의 브라우저 검사는 로컬 실행 근거로 보고한다.
+스크린샷은 `/tmp/private-note-notifications-{desktop,mobile}.png`와 `/tmp/private-notes-readable-{desktop,mobile}.png`에 남는다. 합성 데이터만 사용하며 시험 후 이 세션과 시험용 Vite를 종료한다. 단위 검사는 GitHub Actions(`npm run test:unit`)에서도 돌고, 모의 브라우저 검사는 로컬에서만 돈다.
 
 ## 공개 문의 링크 검증
 
