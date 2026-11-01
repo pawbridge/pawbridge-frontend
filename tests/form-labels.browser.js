@@ -31,17 +31,6 @@ async page => {
   };
   for (const width of [1920, 390]) {
     await page.setViewportSize({ width, height: 1080 });
-    // Login: an email field with the login identifier hint, and the page's own messages instead of the browser's.
-    await page.goto(origin + '/login');
-    await page.getByRole('button', { name: /로컬 개발용 계정/ }).click();
-    assert(await field('이메일').getAttribute('type') === 'email', `login-email-type-${width}`);
-    await autocomplete('이메일', 'username', `login-email-autocomplete-${width}`);
-    await autocomplete('비밀번호', 'current-password', `login-password-autocomplete-${width}`);
-    await field('이메일').fill('not-an-email');
-    await field('비밀번호').fill('test-only-password');
-    await page.getByRole('button', { name: '이메일로 로그인', exact: true }).last().click();
-    await page.getByText('올바른 이메일 형식을 입력해주세요.').waitFor();
-    assert(true, `login-own-email-message-${width}`);
     // Product detail: option buttons sit in a group named by the option, quantity controls have names.
     await page.goto(origin + '/products/1');
     await page.getByRole('group', { name: '크기' }).waitFor();

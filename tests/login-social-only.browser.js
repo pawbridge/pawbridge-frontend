@@ -1,5 +1,5 @@
-// Login without a local backend (API on the page origin, like production): only Naver and Google sign-in are offered.
-// The email form, password reset and password change belong to local development accounts and do not appear.
+// Login offers only Naver and Google sign-in, even against a local backend (the build with a local API address).
+// Email login, password reset and password change were removed; their old addresses go to the login page.
 async page => {
   const origin = 'http://127.0.0.1:5271';
   const checks = [], pageErrors = [];

@@ -31,7 +31,7 @@ async page => {
     ['/', () => page.getByRole('banner').waitFor()],
     ['/community', () => page.getByText('검수 글 2').waitFor()],
     ['/products', () => page.getByText('검수 상품 2').first().waitFor()],
-    ['/login', () => page.getByRole('button', { name: /이메일로 로그인$/ }).first().waitFor()],
+    ['/login', () => page.getByRole('heading', { level: 1, name: '로그인' }).waitFor()],
   ];
   for (const width of [1920, 390]) {
     await page.setViewportSize({ width, height: 1080 });
@@ -52,12 +52,6 @@ async page => {
   await page.getByText('검수 상품 2').first().waitFor();
   assert(await page.getByRole('button', { name: '이전 페이지', exact: true }).count() === 1, 'previous-page-named');
   assert(await page.getByRole('button', { name: '다음 페이지', exact: true }).count() === 1, 'next-page-named');
-  // The password toggle says what it will do and changes with the state.
-  await page.goto(origin + '/login');
-  await page.getByRole('button', { name: /이메일로 로그인$/ }).first().click();
-  assert((await leakedIcons()).length === 0, 'no-icon-text-login-email-form');
-  await page.getByRole('button', { name: '비밀번호 보기', exact: true }).click();
-  assert(await page.getByRole('button', { name: '비밀번호 숨기기', exact: true }).count() === 1, 'login-toggle-name-follows-state');
   assert(pageErrors.length === 0, 'no-page-errors: ' + pageErrors.join(' | '));
   return checks;
 }
