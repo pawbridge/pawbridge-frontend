@@ -174,14 +174,14 @@ export default function Wishlist() {
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
-            <span className="material-symbols-outlined text-4xl text-danger mb-4">error</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-4xl text-danger mb-4">error</span>
             <h3 className="text-lg font-bold text-text-light dark:text-text-dark">데이터를 불러오지 못했습니다.</h3>
             <p className="mt-1 text-sm text-subtext-light dark:text-subtext-dark mb-6">일시적인 오류입니다. 잠시 후 다시 시도해주세요.</p>
             <button
               onClick={() => refetch()}
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-sm font-medium text-text-light dark:text-text-dark hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <span className="material-symbols-outlined text-sm">refresh</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-sm">refresh</span>
               재시도
             </button>
           </div>
@@ -198,7 +198,7 @@ export default function Wishlist() {
       <div className="max-w-7xl mx-auto flex flex-col gap-8">
         {/* 헤더 */}
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight">찜한 상품</h2>
+          <h1 className="text-3xl font-black tracking-tight">찜한 상품</h1>
           <p className="text-subtext-light dark:text-subtext-dark">나중에 구매하려고 찜해둔 상품 목록입니다.</p>
         </div>
 
@@ -263,7 +263,7 @@ export default function Wishlist() {
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-dashed">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand/10 mb-6">
-              <span className="material-symbols-outlined text-4xl text-brand-accent">favorite_border</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-4xl text-brand-accent">favorite_border</span>
             </div>
             <h3 className="text-xl font-bold text-text-light dark:text-text-dark">찜한 상품이 없습니다.</h3>
             <p className="mt-2 text-subtext-light dark:text-subtext-dark max-w-sm">
@@ -274,7 +274,7 @@ export default function Wishlist() {
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑하러 가기
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
         ) : displayItems.length === 0 ? (
@@ -383,12 +383,12 @@ export default function Wishlist() {
                         >
                           {isSoldOut ? (
                             <>
-                              <span className="material-symbols-outlined text-[18px]">block</span>
+                              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">block</span>
                               품절
                             </>
                           ) : (
                             <>
-                              <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+                              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
                               담기
                             </>
                           )}
@@ -403,7 +403,7 @@ export default function Wishlist() {
                           className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2.5 text-subtext-light hover:bg-red-50 hover:text-danger hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                           title="삭제"
                         >
-                          <span className="material-symbols-outlined text-[20px]">delete</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-[20px]">delete</span>
                         </button>
                       </div>
                     </div>
@@ -418,9 +418,10 @@ export default function Wishlist() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                   disabled={currentPage === 0}
+                  aria-label="이전 페이지"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="material-symbols-outlined text-sm">chevron_left</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-sm">chevron_left</span>
                 </button>
                 {[...Array(data.totalPages)].map((_, i) => (
                   <button
@@ -438,9 +439,10 @@ export default function Wishlist() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(data.totalPages - 1, prev + 1))}
                   disabled={currentPage >= data.totalPages - 1}
+                  aria-label="다음 페이지"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="material-symbols-outlined text-sm">chevron_right</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-sm">chevron_right</span>
                 </button>
               </div>
             )}

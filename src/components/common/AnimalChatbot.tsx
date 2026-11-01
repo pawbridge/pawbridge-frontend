@@ -148,7 +148,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
               className="rounded-full p-1 text-text-light hover:bg-white/20"
               aria-label="AI 입양 준비 도우미 닫기"
             >
-              <span className="material-symbols-outlined text-[20px]">close</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
             </button>
           </div>
 
@@ -221,7 +221,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-text-light transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="질문 보내기"
               >
-                <span className="material-symbols-outlined text-[20px]">send</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">send</span>
               </button>
             </form>
             <p className="mt-2 text-right text-[11px] text-gray-500">
@@ -238,7 +238,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
         aria-expanded={isOpen}
         aria-label={isOpen ? 'AI 입양 준비 도우미 닫기' : 'AI 입양 준비 도우미 열기'}
       >
-        <span className="material-symbols-outlined">chat</span>
+        <span aria-hidden="true" className="material-symbols-outlined">chat</span>
         <span className="text-sm">AI 입양 준비</span>
       </button>
     </div>

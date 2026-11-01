@@ -238,7 +238,9 @@ async page => {
     for (const path of ['/admin/dashboard', '/admin/shelter-applications/42', '/products/new']) {
       await page.goto(origin + path);
       await page.getByText(role ? '접근 권한이 없습니다' : '로그인이 필요합니다', { exact: true }).waitFor();
-      check(await page.getByRole('heading', { level: 1 }).count() === 0, 'Denied route must not render admin page: ' + path);
+      // The only h1 is the notice card's title; an admin page would add its own.
+      const titles = await page.getByRole('heading', { level: 1 }).allInnerTexts();
+      check(titles.length === 1 && titles[0] === (role ? '접근 권한이 없습니다' : '로그인이 필요합니다'), 'Denied route must not render admin page: ' + path);
     }
   }
   check(writes.length === 5, 'Shared/public/access regression must not send extra writes');

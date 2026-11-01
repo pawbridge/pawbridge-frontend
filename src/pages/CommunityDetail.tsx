@@ -146,7 +146,7 @@ export default function CommunityDetail() {
             to="/community"
             className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-brand-accent dark:hover:text-brand-accent"
           >
-            <span className="material-symbols-outlined mr-1">arrow_back</span>
+            <span aria-hidden="true" className="material-symbols-outlined mr-1">arrow_back</span>
             목록으로
           </Link>
         </div>

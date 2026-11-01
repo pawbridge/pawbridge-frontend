@@ -109,7 +109,7 @@ export default function Login() {
         <div className="flex justify-center">
           <Link to="/" className="flex items-center gap-4 text-brand-ink dark:text-white hover:opacity-80 transition-opacity">
             <div className="text-brand-accent text-2xl">
-              <span className="material-symbols-outlined">pets</span>
+              <span aria-hidden="true" className="material-symbols-outlined">pets</span>
             </div>
             <h2 className="text-brand-ink dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
               포우 브릿지
@@ -124,12 +124,12 @@ export default function Login() {
           <div className="flex flex-col items-center text-center gap-6">
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvVy0FVCRXUdSS1RMfqcRZOpupHqPdWMGTlsGKB-sEfuo-bTI7QI5lllkGy__chxfvNt4DFcyA3Ixmoi8rWp_JsFfSLOVPTfBXvC53-AbyRIjyOt98RkWW9mvY1ZCbhgeR9McROS520VWyxIi0CZgZpk5ooy15zMqvvJRg64a43gZA-b6udBnKWRgbAEds9Qm5YgGypudMo32-IhafKYW7PCsC-Az_LrdiYhjengwROMo9LB7xnbONL9P38Jz2eUiAQMoIPrkkxb0"
-              alt="A person gently holding a small dog, symbolizing care and adoption"
+              alt="작은 강아지를 조심스럽게 안고 있는 사람"
               className="w-40 h-40 rounded-full object-cover mb-4"
             />
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-brand-ink dark:text-brand-accent">
+            <p className="text-3xl font-bold leading-tight tracking-tight text-brand-ink dark:text-brand-accent">
               세상의 모든 동물이<br />행복해지는 그날까지
-            </h1>
+            </p>
             <p className="text-base font-normal leading-relaxed text-gray-600 dark:text-gray-400">
               유기동물을 위한 따뜻한 커뮤니티에<br />오신 것을 환영합니다.
             </p>
@@ -140,13 +140,13 @@ export default function Login() {
         <div className="w-full lg:w-1/2 p-6 sm:p-10 md:p-12 flex items-center justify-center">
           <div className="w-full max-w-sm mx-auto">
             <div className="mb-6 flex flex-col gap-2">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">로그인</h2>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">로그인</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">네이버 또는 구글 계정으로 바로 시작할 수 있어요.</p>
             </div>
 
             {oauthError && (
               <p role="alert" className="mb-4 flex items-start gap-1 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                <span className="material-symbols-outlined text-base">error</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-base">error</span>
                 {oauthError}
               </p>
             )}
@@ -172,7 +172,7 @@ export default function Login() {
                 className="flex items-center justify-between text-left text-sm font-medium text-gray-900 dark:text-gray-100"
               >
                 <span>이메일로 가입한 기존 회원이신가요? 이메일로 로그인</span>
-                <span className="material-symbols-outlined text-xl">{showEmailLogin ? 'expand_less' : 'expand_more'}</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-xl">{showEmailLogin ? 'expand_less' : 'expand_more'}</span>
               </button>
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 신규 이메일 가입은 받지 않습니다. 로그인 후 네이버·구글 계정으로 옮겨 주세요.
@@ -211,7 +211,7 @@ export default function Login() {
                       />
                       {emailError && (
                         <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-base">error</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-base">error</span>
                           {emailError}
                         </p>
                       )}
@@ -248,16 +248,16 @@ export default function Login() {
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400"
-                          aria-label="비밀번호 보기"
+                          aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                         >
-                          <span className="material-symbols-outlined text-xl">
+                          <span aria-hidden="true" className="material-symbols-outlined text-xl">
                             {showPassword ? 'visibility' : 'visibility_off'}
                           </span>
                         </button>
                       </div>
                       {(passwordError || errorMessage) && (
                         <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-base">error</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-base">error</span>
                           {errorMessage || passwordError}
                         </p>
                       )}

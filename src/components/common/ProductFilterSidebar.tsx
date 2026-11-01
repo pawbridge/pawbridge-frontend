@@ -91,7 +91,7 @@ export default function ProductFilterSidebar({
       <div className="flex flex-col gap-6 p-4 bg-card-light dark:bg-card-dark rounded-xl shadow-sm">
         {/* 검색 */}
         <div className="relative">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <span aria-hidden="true" className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             search
           </span>
           <input
@@ -128,7 +128,7 @@ export default function ProductFilterSidebar({
                   : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
               }`}
             >
-              <span className="material-symbols-outlined">grid_view</span>
+              <span aria-hidden="true" className="material-symbols-outlined">grid_view</span>
               <p className={`text-sm ${!filters.categoryId ? 'font-bold' : 'font-medium'}`}>
                 전체
               </p>
@@ -150,7 +150,7 @@ export default function ProductFilterSidebar({
                         : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
                     }`}
                   >
-                    <span className="material-symbols-outlined">{getCategoryIcon(category.name)}</span>
+                    <span aria-hidden="true" className="material-symbols-outlined">{getCategoryIcon(category.name)}</span>
                     <p className={`text-sm ${filters.categoryId === category.id ? 'font-bold' : 'font-medium'}`}>
                       {category.name}
                     </p>
