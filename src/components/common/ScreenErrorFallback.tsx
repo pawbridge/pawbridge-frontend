@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 export function ScreenErrorCard() {
   return (
     <div role="alert" className="mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-      <p className="text-xl font-bold text-text-light dark:text-text-dark">화면을 표시하지 못했습니다</p>
+      <h1 className="text-xl font-bold text-text-light dark:text-text-dark">화면을 표시하지 못했습니다</h1>
       <p className="break-keep text-sm text-gray-600 dark:text-gray-400">
         일시적인 문제일 수 있습니다. 새로고침하거나 홈으로 이동해 주세요.
       </p>

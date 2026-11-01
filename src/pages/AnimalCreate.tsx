@@ -234,7 +234,7 @@ export default function AnimalCreate() {
               </defs>
             </svg>
           </div>
-          <h1 className="text-xl font-display font-bold tracking-tight text-brand-ink dark:text-white">PawBridge</h1>
+          <p className="text-xl font-display font-bold tracking-tight text-brand-ink dark:text-white">PawBridge</p>
         </div>
         
         {/* 네비게이션 */}

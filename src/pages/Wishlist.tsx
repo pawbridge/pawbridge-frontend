@@ -198,7 +198,7 @@ export default function Wishlist() {
       <div className="max-w-7xl mx-auto flex flex-col gap-8">
         {/* 헤더 */}
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-black tracking-tight">찜한 상품</h2>
+          <h1 className="text-3xl font-black tracking-tight">찜한 상품</h1>
           <p className="text-subtext-light dark:text-subtext-dark">나중에 구매하려고 찜해둔 상품 목록입니다.</p>
         </div>
 

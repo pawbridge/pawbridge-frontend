@@ -31,9 +31,9 @@ export default function MyPageSidebar({
             {userInfo.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col">
-            <h1 className="text-text-main dark:text-gray-100 text-base font-bold leading-normal">
+            <p className="text-text-main dark:text-gray-100 text-base font-bold leading-normal">
               {userInfo.name}
-            </h1>
+            </p>
             <p className="text-brand-accent dark:text-brand text-sm font-normal leading-normal">
               {userInfo.email}
             </p>

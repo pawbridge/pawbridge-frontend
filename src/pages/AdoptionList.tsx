@@ -70,7 +70,7 @@ export default function AdoptionList() {
       {/* PageHeading */}
       <div className="flex flex-wrap justify-between items-start gap-4 mb-8 sm:mb-12">
         <div className="flex min-w-72 flex-col gap-2">
-          <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-brand-ink dark:text-white">입양후기</p>
+          <h1 className="text-4xl font-black leading-tight tracking-[-0.033em] text-brand-ink dark:text-white">입양후기</h1>
           <p className="text-base font-normal leading-normal text-brand-muted dark:text-gray-400">커뮤니티의 따뜻한 이야기들을 만나보세요.</p>
         </div>
         <div className="flex items-center gap-4">
