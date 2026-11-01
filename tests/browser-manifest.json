@@ -539,6 +539,15 @@
       "group": "mock"
     },
     {
+      "name": "product-card",
+      "origin": "http://127.0.0.1:5265",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "community-keyboard",
       "origin": "http://127.0.0.1:5264",
       "server": "preview",
