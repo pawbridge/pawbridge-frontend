@@ -184,11 +184,12 @@ export default function Login() {
                 <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6">
                   <div className="flex flex-col gap-4">
                     {/* Email Input */}
-                    <label className="flex flex-col w-full">
-                      <p className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                    <div className="flex flex-col w-full">
+                      <label htmlFor="login-email" className="block text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
                         이메일
-                      </p>
+                      </label>
                       <input
+                        id="login-email"
                         type="email"
                         autoComplete="username"
                         value={email}
@@ -214,15 +215,16 @@ export default function Login() {
                           {emailError}
                         </p>
                       )}
-                    </label>
+                    </div>
 
                     {/* Password Input */}
-                    <label className="flex flex-col w-full">
-                      <p className="text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
+                    <div className="flex flex-col w-full">
+                      <label htmlFor="login-password" className="block text-gray-900 dark:text-gray-200 text-sm font-medium leading-normal pb-2">
                         비밀번호
-                      </p>
+                      </label>
                       <div className="relative w-full h-12">
                         <input
+                          id="login-password"
                           type={showPassword ? 'text' : 'password'}
                           autoComplete="current-password"
                           value={password}
@@ -259,7 +261,7 @@ export default function Login() {
                           {errorMessage || passwordError}
                         </p>
                       )}
-                    </label>
+                    </div>
                   </div>
 
                   {/* Forgot Password Link */}

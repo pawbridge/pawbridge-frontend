@@ -164,11 +164,12 @@ export default function ResetPassword() {
             
             <form onSubmit={handleStep1Submit} className="w-full">
               <div className="flex flex-col gap-4 py-3">
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="reset-email" className="block text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
                     이메일
-                  </p>
+                  </label>
                   <input
+                    id="reset-email"
                     type="email"
                     autoComplete="email"
                     value={email}
@@ -180,7 +181,7 @@ export default function ResetPassword() {
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.email}</p>
                   )}
-                </label>
+                </div>
               </div>
 
               <div className="flex py-3">
@@ -247,12 +248,13 @@ export default function ResetPassword() {
 
               {/* 새 비밀번호 */}
               <div className="flex flex-col gap-1">
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="reset-new-password" className="block text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
                     새 비밀번호
-                  </p>
+                  </label>
                   <div className="flex w-full items-stretch rounded-lg">
                     <input
+                      id="reset-new-password"
                       type={showNewPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={newPassword}
@@ -271,7 +273,7 @@ export default function ResetPassword() {
                       </span>
                     </button>
                   </div>
-                </label>
+                </div>
                 <p className="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal pt-1 px-1">
                   8~20자 영문, 숫자, 특수문자를 조합하여 입력해주세요.
                 </p>
@@ -282,12 +284,13 @@ export default function ResetPassword() {
 
               {/* 비밀번호 확인 */}
               <div className="flex flex-col gap-2">
-                <label className="flex flex-col w-full">
-                  <p className="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
+                <div className="flex flex-col w-full">
+                  <label htmlFor="reset-confirm-password" className="block text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">
                     비밀번호 확인
-                  </p>
+                  </label>
                   <div className="flex w-full items-stretch rounded-lg">
                     <input
+                      id="reset-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={confirmPassword}
@@ -306,7 +309,7 @@ export default function ResetPassword() {
                       </span>
                     </button>
                   </div>
-                </label>
+                </div>
                 {errors.confirmPassword && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword}</p>
                 )}
