@@ -10,6 +10,7 @@ import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import AdminSidebar from '../components/layout/AdminSidebar';
 import { getApiErrorMessage } from '../lib/apiError';
+import NoteNotificationBell from '../components/contact/NoteNotificationBell';
 
 const editableStatuses: AnimalStatusValue[] = [
   'PROTECT', 'ADOPTION_PENDING', 'ADOPTED', 'RETURNED', 'DONATED', 'RELEASED', 'ESCAPED', 'EUTHANIZED', 'NATURAL_DEATH', 'UNKNOWN',
@@ -257,10 +258,8 @@ export default function AnimalEdit() {
         <header className="flex items-center justify-between md:justify-end h-16 px-4 md:px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
           <Link to="/" className="md:hidden text-lg font-display font-bold text-brand-ink dark:text-white">PawBridge</Link>
           <div className="flex items-center gap-6">
-            <button className="relative flex items-center gap-2 text-brand-muted hover:text-brand-accent transition-colors">
-              <span aria-hidden="true" className="material-symbols-outlined text-[24px]">notifications</span>
-              <span className="absolute top-0 right-0 size-2.5 bg-red-500 rounded-full border-2 border-surface-light dark:border-surface-dark"></span>
-            </button>
+            {/* 사이트 헤더와 같은 연락 알림(쪽지·1:1 채팅). 읽지 않은 것이 있을 때만 숫자가 붙는다. */}
+            <NoteNotificationBell />
             <div className="h-6 w-px bg-brand-border dark:border-stone-800"></div>
             <div className="flex items-center gap-3">
               <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-brand-focus bg-brand/20 flex items-center justify-center">

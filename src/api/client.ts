@@ -16,10 +16,10 @@ declare module 'axios' {
  * API Client 설정
  * 
  * 개발 환경: vite.config.ts의 proxy 설정을 통해 로컬 서버로 요청
- * 배포 환경: VITE_API_BASE_URL 환경 변수를 통해 API Gateway로 요청
+ * 배포 환경: VITE_API_BASE_URL 환경 변수를 통해 운영 API로 요청
  * 
- * Vercel 환경 변수 설정 예시:
- * VITE_API_BASE_URL=https://api-gateway.example.com
+ * Cloudflare Workers Builds 빌드 변수 예시:
+ * VITE_API_BASE_URL=https://api.pawbridge.kr
  */
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
