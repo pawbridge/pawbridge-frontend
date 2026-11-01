@@ -28,7 +28,7 @@ async page => {
       unexpected.push(`GET ${path}`);
       return route.fulfill({ status: 404, json: { message: '테스트에 정의되지 않은 요청' } });
     }
-    if (!['/api/v1/auth/login', '/api/v1/auth/password/reset-request', '/api/v1/auth/password/reset'].includes(path)) unexpected.push(`${request.method()} ${path}`);
+    if (path !== '/api/v1/auth/login') unexpected.push(`${request.method()} ${path}`);
     writes.push({ path, body: request.postDataJSON() });
     if (mode === 'network') return route.abort();
     if (mode !== 'success') return route.fulfill({ status: 400, json: { code: 400, message: mode === 'malformed' ? { detail: 'not a string' } : '서버 테스트 안내', data: null } });
@@ -85,24 +85,11 @@ async page => {
       assert(await page.getByPlaceholder('이름을 입력하세요').count() === 0, 'Email sign-up form came back');
       checks.push(`signup redirects to login ${width}`);
 
+      // Password reset belonged to email login and was removed: the old address goes to the login page.
       await page.goto(`${origin}/reset-password`);
-      await page.getByPlaceholder('이메일 주소를 입력하세요').fill('member@example.invalid');
-      mode = 'error';
-      await notice(() => page.locator('button[type="submit"]').click(), '서버 테스트 안내');
-      mode = 'success';
-      await notice(() => page.locator('button[type="submit"]').click(), '인증 코드가 이메일로 발송되었습니다.');
-      lastWrite('/api/v1/auth/password/reset-request', { email: 'member@example.invalid' });
-      for (let i = 0; i < 6; i++) await page.locator(`#code-${i}`).fill(String(i + 1));
-      await page.getByPlaceholder('새 비밀번호를 입력하세요').fill('New-test1!');
-      await page.getByPlaceholder('비밀번호를 다시 한번 입력하세요').fill('New-test1!');
-      mode = 'malformed';
-      await notice(() => page.locator('button[type="submit"]').click(), '비밀번호 재설정에 실패했습니다');
-      await layout('reset-error', width);
-      mode = 'success';
-      await notice(() => page.locator('button[type="submit"]').click(), '비밀번호가 재설정되었습니다. 새로운 비밀번호로 로그인해주세요.');
-      await page.waitForURL('**/login');
-      lastWrite('/api/v1/auth/password/reset', { email: 'member@example.invalid', code: '123456', newPassword: 'New-test1!' });
-      checks.push(`reset/send/errors/payload ${width}`);
+      await page.waitForURL(`${origin}/login`);
+      assert(await page.getByPlaceholder('새 비밀번호를 입력하세요').count() === 0, 'Password reset form came back');
+      checks.push(`reset-password redirects to login ${width}`);
     }
     assert(errors.length === 0, JSON.stringify({ errors, seen }));
     assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected.join(', ')}`);
