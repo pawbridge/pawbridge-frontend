@@ -2,14 +2,9 @@ import apiClient from './client';
 import { AUTH_LOGIN_PATH, AUTH_LOGOUT_PATH } from './authSession.ts';
 import { AUTH_STORAGE_KEY, getAuthSessionVersion, useAuthStore } from '../store/authStore.ts';
 import type { ApiResponse } from '../types/response.types.ts';
-import type {
-  LoginRequest,
-  LoginResponse,
-  SendResetCodeRequest,
-  ResetPasswordRequest,
-} from '../types/auth.types.ts';
+import type { LoginRequest, LoginResponse } from '../types/auth.types.ts';
 
-// 로그인. 서버가 Refresh Token을 HttpOnly 쿠키로 저장하도록 쿠키 전송을 허용한다.
+// 이메일 로그인(로컬 개발 전용, lib/emailLogin 참고). 서버가 Refresh Token을 HttpOnly 쿠키로 저장하도록 쿠키 전송을 허용한다.
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
   const response = await apiClient.post<ApiResponse<LoginResponse>>(AUTH_LOGIN_PATH, credentials, {
     withCredentials: true,
@@ -46,23 +41,4 @@ export const logoutWithoutWaiting = (): void => {
     // 서버 로그아웃 실패와 무관하게 브라우저 로그인 상태는 정리한다.
   });
   useAuthStore.getState().logout();
-};
-
-// 비밀번호 재설정 - 1단계: 인증 코드 발송
-export const sendResetCode = async (data: SendResetCodeRequest): Promise<void> => {
-  await apiClient.post<ApiResponse<null>>(
-    '/api/v1/auth/password/reset-request',
-    data,
-    {
-      timeout: 30000, // 이메일 발송은 시간이 오래 걸릴 수 있으므로 30초로 설정
-    }
-  );
-};
-
-// 비밀번호 재설정 - 2단계: 인증 및 비밀번호 변경
-export const resetPassword = async (data: ResetPasswordRequest): Promise<void> => {
-  await apiClient.post<ApiResponse<null>>(
-    '/api/v1/auth/password/reset',
-    data
-  );
 };

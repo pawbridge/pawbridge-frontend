@@ -17,7 +17,6 @@ async page => {
     if (hostname !== '127.0.0.1' && hostname !== 'localhost') return route.fallback();
     if (!path.startsWith('/api/v1/') || !['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
     if (path === '/api/v1/posts/read') return route.fulfill({ json: { code: 200, message: 'OK', data: [post(1), post(2)] } });
-    if (path === '/api/v1/auth/password/reset-request') return route.fulfill({ json: { code: 200, message: 'OK', data: null } });
     if (path === '/api/v1/products') return route.fulfill({ json: { items: [product(1), product(2)], totalCount: 30, currentPage: 0, totalPages: 3, hasNext: true } });
     return route.fulfill({ status: 503, json: { message: '모의 응답 없음' } });
   });
@@ -53,16 +52,7 @@ async page => {
   await page.getByText('검수 상품 2').first().waitFor();
   assert(await page.getByRole('button', { name: '이전 페이지', exact: true }).count() === 1, 'previous-page-named');
   assert(await page.getByRole('button', { name: '다음 페이지', exact: true }).count() === 1, 'next-page-named');
-  // Password toggles say what they will do and change with the state.
-  await page.goto(origin + '/reset-password');
-  await page.getByPlaceholder('이메일 주소를 입력하세요').fill('member@example.invalid');
-  await page.getByPlaceholder('이메일 주소를 입력하세요').press('Enter');
-  await page.getByPlaceholder('새 비밀번호를 입력하세요').waitFor();
-  assert((await leakedIcons()).length === 0, 'no-icon-text-reset-password-step-2');
-  const toggle = page.getByRole('button', { name: '새 비밀번호 보기', exact: true });
-  await toggle.click();
-  assert(await page.getByRole('button', { name: '새 비밀번호 숨기기', exact: true }).count() === 1, 'reset-toggle-name-follows-state');
-  assert(await page.getByRole('button', { name: '비밀번호 확인 보기', exact: true }).count() === 1, 'reset-confirm-toggle-named');
+  // The password toggle says what it will do and changes with the state.
   await page.goto(origin + '/login');
   await page.getByRole('button', { name: /이메일로 로그인$/ }).first().click();
   assert((await leakedIcons()).length === 0, 'no-icon-text-login-email-form');

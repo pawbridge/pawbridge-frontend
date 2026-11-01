@@ -1,6 +1,6 @@
 import type { UserInfoResponse } from '../../types/user.types';
 
-export type MyPageTab = 'shelter' | 'profile' | 'password' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
+export type MyPageTab = 'shelter' | 'profile' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
 
 interface MyPageSidebarProps {
   userInfo: Pick<UserInfoResponse, 'name' | 'email' | 'role' | 'provider'>;
@@ -19,9 +19,6 @@ export default function MyPageSidebar({
   onTabChange,
   onLogout,
 }: MyPageSidebarProps) {
-  // 소셜 가입 회원은 서비스 비밀번호가 없으므로 메뉴를 노출하지 않는다 (MyPasswordPanel과 같은 기준).
-  const canChangePassword = userInfo.provider === 'LOCAL' || userInfo.provider === null;
-
   return (
     <aside className="md:w-1/4 lg:w-1/5">
       <div className="flex flex-col gap-6 p-4 bg-white dark:bg-gray-800/20 rounded-xl shadow-sm sticky top-24">
@@ -226,32 +223,6 @@ export default function MyPageSidebar({
           </button>
           </>}
 
-          {canChangePassword && <button
-            onClick={() => onTabChange('password')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-              activeTab === 'password'
-                ? 'bg-brand/20 dark:bg-brand/30'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-            }`}
-          >
-            <span
-              aria-hidden="true"
-              className={`material-symbols-outlined ${
-                activeTab === 'password' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-              }`}
-            >
-              lock_reset
-            </span>
-            <p
-              className={`text-sm ${
-                activeTab === 'password'
-                  ? 'text-text-main dark:text-gray-100 font-bold'
-                  : 'text-gray-500 dark:text-gray-400 font-medium'
-              }`}
-            >
-              비밀번호 변경
-            </p>
-          </button>}
         </nav>
 
         {/* 로그아웃 */}

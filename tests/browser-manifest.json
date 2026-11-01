@@ -582,6 +582,15 @@
       "call": "page",
       "preNavigate": false,
       "group": "mock"
+    },
+    {
+      "name": "login-social-only",
+      "origin": "http://127.0.0.1:5271",
+      "server": "preview",
+      "profile": "preview-same-origin",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
     }
   ]
 }

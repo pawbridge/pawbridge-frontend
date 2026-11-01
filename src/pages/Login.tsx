@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore';
 import Toast from '../components/common/Toast';
 import SocialLoginButton, { type SocialProvider } from '../components/common/SocialLoginButton';
 import { consumeReportLoginReturn, rememberReportLoginReturn } from '../lib/reportNavigation';
+import { emailLoginEnabled } from '../lib/emailLogin';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -161,6 +162,7 @@ export default function Login() {
               </p>
             </div>
 
+            {emailLoginEnabled && <>
             <div className="my-6 border-t border-gray-200 dark:border-gray-600" />
 
             <div className="flex flex-col gap-1">
@@ -171,11 +173,11 @@ export default function Login() {
                 aria-controls="email-login-form"
                 className="flex items-center justify-between text-left text-sm font-medium text-gray-900 dark:text-gray-100"
               >
-                <span>이메일로 가입한 기존 회원이신가요? 이메일로 로그인</span>
+                <span>로컬 개발용 계정: 이메일로 로그인</span>
                 <span aria-hidden="true" className="material-symbols-outlined text-xl">{showEmailLogin ? 'expand_less' : 'expand_more'}</span>
               </button>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                신규 이메일 가입은 받지 않습니다. 로그인 후 네이버·구글 계정으로 옮겨 주세요.
+                로컬 백엔드에 연결했을 때만 보입니다. 운영에서는 네이버·구글 로그인만 씁니다.
               </p>
             </div>
 
@@ -264,16 +266,6 @@ export default function Login() {
                     </div>
                   </div>
 
-                  {/* Forgot Password Link */}
-                  <div className="flex justify-end">
-                    <Link
-                      to="/reset-password"
-                      className="text-sm font-medium text-brand-accent hover:text-brand-accent dark:text-brand-accent dark:hover:text-brand-accent"
-                    >
-                      비밀번호 찾기
-                    </Link>
-                  </div>
-
                   {/* Login Button */}
                   <button
                     type="submit"
@@ -288,6 +280,7 @@ export default function Login() {
                 </form>
               </div>
             )}
+            </>}
           </div>
         </div>
         </div>

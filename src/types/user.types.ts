@@ -64,9 +64,3 @@ export interface UserInfoResponse {
 export interface UpdateNicknameRequest {
   nickname: string;
 }
-
-// 비밀번호 변경 요청
-export interface PasswordUpdateRequest {
-  currentPassword: string;
-  newPassword: string;
-}

@@ -20,7 +20,6 @@ async page => {
     if (hostname !== '127.0.0.1' && hostname !== 'localhost') return route.fallback();
     if (!path.startsWith('/api/v1/') || !['xhr', 'fetch'].includes(request.resourceType())) return route.continue();
     if (path === '/api/v1/products/1') return route.fulfill({ json: product });
-    if (path === '/api/v1/auth/password/reset-request') return route.fulfill({ json: { code: 200, message: 'OK', data: null } });
     return route.fulfill({ status: 503, json: { message: '모의 응답 없음' } });
   });
   const field = (label, options = { exact: true }) => page.getByLabel(label, options);
@@ -34,7 +33,7 @@ async page => {
     await page.setViewportSize({ width, height: 1080 });
     // Login: an email field with the login identifier hint, and the page's own messages instead of the browser's.
     await page.goto(origin + '/login');
-    await page.getByRole('button', { name: /이메일로 가입한 기존 회원/ }).click();
+    await page.getByRole('button', { name: /로컬 개발용 계정/ }).click();
     assert(await field('이메일').getAttribute('type') === 'email', `login-email-type-${width}`);
     await autocomplete('이메일', 'username', `login-email-autocomplete-${width}`);
     await autocomplete('비밀번호', 'current-password', `login-password-autocomplete-${width}`);
@@ -43,16 +42,6 @@ async page => {
     await page.getByRole('button', { name: '이메일로 로그인', exact: true }).last().click();
     await page.getByText('올바른 이메일 형식을 입력해주세요.').waitFor();
     assert(true, `login-own-email-message-${width}`);
-    // Password reset: the six code boxes form one named group, and the new passwords are marked as new.
-    await page.goto(origin + '/reset-password');
-    await autocomplete('이메일', 'email', `reset-email-autocomplete-${width}`);
-    await field('이메일').fill('member@example.invalid');
-    await field('이메일').press('Enter');
-    await page.getByRole('group', { name: '인증 코드' }).waitFor();
-    assert(await page.getByRole('group', { name: '인증 코드' }).getByRole('spinbutton').count() === 6, `reset-code-group-${width}`);
-    await autocomplete('인증 코드 1번째 자리', 'one-time-code', `reset-code-autocomplete-${width}`);
-    await autocomplete('새 비밀번호', 'new-password', `reset-new-password-${width}`);
-    await autocomplete('비밀번호 확인', 'new-password', `reset-confirm-password-${width}`);
     // Product detail: option buttons sit in a group named by the option, quantity controls have names.
     await page.goto(origin + '/products/1');
     await page.getByRole('group', { name: '크기' }).waitFor();

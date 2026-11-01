@@ -17,7 +17,6 @@ const AdminShelterDetail = lazy(() => import('./pages/admin/AdminShelterDetail')
 const AdminShelterApplications = lazy(() => import('./pages/admin/AdminShelterApplications'));
 const AdminShelterApplicationDetail = lazy(() => import('./pages/admin/AdminShelterApplicationDetail'));
 const Login = lazy(() => import('./pages/Login.tsx'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword.tsx'));
 const Animals = lazy(() => import('./pages/Animals.tsx'));
 const LostAnimalSearch = lazy(() => import('./pages/LostAnimalSearch.tsx'));
 const AnimalDetail = lazy(() => import('./pages/AnimalDetail.tsx'));
@@ -211,7 +210,8 @@ function App() {
       <Route path="/login" element={<Login />} />
       {/* New email signup is closed; social login creates the account. */}
       <Route path="/signup" element={<Navigate to="/login" replace />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      {/* Password reset belonged to email login, which production no longer offers. */}
+      <Route path="/reset-password" element={<Navigate to="/login" replace />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
 
       <Route
