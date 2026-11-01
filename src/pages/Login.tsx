@@ -127,9 +127,9 @@ export default function Login() {
               alt="A person gently holding a small dog, symbolizing care and adoption"
               className="w-40 h-40 rounded-full object-cover mb-4"
             />
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-brand-ink dark:text-brand-accent">
+            <p className="text-3xl font-bold leading-tight tracking-tight text-brand-ink dark:text-brand-accent">
               세상의 모든 동물이<br />행복해지는 그날까지
-            </h1>
+            </p>
             <p className="text-base font-normal leading-relaxed text-gray-600 dark:text-gray-400">
               유기동물을 위한 따뜻한 커뮤니티에<br />오신 것을 환영합니다.
             </p>
@@ -140,7 +140,7 @@ export default function Login() {
         <div className="w-full lg:w-1/2 p-6 sm:p-10 md:p-12 flex items-center justify-center">
           <div className="w-full max-w-sm mx-auto">
             <div className="mb-6 flex flex-col gap-2">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">로그인</h2>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">로그인</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">네이버 또는 구글 계정으로 바로 시작할 수 있어요.</p>
             </div>
 

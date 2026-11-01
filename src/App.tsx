@@ -104,7 +104,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <div className="fixed inset-0 bg-black/40" />
         <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-          <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
+          <h1 className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             관리자 페이지는 로그인이 필요합니다.
           </p>
@@ -133,7 +133,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <div className="fixed inset-0 bg-black/40" />
         <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-          <p className="text-xl font-bold text-text-light dark:text-text-dark">접근 권한이 없습니다</p>
+          <h1 className="text-xl font-bold text-text-light dark:text-text-dark">접근 권한이 없습니다</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             이 페이지는 관리자만 접근할 수 있습니다.
           </p>

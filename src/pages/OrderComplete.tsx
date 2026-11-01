@@ -132,7 +132,7 @@ export default function OrderComplete() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <span className="material-symbols-outlined text-6xl text-red-500 mb-4">payment</span>
-          <h2 className="text-2xl font-bold text-red-500 mb-2">결제 승인 실패</h2>
+          <h1 className="text-2xl font-bold text-red-500 mb-2">결제 승인 실패</h1>
           <p className="text-gray-500 mb-2">결제 처리 중 오류가 발생했습니다.</p>
           <p className="text-gray-400 text-sm mb-6">실제로 결제되지 않았으니 안심하세요.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -165,7 +165,7 @@ export default function OrderComplete() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <span className="material-symbols-outlined text-6xl text-amber-500 mb-4">hourglass_empty</span>
-          <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-2">결제 승인 처리 중</h2>
+          <h1 className="text-2xl font-bold text-text-light dark:text-text-dark mb-2">결제 승인 처리 중</h1>
           <p className="text-gray-500 mb-2">결제 승인 상태를 확인하고 있습니다.</p>
           <p className="text-gray-400 text-sm mb-6">잠시 후 새로고침하거나, 처리 지연 시 문의해 주세요.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -243,9 +243,9 @@ export default function OrderComplete() {
             </span>
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">
+            <h1 className="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">
               결제 완료
-            </p>
+            </h1>
             <p className="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">
               포우 브릿지를 이용해주셔서 감사합니다.
             </p>

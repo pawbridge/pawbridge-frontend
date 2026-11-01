@@ -119,9 +119,9 @@ export default function Orders() {
       {/* 페이지 헤더 */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div className="space-y-2">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-background-dark dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-background-dark dark:text-white">
             주문 내역
-          </h2>
+          </h1>
           <p className="text-gray-500 dark:text-gray-400 font-medium max-w-lg">
             최근 주문한 내역을 확인하고 배송 상태를 조회할 수 있습니다.
           </p>

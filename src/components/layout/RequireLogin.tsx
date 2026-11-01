@@ -6,7 +6,7 @@ export function LoginRequiredCard({ className = '' }: { className?: string }) {
   const location = useLocation();
   return (
     <div className={`mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center ${className}`}>
-      <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
+      <h1 className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</h1>
       <p className="text-sm text-gray-600 dark:text-gray-400">
         이 기능은 로그인이 필요합니다. 로그인 후 다시 이용해 주세요.
       </p>
