@@ -70,12 +70,12 @@ export default function AdoptionList() {
       {/* PageHeading */}
       <div className="flex flex-wrap justify-between items-start gap-4 mb-8 sm:mb-12">
         <div className="flex min-w-72 flex-col gap-2">
-          <p className="text-4xl font-black leading-tight tracking-[-0.033em] text-brand-ink dark:text-white">입양후기</p>
+          <h1 className="text-4xl font-black leading-tight tracking-[-0.033em] text-brand-ink dark:text-white">입양후기</h1>
           <p className="text-base font-normal leading-normal text-brand-muted dark:text-gray-400">커뮤니티의 따뜻한 이야기들을 만나보세요.</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
-            <span className="material-symbols-outlined text-lg">lock</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-lg">lock</span>
             <span>로그인이 필요한 서비스입니다.</span>
           </div>
           <button
@@ -113,7 +113,7 @@ export default function AdoptionList() {
                   </div>
                 ) : (
                   <div className="overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 aspect-video flex items-center justify-center">
-                    <span className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                    <span aria-hidden="true" className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
                   </div>
                 )}
                 <div>

@@ -89,6 +89,7 @@ export default function MyWishlistPanel({
                   <span>품절 상품 숨기기</span>
                 </label>
                 <select
+                  aria-label="정렬"
                   value={sortOption}
                   onChange={(e) => onSortChange(e.target.value as WishlistSortOption)}
                   className="text-sm border-gray-200 dark:border-gray-700 dark:bg-gray-800 rounded-lg focus:border-brand-focus focus:ring-brand-focus py-2 pl-3 pr-8 cursor-pointer"
@@ -126,6 +127,7 @@ export default function MyWishlistPanel({
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => onSelectItem(item.wishlistId, e.target.checked)}
+                          aria-label={`${item.productName} 선택`}
                           className="absolute top-2 left-2 z-10 rounded-md text-brand-ink border-white bg-white/80 h-5 w-5 shadow-sm cursor-pointer hover:bg-white focus:ring-brand-focus focus:ring-offset-0"
                         />
                         <Link to={`/products/${item.productId}`}>
@@ -183,12 +185,12 @@ export default function MyWishlistPanel({
                           >
                             {isSoldOut ? (
                               <>
-                                <span className="material-symbols-outlined text-[16px]">block</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">block</span>
                                 품절
                               </>
                             ) : (
                               <>
-                                <span className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
                                 담기
                               </>
                             )}
@@ -199,7 +201,7 @@ export default function MyWishlistPanel({
                             className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                             title="삭제"
                           >
-                            <span className="material-symbols-outlined text-[18px]">delete</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete</span>
                           </button>
                         </div>
                       </div>
@@ -246,7 +248,7 @@ export default function MyWishlistPanel({
           </div>
         ) : (
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">favorite_border</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">favorite_border</span>
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">찜한 상품이 없습니다.</p>
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 찾아 위시리스트에 담아보세요.</p>
             <Link
@@ -254,7 +256,7 @@ export default function MyWishlistPanel({
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑하러 가기
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
         )}

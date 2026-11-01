@@ -30,7 +30,7 @@ npm run test:browser -- lint-regression
 
 ```sh
 npm run test:browser                                  # 모의 테스트 전체
-npm run test:browser -- login-401 visits              # 선택 실행
+npm run test:browser -- auth-refresh visits             # 선택 실행
 npm run test:browser -- --repeat 3 lost-search        # 반복 실행
 ```
 

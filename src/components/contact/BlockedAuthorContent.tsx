@@ -32,6 +32,8 @@ function AuthorVisibility({ state, blocked, children, tableColumns }: {
       onClick={() => setExpanded(true)}>이 글 보기</button></div>;
   else return <>{children}</>;
 
+  // 안내 영역 클릭이 바깥 행(커뮤니티 목록 행 이동)으로 올라가지 않게 막을 뿐, 이 div는 조작 요소가 아니다.
+  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
   const placeholder = <div className="rounded-xl bg-brand-soft p-5 text-sm leading-6 text-brand-ink dark:bg-gray-800 dark:text-white"
     onClick={event => event.stopPropagation()}>{notice}</div>;
   return tableColumns ? <td colSpan={tableColumns} className="p-3" onClick={event => event.stopPropagation()}>{placeholder}</td> : placeholder;

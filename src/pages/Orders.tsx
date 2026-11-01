@@ -119,9 +119,9 @@ export default function Orders() {
       {/* 페이지 헤더 */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div className="space-y-2">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-background-dark dark:text-white">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-background-dark dark:text-white">
             주문 내역
-          </h2>
+          </h1>
           <p className="text-gray-500 dark:text-gray-400 font-medium max-w-lg">
             최근 주문한 내역을 확인하고 배송 상태를 조회할 수 있습니다.
           </p>
@@ -147,7 +147,7 @@ export default function Orders() {
               <option value="CANCELLED">주문 취소</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-              <span className="material-symbols-outlined">expand_more</span>
+              <span aria-hidden="true" className="material-symbols-outlined">expand_more</span>
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function Orders() {
       {orders.length === 0 ? (
         <div className="w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-surface dark:bg-surface-dark shadow-sm p-12">
           <div className="text-center">
-            <span className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-4">
+            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-4">
               receipt_long
             </span>
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">주문 내역이 없습니다</p>

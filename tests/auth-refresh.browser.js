@@ -26,7 +26,6 @@ async page => {
   let refreshMode = 'ok';
   let refreshDelay = 0;
   let protectedAcceptsRefreshed = true;
-  let loginIncludesRefreshToken = false;
   const corsHeaders = {
     'access-control-allow-origin': origin,
     'access-control-allow-credentials': 'true',
@@ -42,12 +41,6 @@ async page => {
     if (method === 'OPTIONS') return route.fulfill({ status: 204, headers: corsHeaders });
     const authorization = request.headers().authorization || '';
     const sentCookie = Boolean((await request.allHeaders()).cookie);
-    if (path === '/api/v1/auth/login' && method === 'POST') {
-      requests.push({ path, sentCookie });
-      const data = { userId: 901, email: profile.email, name: profile.name, role: 'ROLE_USER', careRegNo: null, accessToken: firstToken };
-      if (loginIncludesRefreshToken) data.refreshToken = 'legacy-body-refresh';
-      return respond(200, data);
-    }
     if (path === '/api/v1/auth/refresh' && method === 'POST') {
       requests.push({ path, sentCookie, contentType: request.headers()['content-type'], body: request.postData() });
       if (refreshDelay) await new Promise(resolve => setTimeout(resolve, refreshDelay));
@@ -265,23 +258,6 @@ async page => {
     assert(logoutRequest?.contentType?.startsWith('application/json') && logoutRequest.body === '{}' && logoutRequest.bearer, 'Logout request shape');
     assert(logoutRequest.sentCookie, 'Logout request did not include credentials');
     checks.push('logout uses v1 JSON request with bearer and credentials');
-
-    // 11. 이메일 로그인은 응답에 Refresh Token이 있든 없든 Access Token만 저장한다.
-    for (const includesRefreshToken of [false, true]) {
-      await reset();
-      loginIncludesRefreshToken = includesRefreshToken;
-      await page.goto(`${origin}/login`);
-      await page.getByRole('button', { name: /이메일로 로그인/ }).click();
-      await page.getByPlaceholder('이메일 주소를 입력하세요').fill(profile.email);
-      await page.getByPlaceholder('비밀번호를 입력하세요', { exact: true }).fill('synthetic-password');
-      await page.getByRole('button', { name: '이메일로 로그인', exact: true }).click();
-      await page.waitForURL(url => url.pathname !== '/login', { timeout: 5000 });
-      state = await storedState();
-      assert(state?.user?.id === 901 && state.accessToken === firstToken, `Local login failed (body refresh: ${includesRefreshToken})`);
-      assert(!('refreshToken' in state), 'Local login stored refresh token');
-      assert(requests.find(item => item.path === '/api/v1/auth/login')?.sentCookie, 'Login request did not include credentials');
-      checks.push(`local login stores access token only (body refresh: ${includesRefreshToken})`);
-    }
 
     assert(unexpected.length === 0, `Unexpected API traffic: ${unexpected.join(', ')}`);
     assert(errors.length === 0, `Page errors: ${errors.join(', ')}`);

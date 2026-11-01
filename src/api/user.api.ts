@@ -7,7 +7,6 @@ import type {
   UpdateUserRequest,
   UserInfoResponse,
   UpdateNicknameRequest,
-  PasswordUpdateRequest,
 } from '../types/user.types';
 import type { FavoriteListResponse, PageResponse, Animal } from '../types/api.types';
 
@@ -53,11 +52,6 @@ export const getMyInfo = async (signal?: AbortSignal): Promise<UserInfoResponse>
 // 닉네임 변경
 export const updateNickname = async (data: UpdateNicknameRequest): Promise<void> => {
   await apiClient.put<ApiResponse<null>>('/api/v1/users/me/nickname', data);
-};
-
-// 비밀번호 변경
-export const updatePassword = async (data: PasswordUpdateRequest): Promise<void> => {
-  await apiClient.put<ApiResponse<null>>('/api/v1/users/me/password', data);
 };
 
 // 내가 찜한 동물 목록 조회

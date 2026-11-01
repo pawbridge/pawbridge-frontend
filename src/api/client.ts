@@ -2,7 +2,7 @@ import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestCo
 import { isPublicShelterRequest } from '../lib/shelters';
 import { isPublicTravelRequest } from '../lib/travel';
 import { getAuthSessionVersion, useAuthStore } from '../store/authStore.ts';
-import { AUTH_LOGIN_PATH, AUTH_LOGOUT_PATH, refreshAccessToken } from './authSession.ts';
+import { AUTH_LOGOUT_PATH, refreshAccessToken } from './authSession.ts';
 import { isSessionEndedRefreshFailure } from './sessionRefresh.ts';
 
 declare module 'axios' {
@@ -16,10 +16,10 @@ declare module 'axios' {
  * API Client 설정
  * 
  * 개발 환경: vite.config.ts의 proxy 설정을 통해 로컬 서버로 요청
- * 배포 환경: VITE_API_BASE_URL 환경 변수를 통해 API Gateway로 요청
+ * 배포 환경: VITE_API_BASE_URL 환경 변수를 통해 운영 API로 요청
  * 
- * Vercel 환경 변수 설정 예시:
- * VITE_API_BASE_URL=https://api-gateway.example.com
+ * Cloudflare Workers Builds 빌드 변수 예시:
+ * VITE_API_BASE_URL=https://api.pawbridge.kr
  */
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
@@ -157,8 +157,6 @@ apiClient.interceptors.response.use(
         case 401: {
           const requestUrl = error.config?.url || '';
           const method = error.config?.method?.toLowerCase();
-          // 로그인 실패는 Login의 오류 안내로 전달하고 현재 입력을 유지한다.
-          if (requestUrl === AUTH_LOGIN_PATH && method === 'post') break;
           // 로그아웃을 부른 화면이 결과와 무관하게 로그인 상태를 정리하고 이동한다.
           if (requestUrl === AUTH_LOGOUT_PATH && method === 'post') break;
 

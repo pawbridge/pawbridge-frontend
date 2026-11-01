@@ -245,15 +245,6 @@
       "group": "mock"
     },
     {
-      "name": "login-401",
-      "origin": "http://127.0.0.1:5213",
-      "server": "preview",
-      "profile": "preview-local",
-      "call": "page",
-      "preNavigate": false,
-      "group": "mock"
-    },
-    {
       "name": "lost-search",
       "origin": "http://127.0.0.1:5187",
       "server": "dev",
@@ -287,15 +278,6 @@
     {
       "name": "market-navigation",
       "origin": "http://127.0.0.1:5198",
-      "server": "preview",
-      "profile": "preview-local",
-      "call": "page",
-      "preNavigate": false,
-      "group": "mock"
-    },
-    {
-      "name": "member-auth",
-      "origin": "http://127.0.0.1:5201",
       "server": "preview",
       "profile": "preview-local",
       "call": "page",
@@ -532,6 +514,69 @@
     {
       "name": "error-boundary",
       "origin": "http://127.0.0.1:5263",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "page-headings",
+      "origin": "http://127.0.0.1:5268",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "form-labels",
+      "origin": "http://127.0.0.1:5267",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "accessible-names",
+      "origin": "http://127.0.0.1:5266",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "product-card",
+      "origin": "http://127.0.0.1:5265",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "community-keyboard",
+      "origin": "http://127.0.0.1:5264",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "login-social-only",
+      "origin": "http://127.0.0.1:5271",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "animal-form-bell",
+      "origin": "http://127.0.0.1:5269",
       "server": "preview",
       "profile": "preview-local",
       "call": "page",

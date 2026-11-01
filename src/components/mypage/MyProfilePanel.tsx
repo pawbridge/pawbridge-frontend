@@ -32,11 +32,12 @@ export default function MyProfilePanel({
         {/* 기본 정보 (읽기 전용) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               이메일 주소
             </label>
             <input
               type="email"
+              id="profile-email"
               value={userInfo.email}
               readOnly
               className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
@@ -44,9 +45,10 @@ export default function MyProfilePanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름</label>
+            <label htmlFor="profile-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">이름</label>
             <input
               type="text"
+              id="profile-name"
               value={userInfo.name}
               readOnly
               className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
@@ -54,11 +56,12 @@ export default function MyProfilePanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="profile-nickname" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               닉네임
             </label>
             <input
               type="text"
+              id="profile-nickname"
               value={userInfo.nickname || '미설정'}
               readOnly
               className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
@@ -66,11 +69,12 @@ export default function MyProfilePanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="profile-provider" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               가입 경로
             </label>
             <input
               type="text"
+              id="profile-provider"
               value={providerLabel}
               readOnly
               className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
@@ -78,9 +82,10 @@ export default function MyProfilePanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">권한</label>
+            <label htmlFor="profile-role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">권한</label>
             <input
               type="text"
+              id="profile-role"
               value={roleLabel}
               readOnly
               className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
@@ -88,11 +93,12 @@ export default function MyProfilePanel({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="profile-joined-at" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               가입일시
             </label>
             <input
               type="text"
+              id="profile-joined-at"
               value={joinedAtLabel}
               readOnly
               className="w-full rounded-lg bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 cursor-default focus:border-gray-200 focus:ring-0"
@@ -105,11 +111,13 @@ export default function MyProfilePanel({
           <h3 className="text-lg font-bold text-text-main dark:text-white mb-4">닉네임 변경</h3>
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="profile-new-nickname" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 새 닉네임
               </label>
               <input
+                id="profile-new-nickname"
                 type="text"
+                autoComplete="nickname"
                 value={nickname}
                 onChange={(e) => onNicknameChange(e.target.value)}
                 placeholder="2~30자의 한글, 영문, 숫자"

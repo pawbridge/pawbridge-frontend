@@ -39,7 +39,8 @@ async page => {
     // Moving to another address inside the app clears the error and draws the new screen.
     await page.getByRole('contentinfo').getByRole('link', { name: '이용약관', exact: true }).click();
     await page.waitForURL('**/terms');
-    await page.getByRole('heading', { level: 1 }).waitFor();
+    // The card title is an h1 too, so wait for the terms title by name.
+    await page.getByRole('heading', { level: 1, name: '이용약관' }).waitFor();
     assert(await card().count() === 0, `site-card-cleared-on-move-${width}`);
     // Back to the broken screen shows the card again.
     await page.goBack();

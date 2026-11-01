@@ -146,7 +146,7 @@ export default function CommunityDetail() {
             to="/community"
             className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-brand-accent dark:hover:text-brand-accent"
           >
-            <span className="material-symbols-outlined mr-1">arrow_back</span>
+            <span aria-hidden="true" className="material-symbols-outlined mr-1">arrow_back</span>
             목록으로
           </Link>
         </div>
@@ -232,6 +232,7 @@ export default function CommunityDetail() {
           {/* 댓글 작성 */}
           <div className="mb-6">
             <textarea
+              aria-label="댓글"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder={user ? "댓글을 입력하세요..." : "로그인 후 댓글을 작성할 수 있습니다."}

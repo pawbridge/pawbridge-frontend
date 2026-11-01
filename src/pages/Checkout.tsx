@@ -363,7 +363,7 @@ export default function Checkout() {
       {paymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-            <span className="material-symbols-outlined text-4xl text-brand-accent mx-auto">
+            <span aria-hidden="true" className="material-symbols-outlined text-4xl text-brand-accent mx-auto">
               {paymentModal.type === 'cancel' ? 'info' : 'error'}
             </span>
             <p className="text-lg font-bold text-text-light dark:text-text-dark">
@@ -412,7 +412,7 @@ export default function Checkout() {
                         >
                           {!state.directOrder.product.imageUrl && (
                             <div className="w-full h-full flex items-center justify-center">
-                              <span className="material-symbols-outlined text-xl text-gray-400">image</span>
+                              <span aria-hidden="true" className="material-symbols-outlined text-xl text-gray-400">image</span>
                             </div>
                           )}
                         </div>
@@ -442,7 +442,7 @@ export default function Checkout() {
                           >
                             {!item.productImageUrl && (
                               <div className="w-full h-full flex items-center justify-center">
-                                <span className="material-symbols-outlined text-xl text-gray-400">image</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-xl text-gray-400">image</span>
                               </div>
                             )}
                           </div>
@@ -474,12 +474,14 @@ export default function Checkout() {
                 <div className="flex flex-col gap-4">
                   {/* 받는 사람 이름 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="checkout-receiver-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       받는 사람 이름 <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="checkout-receiver-name"
                       type="text"
                       name="receiverName"
+                      autoComplete="shipping name"
                       value={formData.receiverName}
                       onChange={handleInputChange}
                       placeholder="이름을 입력하세요"
@@ -496,12 +498,14 @@ export default function Checkout() {
 
                   {/* 연락처 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="checkout-receiver-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       연락처 <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="checkout-receiver-phone"
                       type="tel"
                       name="receiverPhone"
+                      autoComplete="shipping tel"
                       value={formData.receiverPhone}
                       onChange={handlePhoneChange}
                       placeholder="010-0000-0000"
@@ -518,11 +522,12 @@ export default function Checkout() {
 
                   {/* 배송 주소 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="checkout-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       배송 주소 <span className="text-red-500">*</span>
                     </label>
                     <div className="flex gap-2">
                       <input
+                        id="checkout-address"
                         type="text"
                         name="deliveryAddress"
                         value={formData.deliveryAddress}
@@ -546,6 +551,8 @@ export default function Checkout() {
                     <input
                       type="text"
                       name="deliveryAddressDetail"
+                      aria-label="상세주소"
+                      autoComplete="shipping address-line2"
                       value={formData.deliveryAddressDetail}
                       onChange={handleInputChange}
                       placeholder="상세주소를 입력하세요"
@@ -558,10 +565,11 @@ export default function Checkout() {
 
                   {/* 배송 메모 */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="checkout-memo" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       배송 메모
                     </label>
                     <textarea
+                      id="checkout-memo"
                       name="deliveryMessage"
                       value={formData.deliveryMessage}
                       onChange={handleInputChange}

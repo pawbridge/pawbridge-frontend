@@ -115,22 +115,23 @@ export default function CommunityCreate() {
                   {form.files.map((file, index) => (
                     <div key={index} className="relative group aspect-square rounded-lg overflow-hidden">
                       <img
-                        alt={`Uploaded image ${index + 1}`}
+                        alt={`첨부 ${index + 1}번 미리보기`}
                         className="w-full h-full object-cover"
                         src={URL.createObjectURL(file)}
                       />
                       <button
-                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                         onClick={() => removeFile(index)}
                         type="button"
+                        aria-label={`사진 ${index + 1} 삭제`}
                       >
-                        <span className="material-symbols-outlined text-base">close</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-base">close</span>
                       </button>
                     </div>
                   ))}
                   {form.files.length < 10 && (
                     <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-brand-focus dark:hover:border-brand-focus transition-colors cursor-pointer aspect-square p-4">
-                      <span className="material-symbols-outlined text-brand-accent text-3xl">add_photo_alternate</span>
+                      <span aria-hidden="true" className="material-symbols-outlined text-brand-accent text-3xl">add_photo_alternate</span>
                       <p className="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal text-center">
                         사진 추가
                       </p>
@@ -230,12 +231,12 @@ export default function CommunityCreate() {
 
             {/* Multi-Image Uploader */}
             <div>
-              <label className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2">
+              <p className="block text-base font-medium text-gray-800 dark:text-gray-200 pb-2">
                 사진 첨부 <span className="text-gray-500 dark:text-gray-400 font-normal">(선택)</span>
-              </label>
+              </p>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-400 dark:border-gray-600 px-6 py-10 bg-white/50 dark:bg-gray-800/50">
                 <div className="text-center">
-                  <span className="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">image</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">image</span>
                   <div className="mt-4 flex text-sm leading-6 text-gray-600 dark:text-gray-400">
                     <label
                       className="relative cursor-pointer rounded-md font-semibold text-brand-accent focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-focus focus-within:ring-offset-2 dark:ring-offset-background-dark hover:text-brand-accent/80"
@@ -265,11 +266,12 @@ export default function CommunityCreate() {
                         style={{ backgroundImage: `url(${URL.createObjectURL(file)})` }}
                       />
                       <button
-                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                         onClick={() => removeFile(index)}
                         type="button"
+                        aria-label={`사진 ${index + 1} 삭제`}
                       >
-                        <span className="material-symbols-outlined text-base">close</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-base">close</span>
                       </button>
                     </div>
                   ))}

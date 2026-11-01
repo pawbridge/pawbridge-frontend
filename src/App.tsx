@@ -17,7 +17,6 @@ const AdminShelterDetail = lazy(() => import('./pages/admin/AdminShelterDetail')
 const AdminShelterApplications = lazy(() => import('./pages/admin/AdminShelterApplications'));
 const AdminShelterApplicationDetail = lazy(() => import('./pages/admin/AdminShelterApplicationDetail'));
 const Login = lazy(() => import('./pages/Login.tsx'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword.tsx'));
 const Animals = lazy(() => import('./pages/Animals.tsx'));
 const LostAnimalSearch = lazy(() => import('./pages/LostAnimalSearch.tsx'));
 const AnimalDetail = lazy(() => import('./pages/AnimalDetail.tsx'));
@@ -104,7 +103,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <div className="fixed inset-0 bg-black/40" />
         <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-          <p className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</p>
+          <h1 className="text-xl font-bold text-text-light dark:text-text-dark">로그인이 필요합니다</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             관리자 페이지는 로그인이 필요합니다.
           </p>
@@ -133,7 +132,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
       <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
         <div className="fixed inset-0 bg-black/40" />
         <div className="relative z-10 mx-auto mt-24 max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200/80 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-          <p className="text-xl font-bold text-text-light dark:text-text-dark">접근 권한이 없습니다</p>
+          <h1 className="text-xl font-bold text-text-light dark:text-text-dark">접근 권한이 없습니다</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             이 페이지는 관리자만 접근할 수 있습니다.
           </p>
@@ -211,7 +210,8 @@ function App() {
       <Route path="/login" element={<Login />} />
       {/* New email signup is closed; social login creates the account. */}
       <Route path="/signup" element={<Navigate to="/login" replace />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      {/* Password reset belonged to email login, which production no longer offers. */}
+      <Route path="/reset-password" element={<Navigate to="/login" replace />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
 
       <Route
