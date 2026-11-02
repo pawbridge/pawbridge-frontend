@@ -25,7 +25,7 @@ async page => {
   });
   await page.goto(origin + '/terms');
   await page.evaluate(value => localStorage.setItem('auth-storage', value), JSON.stringify({ state: { user, accessToken: 'test-only-token', refreshToken: null }, version: 0 }));
-  const bell = () => page.getByRole('button', { name: /^연락 알림/ });
+  const bell = () => page.getByRole('button', { name: /^알림,/ });
   for (const width of [1920, 390]) {
     await page.setViewportSize({ width, height: 900 });
     for (const [name, path, title] of [['create', '/animals/new', '동물 등록'], ['edit', '/animals/1/edit', '동물 수정']]) {
@@ -44,7 +44,7 @@ async page => {
       await page.waitForFunction(() => /읽지 않은 쪽지 2개/.test(document.querySelector('[aria-controls="private-note-notifications"]')?.getAttribute('aria-label') ?? ''));
       assert((await bell().innerText()).trim() === '2', `${name}-${width}-badge-count`);
       await bell().click();
-      const list = page.getByRole('region', { name: '연락 알림 목록' });
+      const list = page.getByRole('region', { name: '알림 목록' });
       await list.waitFor();
       assert(await list.getByRole('link', { name: /검수회원\d님에게 쪽지가 왔어요/ }).count() === 2, `${name}-${width}-list-opens`);
       await page.keyboard.press('Escape');
