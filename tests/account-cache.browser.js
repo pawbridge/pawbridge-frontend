@@ -16,6 +16,7 @@ async page => {
     if (path === '/api/v1/notes/stream') {
       return route.fulfill({ status: 429, headers: { 'retry-after': '300' }, body: '' });
     }
+    if (path === '/api/v1/users/me/favorite-animal-notifications') return route.fulfill({ json: { code: 200, data: { content: [] } } });
     if (path === '/api/v1/notes/notifications') {
       return route.fulfill({ json: { code: 200, data: { content: [], nextCursor: null, unreadCount: 0 } } });
     }

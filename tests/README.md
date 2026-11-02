@@ -9,7 +9,7 @@
 ```sh
 npm run lint
 npm run test:lint-policy
-npm run test:unit        # 화면 로직 단위 시험(adminStatistics·animalSearch·shelters 등 18개 파일)
+npm run test:unit        # 화면 로직 단위 시험(adminStatistics·animalSearch·shelters 등 19개 파일)
 npm run test:environment
 VITE_API_BASE_URL=http://localhost:28080 npm run build:dev
 VITE_API_BASE_URL=https://api.pawbridge.kr npm run build:prod
