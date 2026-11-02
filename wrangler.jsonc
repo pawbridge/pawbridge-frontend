@@ -3,6 +3,10 @@
   "name": "pawbridge-frontend",
   "main": "./worker/index.ts",
   "compatibility_date": "2026-09-19",
+  // CSP 위반 보고 요약(worker/cspReport.ts)을 Workers Logs에서 보기 위해 켠다.
+  "observability": {
+    "enabled": true
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"

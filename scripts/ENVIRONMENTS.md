@@ -18,6 +18,6 @@ VITE_API_BASE_URL=https://api.pawbridge.kr npm run build:prod
 ## 보안 응답 헤더
 
 - `public/_headers`가 빌드 시 `dist/<환경>/_headers`로 복사되어 Workers 정적 자산 응답과, `ASSETS.fetch`를 거치는 Worker의 SPA 셸 응답에 모두 적용된다. Worker 코드는 이를 따로 설정하지 않는다.
-- CSP는 `Content-Security-Policy-Report-Only`다. 위반은 차단되지 않고 브라우저 콘솔에만 기록된다. 새 외부 호스트(이미지, 스크립트, API 등)를 추가하면 이 파일의 정책도 함께 갱신한다.
+- CSP는 `Content-Security-Policy-Report-Only`다. 위반은 차단되지 않는다. 브라우저가 `report-uri /csp-report`로 보고하면 Worker(`worker/cspReport.ts`)가 지시어·막힌 출처·페이지 경로만 Workers Logs에 남긴다(쿼리 제외). 새 외부 호스트(이미지, 스크립트, API 등)를 추가하면 이 파일의 정책도 함께 갱신한다.
 - dev 빌드는 `_headers` 뒤에 `X-Robots-Tag` 규칙을 덧붙인다. dev 정책의 `connect-src`에는 로컬 Gateway가 없으므로, 로컬 dev를 Workers로 서비스할 때는 위반 로그가 보일 수 있다.
 - HSTS는 도메인 전체에 영향을 주므로 여기에 넣지 않았다.

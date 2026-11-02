@@ -1,4 +1,5 @@
 import { resolveSeoMetadata, SITE_NAME } from '../src/lib/seo';
+import { CSP_REPORT_PATH, receiveCspReport } from './cspReport';
 
 function shellRequest(request: Request): Request {
   const url = new URL('/', request.url);
@@ -36,6 +37,10 @@ function transformShell(response: Response, pathname: string, search: string, de
 
 export default {
   async fetch(request, env): Promise<Response> {
+    const url = new URL(request.url);
+    if (url.pathname === CSP_REPORT_PATH) {
+      return receiveCspReport(request, env.DEPLOYMENT_ENVIRONMENT);
+    }
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       return new Response('Method Not Allowed', {
         status: 405,
@@ -43,7 +48,6 @@ export default {
       });
     }
 
-    const url = new URL(request.url);
     const shell = await env.ASSETS.fetch(shellRequest(request));
     if (!shell.ok) return shell;
 
