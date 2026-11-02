@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNoteNotifications } from './useNoteNotifications';
 import { useMemberChat } from './useMemberChat';
+import { useFavoriteNotifications } from './useFavoriteNotifications';
 import { memberChatEnabled } from '../../lib/memberChat';
+import { favoriteAnimalName, favoriteNotificationPhrase } from '../../lib/favoriteNotifications';
 
 export default function NoteNotificationBell() {
   const notifications = useNoteNotifications();
   const chat = useMemberChat();
-  const totalUnread = notifications.unread + chat.unread;
+  const favorites = useFavoriteNotifications();
+  const totalUnread = notifications.unread + chat.unread + favorites.unread;
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -34,10 +37,12 @@ export default function NoteNotificationBell() {
       <button
         ref={button}
         type="button"
-        aria-label={`연락 알림, 읽지 않은 쪽지 ${notifications.unread}개${memberChatEnabled ? `, 새 메시지가 있는 대화 ${chat.unread}개` : ''}`}
+        aria-label={`알림, 읽지 않은 쪽지 ${notifications.unread}개${memberChatEnabled ? `, 새 메시지가 있는 대화 ${chat.unread}개` : ''}, 관심 동물 새 소식 ${favorites.unread}개`}
         aria-expanded={open}
         aria-controls="private-note-notifications"
         onClick={() => {
+          // 패널을 열면 지금까지 받은 관심 동물 소식을 읽은 것으로 본다.
+          if (!open) favorites.markSeen();
           setOpen(!open);
         }}
         className="relative flex h-11 w-11 items-center justify-center rounded-full text-brand-ink hover:bg-brand-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus dark:text-white dark:hover:bg-gray-800"
@@ -55,11 +60,11 @@ export default function NoteNotificationBell() {
       {open && (
         <section
           id="private-note-notifications"
-          aria-label="연락 알림 목록"
+          aria-label="알림 목록"
           className="fixed left-4 right-4 top-20 z-50 w-[calc(100vw-32px)] rounded-xl border border-brand-border bg-white p-4 shadow-lg sm:absolute sm:left-auto sm:right-0 sm:top-14 sm:w-[350px] dark:border-gray-700 dark:bg-gray-900"
         >
           <div className="flex items-center justify-between gap-4">
-            <h2 className="text-lg font-bold">쪽지 알림</h2>
+            <h2 className="text-lg font-bold">알림</h2>
             <Link
               to="/notes"
               onClick={() => setOpen(false)}
@@ -79,6 +84,19 @@ export default function NoteNotificationBell() {
               {!chat.notifications.length && !chat.error && <p className="py-3 text-sm">새 채팅 알림이 없습니다.</p>}
               {chat.error && <p role="status" className="text-sm">채팅 알림을 불러오지 못했어요. <button className="min-h-11 underline" onClick={() => void chat.refresh()}>다시 시도</button></p>}
               {chat.hasMore && <button className="min-h-11 w-full rounded-lg border border-brand-border" disabled={chat.loading} onClick={() => void chat.more()}>{chat.loading ? '불러오는 중…' : '이전 채팅 알림 더 보기'}</button>}
+            </section>}
+            {(favorites.items.length > 0 || favorites.error) && <section aria-label="관심 동물 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:bg-gray-800">
+              <div className="flex items-center justify-between gap-3"><h3 className="font-bold">관심 동물</h3><Link to="/favorite-animals" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline">관심 목록</Link></div>
+              {favorites.items.map((item) => <Link key={item.animalId} to={`/animals/${item.animalId}`}
+                onClick={() => setOpen(false)} className="my-2 flex items-center gap-3 rounded-lg bg-white p-3 focus-visible:outline-brand-focus dark:bg-gray-900">
+                {item.imageUrl && <img src={item.imageUrl} alt="" width={48} height={48} loading="lazy" className="h-12 w-12 shrink-0 rounded-lg object-cover" />}
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-medium">{favoriteAnimalName(item)}</span>
+                  <span className="block text-sm">{favoriteNotificationPhrase(item.status)}</span>
+                  <time dateTime={item.changedAt} className="mt-1 block text-xs text-brand-muted dark:text-gray-400">{new Date(item.changedAt).toLocaleString('ko-KR')}</time>
+                </span>
+              </Link>)}
+              {favorites.error && <p role="status" className="text-sm">관심 동물 소식을 불러오지 못했어요. <button type="button" className="min-h-11 underline" onClick={favorites.retry}>다시 시도</button></p>}
             </section>}
             {notifications.items.map((item) => (
               <Link

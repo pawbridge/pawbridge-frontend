@@ -258,7 +258,7 @@ export default function AnimalEdit() {
         <header className="flex items-center justify-between md:justify-end h-16 px-4 md:px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
           <Link to="/" className="md:hidden text-lg font-display font-bold text-brand-ink dark:text-white">PawBridge</Link>
           <div className="flex items-center gap-6">
-            {/* 사이트 헤더와 같은 연락 알림(쪽지·1:1 채팅). 읽지 않은 것이 있을 때만 숫자가 붙는다. */}
+            {/* 사이트 헤더와 같은 알림(쪽지·1:1 채팅·관심 동물). 새 소식이 있을 때만 숫자가 붙는다. */}
             <NoteNotificationBell />
             <div className="h-6 w-px bg-brand-border dark:border-stone-800"></div>
             <div className="flex items-center gap-3">
