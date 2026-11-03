@@ -263,6 +263,15 @@
       "group": "mock"
     },
     {
+      "name": "lost-search-notice",
+      "origin": "http://127.0.0.1:5187",
+      "server": "dev",
+      "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "map-security",
       "origin": "http://127.0.0.1:5262",
       "server": "preview",

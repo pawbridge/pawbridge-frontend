@@ -171,9 +171,13 @@ export default function LostAnimalSearch() {
         <h2 ref={resultHeading} tabIndex={-1} id="result-heading" className="scroll-mt-24 mb-5 text-xl font-bold focus:outline-none">{phase === 'success' ? `확인할 후보 ${results.length}마리` : '함께 확인할 후보'}</h2>
         <div aria-live="polite">
           {phase === 'loading' && <div className="rounded-2xl border border-border-light p-8 text-center dark:border-border-dark"><span className="mx-auto mb-4 block h-9 w-9 animate-spin rounded-full border-4 border-brand-focus border-t-brand-focus motion-reduce:animate-none" /><p className="font-bold">닮은 동물을 찾고 있어요</p><p className="mt-2 text-sm text-gray-500">사진과 공고 정보를 확인하고 있어요. 잠시만 기다려 주세요.</p></div>}
-          {phase === 'idle' && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:bg-card-dark"><p className="font-bold">사진을 선택하고 후보를 찾아보세요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">기본 검색은 현재 공고·보호 중인 동물을 확인해요.<br />사진이 닮아도 다른 동물일 수 있어요.</p></div>}
+          {phase === 'idle' && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:bg-card-dark"><p className="font-bold">사진을 선택하고 후보를 찾아보세요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">기본 검색은 현재 공고·보호 중인 동물을 확인해요.<br />사진이 닮아도 다른 동물일 수 있어요.<br />막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요. 최근 공고는 동물 목록에서도 확인해 주세요.</p>
+            {/* 임시 안내: 검색 자료 보충이 끝나는 2026-11-04 오전 이후 제거한다. */}
+            <p className="mt-3 text-sm font-bold leading-6">11월 4일 오전까지는 새 공고의 반영이 평소보다 늦어요. 검색 자료를 새로 만들고 있어요.</p></div>}
           {phase === 'error' && <p className="rounded-2xl border border-border-light p-6 text-sm dark:border-border-dark">검색이 완료되지 않았어요. 조건과 사진을 유지했으니 다시 시도해 주세요.</p>}
-          {phase === 'success' && results.length === 0 && <div className="rounded-2xl border border-border-light p-8 dark:border-border-dark"><p className="font-bold">이번 검색에서는 후보를 찾지 못했어요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">수집되지 않았거나 검색 가능한 사진이 없는 공고도 있어요. 다른 사진으로 다시 확인하거나 보호소에 문의해 주세요.</p></div>}
+          {phase === 'success' && results.length === 0 && <div className="rounded-2xl border border-border-light p-8 dark:border-border-dark"><p className="font-bold">이번 검색에서는 후보를 찾지 못했어요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">수집되지 않았거나 검색 가능한 사진이 없는 공고도 있어요. 막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요.<br />다른 사진으로 다시 확인하거나 보호소에 문의해 주세요. 최근 공고는 동물 목록에서도 확인해 주세요.</p>
+            {/* 임시 안내: 검색 자료 보충이 끝나는 2026-11-04 오전 이후 제거한다. */}
+            <p className="mt-3 text-sm font-bold leading-6">11월 4일 오전까지는 새 공고의 반영이 평소보다 늦어요. 검색 자료를 새로 만들고 있어요.</p></div>}
         </div>
         {phase === 'success' && results.length > 0 && <>
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{results.map(({ animal, shelterPhone, matchedEvidence }) => <article key={animal.id} className="min-w-0 overflow-hidden rounded-2xl border border-border-light bg-card-light dark:border-border-dark dark:bg-card-dark">
