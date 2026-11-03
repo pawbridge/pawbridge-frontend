@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import CheckIcon from '../../assets/icons/material-symbols/check.svg?react';
+import ExpandLessIcon from '../../assets/icons/material-symbols/expand_less.svg?react';
+import ExpandMoreIcon from '../../assets/icons/material-symbols/expand_more.svg?react';
 
 interface Option {
   value: string | number;
@@ -88,9 +91,11 @@ export default function CustomSelect({
         <span className={selectedOption ? '' : 'text-brand-muted'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span aria-hidden="true" className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted dark:text-gray-400 pointer-events-none transition-transform z-10">
-          {isOpen ? 'expand_less' : 'expand_more'}
-        </span>
+        {isOpen ? (
+          <ExpandLessIcon aria-hidden="true" className="icon absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted dark:text-gray-400 pointer-events-none transition-transform z-10" />
+        ) : (
+          <ExpandMoreIcon aria-hidden="true" className="icon absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted dark:text-gray-400 pointer-events-none transition-transform z-10" />
+        )}
       </button>
 
       {isOpen && (
@@ -131,9 +136,7 @@ export default function CustomSelect({
                   <div className="flex items-center justify-between">
                     <span>{option.label}</span>
                     {value === option.value && (
-                      <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-brand-accent">
-                        check
-                      </span>
+                      <CheckIcon aria-hidden="true" className="icon text-[18px] text-brand-accent" />
                     )}
                   </div>
                 </button>

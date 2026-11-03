@@ -2,6 +2,9 @@ import MyPageListState, { type MyPageListFeedback } from './MyPageListState';
 import { Link } from 'react-router-dom';
 import type { CartItem } from '../../types/api.types';
 import { formatPrice } from './marketPresentation';
+import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.svg?react';
+import ImageIcon from '../../assets/icons/material-symbols/image.svg?react';
+import ShoppingCartOffIcon from '../../assets/icons/material-symbols/shopping_cart_off.svg?react';
 
 interface MyCartPanelProps {
   feedback: MyPageListFeedback;
@@ -46,7 +49,7 @@ export default function MyCartPanel({
       <MyPageListState label="장바구니를" {...feedback}>
         {cartItems.length === 0 ? (
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">shopping_cart_off</span>
+            <ShoppingCartOffIcon aria-hidden="true" className="icon text-6xl text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">장바구니가 비어있습니다.</p>
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 담아보세요.</p>
             <Link
@@ -54,7 +57,7 @@ export default function MyCartPanel({
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑 계속하기
-              <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
+              <ArrowForwardIcon aria-hidden="true" className="icon text-sm" />
             </Link>
           </div>
         ) : (
@@ -73,7 +76,7 @@ export default function MyCartPanel({
                   >
                     {!item.productImageUrl && (
                       <div className="w-full h-full flex items-center justify-center">
-                        <span aria-hidden="true" className="material-symbols-outlined text-2xl text-gray-400">image</span>
+                        <ImageIcon aria-hidden="true" className="icon text-2xl text-gray-400" />
                       </div>
                     )}
                   </div>

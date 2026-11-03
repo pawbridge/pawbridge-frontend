@@ -15,6 +15,7 @@ import {
 import { useAuthStore } from '../store/authStore';
 
 import { getApiErrorMessage } from '../lib/apiError';
+import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 
 const boardLabel: Record<string, string> = {
   MISSING: '실종',
@@ -146,7 +147,7 @@ export default function CommunityDetail() {
             to="/community"
             className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-brand-accent dark:hover:text-brand-accent"
           >
-            <span aria-hidden="true" className="material-symbols-outlined mr-1">arrow_back</span>
+            <ArrowBackIcon aria-hidden="true" className="icon mr-1" />
             목록으로
           </Link>
         </div>

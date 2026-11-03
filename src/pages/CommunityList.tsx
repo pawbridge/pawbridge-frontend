@@ -8,6 +8,10 @@ import { getAllPosts, searchPosts } from '../api/community.api';
 import type { BoardType, PostResponse } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
 import Pagination from '../components/common/Pagination';
+import EditIcon from '../assets/icons/material-symbols/edit.svg?react';
+import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
+import LockIcon from '../assets/icons/material-symbols/lock.svg?react';
+import SearchIcon from '../assets/icons/material-symbols/search.svg?react';
 
 const boardTabs: { key: BoardType; label: string }[] = [
   { key: 'PROTECTION', label: '보호 동물' },
@@ -171,7 +175,7 @@ export default function CommunityList() {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between py-6">
           <div className="w-full md:max-w-xs">
             <label className="relative flex items-center">
-              <span aria-hidden="true" className="material-symbols-outlined absolute left-3 text-gray-400 dark:text-gray-500">search</span>
+              <SearchIcon aria-hidden="true" className="icon absolute left-3 text-gray-400 dark:text-gray-500" />
               <input
                 className="form-input w-full pl-10 pr-4 py-2.5 rounded-lg border-none bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-brand-focus"
                 placeholder="제목, 내용으로 검색 (Enter)"
@@ -184,14 +188,14 @@ export default function CommunityList() {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
-              <span aria-hidden="true" className="material-symbols-outlined text-lg">lock</span>
+              <LockIcon aria-hidden="true" className="icon text-lg" />
               <span>열람은 누구나 · 작성은 로그인 후</span>
             </div>
             <button
               onClick={handleWriteClick}
               className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
             >
-              <span aria-hidden="true" className="material-symbols-outlined text-base">edit</span>
+              <EditIcon aria-hidden="true" className="icon text-base" />
               <span>글쓰기</span>
             </button>
           </div>
@@ -259,7 +263,7 @@ export default function CommunityList() {
                     />
                   ) : (
                     <div className="w-full aspect-square rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                      <span aria-hidden="true" className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                      <ImageIcon aria-hidden="true" className="icon text-gray-400 dark:text-gray-500 text-5xl" />
                     </div>
                   )}
                   <div>

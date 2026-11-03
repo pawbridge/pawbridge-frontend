@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
+import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -121,7 +122,7 @@ export default function OrderDetail() {
           onClick={() => navigate('/orders')}
           className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border-color rounded-lg text-text-main font-bold hover:bg-gray-50 transition-colors dark:bg-stone-800 dark:border-stone-700 dark:text-white dark:hover:bg-stone-800"
         >
-          <span aria-hidden="true" className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <ArrowBackIcon aria-hidden="true" className="icon text-[20px]" />
           목록으로 돌아가기
         </button>
       </div>

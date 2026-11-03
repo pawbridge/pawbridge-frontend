@@ -1,4 +1,17 @@
 import type { UserInfoResponse } from '../../types/user.types';
+import LogoutIcon from '../../assets/icons/material-symbols/logout.svg?react';
+import FavoriteIcon from '../../assets/icons/material-symbols/favorite.svg?react';
+import FavoriteFillIcon from '../../assets/icons/material-symbols/favorite-fill.svg?react';
+import HomeIcon from '../../assets/icons/material-symbols/home.svg?react';
+import HomeFillIcon from '../../assets/icons/material-symbols/home-fill.svg?react';
+import PersonIcon from '../../assets/icons/material-symbols/person.svg?react';
+import PersonFillIcon from '../../assets/icons/material-symbols/person-fill.svg?react';
+import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
+import PetsFillIcon from '../../assets/icons/material-symbols/pets-fill.svg?react';
+import ReceiptLongIcon from '../../assets/icons/material-symbols/receipt_long.svg?react';
+import ReceiptLongFillIcon from '../../assets/icons/material-symbols/receipt_long-fill.svg?react';
+import ShoppingCartIcon from '../../assets/icons/material-symbols/shopping_cart.svg?react';
+import ShoppingCartFillIcon from '../../assets/icons/material-symbols/shopping_cart-fill.svg?react';
 
 export type MyPageTab = 'shelter' | 'profile' | 'favoriteAnimals' | 'registeredAnimals' | 'wishlist' | 'cart' | 'orders';
 
@@ -59,15 +72,11 @@ export default function MyPageSidebar({
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
-            <span
-              aria-hidden="true"
-              className={`material-symbols-outlined ${
-                activeTab === 'profile' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-              }`}
-              style={{ fontVariationSettings: activeTab === 'profile' ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              person
-            </span>
+            {activeTab === 'profile' ? (
+              <PersonFillIcon aria-hidden="true" className="icon text-text-main dark:text-gray-100" />
+            ) : (
+              <PersonIcon aria-hidden="true" className="icon text-gray-500 dark:text-gray-400" />
+            )}
             <p
               className={`text-sm ${
                 activeTab === 'profile'
@@ -87,15 +96,11 @@ export default function MyPageSidebar({
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
-            <span
-              aria-hidden="true"
-              className={`material-symbols-outlined ${
-                activeTab === 'favoriteAnimals' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-              }`}
-              style={{ fontVariationSettings: activeTab === 'favoriteAnimals' ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              pets
-            </span>
+            {activeTab === 'favoriteAnimals' ? (
+              <PetsFillIcon aria-hidden="true" className="icon text-text-main dark:text-gray-100" />
+            ) : (
+              <PetsIcon aria-hidden="true" className="icon text-gray-500 dark:text-gray-400" />
+            )}
             <p
               className={`text-sm ${
                 activeTab === 'favoriteAnimals'
@@ -116,15 +121,11 @@ export default function MyPageSidebar({
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
               }`}
             >
-              <span
-                aria-hidden="true"
-                className={`material-symbols-outlined ${
-                  activeTab === 'registeredAnimals' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-                }`}
-                style={{ fontVariationSettings: activeTab === 'registeredAnimals' ? "'FILL' 1" : "'FILL' 0" }}
-              >
-                home
-              </span>
+              {activeTab === 'registeredAnimals' ? (
+                <HomeFillIcon aria-hidden="true" className="icon text-text-main dark:text-gray-100" />
+              ) : (
+                <HomeIcon aria-hidden="true" className="icon text-gray-500 dark:text-gray-400" />
+              )}
               <p
                 className={`text-sm ${
                   activeTab === 'registeredAnimals'
@@ -146,15 +147,11 @@ export default function MyPageSidebar({
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
-            <span
-              aria-hidden="true"
-              className={`material-symbols-outlined ${
-                activeTab === 'wishlist' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-              }`}
-              style={{ fontVariationSettings: activeTab === 'wishlist' ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              favorite
-            </span>
+            {activeTab === 'wishlist' ? (
+              <FavoriteFillIcon aria-hidden="true" className="icon text-text-main dark:text-gray-100" />
+            ) : (
+              <FavoriteIcon aria-hidden="true" className="icon text-gray-500 dark:text-gray-400" />
+            )}
             <p
               className={`text-sm ${
                 activeTab === 'wishlist'
@@ -174,15 +171,11 @@ export default function MyPageSidebar({
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
-            <span
-              aria-hidden="true"
-              className={`material-symbols-outlined ${
-                activeTab === 'cart' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-              }`}
-              style={{ fontVariationSettings: activeTab === 'cart' ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              shopping_cart
-            </span>
+            {activeTab === 'cart' ? (
+              <ShoppingCartFillIcon aria-hidden="true" className="icon text-text-main dark:text-gray-100" />
+            ) : (
+              <ShoppingCartIcon aria-hidden="true" className="icon text-gray-500 dark:text-gray-400" />
+            )}
             <p
               className={`text-sm ${
                 activeTab === 'cart'
@@ -202,15 +195,11 @@ export default function MyPageSidebar({
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
-            <span
-              aria-hidden="true"
-              className={`material-symbols-outlined ${
-                activeTab === 'orders' ? 'text-text-main dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
-              }`}
-              style={{ fontVariationSettings: activeTab === 'orders' ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              receipt_long
-            </span>
+            {activeTab === 'orders' ? (
+              <ReceiptLongFillIcon aria-hidden="true" className="icon text-text-main dark:text-gray-100" />
+            ) : (
+              <ReceiptLongIcon aria-hidden="true" className="icon text-gray-500 dark:text-gray-400" />
+            )}
             <p
               className={`text-sm ${
                 activeTab === 'orders'
@@ -231,7 +220,7 @@ export default function MyPageSidebar({
             onClick={onLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
           >
-            <span aria-hidden="true" className="material-symbols-outlined text-red-500">logout</span>
+            <LogoutIcon aria-hidden="true" className="icon text-red-500" />
             <p className="text-red-500 text-sm font-medium leading-normal">로그아웃</p>
           </button>
         </div>
