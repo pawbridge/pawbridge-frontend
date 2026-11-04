@@ -12,7 +12,7 @@ export default function ShelterHistory({ shelterId }: { shelterId: number }) {
   const top = maximum <= 5 ? 5 : Math.ceil(maximum / 10) * 10;
   return <section aria-label="날짜별 보호중 기록" className="mt-4 rounded-xl border border-brand-border bg-white p-4 dark:bg-card-dark md:p-6">
     <h3 className="text-lg font-bold">날짜별 보호중 기록</h3>
-    <p className="mt-2 text-sm leading-6 text-brand-muted dark:text-gray-300">날짜별 전체 보호중 수 · 접수일 제한 없음</p>
+    <p className="mt-2 text-sm leading-6 text-brand-muted dark:text-gray-300">날짜별 전체 보호중 수(접수일 제한 없음)</p>
     <p className="text-xs leading-5 text-brand-muted dark:text-gray-300">최근 30일 · {from} – {to}</p>
     {result.isPending ? <p role="status" className="py-10">기록을 불러오고 있어요.</p>
       : result.isError ? <div role="alert" className="py-6"><p>기록을 불러오지 못했어요.</p><button type="button" onClick={() => void result.refetch()} className="mt-2 min-h-11 underline">기록 다시 불러오기</button></div>

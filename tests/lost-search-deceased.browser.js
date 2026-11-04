@@ -1,6 +1,6 @@
 // 사진으로 찾기 v1.1(Figma 페이지 86): 검색 범위 체크박스 2개와 "보호 중 사망한 기록" 구역.
 // 상태 B(사망 꺼짐, 끝 안내), C(사망 켬, 결과), D(살아 있는 후보 0건), E(사망 기록 0건)를 확인하고
-// PR 캡처용으로 1920·390px 화면을 /tmp/lost-search-deceased-*.png 에 남긴다. C는 다크 모드도 남긴다. 모의 응답만 쓴다.
+// PR 캡처용으로 1920, 390px 화면을 /tmp/lost-search-deceased-*.png 에 남긴다. C는 다크 모드도 남긴다. 모의 응답만 쓴다.
 async (page) => {
   await page.unrouteAll({ behavior: 'ignoreErrors' });
   const check = (ok, message) => { if (!ok) throw new Error(message); };
@@ -57,7 +57,7 @@ async (page) => {
   payload = { candidates: living, deceasedCandidates: deceased };
   await search('확인할 후보 6마리');
   check(await hint.isVisible() && await section.count() === 0, 'B: end hint missing or deceased section shown');
-  check(await page.getByText('종료 · 기증', { exact: true }).isVisible(), 'B: donated label missing');
+  check(await page.getByText('종료(기증)', { exact: true }).isVisible(), 'B: donated label missing');
   await shot('b');
 
   // C: 사망 켬. 체크박스를 바꾸면 이전 결과를 지우고, 다시 찾으면 후보 아래에 사망 기록 구역이 따로 나온다.
@@ -66,7 +66,7 @@ async (page) => {
   await search('보호 중 사망한 기록 3건');
   check(/name="includeDeceased"\r\n\r\ntrue/.test(requests.at(-1)), 'C: deceased option was not transmitted');
   check(await section.locator('article').count() === 3 && await page.locator('article').count() === 9, 'C: cards were mixed or missing');
-  check(await section.getByText('종료 · 안락사', { exact: true }).isVisible(), 'C: euthanized label missing');
+  check(await section.getByText('종료(안락사)', { exact: true }).isVisible(), 'C: euthanized label missing');
   check(await hint.count() === 0, 'C: end hint should be hidden');
   await shot('c');
   await page.evaluate(() => document.documentElement.classList.add('dark'));

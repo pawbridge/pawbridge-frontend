@@ -74,7 +74,7 @@ async page => {
   await page.goto(origin + '/admin/users');
   const menu = page.getByRole('button', { name: '메뉴', exact: true });
   await menu.click();
-  const menuDialog = page.getByRole('dialog', { name: 'PawBridge · 관리자' });
+  const menuDialog = page.getByRole('dialog', { name: 'PawBridge 관리자' });
   await menuDialog.waitFor();
   check(await menuDialog.locator('[aria-current="page"]').count() === 1, 'One mobile current menu');
   check(await page.evaluate(() => document.body.style.overflow === 'hidden'), 'Background scroll must lock');

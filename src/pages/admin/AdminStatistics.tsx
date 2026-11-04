@@ -58,17 +58,17 @@ function StatisticsContent({ area, range }: { area: Area; range: Range }) {
   return <>
     {area === 'animals' && <div role="group" aria-label="동물 통계 기준" className="flex flex-wrap gap-2">
       <button className={!collection ? adminPrimary : adminControl} aria-pressed={!collection} onClick={() => { setCollection(false); setPage(0); }}>접수 현황</button>
-      <button className={collection ? adminPrimary : adminControl} aria-pressed={collection} onClick={() => { setCollection(true); setPage(0); }}>신규 수집 · 보조 지표</button>
+      <button className={collection ? adminPrimary : adminControl} aria-pressed={collection} onClick={() => { setCollection(true); setPage(0); }}>신규 수집(보조 지표)</button>
     </div>}
-    <p className="text-xs text-brand-muted dark:text-stone-300">{mode === 'members' ? '가입일 기준 · 현재 남아 있는 회원 기록입니다. 회원 삭제가 과거 집계에 영향을 줄 수 있습니다.' : mode === 'collection' ? '시스템 최초 저장일 기준 · 실제 발견·접수 건수가 아닙니다. 수동 등록과 공공 데이터 수집이 포함될 수 있습니다.' : mode === 'animals' ? '접수일 기준 · PawBridge 보유 동물입니다. 접수일이 없는 동물은 제외합니다.' : mode === 'shelters' ? '신청 접수일 기준 · 현재 대기 수와 심사일 기준 처리 수는 별도 지표입니다.' : '작성일 기준 · 현재 삭제되지 않은 게시글입니다. 실제 입양 건수나 신규 실종·목격 신고 통계가 아닙니다.'}</p>
+    <p className="text-xs text-brand-muted dark:text-stone-300">{mode === 'members' ? '가입일 기준이며, 현재 남아 있는 회원 기록입니다. 회원 삭제가 과거 집계에 영향을 줄 수 있습니다.' : mode === 'collection' ? '시스템 최초 저장일 기준이며, 실제 발견·접수 건수가 아닙니다. 수동 등록과 공공 데이터 수집이 포함될 수 있습니다.' : mode === 'animals' ? '접수일 기준이며, PawBridge 보유 동물입니다. 접수일이 없는 동물은 제외합니다.' : mode === 'shelters' ? '신청 접수일 기준이며, 현재 대기 수와 심사일 기준 처리 수는 별도 지표입니다.' : '작성일 기준이며, 현재 삭제되지 않은 게시글입니다. 실제 입양 건수나 신규 실종·목격 신고 통계가 아닙니다.'}</p>
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 [&>section:last-child]:col-span-2 sm:[&>section:last-child]:col-span-1">
       <Metric title={mode === 'shelters' ? '기간 신청' : mode === 'community' ? '기간 게시글' : mode === 'animals' ? '기간 접수' : mode === 'members' ? '기간 가입' : '기간 신규 수집'} value={total} caption="선택 기간 기준" query={trend} unit={unit} />
       {mode === 'members' ? <Metric title="현재 회원" value={members.data} caption="선택 기간과 무관한 현재 규모" query={members} unit="명" />
         : mode === 'animals' ? <Metric title="현재 보호중" value={stateCount('PROTECT')} caption="선택 기간 접수 동물의 현재 상태" query={status} unit="마리" />
         : mode === 'shelters' ? <Metric title="현재 심사 대기" value={application?.currentPending} caption="선택 기간과 무관한 현재 대기량" query={trend} unit="건" />
-        : mode === 'community' ? <Metric title="입양 후기" value={adoption} caption="후기 게시글 · 실제 입양 건수 아님" query={trend} unit="건" />
+        : mode === 'community' ? <Metric title="입양 후기" value={adoption} caption="후기 게시글(실제 입양 건수 아님)" query={trend} unit="건" />
         : <Metric title="하루 최대" value={Math.max(0, ...rows.map(row => row.count))} caption="시스템 최초 저장 기준" query={trend} unit={unit} />}
-      {mode === 'animals' ? <Metric title="현재 입양완료" value={stateCount('ADOPTED')} caption="선택 기간 접수 동물의 현재 상태 · 발생 건수 아님" query={status} unit="마리" />
+      {mode === 'animals' ? <Metric title="현재 입양완료" value={stateCount('ADOPTED')} caption="선택 기간 접수 동물의 현재 상태(발생 건수 아님)" query={status} unit="마리" />
         : mode === 'shelters' ? <Metric title="등록된 보호소" value={shelters.data} caption="PawBridge에 저장된 현재 보호소" query={shelters} unit="곳" />
         : mode === 'community' ? <Metric title="그 외 게시글" value={total - adoption} caption="선택 기간 미삭제 게시글" query={trend} unit="건" />
         : <Metric title={mode === 'collection' ? '일평균 신규 수집' : '일평균 가입'} value={rows.length ? Math.round(total / rows.length * 10) / 10 : 0} caption="선택 기간 달력 일수 기준" query={trend} unit={unit} />}
@@ -89,7 +89,7 @@ function StatisticsContent({ area, range }: { area: Area; range: Range }) {
     </div>
     {trend.isSuccess && <section className={`${adminPanel} space-y-5`}>
       <h2 className="text-xl font-bold">날짜별 상세</h2><p className="text-xs text-brand-muted dark:text-stone-300">달력상의 전일과 비교합니다. 전일 0건에서 증가하면 증감 건수를 표시합니다.</p>
-      <div className="space-y-3">{[...rows].reverse().slice(page * 7, (page + 1) * 7).map(row => <div key={row.date} className={`grid gap-3 rounded-lg border border-brand-border p-4 sm:grid-cols-3 dark:border-stone-700 ${row.date === kstToday() ? 'bg-brand-soft dark:bg-stone-800' : ''}`}><span className="text-sm font-medium">{row.date}{row.date === kstToday() ? ' · 오늘' : ''}</span><span className="text-sm">{row.count.toLocaleString()}{unit}</span><span className="text-xs text-brand-muted dark:text-stone-300">전일 대비 {changes.get(row.date)}</span></div>)}</div>
+      <div className="space-y-3">{[...rows].reverse().slice(page * 7, (page + 1) * 7).map(row => <div key={row.date} className={`grid gap-3 rounded-lg border border-brand-border p-4 sm:grid-cols-3 dark:border-stone-700 ${row.date === kstToday() ? 'bg-brand-soft dark:bg-stone-800' : ''}`}><span className="text-sm font-medium">{row.date}{row.date === kstToday() ? ' (오늘)' : ''}</span><span className="text-sm">{row.count.toLocaleString()}{unit}</span><span className="text-xs text-brand-muted dark:text-stone-300">전일 대비 {changes.get(row.date)}</span></div>)}</div>
       <AdminPagination page={page} total={Math.ceil(rows.length / 7)} onChange={setPage} />
     </section>}
   </>;

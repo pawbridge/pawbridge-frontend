@@ -20,7 +20,7 @@ export default function AdminShelterApplications() {
     <p className="text-sm text-brand-muted dark:text-stone-300">신청 정보를 확인한 뒤 보호소 소속을 대조하고 승인해 주세요.</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="신청 상태">{(['PENDING', 'APPROVED', 'REJECTED', ''] as const).map(value =>
       <button key={value} className={status === value ? adminPrimary : adminControl} aria-pressed={status === value} onClick={() => setParams({ status: value || 'ALL', page: '0' })}>{value ? labels[value] : '전체'}</button>)}</div>
-    <p className="text-xs text-brand-muted dark:text-stone-300">현재 조건 · {status ? labels[status] : '전체'}</p>
+    <p className="text-xs text-brand-muted dark:text-stone-300">현재 조건: {status ? labels[status] : '전체'}</p>
     {query.isPending ? <AdminLoading label="신청 목록을 불러오는 중입니다." /> : query.isError ? <AdminError title="신청 목록 조회 실패" retry={() => void query.refetch()} /> : <>
       <h2 className="text-sm font-medium">신청 {query.data.totalElements.toLocaleString()}건</h2>
       {!query.data.content.length ? <AdminEmpty title="해당하는 신청이 없습니다." /> : <ul className="space-y-4">{query.data.content.map(({ application, applicantName }) =>
