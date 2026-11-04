@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   const metrics = [
     { title: '현재 회원', value: members.data, description: '현재 남아 있는 가입 회원', query: members },
     { title: '오늘 가입', value: todayCount(signup.data), description: '오늘 신규 회원', query: signup },
-    { title: '오늘 신규 수집', value: todayCount(animals.data), description: '시스템 최초 저장 기준 · 접수 건수 아님', query: animals },
+    { title: '오늘 신규 수집', value: todayCount(animals.data), description: '시스템 최초 저장 기준(접수 건수 아님)', query: animals },
     { title: '오늘 게시글', value: posts.data, description: '오늘 작성된 미삭제 게시글', query: posts },
   ];
   return <><AdminPageHeader title="대시보드" description="회원과 서비스 운영 현황을 확인하세요." />

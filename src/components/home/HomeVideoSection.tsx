@@ -44,7 +44,7 @@ export default function HomeVideoSection() {
       </nav>}
     </>}
     {playing && <VideoDialog title="함께하는 일상" onClose={() => setPlaying(undefined)}>
-      <iframe title={`${playing.title} · YouTube 영상`} src={videoPlayerUrl(playing.videoId)}
+      <iframe title={`YouTube 영상: ${playing.title}`} src={videoPlayerUrl(playing.videoId)}
         className="aspect-video min-h-[200px] w-full rounded-xl border-0" allow="encrypted-media; picture-in-picture; fullscreen"
         allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
       <h3 className="mt-4 break-words text-lg font-bold">{playing.title}</h3>
