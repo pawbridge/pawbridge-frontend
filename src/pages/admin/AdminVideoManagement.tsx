@@ -57,7 +57,7 @@ function VideoForm({ video, revision, onClose, onSaved }: {
             <p className="text-sm text-brand-muted">YouTube · {preview.channelTitle}</p><p className="text-xs">{videoDuration(preview.durationSeconds)}</p>
           </div>
         </div>
-        <p className="mt-4 text-sm">{preview.available ? '게시 가능 · 공개 상태 · 한국에서 외부 재생 가능' : '재생 불가 · 숨김으로만 등록할 수 있습니다.'}</p>
+        <p className="mt-4 text-sm">{preview.available ? '게시 가능 · 공개 상태 · 한국에서 외부 재생 가능' : '재생할 수 없어 숨김으로만 등록할 수 있습니다.'}</p>
       </section>}
       <label className="block text-sm font-medium">등록 후 상태
         <select className={adminInput} value={published ? 'PUBLISHED' : 'HIDDEN'} disabled={busy} onChange={event => setPublished(event.target.value === 'PUBLISHED')}>

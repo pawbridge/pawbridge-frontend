@@ -71,7 +71,7 @@ export default function AnimalStats() {
       </section>
 
       <section aria-labelledby="regional-heading" className="mt-10">
-        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3"><div><h2 id="regional-heading" className="text-2xl font-bold">지역별 구조 현황</h2><p className="mt-2 text-sm text-gray-600 dark:text-gray-300">보호소 소재지 · 구조일(APMS 접수일) 기준 · 소재지가 확인된 동물 집계</p></div>{regionalQuery.isSuccess && <p className="text-sm">전국 <strong className="text-xl">{regionalTotal?.toLocaleString()}</strong>마리</p>}</div>
+        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3"><div><h2 id="regional-heading" className="text-2xl font-bold">지역별 구조 현황</h2><p className="mt-2 text-sm text-gray-600 dark:text-gray-300">보호소 소재지와 구조일(APMS 접수일) 기준이며, 소재지가 확인된 동물만 집계합니다.</p></div>{regionalQuery.isSuccess && <p className="text-sm">전국 <strong className="text-xl">{regionalTotal?.toLocaleString()}</strong>마리</p>}</div>
         {regionalQuery.isPending ? <p role="status" className="rounded-xl bg-brand/5 p-8 text-center">지역별 현황을 불러오는 중입니다.</p> : regionalQuery.isError ? <QueryError retry={() => { void regionalQuery.refetch(); }} /> : <>
           {regionalTotal === 0 && <p role="status" className="mb-4 rounded-lg bg-brand/10 p-4 text-sm">선택한 기간에 집계된 구조 동물이 없습니다.</p>}
           <RegionalAnimalStats key={`${startDate}:${endDate}`} data={regionalQuery.data} />

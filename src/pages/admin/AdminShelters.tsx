@@ -19,7 +19,7 @@ function ShelterList() {
       <button className={`${adminPrimary} w-full shrink-0 sm:w-auto`}>검색</button>
     </form>
     {query.isPending ? <AdminLoading label="보호소 목록을 불러오는 중입니다." /> : query.isError ? <AdminError title="보호소 목록 조회 실패" retry={() => void query.refetch()} /> : <>
-      <h2 className="text-sm font-medium">검색 결과 · 보호소 {query.data.totalElements.toLocaleString()}곳</h2>
+      <h2 className="text-sm font-medium">검색 결과: 보호소 {query.data.totalElements.toLocaleString()}곳</h2>
       {query.data.content.length === 0 ? <AdminEmpty title="검색 결과가 없습니다."><button className={adminControl} onClick={() => { setDraft(''); setParams({}); }}>전체 보호소 보기</button></AdminEmpty> : <ul className="space-y-4">{query.data.content.map(shelter =>
         <AdminRecord key={shelter.id} title={shelter.name} description={shelter.address || '주소 미등록'} meta={`등록번호 ${shelter.careRegNo}`}>
           <Link className={adminControl} to={`/admin/shelters/${encodeURIComponent(shelter.careRegNo)}?${params.toString()}`}>상세 보기</Link>

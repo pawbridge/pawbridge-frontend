@@ -40,7 +40,7 @@ async (page) => {
   await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).check();
   check(await page.getByRole('heading', { name: '확인할 후보 1마리' }).count() === 0, 'status option did not invalidate old results');
   await page.getByRole('button', { name: '사진으로 후보 찾기' }).click();
-  await page.getByText('종료 · 입양', { exact: true }).waitFor();
+  await page.getByText('종료(입양)', { exact: true }).waitFor();
   check(requests[1].includes('name="includeAdoptedOrReturned"') && requests[1].includes('true'), 'expanded status policy was not transmitted');
   check((await page.getByRole('link', { name: '보호소 문의', exact: false }).getAttribute('href')) === 'tel:020000000', 'shelter phone action missing');
   await page.waitForFunction(() => {
