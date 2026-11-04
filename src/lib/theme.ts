@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 
 // 사용자가 고른 화면 모드. 고른 적이 없으면 기기 설정(시스템 다크 모드)을 따른다.
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -65,4 +65,19 @@ export function useTheme() {
   }, [isDark]);
 
   return { isDark, toggle };
+}
+
+// 지금 화면이 다크인지. 헤더 밖 컴포넌트(지도 안내 문구 등)가 html의 dark 클래스를 지켜본다.
+function subscribeDarkClass(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  return () => observer.disconnect();
+}
+
+function readDarkClass() {
+  return document.documentElement.classList.contains('dark');
+}
+
+export function useIsDark() {
+  return useSyncExternalStore(subscribeDarkClass, readDarkClass, () => false);
 }

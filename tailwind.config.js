@@ -8,6 +8,24 @@ const brand = {
   border: '#DDDDD8',
 };
 
+// SHYU 다크(D안)에 맞춘 무채색 회색. 차가운 회색(gray) 대신 따뜻한 무채색을 쓴다.
+// 50~600은 stone과 같고, 700~900은 다크 화면 값(테두리 #333333, 카드 #1A1A1A, 바탕 #0F0F0F)이다.
+const neutralGray = {
+  50: '#FAFAF9',
+  100: '#F5F5F4',
+  200: '#E7E5E4',
+  300: '#D6D3D1',
+  400: '#A8A29E',
+  500: '#78716C',
+  600: '#57534E',
+  700: '#333333',
+  800: '#1A1A1A',
+  900: '#0F0F0F',
+  950: '#0A0A0A',
+};
+// 관리자 화면은 stone을 쓰고 패널이 #1A1A1A라서, 800을 한 단계 밝은 #262626(눌림, 선택 배경)으로 둔다.
+const neutralStone = { ...neutralGray, 800: '#262626', 900: '#1A1A1A' };
+
 // SHYU typography: ordinary text and legacy display classes share one family.
 const fontSans = ["Noto Sans KR", "sans-serif"];
 
@@ -21,8 +39,14 @@ export default {
     theme: {
       extend: {
         colors: {
+          gray: neutralGray,
+          stone: neutralStone,
           brand: {
             ...brand,
+            // 테두리, 보조 글자, 연노랑 배경은 다크에서 SHYU 다크 값으로 바뀐다(index.css의 .dark).
+            soft: 'rgb(var(--brand-soft) / <alpha-value>)',
+            muted: 'rgb(var(--brand-muted) / <alpha-value>)',
+            border: 'rgb(var(--brand-border) / <alpha-value>)',
             accent: 'rgb(var(--brand-accent) / <alpha-value>)',
             focus: 'rgb(var(--brand-focus) / <alpha-value>)',
           },
@@ -35,7 +59,9 @@ export default {
           "card-light": "#ffffff",
           "card-dark": "#1a1a1a",
           "border-light": "#e5e7eb",
-          "border-dark": "#374151",
+          "border-dark": "#333333",
+          // SHYU border/accent 다크: 연노랑 배경 자리(#1A1A1A)를 구분하는 35% 노랑 테두리
+          "accent-border-dark": "rgb(255 242 166 / 0.35)",
           'text-main': brand.ink,
           'text-secondary': brand.muted,
           'subtext-light': brand.muted,

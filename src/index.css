@@ -6,6 +6,9 @@
   :root {
     --brand-accent: 48 48 46;
     --brand-focus: 48 48 46;
+    --brand-soft: 255 252 233;
+    --brand-muted: 100 100 96;
+    --brand-border: 221 221 216;
     --chart-zero: #e7e5e4;
     --chart-low: #fff2a6;
     --chart-mid: #c4b66a;
@@ -19,10 +22,22 @@
     color-scheme: dark;
     --brand-accent: 255 242 166;
     --brand-focus: 255 242 166;
+    /* SHYU 다크: bg/accent #1A1A1A, text/secondary #A8A29E, border/default #333333 */
+    --brand-soft: 26 26 26;
+    --brand-muted: 168 162 158;
+    --brand-border: 51 51 51;
+    /* 지도 색: 다크에서는 밝을수록 구조 동물이 많다(Figma 21 다크) */
+    --chart-zero: #2a2a2a;
+    --chart-low: #4a4636;
+    --chart-mid: #8a8150;
+    --chart-high: #c4b66a;
+    --chart-highest: #fff2a6;
+    --chart-outline: #e7e5e4;
+    --chart-surface: #1a1a1a;
   }
 
   body {
-    @apply text-brand-ink dark:text-gray-200;
+    @apply bg-background-light text-brand-ink dark:bg-background-dark dark:text-gray-200;
   }
 
   :where(a, button, input, select, textarea, summary):focus-visible {
@@ -83,6 +98,10 @@
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1a1a1a;
 }
 
 ::-webkit-scrollbar-thumb {

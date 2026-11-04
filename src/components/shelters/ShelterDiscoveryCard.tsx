@@ -34,7 +34,7 @@ export default function ShelterDiscoveryCard({ shelter, filters }: { shelter: Sh
     <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start"><div className="min-w-0">
       <p className="text-xs text-brand-muted dark:text-gray-300">{shelter.address || '주소 미등록'}</p>
       <h2 className="mt-2 break-words text-xl font-bold">{shelter.name}</h2>
-      <p className="mt-3 inline-block rounded-lg bg-brand-soft px-3 py-2 text-sm text-brand-ink">조건에 맞는 보호중 <strong>{shelter.protectedCount.toLocaleString()}마리</strong></p>
+      <p className="mt-3 inline-block rounded-lg bg-brand-soft px-3 py-2 text-sm text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">조건에 맞는 보호중 <strong>{shelter.protectedCount.toLocaleString()}마리</strong></p>
     </div><Link to={detailUrl} state={detailState} className="min-h-11 shrink-0 self-start py-3 text-sm underline underline-offset-4">보호소 상세 →</Link></div>
     <p className="mt-4 text-xs leading-5 text-brand-muted dark:text-gray-300">선택한 접수기간의 최근 동물 3마리를 미리 보여드려요. 상세에서 전체 기간의 동물과 보호 현황을 볼 수 있어요.</p>
     <div aria-label={`${shelter.name} 보호중 동물 미리보기`} className="mt-3 flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3">{shelter.animals.map(animal => <Preview key={animal.id} animal={animal} returnTo={animalUrl} />)}</div>

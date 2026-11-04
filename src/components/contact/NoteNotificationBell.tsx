@@ -5,6 +5,8 @@ import { useMemberChat } from './useMemberChat';
 import { useFavoriteNotifications } from './useFavoriteNotifications';
 import { memberChatEnabled } from '../../lib/memberChat';
 import { favoriteAnimalName, favoriteNotificationPhrase } from '../../lib/favoriteNotifications';
+// 선 아이콘이라 글자색(currentColor)을 선 색으로 쓴다. 다크에서 버튼 글자색을 따라 밝아진다.
+import BellIcon from '../../assets/icons/contact/bell.svg?react';
 
 export default function NoteNotificationBell() {
   const notifications = useNoteNotifications();
@@ -47,7 +49,7 @@ export default function NoteNotificationBell() {
         }}
         className="relative flex h-11 w-11 items-center justify-center rounded-full text-brand-ink hover:bg-brand-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus dark:text-white dark:hover:bg-gray-800"
       >
-        <img src="/contact/bell.svg" alt="" width={20} height={20} />
+        <BellIcon aria-hidden="true" className="h-5 w-5" />
         {totalUnread > 0 && (
           <span
             aria-hidden="true"
