@@ -1,4 +1,7 @@
 import { useEffect } from 'react';
+import CheckCircleIcon from '../../assets/icons/material-symbols/check_circle.svg?react';
+import ErrorIcon from '../../assets/icons/material-symbols/error.svg?react';
+import InfoIcon from '../../assets/icons/material-symbols/info.svg?react';
 
 interface ToastProps {
   message: string;
@@ -27,15 +30,16 @@ export default function Toast({ message, type = 'info', isVisible, onClose, dura
   };
 
   const iconMap = {
-    success: 'check_circle',
-    error: 'error',
-    info: 'info',
+    success: CheckCircleIcon,
+    error: ErrorIcon,
+    info: InfoIcon,
   };
+  const Icon = iconMap[type];
 
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
       <div className={`${typeStyles[type]} flex items-center gap-3 px-4 py-3 rounded-lg shadow-xl shadow-gray-900/20`}>
-        <span aria-hidden="true" className="material-symbols-outlined text-xl">{iconMap[type]}</span>
+        <Icon aria-hidden="true" className="icon text-xl" />
         <span className="text-sm font-medium">{message}</span>
       </div>
     </div>

@@ -4,6 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProductById, addToCart } from '../api/products.api';
 import type { ProductSku } from '../types/api.types';
 import placeholderImg from '../assets/image-placeholder.svg';
+import AddShoppingCartIcon from '../assets/icons/material-symbols/add_shopping_cart.svg?react';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -155,7 +158,7 @@ export default function ProductDetail() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
           <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
           <button
             onClick={() => navigate('/products')}
@@ -201,7 +204,7 @@ export default function ProductDetail() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-400">image</span>
+                  <ImageIcon aria-hidden="true" className="icon text-6xl text-gray-400" />
                 </div>
               )}
             </div>
@@ -319,7 +322,7 @@ export default function ProductDetail() {
                 onClick={handleAddToCart}
                 disabled={!selectedSku || selectedSku.stockQuantity <= 0 || addToCartMutation.isPending}
               >
-                <span aria-hidden="true" className="material-symbols-outlined">add_shopping_cart</span>
+                <AddShoppingCartIcon aria-hidden="true" className="icon" />
                 <span>장바구니 담기</span>
               </button>
               <button

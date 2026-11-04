@@ -3,6 +3,17 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRegisteredAnimals } from '../api/user.api';
 import { useAuthStore } from '../store/authStore';
+import CakeIcon from '../assets/icons/material-symbols/cake.svg?react';
+import CategoryIcon from '../assets/icons/material-symbols/category.svg?react';
+import ChevronLeftIcon from '../assets/icons/material-symbols/chevron_left.svg?react';
+import ChevronRightIcon from '../assets/icons/material-symbols/chevron_right.svg?react';
+import FavoriteIcon from '../assets/icons/material-symbols/favorite.svg?react';
+import PetsIcon from '../assets/icons/material-symbols/pets.svg?react';
+import ScheduleIcon from '../assets/icons/material-symbols/schedule.svg?react';
+import TagIcon from '../assets/icons/material-symbols/tag.svg?react';
+import FemaleIcon from '../assets/icons/material-symbols/female.svg?react';
+import HelpIcon from '../assets/icons/material-symbols/help.svg?react';
+import MaleIcon from '../assets/icons/material-symbols/male.svg?react';
 
 export default function RegisteredAnimals() {
   const userId = useAuthStore(state => state.user?.id);
@@ -120,7 +131,7 @@ export default function RegisteredAnimals() {
                   </div>
                 ) : (
                   <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                    <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-400">pets</span>
+                    <PetsIcon aria-hidden="true" className="icon text-6xl text-gray-400" />
                   </div>
                 )}
 
@@ -132,15 +143,18 @@ export default function RegisteredAnimals() {
 
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-2">
-                      <span aria-hidden="true" className="material-symbols-outlined text-base">category</span>
+                      <CategoryIcon aria-hidden="true" className="icon text-base" />
                       <span>{animal.species || '종 정보 없음'}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span aria-hidden="true" className="material-symbols-outlined text-base">
-                        {animal.gender === 'MALE' ? 'male' :
-                         animal.gender === 'FEMALE' ? 'female' : 'help'}
-                      </span>
+                      {animal.gender === 'MALE' ? (
+                        <MaleIcon aria-hidden="true" className="icon text-base" />
+                      ) : animal.gender === 'FEMALE' ? (
+                        <FemaleIcon aria-hidden="true" className="icon text-base" />
+                      ) : (
+                        <HelpIcon aria-hidden="true" className="icon text-base" />
+                      )}
                       <span>
                         {animal.gender === 'MALE' ? '수컷' :
                          animal.gender === 'FEMALE' ? '암컷' : '성별 미상'}
@@ -148,20 +162,20 @@ export default function RegisteredAnimals() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span aria-hidden="true" className="material-symbols-outlined text-base">cake</span>
+                      <CakeIcon aria-hidden="true" className="icon text-base" />
                       <span>{animal.age ? `${animal.age}세` : animal.birthYear ? `${animal.birthYear}년생` : '나이 정보 없음'}</span>
                     </div>
 
                     {animal.apmsNoticeNo && (
                       <div className="flex items-center gap-2">
-                        <span aria-hidden="true" className="material-symbols-outlined text-base">tag</span>
+                        <TagIcon aria-hidden="true" className="icon text-base" />
                         <span className="line-clamp-1 text-xs">{animal.apmsNoticeNo}</span>
                       </div>
                     )}
 
                     {animal.favoriteCount !== undefined && animal.favoriteCount > 0 && (
                       <div className="flex items-center gap-2">
-                        <span aria-hidden="true" className="material-symbols-outlined text-base text-red-500">favorite</span>
+                        <FavoriteIcon aria-hidden="true" className="icon text-base text-red-500" />
                         <span>{animal.favoriteCount}명이 찜했습니다</span>
                       </div>
                     )}
@@ -170,7 +184,7 @@ export default function RegisteredAnimals() {
                   {animal.createdAt && (
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <p className="text-xs text-gray-500 dark:text-gray-500 flex items-center gap-1">
-                        <span aria-hidden="true" className="material-symbols-outlined text-sm">schedule</span>
+                        <ScheduleIcon aria-hidden="true" className="icon text-sm" />
                         등록일: {new Date(animal.createdAt).toLocaleDateString('ko-KR', {
                           year: 'numeric',
                           month: 'long',
@@ -193,7 +207,7 @@ export default function RegisteredAnimals() {
                 disabled={currentPage === 0}
                 className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-text-main dark:text-white border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                <span aria-hidden="true" className="material-symbols-outlined">chevron_left</span>
+                <ChevronLeftIcon aria-hidden="true" className="icon" />
               </button>
 
               <div className="flex items-center gap-1">
@@ -222,16 +236,14 @@ export default function RegisteredAnimals() {
                 disabled={currentPage >= totalPages - 1}
                 className="px-4 py-2 rounded-lg bg-white dark:bg-gray-800 text-text-main dark:text-white border border-gray-200 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                <span aria-hidden="true" className="material-symbols-outlined">chevron_right</span>
+                <ChevronRightIcon aria-hidden="true" className="icon" />
               </button>
             </div>
           )}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <span aria-hidden="true" className="material-symbols-outlined text-7xl text-gray-300 dark:text-gray-600 mb-4">
-            pets
-          </span>
+          <PetsIcon aria-hidden="true" className="icon text-7xl text-gray-300 dark:text-gray-600 mb-4" />
           <h3 className="text-xl font-bold text-text-main dark:text-white mb-2">
             아직 등록한 동물이 없습니다
           </h3>

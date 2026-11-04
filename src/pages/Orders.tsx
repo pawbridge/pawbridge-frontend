@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getOrders } from '../api/orders.api';
 import type { OrderStatus } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
+import ExpandMoreIcon from '../assets/icons/material-symbols/expand_more.svg?react';
+import ReceiptLongIcon from '../assets/icons/material-symbols/receipt_long.svg?react';
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -147,7 +149,7 @@ export default function Orders() {
               <option value="CANCELLED">주문 취소</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-              <span aria-hidden="true" className="material-symbols-outlined">expand_more</span>
+              <ExpandMoreIcon aria-hidden="true" className="icon" />
             </div>
           </div>
         </div>
@@ -157,9 +159,7 @@ export default function Orders() {
       {orders.length === 0 ? (
         <div className="w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-surface dark:bg-surface-dark shadow-sm p-12">
           <div className="text-center">
-            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-4">
-              receipt_long
-            </span>
+            <ReceiptLongIcon aria-hidden="true" className="icon text-6xl text-gray-300 dark:text-gray-600 mb-4" />
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">주문 내역이 없습니다</p>
           </div>
         </div>

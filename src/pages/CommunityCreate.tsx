@@ -4,6 +4,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from '../api/community.api';
 import type { BoardType } from '../types/api.types';
 import { getApiErrorMessage } from '../lib/apiError';
+import AddPhotoAlternateIcon from '../assets/icons/material-symbols/add_photo_alternate.svg?react';
+import CloseIcon from '../assets/icons/material-symbols/close.svg?react';
+import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
 
 export default function CommunityCreate() {
   const navigate = useNavigate();
@@ -125,13 +128,13 @@ export default function CommunityCreate() {
                         type="button"
                         aria-label={`사진 ${index + 1} 삭제`}
                       >
-                        <span aria-hidden="true" className="material-symbols-outlined text-base">close</span>
+                        <CloseIcon aria-hidden="true" className="icon text-base" />
                       </button>
                     </div>
                   ))}
                   {form.files.length < 10 && (
                     <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-brand-focus dark:hover:border-brand-focus transition-colors cursor-pointer aspect-square p-4">
-                      <span aria-hidden="true" className="material-symbols-outlined text-brand-accent text-3xl">add_photo_alternate</span>
+                      <AddPhotoAlternateIcon aria-hidden="true" className="icon text-brand-accent text-3xl" />
                       <p className="text-gray-500 dark:text-gray-400 text-sm font-medium leading-normal text-center">
                         사진 추가
                       </p>
@@ -236,7 +239,7 @@ export default function CommunityCreate() {
               </p>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-400 dark:border-gray-600 px-6 py-10 bg-white/50 dark:bg-gray-800/50">
                 <div className="text-center">
-                  <span aria-hidden="true" className="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">image</span>
+                  <ImageIcon aria-hidden="true" className="icon text-5xl text-gray-400 dark:text-gray-500" />
                   <div className="mt-4 flex text-sm leading-6 text-gray-600 dark:text-gray-400">
                     <label
                       className="relative cursor-pointer rounded-md font-semibold text-brand-accent focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-focus focus-within:ring-offset-2 dark:ring-offset-background-dark hover:text-brand-accent/80"
@@ -271,7 +274,7 @@ export default function CommunityCreate() {
                         type="button"
                         aria-label={`사진 ${index + 1} 삭제`}
                       >
-                        <span aria-hidden="true" className="material-symbols-outlined text-base">close</span>
+                        <CloseIcon aria-hidden="true" className="icon text-base" />
                       </button>
                     </div>
                   ))}

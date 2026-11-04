@@ -36,7 +36,7 @@ async page => {
     function bg(el){let color=[255,255,255]; const stack=[];for(let e=el;e;e=e.parentElement)stack.unshift(e);for(const e of stack){const c=rgb(getComputedStyle(e).backgroundColor);const alpha=c[3]??1;if(c.length>=3)color=c.slice(0,3).map((v,i)=>v*alpha+color[i]*(1-alpha));}return color;}
     const failures=[];let checked=0;
     for(const el of document.querySelectorAll('body *')){
-     if(!el.getClientRects().length||el.closest('[disabled]')||el.matches('.material-symbols-outlined,script,style,svg *'))continue;
+     if(!el.getClientRects().length||el.closest('[disabled]')||el.matches('script,style,svg *'))continue;
      const c=getComputedStyle(el);if(c.visibility==='hidden')continue;
      const text=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim();
      if(!text||!el.className?.toString().includes('brand'))continue;

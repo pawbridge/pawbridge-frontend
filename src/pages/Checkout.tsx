@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { createOrder, createDirectOrder } from '../api/products.api';
 import type { CartItem, CreateOrderRequest, DirectOrderRequest } from '../types/api.types';
+import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import InfoIcon from '../assets/icons/material-symbols/info.svg?react';
 
 // 다음 우편번호 API 타입 선언
 declare global {
@@ -363,9 +366,11 @@ export default function Checkout() {
       {paymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 p-6 flex flex-col gap-4 text-center">
-            <span aria-hidden="true" className="material-symbols-outlined text-4xl text-brand-accent mx-auto">
-              {paymentModal.type === 'cancel' ? 'info' : 'error'}
-            </span>
+            {paymentModal.type === 'cancel' ? (
+              <InfoIcon aria-hidden="true" className="icon text-4xl text-brand-accent mx-auto" />
+            ) : (
+              <ErrorIcon aria-hidden="true" className="icon text-4xl text-brand-accent mx-auto" />
+            )}
             <p className="text-lg font-bold text-text-light dark:text-text-dark">
               {paymentModal.type === 'cancel' ? '결제가 취소되었습니다' : '결제 오류'}
             </p>
@@ -412,7 +417,7 @@ export default function Checkout() {
                         >
                           {!state.directOrder.product.imageUrl && (
                             <div className="w-full h-full flex items-center justify-center">
-                              <span aria-hidden="true" className="material-symbols-outlined text-xl text-gray-400">image</span>
+                              <ImageIcon aria-hidden="true" className="icon text-xl text-gray-400" />
                             </div>
                           )}
                         </div>
@@ -442,7 +447,7 @@ export default function Checkout() {
                           >
                             {!item.productImageUrl && (
                               <div className="w-full h-full flex items-center justify-center">
-                                <span aria-hidden="true" className="material-symbols-outlined text-xl text-gray-400">image</span>
+                                <ImageIcon aria-hidden="true" className="icon text-xl text-gray-400" />
                               </div>
                             )}
                           </div>

@@ -1,6 +1,5 @@
-// Accessible names on mocked data. Material Symbols draw icons from ligature text such as "edit", which screen
-// readers used to read as part of a button name ("edit 글쓰기"). Icons are hidden from them, and buttons that
-// show only an icon carry their own name.
+// Accessible names on mocked data. Icons are SVG components hidden from screen readers (aria-hidden), so a button
+// with an icon and text is named by its text, and buttons that show only an icon carry their own name.
 async page => {
   const origin = 'http://127.0.0.1:5266';
   const checks = [], pageErrors = [];
@@ -20,13 +19,8 @@ async page => {
     if (path === '/api/v1/products') return route.fulfill({ json: { items: [product(1), product(2)], totalCount: 30, currentPage: 0, totalPages: 3, hasNext: true } });
     return route.fulfill({ status: 503, json: { message: '모의 응답 없음' } });
   });
-  // The icon names the app uses are listed in index.html (Google Fonts icon_names); none may appear in the accessibility tree.
-  const html = await (await page.request.get(origin + '/')).text();
-  const iconNames = html.match(/icon_names=([a-z0-9_,]+)/)[1].split(',');
-  const leakedIcons = async () => {
-    const tree = await page.locator('body').ariaSnapshot();
-    return iconNames.filter(name => new RegExp(`(^|[^a-z_])${name}([^a-z_]|$)`).test(tree));
-  };
+  // Every SVG icon is decorative here; one without aria-hidden would be announced as an unnamed image.
+  const leakedIcons = () => page.locator('svg.icon:not([aria-hidden="true"])').count();
   const routes = [
     ['/', () => page.getByRole('banner').waitFor()],
     ['/community', () => page.getByText('검수 글 2').waitFor()],
@@ -40,7 +34,7 @@ async page => {
       await ready();
       await page.waitForTimeout(300);
       const leaked = await leakedIcons();
-      assert(leaked.length === 0, `no-icon-text-${path}-${width}: ${leaked.join(',')}`);
+      assert(leaked === 0, `icons-hidden-${path}-${width}: ${leaked}`);
     }
   }
   // A button with an icon and text is named by its text only.
