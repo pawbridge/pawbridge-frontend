@@ -31,6 +31,21 @@
   }
 }
 
+@layer components {
+  /* SVG 아이콘: 기본 24px, text-* 크기 클래스로 바꾸고 글자색(currentColor)을 따른다.
+     높이는 예전 아이콘 글꼴처럼 줄 높이(1lh)만큼 차지해 주변 줄 간격이 그대로다. 그림은 그 안 가운데에 그린다. */
+  .icon {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    height: 1lh;
+    font-size: 24px;
+    line-height: 1;
+    fill: currentColor;
+  }
+}
+
 /* 커스텀 애니메이션 */
 @layer utilities {
   .animate-fade-in {

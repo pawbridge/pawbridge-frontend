@@ -2,6 +2,9 @@ import axios from 'axios';
 import type { FormEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { sendAnimalChatbotMessage } from '../../api/animals.api';
+import ChatIcon from '../../assets/icons/material-symbols/chat.svg?react';
+import CloseIcon from '../../assets/icons/material-symbols/close.svg?react';
+import SendIcon from '../../assets/icons/material-symbols/send.svg?react';
 
 interface AnimalChatbotProps {
   animalId: number;
@@ -148,7 +151,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
               className="rounded-full p-1 text-text-light hover:bg-white/20"
               aria-label="AI 입양 준비 도우미 닫기"
             >
-              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">close</span>
+              <CloseIcon aria-hidden="true" className="icon text-[20px]" />
             </button>
           </div>
 
@@ -221,7 +224,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-text-light transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="질문 보내기"
               >
-                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">send</span>
+                <SendIcon aria-hidden="true" className="icon text-[20px]" />
               </button>
             </form>
             <p className="mt-2 text-right text-[11px] text-gray-500">
@@ -238,7 +241,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
         aria-expanded={isOpen}
         aria-label={isOpen ? 'AI 입양 준비 도우미 닫기' : 'AI 입양 준비 도우미 열기'}
       >
-        <span aria-hidden="true" className="material-symbols-outlined">chat</span>
+        <ChatIcon aria-hidden="true" className="icon" />
         <span className="text-sm">AI 입양 준비</span>
       </button>
     </div>

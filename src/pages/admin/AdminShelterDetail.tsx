@@ -3,7 +3,7 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getShelter, getShelterMembers } from '../../api/shelter.api';
 import { useAuthStore } from '../../store/authStore';
-import { AdminShelterLayout } from '../../components/shelters/ShelterUI';
+import { AdminShelterPageHeader } from '../../components/shelters/ShelterUI';
 import { AdminDetailFields, AdminEmpty, AdminError, AdminLoading, AdminPagination, AdminRecord, adminControl, adminPanel } from '../../components/admin/AdminUI';
 
 function Detail() {
@@ -13,7 +13,7 @@ function Detail() {
   const [page, setPage] = useState(0);
   const shelter = useQuery({ queryKey: ['shelter', 'detail', registration], queryFn: () => getShelter(registration), enabled: !!registration });
   const members = useQuery({ queryKey: ['shelter', 'members', userId, registration, page], queryFn: () => getShelterMembers(registration, page), enabled: !!shelter.data });
-  return <AdminShelterLayout title="보호소 상세">
+  return <><AdminShelterPageHeader title="보호소 상세" />
     <Link className={adminControl} to={`/admin/shelters${location.search}`}>보호소 목록으로</Link>
     {shelter.isPending ? <AdminLoading label="보호소를 불러오는 중입니다." /> : shelter.isError ? <AdminError title="보호소 정보 조회 실패" retry={() => void shelter.refetch()} /> : <>
       <section className={`${adminPanel} space-y-4`}>
@@ -32,7 +32,7 @@ function Detail() {
         </>}
       </section>
     </>}
-  </AdminShelterLayout>;
+  </>;
 }
 export default function AdminShelterDetail() {
   const params = useParams();

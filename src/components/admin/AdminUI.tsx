@@ -9,7 +9,7 @@ export const adminInput = 'mt-2 min-h-12 w-full min-w-0 rounded-lg border border
 
 export function AdminImage({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
   const [failedSource, setFailedSource] = useState<string>();
-  return failedSource === src ? <div role="img" aria-label={alt + ' · 이미지를 불러오지 못했습니다.'} className={`${className} flex items-center justify-center bg-stone-100 p-2 text-center text-xs text-brand-muted`}>이미지를 불러오지 못했습니다.</div> : <img src={src} alt={alt} className={className} loading="lazy" onError={() => setFailedSource(src)} />;
+  return failedSource === src ? <div role="img" aria-label={alt + ', 이미지를 불러오지 못했습니다.'} className={`${className} flex items-center justify-center bg-stone-100 p-2 text-center text-xs text-brand-muted`}>이미지를 불러오지 못했습니다.</div> : <img src={src} alt={alt} className={className} loading="lazy" onError={() => setFailedSource(src)} />;
 }
 
 export function AdminLoading({ label = '정보를 불러오는 중입니다.' }: { label?: string }) {

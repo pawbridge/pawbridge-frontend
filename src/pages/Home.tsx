@@ -115,7 +115,7 @@ export default function Home() {
             ['안락사율 (최근 30일)', rates?.euthanasiaRate ?? '—', '%'],
           ].map(([label, value, unit]) => <div key={label}><dt className="text-xs leading-relaxed text-brand-muted dark:text-gray-300 sm:text-sm">{label}</dt><dd className="mt-2 text-xl font-bold sm:text-3xl">{value}<span className="ml-1 text-sm font-medium">{unit}</span></dd></div>)}
         </dl>
-        <p className="mt-5 text-xs leading-relaxed text-brand-muted dark:text-gray-400">{today} 기준 · 비율은 최근 30일 구조 동물 전체의 현재 상태 기준입니다.</p>
+        <p className="mt-5 text-xs leading-relaxed text-brand-muted dark:text-gray-400">{today} 기준입니다. 비율은 최근 30일 구조 동물 전체의 현재 상태 기준입니다.</p>
         {(todayStats.isError || statusStats.isError) && <p role="status" className="mt-2 text-sm">일부 현황을 불러오지 못했어요. 자세한 현황에서 다시 확인해 주세요.</p>}
         <Link to="/animals/stats" className={`mt-1 ${textLink}`}>유기동물 현황 보기 →</Link>
       </section>

@@ -4,6 +4,11 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { getOrderById, confirmPayment } from '../api/products.api';
 import type { OrderItem } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
+import CreditCardIcon from '../assets/icons/material-symbols/credit_card.svg?react';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import HourglassEmptyIcon from '../assets/icons/material-symbols/hourglass_empty.svg?react';
+import Inventory2Icon from '../assets/icons/material-symbols/inventory_2.svg?react';
+import CheckFillIcon from '../assets/icons/material-symbols/check-fill.svg?react';
 
 export default function OrderComplete() {
   const userId = useAuthStore(state => state.user?.id);
@@ -101,7 +106,7 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
           <p className="text-gray-500 mb-4">잘못된 접근입니다.</p>
           <Link
             to="/"
@@ -131,7 +136,7 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span aria-hidden="true" className="material-symbols-outlined text-6xl text-red-500 mb-4">payment</span>
+          <CreditCardIcon aria-hidden="true" className="icon text-6xl text-red-500 mb-4" />
           <h1 className="text-2xl font-bold text-red-500 mb-2">결제 승인 실패</h1>
           <p className="text-gray-500 mb-2">결제 처리 중 오류가 발생했습니다.</p>
           <p className="text-gray-400 text-sm mb-6">실제로 결제되지 않았으니 안심하세요.</p>
@@ -164,7 +169,7 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span aria-hidden="true" className="material-symbols-outlined text-6xl text-amber-500 mb-4">hourglass_empty</span>
+          <HourglassEmptyIcon aria-hidden="true" className="icon text-6xl text-amber-500 mb-4" />
           <h1 className="text-2xl font-bold text-text-light dark:text-text-dark mb-2">결제 승인 처리 중</h1>
           <p className="text-gray-500 mb-2">결제 승인 상태를 확인하고 있습니다.</p>
           <p className="text-gray-400 text-sm mb-6">잠시 후 새로고침하거나, 처리 지연 시 문의해 주세요.</p>
@@ -215,7 +220,7 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
           <p className="text-gray-500 mb-4">주문 정보를 불러올 수 없습니다.</p>
           <Link
             to="/"
@@ -235,12 +240,7 @@ export default function OrderComplete() {
         {/* 성공 아이콘 및 메시지 */}
         <div className="flex flex-col items-center text-center gap-4 pt-8">
           <div className="flex items-center justify-center size-24 bg-brand/20 dark:bg-brand/30 rounded-full">
-            <span aria-hidden="true" 
-              className="material-symbols-outlined text-brand-accent text-6xl"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              check
-            </span>
+            <CheckFillIcon aria-hidden="true" className="icon text-brand-accent text-6xl" />
           </div>
           <div className="flex flex-col gap-2">
             <h1 className="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">
@@ -294,7 +294,7 @@ export default function OrderComplete() {
                 {order.items?.map((item: OrderItem, index: number) => (
                   <li key={index} className="flex py-6">
                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                      <span aria-hidden="true" className="material-symbols-outlined text-3xl text-gray-400">inventory_2</span>
+                      <Inventory2Icon aria-hidden="true" className="icon text-3xl text-gray-400" />
                     </div>
                     <div className="ml-4 flex flex-1 flex-col">
                       <div>

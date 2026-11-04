@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCategories } from '../../api/products.api';
+import type { ComponentType, SVGProps } from 'react';
 import type { ProductSearchParams, CategoryResponse } from '../../types/api.types';
+import GridViewIcon from '../../assets/icons/material-symbols/grid_view.svg?react';
+import SearchIcon from '../../assets/icons/material-symbols/search.svg?react';
+import CategoryIcon from '../../assets/icons/material-symbols/category.svg?react';
+import CheckroomIcon from '../../assets/icons/material-symbols/checkroom.svg?react';
+import SkeletonIcon from '../../assets/icons/material-symbols/skeleton.svg?react';
+import SoapIcon from '../../assets/icons/material-symbols/soap.svg?react';
+import StadiaControllerIcon from '../../assets/icons/material-symbols/stadia_controller.svg?react';
+import StorefrontIcon from '../../assets/icons/material-symbols/storefront.svg?react';
 
 interface ProductFilterSidebarProps {
   filters: ProductSearchParams;
@@ -10,16 +19,21 @@ interface ProductFilterSidebarProps {
 }
 
 // 카테고리 아이콘 매핑 (카테고리 이름 기반)
-const getCategoryIcon = (categoryName: string): string => {
-  const iconMap: Record<string, string> = {
-    '사료 및 간식': 'skeleton',
-    '장난감': 'stadia_controller',
-    '위생/미용 용품': 'spark',
-    '의류/액세서리': 'checkroom',
-    '굿즈': 'storefront',
+const getCategoryIcon = (categoryName: string): ComponentType<SVGProps<SVGSVGElement>> => {
+  const iconMap: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
+    '사료 및 간식': SkeletonIcon,
+    '장난감': StadiaControllerIcon,
+    '위생/미용 용품': SoapIcon,
+    '의류/액세서리': CheckroomIcon,
+    '굿즈': StorefrontIcon,
   };
-  return iconMap[categoryName] || 'category';
+  return iconMap[categoryName] || CategoryIcon;
 };
+
+function CategoryIconFor({ name }: { name: string }) {
+  const Icon = getCategoryIcon(name);
+  return <Icon aria-hidden="true" className="icon" />;
+}
 
 export default function ProductFilterSidebar({
   filters,
@@ -91,9 +105,7 @@ export default function ProductFilterSidebar({
       <div className="flex flex-col gap-6 p-4 bg-card-light dark:bg-card-dark rounded-xl shadow-sm">
         {/* 검색 */}
         <div className="relative">
-          <span aria-hidden="true" className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            search
-          </span>
+          <SearchIcon aria-hidden="true" className="icon absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={localKeyword}
@@ -128,7 +140,7 @@ export default function ProductFilterSidebar({
                   : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
               }`}
             >
-              <span aria-hidden="true" className="material-symbols-outlined">grid_view</span>
+              <GridViewIcon aria-hidden="true" className="icon" />
               <p className={`text-sm ${!filters.categoryId ? 'font-bold' : 'font-medium'}`}>
                 전체
               </p>
@@ -150,7 +162,7 @@ export default function ProductFilterSidebar({
                         : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
                     }`}
                   >
-                    <span aria-hidden="true" className="material-symbols-outlined">{getCategoryIcon(category.name)}</span>
+                    <CategoryIconFor name={category.name} />
                     <p className={`text-sm ${filters.categoryId === category.id ? 'font-bold' : 'font-medium'}`}>
                       {category.name}
                     </p>

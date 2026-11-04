@@ -3,7 +3,7 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getApplication, approveApplication, rejectApplication } from '../../api/shelter.api';
 import { useAuthStore } from '../../store/authStore';
-import { AdminShelterLayout, Status } from '../../components/shelters/ShelterUI';
+import { AdminShelterPageHeader, Status } from '../../components/shelters/ShelterUI';
 import { date, errorMessage } from '../../components/shelters/shelterApplicationDisplay';
 import { AdminDetailFields, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
 import StatsDialog from '../../components/statistics/StatsDialog';
@@ -27,7 +27,7 @@ function Detail() {
   const data = query.data;
   const application = data?.application;
   const locked = mutation.isPending || mutation.isError;
-  return <AdminShelterLayout title="담당자 신청 상세">
+  return <><AdminShelterPageHeader title="담당자 신청 상세" />
     <Link className={adminControl} to={`/admin/shelter-applications${location.search}`}>신청 목록으로</Link>
     {!validId ? <AdminError title="잘못된 신청 주소입니다." /> : query.isPending ? <AdminLoading label="신청을 불러오는 중입니다." /> : query.isError ? <AdminError title="신청 정보 조회 실패" retry={() => void query.refetch()} /> : data && application && <>
       <section className={`${adminPanel} space-y-4`}><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="break-words text-xl font-bold">{application.shelterName}</h2><Status status={application.status} /></div><p className="text-sm text-brand-muted dark:text-stone-300">신청자가 입력한 보호소 이름입니다. 실제 소속 여부는 별도로 확인해 주세요.</p></section>
@@ -54,7 +54,7 @@ function Detail() {
       </form>
     </StatsDialog>}
     {mutation.isError && !mode && <AdminError title="처리 결과 확인이 필요합니다." retry={() => setMode(mutation.variables || 'approve')} />}
-  </AdminShelterLayout>;
+  </>;
 }
 export default function AdminShelterApplicationDetail() {
   const { id } = useParams();

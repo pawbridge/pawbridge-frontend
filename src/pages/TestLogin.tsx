@@ -4,6 +4,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { login } from '../api/auth.api';
 import { useAuthStore } from '../store/authStore';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import PetsIcon from '../assets/icons/material-symbols/pets.svg?react';
+import VisibilityIcon from '../assets/icons/material-symbols/visibility.svg?react';
+import VisibilityOffIcon from '../assets/icons/material-symbols/visibility_off.svg?react';
 
 // 운영 시험 계정(이메일 계정) 전용 로그인. 어떤 화면도 이 주소로 연결하지 않으며 회원은 네이버·구글로만 로그인한다.
 export default function TestLogin() {
@@ -54,7 +58,7 @@ export default function TestLogin() {
         <div className="flex justify-center">
           <Link to="/" className="flex items-center gap-4 text-brand-ink dark:text-white hover:opacity-80 transition-opacity">
             <div className="text-brand-accent text-2xl">
-              <span aria-hidden="true" className="material-symbols-outlined">pets</span>
+              <PetsIcon aria-hidden="true" className="icon" />
             </div>
             <h2 className="text-brand-ink dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
               포우 브릿지
@@ -95,7 +99,7 @@ export default function TestLogin() {
                 />
                 {emailError && (
                   <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <span aria-hidden="true" className="material-symbols-outlined text-base">error</span>
+                    <ErrorIcon aria-hidden="true" className="icon text-base" />
                     {emailError}
                   </p>
                 )}
@@ -128,14 +132,16 @@ export default function TestLogin() {
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400"
                     aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                   >
-                    <span aria-hidden="true" className="material-symbols-outlined text-xl">
-                      {showPassword ? 'visibility' : 'visibility_off'}
-                    </span>
+                    {showPassword ? (
+                      <VisibilityIcon aria-hidden="true" className="icon text-xl" />
+                    ) : (
+                      <VisibilityOffIcon aria-hidden="true" className="icon text-xl" />
+                    )}
                   </button>
                 </div>
                 {(passwordError || errorMessage) && (
                   <p role="alert" className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <span aria-hidden="true" className="material-symbols-outlined text-base">error</span>
+                    <ErrorIcon aria-hidden="true" className="icon text-base" />
                     {errorMessage || passwordError}
                   </p>
                 )}

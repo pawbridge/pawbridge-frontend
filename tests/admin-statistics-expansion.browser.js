@@ -76,7 +76,7 @@ async page => {
   await page.keyboard.press('Enter');
   check(await bar.getAttribute('aria-pressed') === 'true', 'Chart must support keyboard selection');
   check(await page.getByText('전일 대비 -5마리 (-50.0%)', { exact: true }).count() === 1, 'First day must use separate previousDayCount');
-  await page.getByRole('button', { name: '신규 수집 · 보조 지표', exact: true }).click();
+  await page.getByRole('button', { name: '신규 수집(보조 지표)', exact: true }).click();
   await page.getByRole('heading', { name: '동물 신규 수집 추이', exact: true }).waitFor();
   check(requests.some(request => request.path.endsWith('/daily-animals')), 'Keep legacy collection API');
   check(await page.getByText(/실제 발견·접수 건수가 아닙니다/).isVisible(), 'Collection meaning');

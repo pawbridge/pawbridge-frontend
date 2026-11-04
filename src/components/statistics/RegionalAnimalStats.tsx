@@ -64,7 +64,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           const count = rows.find(row => row.name === name)?.count ?? 0;
           const active = selected === name;
           return <RegionalMapGeography key={geo.rsmKey} geography={geo} tabIndex={-1}
-            aria-label={`${name} · ${count.toLocaleString()}마리`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
+            aria-label={`${name} ${count.toLocaleString()}마리`} data-region={name} data-selected={active} data-band={terrainBand(count, breaks)}
             onClick={() => setSelected(name)} fill={terrainColor(count, breaks)}
             stroke={active ? 'var(--chart-outline)' : 'var(--chart-surface)'} strokeWidth={active ? 2 : 1}
             className="cursor-pointer" filter={`url(#${filterId}-${zoomed ? 'expanded' : 'main'})`}>

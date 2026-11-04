@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPost, updatePost } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
 import { getApiErrorMessage } from '../lib/apiError';
+import AddPhotoAlternateIcon from '../assets/icons/material-symbols/add_photo_alternate.svg?react';
+import CloseIcon from '../assets/icons/material-symbols/close.svg?react';
 
 export default function CommunityEdit() {
   const { id } = useParams<{ id: string }>();
@@ -182,7 +184,7 @@ export default function CommunityEdit() {
                         type="button"
                         aria-label={`사진 ${index + 1} 삭제`}
                       >
-                        <span aria-hidden="true" className="material-symbols-outlined text-base">close</span>
+                        <CloseIcon aria-hidden="true" className="icon text-base" />
                       </button>
                     </div>
                   ))}
@@ -193,7 +195,7 @@ export default function CommunityEdit() {
             {/* File Upload Button */}
             <div className="flex flex-col gap-4">
               <label className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-brand-focus dark:hover:border-brand-focus transition-colors cursor-pointer p-4">
-                <span aria-hidden="true" className="material-symbols-outlined text-brand-accent text-2xl">add_photo_alternate</span>
+                <AddPhotoAlternateIcon aria-hidden="true" className="icon text-brand-accent text-2xl" />
                 <span className="text-gray-700 dark:text-gray-300 font-medium">
                   이미지 추가
                 </span>

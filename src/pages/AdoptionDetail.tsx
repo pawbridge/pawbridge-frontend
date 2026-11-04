@@ -11,6 +11,7 @@ import {
 } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
 import { getApiErrorMessage } from '../lib/apiError';
+import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 
 export default function AdoptionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -137,7 +138,7 @@ export default function AdoptionDetail() {
             to="/adoption"
             className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-brand-accent dark:hover:text-brand-accent"
           >
-            <span aria-hidden="true" className="material-symbols-outlined mr-1">arrow_back</span>
+            <ArrowBackIcon aria-hidden="true" className="icon mr-1" />
             목록으로
           </Link>
         </div>

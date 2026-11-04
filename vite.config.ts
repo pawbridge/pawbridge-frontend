@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import svgr from 'vite-plugin-svgr'
 
 // https://vite.dev/config/
 /**
@@ -9,7 +10,8 @@ import react from '@vitejs/plugin-react'
  * 배포 환경에서는 src/api/client.ts의 baseURL(VITE_API_BASE_URL)을 사용합니다.
  */
 export default defineConfig({
-  plugins: [react()],
+  // `*.svg?react`로 불러온 SVG를 React 컴포넌트로 만든다. icon: true는 크기를 1em으로 맞춰 글자 크기 클래스로 조절하게 한다.
+  plugins: [react(), svgr({ svgrOptions: { icon: true } })],
   server: {
     proxy: {
       // Store Service (상점) - 8085

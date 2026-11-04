@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllPosts } from '../api/community.api';
 import { useAuthStore } from '../store/authStore';
 import Pagination from '../components/common/Pagination';
+import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
+import LockIcon from '../assets/icons/material-symbols/lock.svg?react';
 
 export default function AdoptionList() {
   const navigate = useNavigate();
@@ -75,7 +77,7 @@ export default function AdoptionList() {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-brand-muted dark:text-gray-400">
-            <span aria-hidden="true" className="material-symbols-outlined text-lg">lock</span>
+            <LockIcon aria-hidden="true" className="icon text-lg" />
             <span>로그인이 필요한 서비스입니다.</span>
           </div>
           <button
@@ -113,7 +115,7 @@ export default function AdoptionList() {
                   </div>
                 ) : (
                   <div className="overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 aspect-video flex items-center justify-center">
-                    <span aria-hidden="true" className="material-symbols-outlined text-gray-400 dark:text-gray-500 text-5xl">image</span>
+                    <ImageIcon aria-hidden="true" className="icon text-gray-400 dark:text-gray-500 text-5xl" />
                   </div>
                 )}
                 <div>

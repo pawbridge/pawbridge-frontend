@@ -51,8 +51,7 @@ const rejectionGraceMs = 500;
 // External resources the app itself loads (fonts, address search script, login and site images). Requests to them
 // are aborted quietly; an aborted request to any other host fails the test, so a new external dependency or a call
 // to a real API host (for example api.pawbridge.kr) is caught.
-// Fonts the production page loads from Google (index.html): Noto Sans KR and the Material Symbols
-// icon font. Without them icons render as their names ("menu", "person") and screenshots differ
+// Fonts the production page loads from Google (index.html): Noto Sans KR. Without it screenshots differ
 // from production. These hosts serve static font files only, so no API call can leave through them.
 const productionFontHosts = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
