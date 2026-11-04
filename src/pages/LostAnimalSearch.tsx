@@ -29,10 +29,12 @@ export default function LostAnimalSearch() {
   const [region, setRegion] = useState(restored?.region ?? '');
   const [description, setDescription] = useState(restored?.description ?? '');
   const [includeAdoptedOrReturned, setIncludeAdoptedOrReturned] = useState(restored?.includeAdoptedOrReturned ?? false);
+  const [includeDeceased, setIncludeDeceased] = useState(restored?.includeDeceased ?? false);
   const [phase, setPhase] = useState<'idle' | 'loading' | 'success' | 'error'>(restored?.phase ?? 'idle');
   const [validating, setValidating] = useState(false);
   const [error, setError] = useState('');
   const [results, setResults] = useState<LostCandidate[]>(restored?.results ?? []);
+  const [deceasedResults, setDeceasedResults] = useState<LostCandidate[]>(restored?.deceasedResults ?? []);
   const fileInput = useRef<HTMLInputElement>(null);
   const request = useRef<AbortController | null>(null);
   const revision = useRef(0);
@@ -61,7 +63,7 @@ export default function LostAnimalSearch() {
 
   function rememberSearch() {
     saveLostSearchSession(routeLocation.key, { photo, species, lostDate, region, description, includeAdoptedOrReturned,
-      results, phase: 'success', scrollY: window.scrollY });
+      includeDeceased, results, deceasedResults, phase: 'success', scrollY: window.scrollY });
   }
 
   function invalidate() {
@@ -70,7 +72,7 @@ export default function LostAnimalSearch() {
     revision.current++;
     request.current?.abort();
     request.current = null;
-    setPhase('idle'); setResults([]); setError('');
+    setPhase('idle'); setResults([]); setDeceasedResults([]); setError('');
   }
 
   async function selectPhoto(file?: File) {
@@ -107,9 +109,9 @@ export default function LostAnimalSearch() {
     const controller = new AbortController(); request.current = controller;
     setPhase('loading');
     try {
-      const candidates = await findLostCandidates({ image: photo, species, lostDate, region, description, includeAdoptedOrReturned }, controller.signal);
+      const found = await findLostCandidates({ image: photo, species, lostDate, region, description, includeAdoptedOrReturned, includeDeceased }, controller.signal);
       if (version !== revision.current || controller.signal.aborted) return;
-      setResults(candidates); setPhase('success');
+      setResults(found.candidates); setDeceasedResults(found.deceasedCandidates); setPhase('success');
       requestAnimationFrame(() => {
         if (version !== revision.current || controller.signal.aborted) return;
         resultHeading.current?.focus({ preventScroll: true });
@@ -122,6 +124,29 @@ export default function LostAnimalSearch() {
     } finally {
       if (version === revision.current) request.current = null;
     }
+  }
+
+  function searchOption(title: string, help: string, checked: boolean, setChecked: (value: boolean) => void) {
+    return <label className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 ${checked ? 'border-brand-ink dark:border-text-dark' : 'border-border-light dark:border-border-dark'}`}>
+      <input type="checkbox" aria-label={title} checked={checked} onChange={e => { invalidate(); setChecked(e.target.checked); }} className="mt-0.5 rounded border-gray-300 text-brand-ink focus:ring-brand-focus" />
+      <span><span className="block text-sm font-bold">{title}</span><span className="mt-1 block text-xs leading-5 text-gray-500">{help}</span></span>
+    </label>;
+  }
+
+  // 사망 기록 카드는 흐린 면으로 살아 있는 후보와 구분한다.
+  function candidateCard({ animal, shelterPhone, matchedEvidence }: LostCandidate, deceased: boolean) {
+    // 사망 기록 구역의 제목(h3) 아래에 놓이므로 카드 제목은 한 단계 낮춘다.
+    const Title = deceased ? 'h4' : 'h3';
+    return <article key={animal.id} className={`min-w-0 overflow-hidden rounded-2xl border border-border-light dark:border-border-dark ${deceased ? 'bg-gray-50 dark:bg-black/20' : 'bg-card-light dark:bg-card-dark'}`}>
+      <img src={animal.imageUrl || placeholder} onError={e => { if (e.currentTarget.src !== new URL(placeholder, location.href).href) e.currentTarget.src = placeholder; }} alt={`${animal.breed || '동물'} 후보 사진`} className="aspect-[4/3] w-full bg-gray-50 object-contain dark:bg-black/20" loading="lazy" />
+      <div className="space-y-3 p-4"><p className={`text-xs font-bold ${deceased ? 'text-gray-600 dark:text-gray-300' : 'text-emerald-700 dark:text-brand-accent'}`}>{statusLabels[animal.status] || '상태 확인 필요'}</p>
+        <Title className="break-words text-lg font-bold">{animal.breed || (animal.species === 'CAT' ? '고양이' : '강아지')} · {animal.gender === 'MALE' ? '수컷' : animal.gender === 'FEMALE' ? '암컷' : '성별 미상'}</Title>
+        <dl className="space-y-2 break-words text-sm leading-5 text-gray-600 dark:text-gray-300"><div><dt className="inline">발견일 </dt><dd className="inline">{animal.happenDate || '미상'}</dd></div><div><dt>발견 장소</dt><dd>{animal.happenPlace || '미상'}</dd></div><div><dt className="sr-only">보호소</dt><dd>{animal.shelterName || '보호소 정보 확인 필요'}</dd></div></dl>
+        {matchedEvidence.filter(e => evidenceLabels[e]).length > 0 && <ul className="flex flex-wrap gap-1.5">{[...new Set(matchedEvidence)].filter(e => evidenceLabels[e]).map(e => <li key={e} className="rounded-lg bg-brand/10 px-2 py-1 text-xs leading-5">{evidenceLabels[e]}</li>)}</ul>}
+        <Link to={`/animals/${animal.id}`} onClick={rememberSearch} state={{ from: 'lost-search', lostSearchEntryKey: routeLocation.key }} className={`${secondary} w-full`}>공고 상세 보기</Link>
+        {shelterPhone && /^\+?[0-9 ()-]{5,30}$/.test(shelterPhone) && <a href={`tel:${shelterPhone.replace(/[^+0-9]/g, '')}`} className="block py-2 text-center text-sm font-medium text-brand-accent underline">보호소 문의 · {shelterPhone}</a>}
+      </div>
+    </article>;
   }
 
   return <main className="container mx-auto px-4 pb-16 pt-8 md:pt-12">
@@ -158,10 +183,10 @@ export default function LostAnimalSearch() {
             <label className="block text-sm font-medium">털색·무늬·특징<textarea aria-label="털색·무늬·특징" value={description} maxLength={500} rows={3} onChange={e => { invalidate(); setDescription(e.target.value); }} placeholder="예: 흰 털, 갈색 귀, 목에 빨간 목줄" className={`${fieldClass} mt-2 resize-y`} /></label>
             <p className="text-xs leading-5 text-gray-500">모르는 항목은 비워 두셔도 돼요. 부가정보는 후보 순서를 보완하며, 조건이 다르다고 제외하지 않아요.</p>
           </fieldset>
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border-light p-4 dark:border-border-dark">
-            <input type="checkbox" aria-label="입양·반환된 동물도 포함" checked={includeAdoptedOrReturned} onChange={e => { invalidate(); setIncludeAdoptedOrReturned(e.target.checked); }} className="mt-0.5 rounded border-gray-300 text-brand-ink focus:ring-brand-focus" />
-            <span><span className="block text-sm font-bold">입양·반환된 동물도 포함</span><span className="mt-1 block text-xs leading-5 text-gray-500">이미 가족을 찾았거나 원래 가족에게 돌아간 동물도 단서로 확인해요. 사망한 동물은 표시하지 않아요.</span></span>
-          </label>
+          <fieldset className="space-y-3"><legend className="mb-3 text-sm font-bold">검색 범위</legend>
+            {searchOption('보호소를 떠난 동물도 포함', '입양, 반환, 기증, 방사로 보호소를 떠난 동물도 단서로 확인해요.', includeAdoptedOrReturned, setIncludeAdoptedOrReturned)}
+            {searchOption('보호 중 사망한 기록도 확인', '보호소에서 자연사하거나 안락사된 동물의 기록을 살아 있는 후보와 섞지 않고 아래에 따로 보여드려요.', includeDeceased, setIncludeDeceased)}
+          </fieldset>
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm leading-6 text-red-700 dark:bg-red-950/30 dark:text-red-300">{error}</p>}
           {phase === 'loading' ? <button key="cancel" type="button" onClick={event => { event.preventDefault(); invalidate(); }} className={`${secondary} w-full`}>검색 취소</button> : <button key="submit" type="submit" disabled={!photo || validating} className="min-h-12 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-text-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 focus-visible:outline-brand-focus">{phase === 'error' ? '다시 시도하기' : '사진으로 후보 찾기'}</button>}
           <p className="text-xs leading-5 text-gray-500">사진은 검색에만 사용하며 저장하지 않아요.</p>
@@ -176,17 +201,18 @@ export default function LostAnimalSearch() {
           {phase === 'success' && results.length === 0 && <div className="rounded-2xl border border-border-light p-8 dark:border-border-dark"><p className="font-bold">이번 검색에서는 후보를 찾지 못했어요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">수집되지 않았거나 검색 가능한 사진이 없는 공고도 있어요. 막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요.<br />다른 사진으로 다시 확인하거나 보호소에 문의해 주세요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
         </div>
         {phase === 'success' && results.length > 0 && <>
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{results.map(({ animal, shelterPhone, matchedEvidence }) => <article key={animal.id} className="min-w-0 overflow-hidden rounded-2xl border border-border-light bg-card-light dark:border-border-dark dark:bg-card-dark">
-            <img src={animal.imageUrl || placeholder} onError={e => { if (e.currentTarget.src !== new URL(placeholder, location.href).href) e.currentTarget.src = placeholder; }} alt={`${animal.breed || '동물'} 후보 사진`} className="aspect-[4/3] w-full bg-gray-50 object-contain dark:bg-black/20" loading="lazy" />
-            <div className="space-y-3 p-4"><p className="text-xs font-bold text-emerald-700 dark:text-brand-accent">{statusLabels[animal.status] || '상태 확인 필요'}</p>
-              <h3 className="break-words text-lg font-bold">{animal.breed || (animal.species === 'CAT' ? '고양이' : '강아지')} · {animal.gender === 'MALE' ? '수컷' : animal.gender === 'FEMALE' ? '암컷' : '성별 미상'}</h3>
-              <dl className="space-y-2 break-words text-sm leading-5 text-gray-600 dark:text-gray-300"><div><dt className="inline">발견일 </dt><dd className="inline">{animal.happenDate || '미상'}</dd></div><div><dt>발견 장소</dt><dd>{animal.happenPlace || '미상'}</dd></div><div><dt className="sr-only">보호소</dt><dd>{animal.shelterName || '보호소 정보 확인 필요'}</dd></div></dl>
-              {matchedEvidence.filter(e => evidenceLabels[e]).length > 0 && <ul className="flex flex-wrap gap-1.5">{[...new Set(matchedEvidence)].filter(e => evidenceLabels[e]).map(e => <li key={e} className="rounded-lg bg-brand/10 px-2 py-1 text-xs leading-5">{evidenceLabels[e]}</li>)}</ul>}
-              <Link to={`/animals/${animal.id}`} onClick={rememberSearch} state={{ from: 'lost-search', lostSearchEntryKey: routeLocation.key }} className={`${secondary} w-full`}>공고 상세 보기</Link>
-              {shelterPhone && /^\+?[0-9 ()-]{5,30}$/.test(shelterPhone) && <a href={`tel:${shelterPhone.replace(/[^+0-9]/g, '')}`} className="block py-2 text-center text-sm font-medium text-brand-accent underline">보호소 문의 · {shelterPhone}</a>}
-            </div>
-          </article>)}</div>
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{results.map(candidate => candidateCard(candidate, false))}</div>
         </>}
+        {phase === 'success' && (includeDeceased ? <section aria-labelledby="deceased-heading" className="mt-5 rounded-2xl border border-border-light p-4 sm:p-6 dark:border-border-dark">
+          <h3 id="deceased-heading" className="text-xl font-bold">보호 중 사망한 기록 {deceasedResults.length}건</h3>
+          <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">{deceasedResults.length > 0
+            ? '보호소에서 자연사하거나 안락사된 동물의 기록이에요. 사진이 닮아도 다른 동물일 수 있으니 발견일과 장소, 몸의 무늬를 함께 확인해 주세요.'
+            : '보호소에서 자연사하거나 안락사된 기록 중에서는 닮은 동물을 찾지 못했어요.'}</p>
+          {deceasedResults.length > 0 && <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{deceasedResults.map(candidate => candidateCard(candidate, true))}</div>}
+        </section> : <div className="mt-5 rounded-2xl bg-gray-100 p-4 dark:bg-card-dark">
+          <p className="font-medium">찾는 동물이 없나요?</p>
+          <p className="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">보호소에서 사망한 동물의 기록은 &apos;보호 중 사망한 기록도 확인&apos;을 선택하고 다시 찾으면 후보 아래에 따로 보여드려요.</p>
+        </div>)}
       </section>
     </div>
   </main>;

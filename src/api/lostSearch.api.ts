@@ -18,20 +18,35 @@ export interface LostCandidate {
   matchedEvidence: string[];
 }
 
+export interface LostSearchResult {
+  candidates: LostCandidate[];
+  // 보호 중 사망한 기록. includeDeceased를 켠 검색에서만 채워지고, 그 밖에는 빈 목록이다.
+  deceasedCandidates: LostCandidate[];
+}
+
 export interface LostSearchInput {
   image: File;
   species: 'DOG' | 'CAT';
   lostDate: string;
   region: string;
   description: string;
+  // 이름과 달리 살아서 보호소를 떠난 동물 전체(입양, 반환, 기증, 방사)를 뜻한다. 서버 입력 이름이라 그대로 둔다.
   includeAdoptedOrReturned: boolean;
+  includeDeceased: boolean;
 }
 
-export async function findLostCandidates(input: LostSearchInput, signal: AbortSignal): Promise<LostCandidate[]> {
+function isCandidateList(value: unknown, limit: number): value is LostCandidate[] {
+  return Array.isArray(value) && value.length <= limit && value.every((c: LostCandidate) =>
+    c?.animal && Number.isSafeInteger(c.animal.id) && c.animal.id > 0 && typeof c.animal.status === 'string'
+    && Array.isArray(c.matchedEvidence) && c.matchedEvidence.every(e => typeof e === 'string'));
+}
+
+export async function findLostCandidates(input: LostSearchInput, signal: AbortSignal): Promise<LostSearchResult> {
   const form = new FormData();
   form.append('image', input.image, 'photo');
   form.append('species', input.species);
   form.append('includeAdoptedOrReturned', String(input.includeAdoptedOrReturned));
+  form.append('includeDeceased', String(input.includeDeceased));
   if (input.lostDate) form.append('lostDate', input.lostDate);
   if (input.region.trim()) form.append('region', input.region.trim());
   if (input.description.trim()) form.append('description', input.description.trim());
@@ -58,12 +73,12 @@ export async function findLostCandidates(input: LostSearchInput, signal: AbortSi
       throw new Error(messages[response.status] || '검색을 완료하지 못했어요. 잠시 후 다시 시도해 주세요.');
     }
     const data = await response.json();
-    if (!Array.isArray(data?.candidates) || data.candidates.length > 20 || data.candidates.some((c: LostCandidate) =>
-      !c?.animal || !Number.isSafeInteger(c.animal.id) || c.animal.id <= 0 || typeof c.animal.status !== 'string'
-      || !Array.isArray(c.matchedEvidence) || c.matchedEvidence.some(e => typeof e !== 'string'))) {
+    // 사망 기록 필드가 없는 이전 서버 응답은 0건으로 본다.
+    const deceased = data?.deceasedCandidates ?? [];
+    if (!isCandidateList(data?.candidates, 20) || !isCandidateList(deceased, 10)) {
       throw new Error('검색 결과를 확인할 수 없어요. 다시 시도해 주세요.');
     }
-    return data.candidates;
+    return { candidates: data.candidates, deceasedCandidates: input.includeDeceased ? deceased : [] };
   } catch (error) {
     if (timedOut) throw new Error('검색 시간이 오래 걸리고 있어요. 잠시 후 다시 시도해 주세요.');
     if (error instanceof TypeError) throw new Error('연결을 확인한 뒤 다시 시도해 주세요.');
