@@ -4,12 +4,16 @@ import type { RegionalAnimalStats as RegionalStats } from '../../types/api.types
 import { terrainBand, terrainColor, terrainBreaks, buildRegionRows, normalizeRegion, provinces } from './regionalStats';
 import StatsDialog from './StatsDialog';
 import RegionalMapGeography from './RegionalMapGeography';
+import { useIsDark } from '../../lib/theme';
 
 const mapCenter: [number, number] = [127.7, 35.95];
 const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-brand/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:opacity-40 dark:border-border-dark';
 
 export default function RegionalAnimalStats({ data }: { data: RegionalStats[] }) {
   const rows = useMemo(() => buildRegionRows(data), [data]);
+  // 다크에서는 색 구간이 거꾸로 밝아진다(많을수록 밝은 노랑).
+  const isDark = useIsDark();
+  const scaleWord = isDark ? '밝을수록' : '진할수록';
   const total = rows.reduce((sum, row) => sum + row.count, 0);
   const maximum = Math.max(0, ...rows.map(row => row.count));
   const [selected, setSelected] = useState<string | null>(null);
@@ -95,7 +99,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
           y: Math.max(8, Math.min(event.clientY - rect.top + 16, rect.height - 52)) });
       }}>
       <ComposableMap projection="geoMercator" projectionConfig={{ center: mapCenter, scale: 4800 }} width={500} height={620}
-      role="img" aria-label="17개 시·도 입체 지형 지도. 색이 진할수록 구조 동물이 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다."
+      role="img" aria-label={`17개 시·도 입체 지형 지도. 색이 ${scaleWord} 구조 동물이 많습니다. 정확한 값과 지역 선택은 비교 목록에서도 제공합니다.`}
       className={`mx-auto h-auto w-full ${zoomed ? 'max-w-[580px] touch-none' : 'max-w-[520px]'}`}>
       <defs><filter id={`${filterId}-${zoomed ? 'expanded' : 'main'}`} x="-30%" y="-30%" width="160%" height="180%">
         <feDropShadow dx="0" dy="3" stdDeviation="1.2" floodColor="var(--chart-outline)" floodOpacity="0.22" />
@@ -117,7 +121,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   return <div className="space-y-5 text-text-light dark:text-text-dark">
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,560fr)_minmax(0,536fr)]">
     <div className="min-w-0 space-y-5" data-map-column>
-      <div className="rounded-3xl bg-brand-soft p-4 sm:p-5 dark:bg-stone-900">
+      <div className="rounded-3xl bg-brand-soft p-4 sm:p-5 dark:border dark:border-accent-border-dark">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div><h3 className="text-xl font-bold">지역을 더 가까이</h3>
             <p className="mt-2 text-sm">전국 구조 동물 분포{selected ? ` · ${selected} 선택` : ''}</p></div>
@@ -130,7 +134,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
             <span className="block break-words text-xs tabular-nums">{label}</span>
           </div>)}
         </div>
-        <p className="mt-5 text-sm">선택 기간의 지역별 분포에 따라 색상 구간이 달라집니다. 진할수록 구조 동물이 많으며, 입체 효과는 마릿수를 뜻하지 않습니다.</p>
+        <p className="mt-5 text-sm">선택 기간의 지역별 분포에 따라 색상 구간이 달라집니다. {scaleWord} 구조 동물이 많으며, 입체 효과는 마릿수를 뜻하지 않습니다.</p>
       </div>
       {details}
     </div>

@@ -257,7 +257,7 @@ export default function CommunityCreate() {
                     </label>
                     <p className="pl-1">또는 드래그 앤 드롭</p>
                   </div>
-                  <p className="text-xs leading-5 text-gray-500 dark:text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                  <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 10MB</p>
                 </div>
               </div>
               {form.files.length > 0 && (

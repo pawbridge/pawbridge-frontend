@@ -43,7 +43,7 @@ export default function MyShelterApplications({ role }: { role: string; }) {
     </form>}
     {mutation.isError && <Feedback error={mutation.error} />}
     <div className={panel}>
-      <h3 className="mb-4 text-xl font-bold">신청 이력</h3>{history.isPending ? <p role="status">이력을 불러오는 중입니다.</p> : history.isError ? <Feedback error={history.error} retry={() => void history.refetch()} /> : <>{history.data.content.length === 0 && <p>아직 신청한 내역이 없습니다.</p>}<ul className="divide-y divide-gray-200">{history.data.content.map(a => <li key={a.id} className="space-y-2 py-4">
+      <h3 className="mb-4 text-xl font-bold">신청 이력</h3>{history.isPending ? <p role="status">이력을 불러오는 중입니다.</p> : history.isError ? <Feedback error={history.error} retry={() => void history.refetch()} /> : <>{history.data.content.length === 0 && <p>아직 신청한 내역이 없습니다.</p>}<ul className="divide-y divide-gray-200 dark:divide-gray-700">{history.data.content.map(a => <li key={a.id} className="space-y-2 py-4">
         <div className="flex flex-wrap justify-between gap-2">
           <strong>{a.shelterName}</strong>
           <Status status={a.status} />

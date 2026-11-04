@@ -146,7 +146,7 @@ export default function CommunityList() {
         </div>
 
         {/* Tabs */}
-        <p className="mb-6 rounded-xl bg-brand-soft p-4 text-sm text-brand-ink dark:bg-gray-800 dark:text-white">
+        <p className="mb-6 rounded-xl bg-brand-soft p-4 text-sm text-brand-ink dark:border dark:border-accent-border-dark dark:text-white">
           실종 알림과 목격 제보는 <Link to="/reports/missing" className="font-bold underline underline-offset-4">실종동물 찾기</Link>에서 확인하고 등록해 주세요.
         </p>
         <div className="border-b border-gray-200 dark:border-gray-700">

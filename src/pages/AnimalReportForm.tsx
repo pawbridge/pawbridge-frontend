@@ -162,7 +162,7 @@ export default function AnimalReportForm() {
               <label className="block font-semibold">날짜 <span aria-hidden="true">*</span>
                 <input className={fieldClass} type="date" max={koreaToday()} required value={form.occurredOn} onChange={(e) => update('occurredOn', e.target.value)} />
               </label>
-              <label className="block font-semibold">대략적인 시간 <span className="text-sm font-normal text-gray-500">(선택)</span>
+              <label className="block font-semibold">대략적인 시간 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
                 <input className={fieldClass} maxLength={40} placeholder="예: 오후 3시 무렵 / 모름" value={form.approximateTime || ''} onChange={(e) => update('approximateTime', e.target.value || null)} />
               </label>
             </div>
@@ -171,7 +171,7 @@ export default function AnimalReportForm() {
             <label className="block font-semibold">지역 설명 <span aria-hidden="true">*</span>
               <input className={fieldClass} maxLength={120} required placeholder="예: 서울 마포구 상암동" value={form.region} onChange={(e) => update('region', e.target.value)} />
             </label>
-            <label className="block font-semibold">가까운 장소 <span className="text-sm font-normal text-gray-500">(선택)</span>
+            <label className="block font-semibold">가까운 장소 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
               <input className={fieldClass} maxLength={200} placeholder="예: 월드컵공원 남문 근처" value={form.landmark || ''} onChange={(e) => update('landmark', e.target.value || null)} />
             </label>
           </section>
@@ -179,23 +179,23 @@ export default function AnimalReportForm() {
           <section className="space-y-5" aria-labelledby="animal-heading">
             <h2 id="animal-heading" className="text-xl font-bold">동물의 특징을 알려주세요</h2>
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block font-semibold">품종·세부 종류 <span className="text-sm font-normal text-gray-500">(선택)</span>
+              <label className="block font-semibold">품종·세부 종류 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
                 <input className={fieldClass} maxLength={40} placeholder="예: 푸들, 코리안숏헤어 / 모르면 비워두세요" value={form.species} onChange={(e) => update('species', e.target.value)} />
               </label>
-              {missing && <label className="block font-semibold">이름 <span className="text-sm font-normal text-gray-500">(선택)</span>
+              {missing && <label className="block font-semibold">이름 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
                 <input className={fieldClass} maxLength={80} value={form.animalName || ''} onChange={(e) => update('animalName', e.target.value || null)} />
               </label>}
-              <label className="block font-semibold">털색 <span className="text-sm font-normal text-gray-500">(선택)</span>
+              <label className="block font-semibold">털색 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
                 <input className={fieldClass} maxLength={100} placeholder="예: 갈색과 흰색" value={form.coatColor || ''} onChange={(e) => update('coatColor', e.target.value || null)} />
               </label>
-              <label className="block font-semibold">크기 <span className="text-sm font-normal text-gray-500">(선택)</span>
+              <label className="block font-semibold">크기 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
                 <input className={fieldClass} maxLength={40} placeholder="예: 소형 / 약 5kg" value={form.animalSize || ''} onChange={(e) => update('animalSize', e.target.value || null)} />
               </label>
             </div>
-            <label className="block font-semibold">구별되는 특징 <span className="text-sm font-normal text-gray-500">(선택)</span>
+            <label className="block font-semibold">구별되는 특징 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
               <textarea className={areaClass} maxLength={500} placeholder="목줄, 무늬, 상처 등" value={form.distinguishingFeatures || ''} onChange={(e) => update('distinguishingFeatures', e.target.value || null)} />
             </label>
-            {!missing && <label className="block font-semibold">이동 방향 <span className="text-sm font-normal text-gray-500">(선택)</span>
+            {!missing && <label className="block font-semibold">이동 방향 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">(선택)</span>
               <input className={fieldClass} maxLength={200} value={form.direction || ''} onChange={(e) => update('direction', e.target.value || null)} />
             </label>}
             <label className="block font-semibold">상황 설명 <span aria-hidden="true">*</span>
@@ -204,7 +204,7 @@ export default function AnimalReportForm() {
           </section>
 
           <section aria-labelledby="photo-heading">
-            <h2 id="photo-heading" className="text-xl font-bold">사진 첨부 <span className="text-base font-normal text-gray-500">(선택)</span></h2>
+            <h2 id="photo-heading" className="text-xl font-bold">사진 첨부 <span className="text-base font-normal text-gray-500 dark:text-gray-400">(선택)</span></h2>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">JPG·PNG·WebP, 최대 5장, 한 장당 10MB. 위치 정보가 담긴 사진은 공개 전 확인해 주세요.</p>
             {reportId !== null ? <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">등록 후 사진 교체는 아직 지원하지 않습니다. 기존 사진은 유지됩니다.</p> :
               <input className="mt-4 block w-full rounded-lg border border-gray-300 p-3 text-sm dark:border-gray-600" type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={choosePhotos} aria-label="제보 사진 선택" />}

@@ -83,7 +83,7 @@ export default function AnimalReportDetail() {
       </div>
       {deleteMutation.isError && <p role="alert" className="mt-4 text-sm text-red-600">삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>}
       {report.imageUrls.length > 0 && <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {report.imageUrls.map((url, index) => <img key={`${url}-${index}`} src={url} alt={`${report.kind === 'MISSING' ? '실종 동물' : '목격 동물'} 사진 ${index + 1}`} className="max-h-96 w-full rounded-lg bg-gray-100 object-contain" onError={(event) => { event.currentTarget.src = placeholderImg; }} />)}
+        {report.imageUrls.map((url, index) => <img key={`${url}-${index}`} src={url} alt={`${report.kind === 'MISSING' ? '실종 동물' : '목격 동물'} 사진 ${index + 1}`} className="max-h-96 w-full rounded-lg bg-gray-100 dark:bg-gray-700 object-contain" onError={(event) => { event.currentTarget.src = placeholderImg; }} />)}
       </div>}
       <section className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-900" aria-label="제보 정보">
         <h2 className="text-lg font-bold">{report.kind === 'MISSING' ? '실종 정보' : '목격 정보'}</h2>

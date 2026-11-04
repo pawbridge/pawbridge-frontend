@@ -29,11 +29,11 @@ export default function FavoriteAnimalCard({ favorite, fromMyPage = false }: { f
           {favorite.imageUrl && !imageFailed ? (
             <img src={favorite.imageUrl} alt={`${favorite.breed || '동물'} 사진`} className="h-full w-full object-contain" loading="lazy" onError={() => setImageFailed(true)} />
           ) : (
-            <span className="text-sm text-gray-500">사진이 없습니다</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">사진이 없습니다</span>
           )}
         </div>
         <div className="flex min-w-0 flex-col p-5 sm:p-6">
-          <span className="mb-3 w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold dark:bg-gray-700">
+          <span className="mb-3 w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold dark:border dark:border-accent-border-dark">
             {animalStatusLabel(favorite.status)}
           </span>
           <h3 className="break-words text-xl font-bold">{deleted ? '현재 동물 정보를 볼 수 없습니다' : favorite.breed || '품종 정보 없음'}</h3>

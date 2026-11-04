@@ -125,7 +125,7 @@ export default function AnimalDetail() {
       <p className="mt-3 text-gray-600 dark:text-gray-300">잠시 후 다시 시도하거나 목록으로 돌아가 주세요.</p>
       <div className="mt-6 flex justify-center gap-3">
         <button onClick={() => void refetch()} className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-brand-ink">다시 시도</button>
-        <button onClick={returnToSearch} className="min-h-11 rounded-lg border border-border-light px-5">목록으로</button>
+        <button onClick={returnToSearch} className="min-h-11 rounded-lg border border-border-light px-5 dark:border-gray-700">목록으로</button>
       </div>
     </main>
   );
@@ -159,18 +159,18 @@ export default function AnimalDetail() {
             <div className="flex h-[360px] items-center justify-center overflow-hidden rounded-2xl border border-border-light bg-gray-50 sm:h-[500px] xl:h-[620px] dark:border-border-dark dark:bg-gray-800">
               {photo && !imageFailed ? (
                 <img key={photo} src={photo} alt={`${animal.breed || '동물'} 사진`} className="h-full w-full object-contain" onError={() => setImageFailed(true)} />
-              ) : <span className="text-sm text-gray-500">사진이 없습니다</span>}
+              ) : <span className="text-sm text-gray-500 dark:text-gray-400">사진이 없습니다</span>}
             </div>
             {images.length > 1 && <div className="mt-3 flex gap-3">
-              {images.map((image, index) => <button type="button" key={image} onClick={() => { setSelectedImage(image); setImageFailed(false); }} aria-label={`${index + 1}번째 사진 보기`} aria-pressed={photo === image} className={`h-20 w-20 overflow-hidden rounded-lg border-2 ${photo === image ? 'border-brand-ink' : 'border-border-light'}`}>
+              {images.map((image, index) => <button type="button" key={image} onClick={() => { setSelectedImage(image); setImageFailed(false); }} aria-label={`${index + 1}번째 사진 보기`} aria-pressed={photo === image} className={`h-20 w-20 overflow-hidden rounded-lg border-2 ${photo === image ? 'border-brand-ink dark:border-brand' : 'border-border-light dark:border-gray-700'}`}>
                 <img src={image} alt="" className="h-full w-full object-cover" />
               </button>)}
             </div>}
           </div>
           <div className="min-w-0">
             <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-brand-soft px-4 py-2 text-sm font-semibold text-brand-ink">{animalStatusLabel(animal.status)}</span>
-              {daysLeft !== null && daysLeft >= 0 && <span className="rounded-full border border-border-light px-3 py-2 text-sm font-medium">공고 D-{daysLeft}</span>}
+              <span className="rounded-full bg-brand-soft px-4 py-2 text-sm font-semibold text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">{animalStatusLabel(animal.status)}</span>
+              {daysLeft !== null && daysLeft >= 0 && <span className="rounded-full border border-border-light px-3 py-2 text-sm font-medium dark:border-gray-700">공고 D-{daysLeft}</span>}
             </div>
             <h1 className="break-words text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">{animal.breed || '품종 정보 없음'}</h1>
             {noticeNo && <p className="mt-3 break-all text-sm text-gray-600 dark:text-gray-300">공고번호 {noticeNo}</p>}
@@ -181,7 +181,7 @@ export default function AnimalDetail() {
               <button type="button" onClick={() => void handleShare()} className="min-h-12 flex-1 rounded-lg border border-border-light px-5 text-sm font-semibold sm:flex-none hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800">공유하기</button>
             </div>
             {actionMessage && <p role="status" className="mt-3 text-sm">{actionMessage}</p>}
-            {isMyAnimal && <Link to={`/animals/${id}/edit`} state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }} className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border-light px-4 text-sm font-semibold">등록 정보 수정</Link>}
+            {isMyAnimal && <Link to={`/animals/${id}/edit`} state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }} className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border-light px-4 text-sm font-semibold dark:border-gray-700">등록 정보 수정</Link>}
             <section className="mt-8 rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">
               <h2 className="text-lg font-bold">기본 정보</h2>
               <dl className="mt-5 grid gap-x-6 gap-y-4 sm:grid-cols-2">
@@ -213,7 +213,7 @@ export default function AnimalDetail() {
             <dl className="mt-5 space-y-4">
               {animal.happenDate && <Info label="발견일" value={dateLabel(animal.happenDate) || ''} />}
               {animal.happenPlace && <Info label="발견 장소" value={animal.happenPlace} />}
-              {!animal.happenDate && !animal.happenPlace && <p className="text-sm text-gray-600">등록된 정보가 없습니다.</p>}
+              {!animal.happenDate && !animal.happenPlace && <p className="text-sm text-gray-600 dark:text-gray-400">등록된 정보가 없습니다.</p>}
             </dl>
           </section>
           <section className="rounded-2xl border border-border-light p-5 sm:p-6 dark:border-border-dark">

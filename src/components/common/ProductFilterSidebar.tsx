@@ -113,7 +113,7 @@ export default function ProductFilterSidebar({
             onKeyPress={handleKeyPress}
             aria-label="상품 검색"
             placeholder="상품 검색..."
-            className="form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border-none bg-background-light dark:bg-secondary-dark h-10 placeholder:text-gray-500 pl-10 pr-4 text-sm font-normal"
+            className="form-input w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-brand-focus border-none bg-background-light dark:bg-gray-800 h-10 placeholder:text-gray-500 pl-10 pr-4 text-sm font-normal"
           />
         </div>
 
@@ -137,7 +137,7 @@ export default function ProductFilterSidebar({
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
                 !filters.categoryId
                   ? 'bg-brand/20 text-brand-accent'
-                  : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
+                  : 'hover:bg-secondary-light dark:hover:bg-gray-700'
               }`}
             >
               <GridViewIcon aria-hidden="true" className="icon" />
@@ -147,9 +147,9 @@ export default function ProductFilterSidebar({
             </button>
             
             {isLoadingCategories ? (
-              <div className="px-3 py-2 text-sm text-gray-500">카테고리 불러오는 중...</div>
+              <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">카테고리 불러오는 중...</div>
             ) : topLevelCategories.length === 0 ? (
-              <div className="px-3 py-2 text-sm text-gray-500">등록된 카테고리가 없습니다</div>
+              <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">등록된 카테고리가 없습니다</div>
             ) : (
               <>
                 {topLevelCategories.map((category) => (
@@ -159,7 +159,7 @@ export default function ProductFilterSidebar({
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
                       filters.categoryId === category.id
                         ? 'bg-brand/20 text-brand-accent'
-                        : 'hover:bg-secondary-light dark:hover:bg-secondary-dark'
+                        : 'hover:bg-secondary-light dark:hover:bg-gray-700'
                     }`}
                   >
                     <CategoryIconFor name={category.name} />
@@ -188,7 +188,7 @@ export default function ProductFilterSidebar({
               type="checkbox"
               checked={filters.inStockOnly || false}
               onChange={(e) => handleStockFilter(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-brand-ink focus:ring-brand-focus"
+              className="w-4 h-4 rounded border-gray-300 dark:border-gray-700 text-brand-ink focus:ring-brand-focus"
             />
             <span className="text-sm">재고 있는 상품만</span>
           </label>
@@ -207,7 +207,7 @@ export default function ProductFilterSidebar({
               value={localMinPrice}
               onChange={(e) => setLocalMinPrice(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-secondary-dark text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-gray-800 text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
             <span className="self-center text-gray-400">~</span>
             <input
@@ -217,7 +217,7 @@ export default function ProductFilterSidebar({
               value={localMaxPrice}
               onChange={(e) => setLocalMaxPrice(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-secondary-dark text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-background-light dark:bg-gray-800 text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
           </div>
           <p className="text-xs text-gray-400 px-3 mt-1">엔터 또는 검색 버튼으로 적용</p>

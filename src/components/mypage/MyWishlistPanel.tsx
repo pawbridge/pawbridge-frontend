@@ -68,7 +68,7 @@ export default function MyWishlistPanel({
                     type="checkbox"
                     checked={filteredAndSortedWishlist.length > 0 && selectedWishlistItems.length === filteredAndSortedWishlist.length}
                     onChange={(e) => onSelectAll(e.target.checked)}
-                    className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-5 w-5"
+                    className="rounded text-brand-ink border-gray-300 dark:border-gray-700 focus:ring-brand-focus h-5 w-5"
                   />
                   <span className="text-sm font-medium text-text-light dark:text-text-dark group-hover:text-brand-accent transition-colors">
                     전체 선택 ({selectedWishlistItems.length})
@@ -78,18 +78,18 @@ export default function MyWishlistPanel({
                 <button
                   onClick={onDeleteSelected}
                   disabled={isDeletingSelected || selectedWishlistItems.length === 0}
-                  className="text-sm font-medium text-subtext-light hover:text-red-500 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                  className="text-sm font-medium text-subtext-light dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                 >
                   선택 삭제
                 </button>
               </div>
               <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-                <label className="flex items-center gap-2 cursor-pointer text-sm text-subtext-light hover:text-text-light dark:hover:text-text-dark transition-colors">
+                <label className="flex items-center gap-2 cursor-pointer text-sm text-subtext-light dark:text-gray-400 hover:text-text-light dark:hover:text-text-dark transition-colors">
                   <input
                     type="checkbox"
                     checked={hideSoldOut}
                     onChange={(e) => onHideSoldOutChange(e.target.checked)}
-                    className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-4 w-4"
+                    className="rounded text-brand-ink border-gray-300 dark:border-gray-700 focus:ring-brand-focus h-4 w-4"
                   />
                   <span>품절 상품 숨기기</span>
                 </label>
@@ -203,7 +203,7 @@ export default function MyWishlistPanel({
                           <button
                             onClick={() => onDeleteItem(item.wishlistId)}
                             disabled={isDeletingItem}
-                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                             title="삭제"
                           >
                             <DeleteIcon aria-hidden="true" className="icon text-[18px]" />
@@ -255,7 +255,7 @@ export default function MyWishlistPanel({
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <FavoriteIcon aria-hidden="true" className="icon text-6xl text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">찜한 상품이 없습니다.</p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 찾아 위시리스트에 담아보세요.</p>
+            <p className="text-gray-400 dark:text-gray-400 text-sm mb-6">마음에 드는 상품을 찾아 위시리스트에 담아보세요.</p>
             <Link
               to="/products"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"

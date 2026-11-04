@@ -99,14 +99,14 @@ export default function OrderDetail() {
     <main className="flex-grow w-full max-w-[1200px] mx-auto px-4 md:px-10 py-8">
       {/* Breadcrumbs */}
       <nav className="flex flex-wrap gap-2 mb-6 text-sm">
-        <button onClick={() => navigate('/')} className="text-text-secondary hover:underline">
+        <button onClick={() => navigate('/')} className="text-text-secondary dark:text-gray-400 hover:underline">
           Home
         </button>
-        <span className="text-text-secondary">/</span>
-        <button onClick={() => navigate('/orders')} className="text-text-secondary hover:underline">
+        <span className="text-text-secondary dark:text-gray-400">/</span>
+        <button onClick={() => navigate('/orders')} className="text-text-secondary dark:text-gray-400 hover:underline">
           주문 내역
         </button>
-        <span className="text-text-secondary">/</span>
+        <span className="text-text-secondary dark:text-gray-400">/</span>
         <span className="text-text-main dark:text-white font-semibold">주문 상세</span>
       </nav>
 
@@ -116,7 +116,7 @@ export default function OrderDetail() {
           <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-text-main dark:text-white">
             주문 상세
           </h1>
-          <p className="text-text-secondary">주문 번호: {order.orderUuid}</p>
+          <p className="text-text-secondary dark:text-gray-400">주문 번호: {order.orderUuid}</p>
         </div>
         <button
           onClick={() => navigate('/orders')}
@@ -128,40 +128,40 @@ export default function OrderDetail() {
       </div>
 
       {/* Order Status */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6 mb-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-text-secondary mb-1">주문 상태</p>
+            <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">주문 상태</p>
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${statusBadge.className}`}>
               {statusBadge.label}
             </span>
           </div>
           <div className="text-right">
-            <p className="text-sm text-text-secondary mb-1">주문 일시</p>
+            <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">주문 일시</p>
             <p className="text-sm font-medium text-text-main dark:text-white">{formatDateTime(order.createdAt)}</p>
           </div>
         </div>
       </div>
 
       {/* Delivery Information */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6 mb-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6 mb-6">
         <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">배송 정보</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-text-secondary mb-1">수령인</p>
+            <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">수령인</p>
             <p className="text-base font-medium text-text-main dark:text-white">{order.receiverName}</p>
           </div>
           <div>
-            <p className="text-sm text-text-secondary mb-1">연락처</p>
+            <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">연락처</p>
             <p className="text-base font-medium text-text-main dark:text-white">{order.receiverPhone}</p>
           </div>
           <div className="md:col-span-2">
-            <p className="text-sm text-text-secondary mb-1">배송 주소</p>
+            <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">배송 주소</p>
             <p className="text-base font-medium text-text-main dark:text-white">{order.deliveryAddress}</p>
           </div>
           {order.deliveryMessage && (
             <div className="md:col-span-2">
-              <p className="text-sm text-text-secondary mb-1">배송 메시지</p>
+              <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">배송 메시지</p>
               <p className="text-base font-medium text-text-main dark:text-white">{order.deliveryMessage}</p>
             </div>
           )}
@@ -169,17 +169,17 @@ export default function OrderDetail() {
       </div>
 
       {/* Order Items */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6 mb-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6 mb-6">
         <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">주문 상품</h2>
         <div className="space-y-4">
           {order.items.map((item, index) => (
-            <div key={index} className="flex items-start gap-4 pb-4 border-b border-border-color last:border-0">
-              <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-800 border border-border-color"></div>
+            <div key={index} className="flex items-start gap-4 pb-4 border-b border-border-color dark:border-gray-700 last:border-0">
+              <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-800 border border-border-color dark:border-gray-700"></div>
               <div className="flex-1">
                 <h3 className="font-bold text-text-main dark:text-white mb-1">{item.productName}</h3>
-                <p className="text-sm text-text-secondary mb-2">SKU: {item.skuCode}</p>
+                <p className="text-sm text-text-secondary dark:text-gray-400 mb-2">SKU: {item.skuCode}</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-text-secondary">
+                  <p className="text-sm text-text-secondary dark:text-gray-400">
                     {formatPrice(item.price)}원 × {item.quantity}개
                   </p>
                   <p className="font-bold text-text-main dark:text-white">
@@ -193,18 +193,18 @@ export default function OrderDetail() {
       </div>
 
       {/* Payment Summary */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color p-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6">
         <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">결제 정보</h2>
         <div className="space-y-3">
           <div className="flex justify-between">
-            <span className="text-text-secondary">상품 금액</span>
+            <span className="text-text-secondary dark:text-gray-400">상품 금액</span>
             <span className="font-medium text-text-main dark:text-white">{formatPrice(totalItemsPrice)}원</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-secondary">배송비</span>
+            <span className="text-text-secondary dark:text-gray-400">배송비</span>
             <span className="font-medium text-text-main dark:text-white">{formatPrice(shippingFee)}원</span>
           </div>
-          <div className="border-t border-border-color pt-3 flex justify-between">
+          <div className="border-t border-border-color dark:border-gray-700 pt-3 flex justify-between">
             <span className="text-lg font-bold text-text-main dark:text-white">총 결제 금액</span>
             <span className="text-lg font-bold text-brand-accent">{formatPrice(order.totalAmount)}원</span>
           </div>

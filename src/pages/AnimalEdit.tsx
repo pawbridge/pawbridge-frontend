@@ -203,7 +203,7 @@ export default function AnimalEdit() {
       <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500">동물 정보를 불러오는 중...</p>
+          <p className="text-gray-500 dark:text-gray-400">동물 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -214,7 +214,7 @@ export default function AnimalEdit() {
       <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex items-center justify-center">
         <div className="text-center">
           <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">동물 정보를 불러올 수 없습니다.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">동물 정보를 불러올 수 없습니다.</p>
           <Link
             to={fromMyPage ? '/mypage' : '/animals'}
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
@@ -239,7 +239,7 @@ export default function AnimalEdit() {
       <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex items-center justify-center">
         <div className="text-center">
           <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">보호소가 직접 등록한 동물만 수정할 수 있습니다.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">보호소가 직접 등록한 동물만 수정할 수 있습니다.</p>
           <Link
             to={`/animals/${id}`}
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"

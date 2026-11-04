@@ -12,6 +12,9 @@ import FavoriteIcon from '../../assets/icons/material-symbols/favorite.svg?react
 import PersonIcon from '../../assets/icons/material-symbols/person.svg?react';
 import CloseIcon from '../../assets/icons/material-symbols/close.svg?react';
 import MenuIcon from '../../assets/icons/material-symbols/menu.svg?react';
+import DarkModeIcon from '../../assets/icons/material-symbols/dark_mode.svg?react';
+import LightModeIcon from '../../assets/icons/material-symbols/light_mode.svg?react';
+import { useTheme } from '../../lib/theme';
 
 const palette = {
   text: 'text-brand-ink',
@@ -37,6 +40,7 @@ export default function Header() {
   const showPetMarket = canSeePetMarket(user?.role);
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => { setIsMobileMenuOpen(false); }, [pathname]);
 
@@ -146,14 +150,24 @@ export default function Header() {
 
           {/* 로그인 상태에 따른 버튼 & 모바일 메뉴 */}
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* 1280px 이상에서만 보이는 테마 전환. 그보다 좁으면 모바일 메뉴의 다크 모드 스위치를 쓴다. */}
+            <button
+              type="button"
+              onClick={theme.toggle}
+              aria-label={theme.isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+              title={theme.isDark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+              className={`hidden h-10 w-10 shrink-0 items-center justify-center rounded-full xl:flex ${palette.text} dark:text-gray-200 hover:bg-brand-soft dark:hover:bg-gray-700 ${palette.focus}`}
+            >
+              {theme.isDark ? <LightModeIcon aria-hidden="true" className="icon text-[20px]" /> : <DarkModeIcon aria-hidden="true" className="icon text-[20px]" />}
+            </button>
             {user ? (
               // 로그인된 경우: 찜 아이콘 + 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
                 <NoteNotificationBell />
-                <Link to="/notes" className={`hidden sm:flex items-center rounded-lg px-3 min-h-11 text-sm ${palette.text} ${palette.focus} hover:bg-brand-soft`}>쪽지함</Link>
+                <Link to="/notes" className={`hidden sm:flex items-center rounded-lg px-3 min-h-11 text-sm ${palette.text} dark:text-gray-300 ${palette.focus} hover:bg-brand-soft dark:hover:bg-gray-700`}>쪽지함</Link>
                 {showPetMarket && <Link
                   to="/wishlist"
-                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
+                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
                   title="찜한 상품"
                 >
                   <FavoriteIcon aria-hidden="true" className="icon text-[20px]" />
@@ -261,6 +275,21 @@ export default function Header() {
               >
                 펫마켓
               </NavLink>}
+
+              <div className={`border-t pt-4 ${palette.border}`}>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={theme.isDark}
+                  onClick={theme.toggle}
+                  className={`flex min-h-11 w-full items-center gap-3 text-left text-base ${palette.text} dark:text-gray-200 ${palette.focus}`}
+                >
+                  <span aria-hidden="true" className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${theme.isDark ? 'bg-brand' : 'bg-gray-400'}`}>
+                    <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-[left] ${theme.isDark ? 'left-[22px]' : 'left-0.5'}`} />
+                  </span>
+                  다크 모드
+                </button>
+              </div>
 
               <div className={`pt-2 border-t ${palette.border} sm:hidden`}>
                 {user ? (

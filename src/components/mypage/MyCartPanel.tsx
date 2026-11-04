@@ -51,7 +51,7 @@ export default function MyCartPanel({
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <ShoppingCartOffIcon aria-hidden="true" className="icon text-6xl text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">장바구니가 비어있습니다.</p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 담아보세요.</p>
+            <p className="text-gray-400 dark:text-gray-400 text-sm mb-6">마음에 드는 상품을 담아보세요.</p>
             <Link
               to="/products"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
@@ -71,7 +71,7 @@ export default function MyCartPanel({
                 >
                   {/* 상품 이미지 */}
                   <div
-                    className="w-20 h-20 rounded-md bg-cover bg-center flex-shrink-0 bg-gray-100"
+                    className="w-20 h-20 rounded-md bg-cover bg-center flex-shrink-0 bg-gray-100 dark:bg-gray-700"
                     style={{ backgroundImage: item.productImageUrl ? `url('${item.productImageUrl}')` : undefined }}
                   >
                     {!item.productImageUrl && (

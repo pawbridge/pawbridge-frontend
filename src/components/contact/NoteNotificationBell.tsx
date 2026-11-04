@@ -5,6 +5,8 @@ import { useMemberChat } from './useMemberChat';
 import { useFavoriteNotifications } from './useFavoriteNotifications';
 import { memberChatEnabled } from '../../lib/memberChat';
 import { favoriteAnimalName, favoriteNotificationPhrase } from '../../lib/favoriteNotifications';
+// 선 아이콘이라 글자색(currentColor)을 선 색으로 쓴다. 다크에서 버튼 글자색을 따라 밝아진다.
+import BellIcon from '../../assets/icons/contact/bell.svg?react';
 
 export default function NoteNotificationBell() {
   const notifications = useNoteNotifications();
@@ -47,7 +49,7 @@ export default function NoteNotificationBell() {
         }}
         className="relative flex h-11 w-11 items-center justify-center rounded-full text-brand-ink hover:bg-brand-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus dark:text-white dark:hover:bg-gray-800"
       >
-        <img src="/contact/bell.svg" alt="" width={20} height={20} />
+        <BellIcon aria-hidden="true" className="h-5 w-5" />
         {totalUnread > 0 && (
           <span
             aria-hidden="true"
@@ -74,7 +76,7 @@ export default function NoteNotificationBell() {
             </Link>
           </div>
           <div className="max-h-[50dvh] overflow-y-auto">
-            {memberChatEnabled && <section aria-label="채팅 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:bg-gray-800">
+            {memberChatEnabled && <section aria-label="채팅 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:border dark:border-accent-border-dark">
               <div className="flex items-center justify-between gap-3"><h3 className="font-bold">채팅 알림</h3><Link to="/chats" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline">대화 목록</Link></div>
               {chat.notifications.map((room) => <Link key={room.roomId} to={`/chats/${room.roomId}`}
                 onClick={() => setOpen(false)} className="my-2 block rounded-lg bg-white p-3 focus-visible:outline-brand-focus dark:bg-gray-900">
@@ -85,7 +87,7 @@ export default function NoteNotificationBell() {
               {chat.error && <p role="status" className="text-sm">채팅 알림을 불러오지 못했어요. <button className="min-h-11 underline" onClick={() => void chat.refresh()}>다시 시도</button></p>}
               {chat.hasMore && <button className="min-h-11 w-full rounded-lg border border-brand-border" disabled={chat.loading} onClick={() => void chat.more()}>{chat.loading ? '불러오는 중…' : '이전 채팅 알림 더 보기'}</button>}
             </section>}
-            {(favorites.items.length > 0 || favorites.error) && <section aria-label="관심 동물 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:bg-gray-800">
+            {(favorites.items.length > 0 || favorites.error) && <section aria-label="관심 동물 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:border dark:border-accent-border-dark">
               <div className="flex items-center justify-between gap-3"><h3 className="font-bold">관심 동물</h3><Link to="/favorite-animals" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline">관심 목록</Link></div>
               {favorites.items.map((item) => <Link key={item.animalId} to={`/animals/${item.animalId}`}
                 onClick={() => setOpen(false)} className="my-2 flex items-center gap-3 rounded-lg bg-white p-3 focus-visible:outline-brand-focus dark:bg-gray-900">
@@ -103,7 +105,7 @@ export default function NoteNotificationBell() {
                 key={item.noteId}
                 to={item.href}
                 onClick={() => setOpen(false)}
-                className={`my-2 block rounded-lg p-3 focus-visible:outline focus-visible:outline-brand-focus ${item.read ? 'bg-gray-50 dark:bg-gray-800' : 'bg-brand-soft dark:bg-gray-800'}`}
+                className={`my-2 block rounded-lg p-3 focus-visible:outline focus-visible:outline-brand-focus ${item.read ? 'bg-gray-50 dark:bg-gray-800' : 'bg-brand-soft dark:border dark:border-accent-border-dark'}`}
               >
                 <p className="text-sm font-medium">{item.actorNickname}님에게 쪽지가 왔어요</p>
                 <time

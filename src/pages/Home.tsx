@@ -106,7 +106,7 @@ export default function Home() {
               ))}</div>}
       </section>
 
-      <section aria-labelledby="stats-heading" className="mt-12 rounded-2xl bg-brand-soft p-5 dark:bg-neutral-800 sm:p-6">
+      <section aria-labelledby="stats-heading" className="mt-12 rounded-2xl bg-brand-soft p-5 dark:border dark:border-accent-border-dark sm:p-6">
         <h2 id="stats-heading" className="text-lg font-bold">전국 보호 현황</h2>
         <dl className="mt-5 grid grid-cols-3 gap-3 sm:gap-6">
           {[
