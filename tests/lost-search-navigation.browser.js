@@ -10,7 +10,8 @@ async (page) => {
   await page.route(/\/api\/v1\/animals\/(77|78)$/, route => route.fulfill({ json: animals.find(x => route.request().url().endsWith('/' + x.id)) }));
   await page.route('**/api/v1/animals/lost-candidates', route => {
     searches++;
-    return route.fulfill({ json: { candidates: animals.map(animal => ({ animal, matchedEvidence: [] })) } });
+    const deceased = { animal: { ...animals[0], id: 79, status: 'NATURAL_DEATH' }, matchedEvidence: [] };
+    return route.fulfill({ json: { candidates: animals.map(animal => ({ animal, matchedEvidence: [] })), deceasedCandidates: [deceased] } });
   });
   await page.goto('http://127.0.0.1:5187/animals/lost');
   await page.setViewportSize({ width: 1920, height: 1080 });
@@ -23,7 +24,8 @@ async (page) => {
   await page.getByLabel('실종 날짜', { exact: true }).fill('2026-09-08');
   await page.getByLabel('실종 지역', { exact: true }).fill('상주시');
   await page.getByLabel('털색·무늬·특징', { exact: true }).fill('갈색 귀');
-  await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).check();
+  await page.getByLabel('보호소를 떠난 동물도 포함', { exact: true }).check();
+  await page.getByLabel('보호 중 사망한 기록도 확인', { exact: true }).check();
   await page.getByRole('button', { name: '사진으로 후보 찾기', exact: true }).click();
   await page.getByRole('heading', { name: '확인할 후보 2마리' }).waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
@@ -41,7 +43,9 @@ async (page) => {
   check(await page.getByLabel('실종 날짜', { exact: true }).inputValue() === '2026-09-08', 'date not restored');
   check(await page.getByLabel('실종 지역', { exact: true }).inputValue() === '상주시', 'region not restored');
   check(await page.getByLabel('털색·무늬·특징', { exact: true }).inputValue() === '갈색 귀', 'description not restored');
-  check(await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).isChecked(), 'status option not restored');
+  check(await page.getByLabel('보호소를 떠난 동물도 포함', { exact: true }).isChecked(), 'status option not restored');
+  check(await page.getByLabel('보호 중 사망한 기록도 확인', { exact: true }).isChecked(), 'deceased option not restored');
+  check(await page.getByRole('heading', { name: '보호 중 사망한 기록 1건' }).count() === 1, 'deceased records not restored');
   check(await page.getByAltText('선택한 실종동물 사진').count() === 1, 'photo not restored');
   check(searches === 1, 'back reran GPU search');
   await page.getByRole('link', { name: '공고 상세 보기', exact: true }).nth(1).click();

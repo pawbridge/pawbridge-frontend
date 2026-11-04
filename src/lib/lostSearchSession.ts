@@ -3,6 +3,7 @@ import type { LostCandidate, LostSearchInput } from '../api/lostSearch.api';
 export interface LostSearchSession extends Omit<LostSearchInput, 'image'> {
   photo: File | null;
   results: LostCandidate[];
+  deceasedResults: LostCandidate[];
   phase: 'idle' | 'success';
   scrollY: number;
 }

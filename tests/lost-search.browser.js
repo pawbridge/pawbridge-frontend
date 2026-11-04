@@ -31,13 +31,14 @@ async (page) => {
   await page.getByLabel('실종 날짜', { exact: true }).fill('2026-09-08');
   await page.getByLabel('실종 지역', { exact: true }).fill('상주시');
   await page.getByLabel('털색·무늬·특징', { exact: true }).fill('갈색 귀');
-  check(!await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).isChecked(), 'status option should default to false');
+  check(!await page.getByLabel('보호소를 떠난 동물도 포함', { exact: true }).isChecked(), 'status option should default to false');
   await page.getByRole('button', { name: '사진으로 후보 찾기' }).click();
   await page.getByRole('heading', { name: '확인할 후보 1마리' }).waitFor();
   check(requests[0].includes('name="region"') && requests[0].includes('상주시') && requests[0].includes('갈색 귀') && requests[0].includes('2026-09-08'), 'conditions were not transmitted');
   check(requests[0].includes('name="includeAdoptedOrReturned"') && requests[0].includes('false'), 'default status policy was not transmitted');
+  check(/name="includeDeceased"\r\n\r\nfalse/.test(requests[0]), 'deceased option default was not transmitted');
   payload = { candidates: [adoptedCard] };
-  await page.getByLabel('입양·반환된 동물도 포함', { exact: true }).check();
+  await page.getByLabel('보호소를 떠난 동물도 포함', { exact: true }).check();
   check(await page.getByRole('heading', { name: '확인할 후보 1마리' }).count() === 0, 'status option did not invalidate old results');
   await page.getByRole('button', { name: '사진으로 후보 찾기' }).click();
   await page.getByText('종료(입양)', { exact: true }).waitFor();
