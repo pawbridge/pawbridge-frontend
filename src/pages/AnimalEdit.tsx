@@ -8,7 +8,7 @@ import { useAuthStore } from '../store/authStore';
 import { logoutWithoutWaiting } from '../api/auth.api';
 import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
-import AdminSidebar from '../components/layout/AdminSidebar';
+import ShelterAnimalSidebar from '../components/layout/ShelterAnimalSidebar';
 import { getApiErrorMessage } from '../lib/apiError';
 import NoteNotificationBell from '../components/contact/NoteNotificationBell';
 import AddPhotoAlternateIcon from '../assets/icons/material-symbols/add_photo_alternate.svg?react';
@@ -258,7 +258,7 @@ export default function AnimalEdit() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex overflow-hidden">
-      <div className="hidden md:block"><AdminSidebar /></div>
+      <ShelterAnimalSidebar current="registered" />
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         <header className="flex items-center justify-between md:justify-end h-16 px-4 md:px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
           <Link to="/" className="md:hidden text-lg font-display font-bold text-brand-ink dark:text-white">PawBridge</Link>
