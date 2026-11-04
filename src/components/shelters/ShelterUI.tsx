@@ -1,5 +1,4 @@
 import { panel, control, labels, errorMessage } from './shelterApplicationDisplay';
-import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AdminPageHeader } from '../layout/AdminLayout';
 import ManagementBreadcrumb from '../common/ManagementBreadcrumb';
@@ -16,15 +15,15 @@ export function Pagination({ page, total, change }: { page: number; total: numbe
     <button className={control} disabled={page + 1 >= total} onClick={() => change(page + 1)}>다음</button>
   </nav>;
 }
-export function AdminShelterLayout({ title, children }: { title: string; children: ReactNode; }) {
+export function AdminShelterPageHeader({ title }: { title: string; }) {
   const { pathname } = useLocation();
   const isApplication = pathname.startsWith('/admin/shelter-applications');
   const listPath = isApplication ? '/admin/shelter-applications' : '/admin/shelters';
   const listLabel = isApplication ? '담당자 신청' : '보호소 목록';
   const detail = pathname !== listPath;
-  return <><AdminPageHeader title={title} breadcrumb={<ManagementBreadcrumb current={detail ? '상세' : listLabel} collapseAncestors={false} separatorSrc="/admin/breadcrumb-separator.svg" items={[
+  return <AdminPageHeader title={title} breadcrumb={<ManagementBreadcrumb current={detail ? '상세' : listLabel} collapseAncestors={false} separatorSrc="/admin/breadcrumb-separator.svg" items={[
     { label: '관리자', to: '/admin/dashboard' },
     { label: '보호소 관리', to: '/admin/shelters' },
     ...(detail ? [{ label: listLabel, to: listPath }] : []),
-  ]} />} />{children}</>;
+  ]} />} />;
 }
