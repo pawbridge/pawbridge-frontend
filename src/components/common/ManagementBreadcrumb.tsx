@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ChevronRightIcon from '../../assets/icons/material-symbols/chevron_right.svg?react';
 
 type ManagementBreadcrumbProps = {
   current: string;
@@ -43,9 +44,7 @@ export default function ManagementBreadcrumb({ current, items, separatorSrc, col
   }, [expanded]);
 
   const separator = separatorSrc ? <img src={separatorSrc} alt="" width="16" height="16" /> : (
-    <span aria-hidden="true" className="material-symbols-outlined text-base leading-none text-brand-muted">
-      chevron_right
-    </span>
+    <ChevronRightIcon aria-hidden="true" className="icon text-base leading-none text-brand-muted" />
   );
 
   return (

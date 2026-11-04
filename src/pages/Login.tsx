@@ -1,6 +1,8 @@
 import { useLocation, useSearchParams, Link } from 'react-router-dom';
 import SocialLoginButton, { type SocialProvider } from '../components/common/SocialLoginButton';
 import { rememberReportLoginReturn } from '../lib/reportNavigation';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import PetsIcon from '../assets/icons/material-symbols/pets.svg?react';
 
 export default function Login() {
   const location = useLocation();
@@ -21,7 +23,7 @@ export default function Login() {
         <div className="flex justify-center">
           <Link to="/" className="flex items-center gap-4 text-brand-ink dark:text-white hover:opacity-80 transition-opacity">
             <div className="text-brand-accent text-2xl">
-              <span aria-hidden="true" className="material-symbols-outlined">pets</span>
+              <PetsIcon aria-hidden="true" className="icon" />
             </div>
             <h2 className="text-brand-ink dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
               포우 브릿지
@@ -58,7 +60,7 @@ export default function Login() {
 
             {oauthError && (
               <p role="alert" className="mb-4 flex items-start gap-1 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                <span aria-hidden="true" className="material-symbols-outlined text-base">error</span>
+                <ErrorIcon aria-hidden="true" className="icon text-base" />
                 {oauthError}
               </p>
             )}

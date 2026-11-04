@@ -12,6 +12,14 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { getApiErrorMessage } from '../lib/apiError';
 import NoteNotificationBell from '../components/contact/NoteNotificationBell';
+import AddPhotoAlternateIcon from '../assets/icons/material-symbols/add_photo_alternate.svg?react';
+import CloseIcon from '../assets/icons/material-symbols/close.svg?react';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import ExpandLessIcon from '../assets/icons/material-symbols/expand_less.svg?react';
+import HelpIcon from '../assets/icons/material-symbols/help.svg?react';
+import LogoutIcon from '../assets/icons/material-symbols/logout.svg?react';
+import PersonIcon from '../assets/icons/material-symbols/person.svg?react';
+import PetsIcon from '../assets/icons/material-symbols/pets.svg?react';
 
 export default function AnimalCreate() {
   const navigate = useNavigate();
@@ -199,7 +207,7 @@ export default function AnimalCreate() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
             <p className="text-gray-500 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
             <Link
               to="/mypage"
@@ -241,21 +249,21 @@ export default function AnimalCreate() {
         {/* 네비게이션 */}
         <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-hide">
           <Link to="/mypage" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors">
-            <span aria-hidden="true" className="material-symbols-outlined text-[22px]">person</span>
+            <PersonIcon aria-hidden="true" className="icon text-[22px]" />
             <span className="text-sm font-medium">마이페이지</span>
           </Link>
           <div className="my-2 h-px bg-brand-border dark:bg-stone-800 mx-3"></div>
           <Link to="/animals" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors">
-            <span aria-hidden="true" className="material-symbols-outlined text-[22px]">pets</span>
+            <PetsIcon aria-hidden="true" className="icon text-[22px]" />
             <span className="text-sm font-medium">동물 목록</span>
           </Link>
           <div className="flex flex-col gap-1 mt-1">
             <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-brand-ink dark:text-white bg-brand-soft dark:bg-stone-800 font-bold">
               <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="material-symbols-outlined text-[22px] text-brand-accent">pets</span>
+                <PetsIcon aria-hidden="true" className="icon text-[22px] text-brand-accent" />
                 <span className="text-sm">동물 관리</span>
               </div>
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">expand_less</span>
+              <ExpandLessIcon aria-hidden="true" className="icon text-[18px]" />
             </div>
             <div className="flex flex-col pl-11 gap-1">
               <Link to="/mypage" className="block px-3 py-2 rounded-lg text-sm text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:text-white dark:hover:bg-stone-800 transition-colors">
@@ -271,7 +279,7 @@ export default function AnimalCreate() {
         {/* 하단 고객지원 */}
         <div className="p-4 border-t border-brand-border dark:border-stone-800">
           <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-brand-muted hover:text-brand-ink dark:hover:text-white bg-transparent hover:bg-brand-soft dark:hover:bg-stone-800 rounded-lg transition-colors">
-            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">help</span>
+            <HelpIcon aria-hidden="true" className="icon text-[18px]" />
             고객지원
           </button>
         </div>
@@ -288,7 +296,7 @@ export default function AnimalCreate() {
             <div className="h-6 w-px bg-brand-border dark:border-stone-800"></div>
             <div className="flex items-center gap-3">
               <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-brand-focus bg-brand/20 flex items-center justify-center">
-                <span aria-hidden="true" className="material-symbols-outlined text-brand-accent">person</span>
+                <PersonIcon aria-hidden="true" className="icon text-brand-accent" />
               </div>
               <div className="hidden md:flex flex-col text-right">
                 <span className="text-sm font-bold leading-none text-brand-ink dark:text-white">{user?.name || '사용자'}</span>
@@ -300,7 +308,7 @@ export default function AnimalCreate() {
               aria-label="로그아웃"
               className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2"
             >
-              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">logout</span>
+              <LogoutIcon aria-hidden="true" className="icon text-[20px]" />
             </button>
           </div>
         </header>
@@ -460,13 +468,13 @@ export default function AnimalCreate() {
                       aria-label="대표 이미지 삭제"
                       className="absolute top-2 right-2 rounded-full bg-red-500 text-white p-2 hover:bg-red-600 transition-colors"
                     >
-                      <span aria-hidden="true" className="material-symbols-outlined text-sm">close</span>
+                      <CloseIcon aria-hidden="true" className="icon text-sm" />
                     </button>
                   </div>
                 ) : (
                   <label className="flex-1 min-h-[240px] border-2 border-dashed border-brand-border dark:border-stone-700 rounded-xl bg-white dark:bg-stone-900 flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-brand-focus hover:bg-brand/5 transition-colors group/upload">
                     <div className="size-14 rounded-full bg-white dark:bg-stone-800 shadow-sm flex items-center justify-center text-brand-muted group-hover/upload:text-brand-accent transition-colors border border-brand-border dark:border-stone-700">
-                      <span aria-hidden="true" className="material-symbols-outlined text-[32px]">add_photo_alternate</span>
+                      <AddPhotoAlternateIcon aria-hidden="true" className="icon text-[32px]" />
                     </div>
                     <div className="flex flex-col gap-1">
                       <p className="text-sm font-bold text-brand-ink dark:text-white group-hover/upload:text-brand-accent transition-colors">

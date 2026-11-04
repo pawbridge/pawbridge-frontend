@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import placeholderImg from '../../assets/image-placeholder.svg';
 import type { WishlistItem, WishlistSearchResponse } from '../../types/api.types';
 import { getStatusBadge } from './marketPresentation';
+import AddShoppingCartIcon from '../../assets/icons/material-symbols/add_shopping_cart.svg?react';
+import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.svg?react';
+import BlockIcon from '../../assets/icons/material-symbols/block.svg?react';
+import DeleteIcon from '../../assets/icons/material-symbols/delete.svg?react';
+import FavoriteIcon from '../../assets/icons/material-symbols/favorite.svg?react';
 
 export type WishlistSortOption = 'latest' | 'priceAsc' | 'priceDesc' | 'nameAsc';
 interface MyWishlistPanelProps {
@@ -185,12 +190,12 @@ export default function MyWishlistPanel({
                           >
                             {isSoldOut ? (
                               <>
-                                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">block</span>
+                                <BlockIcon aria-hidden="true" className="icon text-[16px]" />
                                 품절
                               </>
                             ) : (
                               <>
-                                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+                                <AddShoppingCartIcon aria-hidden="true" className="icon text-[16px]" />
                                 담기
                               </>
                             )}
@@ -201,7 +206,7 @@ export default function MyWishlistPanel({
                             className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                             title="삭제"
                           >
-                            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete</span>
+                            <DeleteIcon aria-hidden="true" className="icon text-[18px]" />
                           </button>
                         </div>
                       </div>
@@ -248,7 +253,7 @@ export default function MyWishlistPanel({
           </div>
         ) : (
           <div className="mt-8 text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mb-3">favorite_border</span>
+            <FavoriteIcon aria-hidden="true" className="icon text-6xl text-gray-300 dark:text-gray-600 mb-3" />
             <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">찜한 상품이 없습니다.</p>
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">마음에 드는 상품을 찾아 위시리스트에 담아보세요.</p>
             <Link
@@ -256,7 +261,7 @@ export default function MyWishlistPanel({
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑하러 가기
-              <span aria-hidden="true" className="material-symbols-outlined text-sm">arrow_forward</span>
+              <ArrowForwardIcon aria-hidden="true" className="icon text-sm" />
             </Link>
           </div>
         )}

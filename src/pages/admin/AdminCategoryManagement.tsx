@@ -5,6 +5,7 @@ import type { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } f
 import { AdminPageHeader } from '../../components/layout/AdminLayout';
 import AdminDeleteDialog from '../../components/admin/AdminDeleteDialog';
 import { AdminEmpty, AdminError, AdminLoading, adminControl, adminInput, adminPanel, adminPrimary } from '../../components/admin/AdminUI';
+import ArrowRightIcon from '../../assets/icons/material-symbols/arrow_right.svg?react';
 
 interface CategoryTreeNodeProps {
   category: CategoryResponse;
@@ -40,14 +41,12 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
         >
           <div className="flex min-w-0 items-center gap-2">
             {hasChildren && (
-              <span
+              <ArrowRightIcon
                 aria-hidden="true"
-                className={`material-symbols-outlined text-text-sub dark:text-gray-400 transition-transform text-[20px] ${
+                className={`icon text-text-sub dark:text-gray-400 transition-transform text-[20px] ${
                   isOpen ? 'rotate-90' : ''
                 }`}
-              >
-                arrow_right
-              </span>
+              />
             )}
             {!hasChildren && <span className="w-[20px]"></span>}
             <span

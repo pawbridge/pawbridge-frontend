@@ -237,7 +237,7 @@ export default function AnimalDetail() {
           <h2 id="similar-animals-title" className="mb-6 text-xl font-bold">비슷한 동물</h2>
           {similarQuery.isPending && <p role="status" className="rounded-2xl border border-border-light p-6 text-sm text-brand-muted dark:border-border-dark dark:text-gray-300">비슷한 동물을 불러오는 중입니다…</p>}
           {similarQuery.isError && <div className="mb-4 rounded-2xl border border-border-light p-6 dark:border-border-dark">
-            <p role="alert" className="text-sm">비슷한 동물을 불러오지 못했습니다.</p>
+            <p role="alert" className="text-sm">비슷한 동물을 아직 준비하지 못했어요. 새로 등록된 공고는 반영까지 시간이 걸릴 수 있어요.</p>
             <button type="button" onClick={() => void similarQuery.refetch()} disabled={similarQuery.isFetching} className="mt-4 min-h-11 rounded-lg border border-border-light px-5 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-border-dark dark:hover:bg-gray-800">
               {similarQuery.isFetching ? '다시 불러오는 중…' : '다시 시도'}
             </button>

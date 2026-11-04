@@ -183,7 +183,7 @@ async page => {
   results.push('five list errors, retry and empty-result recovery');
   await page.route('**/favicon-96.png', route => route.abort());
   await page.goto(origin + '/admin/products/1/edit');
-  await page.getByRole('img', { name: '상품 대표 이미지 미리보기 · 이미지를 불러오지 못했습니다.' }).waitFor();
+  await page.getByRole('img', { name: '상품 대표 이미지 미리보기, 이미지를 불러오지 못했습니다.' }).waitFor();
   await page.unroute('**/favicon-96.png');
   results.push('product image failure fallback');
   check(errors.length === 0, 'Page errors: ' + errors.join('; '));

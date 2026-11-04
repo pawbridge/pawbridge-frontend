@@ -8,6 +8,10 @@ import { LostAnimalLinks } from './LostAnimalNavigation';
 import { protectedAnimalDestinations, lostAnimalDestinations } from '../../lib/navigationDestinations';
 import NavigationGroup, { type OpenMode } from './NavigationGroup';
 import NoteNotificationBell from '../contact/NoteNotificationBell';
+import FavoriteIcon from '../../assets/icons/material-symbols/favorite.svg?react';
+import PersonIcon from '../../assets/icons/material-symbols/person.svg?react';
+import CloseIcon from '../../assets/icons/material-symbols/close.svg?react';
+import MenuIcon from '../../assets/icons/material-symbols/menu.svg?react';
 
 const palette = {
   text: 'text-brand-ink',
@@ -152,7 +156,7 @@ export default function Header() {
                   className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
                   title="찜한 상품"
                 >
-                  <span aria-hidden="true" className="material-symbols-outlined text-[20px]">favorite</span>
+                  <FavoriteIcon aria-hidden="true" className="icon text-[20px]" />
                 </Link>}
                 {user.role === 'ROLE_ADMIN' ? (
                   // 관리자는 대시보드 버튼이 마이페이지 자리를 쓰므로 이름을 마이페이지 링크로 둔다.
@@ -181,7 +185,7 @@ export default function Header() {
                     to="/mypage"
                     className={`hidden sm:flex items-center gap-2 min-w-[84px] max-w-[480px] cursor-pointer justify-center overflow-hidden rounded-full h-10 px-4 ${palette.filled} text-sm font-medium leading-5 tracking-normal hover:opacity-90 transition-opacity ${palette.focus}`}
                   >
-                    <span aria-hidden="true" className="material-symbols-outlined text-[18px]">person</span>
+                    <PersonIcon aria-hidden="true" className="icon text-[18px]" />
                     <span className="truncate">마이페이지</span>
                   </Link>
                 )}
@@ -210,9 +214,7 @@ export default function Header() {
               className={`flex h-11 w-11 shrink-0 items-center justify-center xl:hidden ${palette.text} dark:text-white`}
               onClick={() => setIsMobileMenuOpen((open) => !open)}
             >
-              <span aria-hidden="true" className="material-symbols-outlined">
-                {isMobileMenuOpen ? 'close' : 'menu'}
-              </span>
+              {isMobileMenuOpen ? <CloseIcon aria-hidden="true" className="icon" /> : <MenuIcon aria-hidden="true" className="icon" />}
             </button>
           </div>
         </div>
@@ -268,7 +270,7 @@ export default function Header() {
                       className={`flex items-center gap-2 mb-2 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[18px]">favorite</span>
+                      <FavoriteIcon aria-hidden="true" className="icon text-[18px]" />
                       <span>찜한 상품</span>
                     </Link>}
                     <div className={`${palette.text} dark:text-gray-300 text-sm font-medium mb-2`}>
@@ -288,7 +290,7 @@ export default function Header() {
                       className={`flex items-center gap-2 mb-2 ${palette.text} dark:text-gray-300 text-sm font-medium ${palette.navigation} transition-colors ${palette.focus}`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <span aria-hidden="true" className="material-symbols-outlined text-[18px]">person</span>
+                      <PersonIcon aria-hidden="true" className="icon text-[18px]" />
                       <span>마이페이지</span>
                     </Link>
                     <button

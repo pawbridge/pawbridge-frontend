@@ -4,6 +4,10 @@ import { getProducts, addToCart, getCategories } from '../api/products.api';
 import type { ProductSearchParams, CategoryResponse } from '../types/api.types';
 import ProductFilterSidebar from '../components/common/ProductFilterSidebar';
 import ProductCard from '../components/common/ProductCard';
+import ChevronLeftIcon from '../assets/icons/material-symbols/chevron_left.svg?react';
+import ChevronRightIcon from '../assets/icons/material-symbols/chevron_right.svg?react';
+import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
+import Inventory2Icon from '../assets/icons/material-symbols/inventory_2.svg?react';
 
 export default function Products() {
   const queryClient = useQueryClient();
@@ -100,7 +104,7 @@ export default function Products() {
       <main className="container mx-auto px-4 py-8 flex-1">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <span aria-hidden="true" className="material-symbols-outlined text-5xl text-red-500 mb-4">error</span>
+            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
             <p className="text-gray-500">상품을 불러오는데 실패했습니다.</p>
             <button
               onClick={() => window.location.reload()}
@@ -191,9 +195,7 @@ export default function Products() {
           {/* 상품 목록 */}
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <span aria-hidden="true" className="material-symbols-outlined text-6xl text-gray-300 mb-4">
-                inventory_2
-              </span>
+              <Inventory2Icon aria-hidden="true" className="icon text-6xl text-gray-300 mb-4" />
               <p className="text-lg text-gray-500 mb-4">검색 결과가 없습니다</p>
               <button
                 onClick={handleReset}
@@ -228,7 +230,7 @@ export default function Products() {
                     : 'bg-secondary-light dark:bg-secondary-dark text-gray-500 hover:bg-brand/20 hover:text-brand-accent'
                 }`}
               >
-                <span aria-hidden="true" className="material-symbols-outlined text-xl">chevron_left</span>
+                <ChevronLeftIcon aria-hidden="true" className="icon text-xl" />
               </button>
 
               {/* 페이지 번호 */}
@@ -270,7 +272,7 @@ export default function Products() {
                     : 'bg-secondary-light dark:bg-secondary-dark text-gray-500 hover:bg-brand/20 hover:text-brand-accent'
                 }`}
               >
-                <span aria-hidden="true" className="material-symbols-outlined text-xl">chevron_right</span>
+                <ChevronRightIcon aria-hidden="true" className="icon text-xl" />
               </button>
             </nav>
           )}

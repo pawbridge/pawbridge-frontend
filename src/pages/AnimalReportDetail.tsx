@@ -8,6 +8,7 @@ import { reportListPath } from '../lib/reportNavigation';
 import placeholderImg from '../assets/image-placeholder.svg';
 import { deleteAnimalReport, getAnimalReport } from '../api/animalReports.api';
 import { useAuthStore } from '../store/authStore';
+import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 
 export default function AnimalReportDetail() {
   const { id } = useParams<{ id: string }>();
@@ -61,7 +62,7 @@ export default function AnimalReportDetail() {
 
   return shell(<div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 md:py-12">
     <Link to={reportListPath(report?.kind)} className="mb-6 inline-flex items-center gap-1 text-gray-600 hover:text-brand-accent dark:text-gray-300">
-      <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span> 목록으로
+      <ArrowBackIcon aria-hidden="true" className="icon" /> 목록으로
     </Link>
     <BlockedAuthorContent key={report.reportId} state={blocks} authorId={report.authorId}>
     <article className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800 md:p-8">

@@ -30,7 +30,7 @@ export function adminDailyChange(current: number, previous: number, unit = '건'
   const change = current - previous;
   if (!change) return '변동 없음';
   const count = `${change > 0 ? '+' : ''}${change.toLocaleString()}${unit}`;
-  return previous === 0 ? `${count} · 비율 비교 불가` : `${count} (${change > 0 ? '+' : ''}${(change / previous * 100).toFixed(1)}%)`;
+  return previous === 0 ? `${count} (비율 비교 불가)` : `${count} (${change > 0 ? '+' : ''}${(change / previous * 100).toFixed(1)}%)`;
 }
 
 // Legacy signup/collection endpoints return the previous date in their array.

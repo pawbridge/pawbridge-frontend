@@ -15,7 +15,7 @@ test('일별 성공 응답에 중간 0건 날짜를 채우고 날짜순을 유�
   ]);
 });
 test('0건 전일의 증가를 100퍼센트로 꾸미지 않는다', () => {
-  assert.equal(adminDailyChange(20, 0), '+20건 · 비율 비교 불가');
+  assert.equal(adminDailyChange(20, 0), '+20건 (비율 비교 불가)');
   assert.equal(adminDailyChange(0, 0), '변동 없음');
   assert.equal(adminDailyChange(5, 10), '-5건 (-50.0%)');
 });
@@ -39,7 +39,7 @@ test('새 응답의 전일 수치는 기간 합계에 섞지 않고 첫날 비�
   assert.equal(rows.reduce((sum, row) => sum + row.count, 0), 7);
   assert.equal(changes.get('2026-10-01'), '-5마리 (-50.0%)');
   assert.equal(changes.get('2026-10-02'), '-5마리 (-100.0%)');
-  assert.equal(changes.get('2026-10-03'), '+2마리 · 비율 비교 불가');
+  assert.equal(changes.get('2026-10-03'), '+2마리 (비율 비교 불가)');
 });
 test('기존 회원·수집 응답은 전일 행을 분리한다', () => {
   const result = separateAdminPreviousDay([{ date: '2026-09-30', count: 9 }, { date: '2026-10-01', count: 3 }], '2026-10-01', '2026-10-02');

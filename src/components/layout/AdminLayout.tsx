@@ -41,9 +41,9 @@ export default function AdminLayout() {
           </Suspense>
         </ErrorBoundary>
       </main>
-      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-brand-border bg-surface-light p-4 text-xs lg:hidden dark:border-stone-700 dark:bg-surface-dark"><span>PawBridge · 관리자</span><Link className={adminControl} to="/">사용자 화면으로</Link></footer>
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-brand-border bg-surface-light p-4 text-xs lg:hidden dark:border-stone-700 dark:bg-surface-dark"><span>PawBridge 관리자</span><Link className={adminControl} to="/">사용자 화면으로</Link></footer>
     </div>
-    {menuOpen && <StatsDialog fullScreen title="PawBridge · 관리자" onClose={() => setMenuOpen(false)}><AdminSidebar mobile onNavigate={() => setMenuOpen(false)} /></StatsDialog>}
+    {menuOpen && <StatsDialog fullScreen title="PawBridge 관리자" onClose={() => setMenuOpen(false)}><AdminSidebar mobile onNavigate={() => setMenuOpen(false)} /></StatsDialog>}
   </div>;
 }
 
