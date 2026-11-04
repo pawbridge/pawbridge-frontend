@@ -246,7 +246,7 @@ export default function AdminOptionGroupManagement() {
     {isLoading ? <AdminLoading /> : error ? <AdminError title="옵션 그룹 조회 실패" retry={() => void refetch()} /> : <fieldset disabled={busy || !!deleting} className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <section className={`${adminPanel} space-y-4`}><h2 className="text-xl font-bold">옵션 그룹</h2>
         <label className="block text-sm font-medium">그룹 검색<input className={adminInput} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></label>
-        <ul className="space-y-2">{filteredGroups.map(group => <li key={group.id}><button type="button" className={`${adminControl} w-full !justify-start break-words ${selectedGroup?.id === group.id ? '!bg-brand-soft' : ''}`} aria-pressed={selectedGroup?.id === group.id} onClick={() => handleSelectGroup(group)}>{group.name}</button></li>)}</ul>
+        <ul className="space-y-2">{filteredGroups.map(group => <li key={group.id}><button type="button" className={`${adminControl} w-full !justify-start break-words ${selectedGroup?.id === group.id ? '!bg-brand-soft dark:!border-accent-border-dark' : ''}`} aria-pressed={selectedGroup?.id === group.id} onClick={() => handleSelectGroup(group)}>{group.name}</button></li>)}</ul>
         {!filteredGroups.length && <p className="text-sm text-brand-muted">{optionGroups.length ? '검색 결과가 없습니다.' : '등록된 옵션 그룹이 없습니다.'}</p>}
         <button type="button" className={adminPrimary} onClick={handleNewGroup}>새 그룹 추가</button>
       </section>

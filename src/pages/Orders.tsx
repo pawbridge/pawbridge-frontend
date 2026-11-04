@@ -111,10 +111,10 @@ export default function Orders() {
     <main className="flex-1 w-full max-w-[1080px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
       {/* Breadcrumbs */}
       <nav className="flex flex-wrap gap-2 mb-6 text-sm">
-        <button onClick={() => navigate('/')} className="text-text-secondary hover:underline">
+        <button onClick={() => navigate('/')} className="text-text-secondary dark:text-gray-400 hover:underline">
           Home
         </button>
-        <span className="text-text-secondary">/</span>
+        <span className="text-text-secondary dark:text-gray-400">/</span>
         <span className="text-text-main dark:text-white font-semibold">주문 내역</span>
       </nav>
 
@@ -148,7 +148,7 @@ export default function Orders() {
               <option value="COMPLETED">주문 완료</option>
               <option value="CANCELLED">주문 취소</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400">
               <ExpandMoreIcon aria-hidden="true" className="icon" />
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function Orders() {
                           </span>
                           <button
                             onClick={() => handleViewDetail(order.orderId)}
-                            className="text-xs text-gray-500 hover:text-brand-accent hover:underline text-left"
+                            className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-accent hover:underline text-left"
                           >
                             No. {order.orderUuid.slice(0, 13)}
                           </button>

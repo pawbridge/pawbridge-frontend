@@ -19,7 +19,7 @@ function RoomAvatar({ nickname }: { nickname: string }) {
 
 function RoomRow({ room, selected }: { room: ChatRoom; selected: boolean }) {
   return <Link to={`/chats/${room.roomId}`} aria-current={selected ? 'page' : undefined}
-    className={`flex min-w-0 gap-3 rounded-xl p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus ${selected ? 'bg-brand-soft dark:bg-gray-800' : 'hover:bg-brand-soft dark:hover:bg-gray-800'}`}>
+    className={`flex min-w-0 gap-3 rounded-xl p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus ${selected ? 'bg-brand-soft dark:border dark:border-accent-border-dark' : 'hover:bg-brand-soft dark:hover:bg-gray-800'}`}>
     <RoomAvatar nickname={room.counterpartNickname} />
     <span className="min-w-0 flex-1">
       <span className="block break-words font-bold">{room.counterpartNickname}</span>
@@ -175,7 +175,7 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
           requestAnimationFrame(() => { if (element) element.scrollTop = top + element.scrollHeight - height; });
         }}>{history.isFetchingNextPage ? '불러오는 중…' : '이전 메시지 50개 더 보기'}</button>}
       {roomId && history.isPending && <p role="status">메시지를 불러오는 중입니다…</p>}
-      {!roomId && <p className="rounded-xl bg-brand-soft p-4 text-brand-muted dark:bg-gray-800 dark:text-gray-400">상대에게 전달할 내용을 작성해 주세요.</p>}
+      {!roomId && <p className="rounded-xl bg-brand-soft p-4 text-brand-muted dark:border dark:border-accent-border-dark dark:text-gray-400">상대에게 전달할 내용을 작성해 주세요.</p>}
       <ol className="space-y-3">{messages.map((message) => {
         const mine = message.senderId === owner;
         return <li key={message.sequence} data-sequence={message.sequence} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
@@ -201,7 +201,7 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
       <button type="submit" disabled={sending || !canSend || !chat.connected || (!uncertain && !validChatBody(body))}
         className={`${contactButton} w-full !border-brand bg-brand text-brand-ink`}>{sending ? '전송 중…' : uncertain ? '같은 메시지 다시 확인·전송' : '보내기'}</button>
     </form>
-    {roomId && <div className="mt-6 rounded-xl bg-brand-soft p-4 text-sm dark:bg-gray-800">
+    {roomId && <div className="mt-6 rounded-xl bg-brand-soft p-4 text-sm dark:border dark:border-accent-border-dark">
       <h4 className="font-bold">대화 관리</h4>
       <div className="mt-2 flex flex-wrap gap-2">
         <button className={contactButton} onClick={() => void manage('hide')}>내 목록에서 숨기기</button>
@@ -247,7 +247,7 @@ export default function MemberChats() {
       <aside className={selected ? 'hidden lg:block' : ''} aria-label="대화 목록">
         {rooms.isPending && <p role="status" className="p-4">대화를 불러오는 중입니다…</p>}
         {rooms.isError && <p role="alert" className="p-4">목록을 불러오지 못했어요. <button className={contactButton} onClick={() => void rooms.refetch()}>다시 시도</button></p>}
-        {!rooms.isPending && !rooms.isError && !content.length && <p className="rounded-xl bg-brand-soft p-4 leading-7 dark:bg-gray-800">아직 대화가 없습니다. 글 작성자의 닉네임에서 1:1 대화를 시작할 수 있어요.</p>}
+        {!rooms.isPending && !rooms.isError && !content.length && <p className="rounded-xl bg-brand-soft p-4 leading-7 dark:border dark:border-accent-border-dark">아직 대화가 없습니다. 글 작성자의 닉네임에서 1:1 대화를 시작할 수 있어요.</p>}
         <ul>{content.map((room) => <li key={room.roomId}><RoomRow room={room} selected={roomId === room.roomId} /></li>)}</ul>
         {rooms.hasNextPage && <button type="button" className={`${contactButton} mt-4 w-full`} disabled={rooms.isFetchingNextPage}
           onClick={() => void rooms.fetchNextPage()}>{rooms.isFetchingNextPage ? '불러오는 중…' : '대화 10개 더 보기'}</button>}
@@ -257,8 +257,8 @@ export default function MemberChats() {
       {findingExisting && (existing.isPending || (!existing.isFetchedAfterMount && !existing.isError)) ? <p role="status" className="p-4">이전 대화를 확인하는 중입니다…</p>
         : findingExisting && existing.isError ? <p role="alert" className="p-4">이전 대화를 확인하지 못했어요. <button type="button" className={contactButton} onClick={() => void existing.refetch()}>다시 시도</button></p>
         : selected ? <ChatConversation key={`${owner}:${getAuthSessionVersion()}:${roomId ?? `new:${recipientId}`}`} roomId={roomId} recipientId={recipientId} />
-        : <section className="hidden self-start rounded-xl bg-brand-soft p-6 lg:block dark:bg-gray-800"><h3 className="text-lg font-bold">대화를 선택해 주세요</h3><p className="mt-3 text-sm leading-6">목록에서 회원을 선택하면 기존 기록을 확인할 수 있어요.</p></section>}
+        : <section className="hidden self-start rounded-xl bg-brand-soft p-6 lg:block dark:border dark:border-accent-border-dark"><h3 className="text-lg font-bold">대화를 선택해 주세요</h3><p className="mt-3 text-sm leading-6">목록에서 회원을 선택하면 기존 기록을 확인할 수 있어요.</p></section>}
     </div>
-    {!selected && <p className="mt-6 rounded-xl bg-brand-soft p-4 text-sm leading-6 dark:bg-gray-800">대화 목록에서 숨겨도 기록은 유지됩니다. 새 메시지가 오면 목록에 다시 나타납니다.</p>}
+    {!selected && <p className="mt-6 rounded-xl bg-brand-soft p-4 text-sm leading-6 dark:border dark:border-accent-border-dark">대화 목록에서 숨겨도 기록은 유지됩니다. 새 메시지가 오면 목록에 다시 나타납니다.</p>}
   </ContactLayout>;
 }

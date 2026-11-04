@@ -8,9 +8,9 @@ import { readShelterView, saveShelterView } from '../../lib/shelterViewSnapshot'
 
 function Preview({ animal, returnTo }: { animal: ShelterAnimalPreview; returnTo: string }) {
   const [failed, setFailed] = useState(false);
-  return <Link to={`/animals/${animal.id}`} state={{ searchReturnTo: returnTo }} className="flex w-40 shrink-0 flex-col overflow-hidden rounded-lg border border-brand-border bg-white text-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus md:w-auto md:flex-row">
+  return <Link to={`/animals/${animal.id}`} state={{ searchReturnTo: returnTo }} className="flex w-40 shrink-0 flex-col overflow-hidden rounded-lg border border-brand-border bg-white text-brand-ink dark:bg-gray-800 dark:text-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus md:w-auto md:flex-row">
     {animal.imageUrl && !failed ? <img src={animal.imageUrl} onError={() => setFailed(true)} alt={`${animal.breed || '동물'} 보호 사진`} loading="lazy" className="h-36 w-full object-cover md:h-36 md:w-32" />
-      : <div className="flex h-36 w-full shrink-0 items-center justify-center bg-stone-100 text-xs text-brand-muted md:w-32">사진 준비 중</div>}
+      : <div className="flex h-36 w-full shrink-0 items-center justify-center bg-stone-100 text-xs text-brand-muted dark:bg-gray-700 md:w-32">사진 준비 중</div>}
     <div className="min-w-0 space-y-1 p-3"><p className="break-words text-sm font-bold">{animal.breed || ({ DOG: '개', CAT: '고양이', ETC: '기타 동물' }[animal.species] || '동물')}</p>
       <p className="text-xs text-brand-muted">{animal.birthYear ? `${animal.birthYear}년생` : '연령 미상'} · {animal.gender === 'MALE' ? '수컷' : animal.gender === 'FEMALE' ? '암컷' : '성별 미상'}</p>
       <p className="text-xs text-brand-muted">접수 {animal.happenDate}</p><p className="text-xs font-medium">보호중</p>

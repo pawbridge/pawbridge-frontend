@@ -208,7 +208,7 @@ export default function AnimalCreate() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-            <p className="text-gray-500 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
             <Link
               to="/mypage"
               className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
@@ -258,7 +258,7 @@ export default function AnimalCreate() {
             <span className="text-sm font-medium">동물 목록</span>
           </Link>
           <div className="flex flex-col gap-1 mt-1">
-            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-brand-ink dark:text-white bg-brand-soft dark:bg-stone-800 font-bold">
+            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-brand-ink dark:text-white bg-brand-soft dark:border dark:border-accent-border-dark font-bold">
               <div className="flex items-center gap-3">
                 <PetsIcon aria-hidden="true" className="icon text-[22px] text-brand-accent" />
                 <span className="text-sm">동물 관리</span>

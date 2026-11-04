@@ -114,7 +114,7 @@ export default function PrivateNotes() {
         {query.data?.content.map((note) => (
           <li
             key={note.noteId}
-            className={`flex min-w-0 items-start gap-3 rounded-xl border border-brand-border p-4 sm:items-center dark:border-gray-700 ${box === 'INBOX' && !note.readAt ? 'bg-brand-soft dark:bg-gray-800' : 'bg-white dark:bg-gray-900'}`}
+            className={`flex min-w-0 items-start gap-3 rounded-xl border border-brand-border p-4 sm:items-center ${box === 'INBOX' && !note.readAt ? 'bg-brand-soft dark:border-accent-border-dark' : 'bg-white dark:border-gray-700 dark:bg-gray-900'}`}
           >
             <div aria-hidden="true" className="relative mt-1 h-8 w-8 shrink-0">
               <img src="/contact/avatar-background.svg" alt="" width={32} height={32} />
@@ -163,6 +163,7 @@ export default function PrivateNotes() {
                 alt=""
                 width={20}
                 height={20}
+                className="dark:invert"
               />
             </button>
           </li>
@@ -176,7 +177,7 @@ export default function PrivateNotes() {
           onPageChange={(value) => navigate(box, favorites, value)}
         />
       )}
-      <p className="mt-6 rounded-xl bg-brand-soft p-4 text-sm leading-6 text-brand-muted dark:bg-gray-800 dark:text-gray-400">
+      <p className="mt-6 rounded-xl bg-brand-soft p-4 text-sm leading-6 text-brand-muted dark:border dark:border-accent-border-dark dark:text-gray-400">
         별표로 즐겨찾기를 표시합니다. 쪽지는 최대 1년 보관되며, 내 쪽지함에서 삭제해도 상대방의
         쪽지는 삭제되지 않습니다.
       </p>

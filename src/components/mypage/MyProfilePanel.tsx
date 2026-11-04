@@ -123,7 +123,7 @@ export default function MyProfilePanel({
                 placeholder="2~30자의 한글, 영문, 숫자"
                 className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 한글, 영문, 숫자를 사용할 수 있으며 띄어쓰기가 불가능합니다.
               </p>
             </div>

@@ -54,12 +54,12 @@ export default function Animals() {
 
   return (
     <>
-      {shelterContext && <section aria-label="선택한 보호소와 접수일" className="bg-brand-soft text-brand-ink">
+      {shelterContext && <section aria-label="선택한 보호소와 접수일" className="bg-brand-soft text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">
         <div className="mx-auto max-w-[1504px] space-y-3 px-4 py-6 md:px-6">
-          <Link to={shelterReturnTo} className="inline-flex min-h-11 items-center rounded-lg border border-brand-border bg-white px-4 text-sm font-medium">← 보호소 목록으로</Link>
+          <Link to={shelterReturnTo} className="inline-flex min-h-11 items-center rounded-lg border border-brand-border bg-white px-4 text-sm font-medium dark:bg-gray-800">← 보호소 목록으로</Link>
           <h2 className="text-xl font-bold">{shelter.data?.name || (shelter.isError ? '선택한 보호소' : '보호소 이름 확인 중…')}</h2>
           {shelter.isError && <p role="alert" className="text-sm">보호소 정보를 불러오지 못했어요. <button type="button" onClick={() => void shelter.refetch()} className="min-h-11 underline">다시 시도</button></p>}
-          <div className="flex flex-wrap gap-2 text-xs font-medium">{['이 보호소만', '보호중'].map(label => <span key={label} className="rounded-full bg-brand px-4 py-2">✓ {label}</span>)}</div>
+          <div className="flex flex-wrap gap-2 text-xs font-medium">{['이 보호소만', '보호중'].map(label => <span key={label} className="rounded-full bg-brand px-4 py-2 dark:text-brand-ink">✓ {label}</span>)}</div>
           <p className="text-sm">접수일 {filters.intakeFrom} – {filters.intakeTo}</p>
           <p className="text-xs leading-5 text-brand-muted">기간·보호소 변경은 목록에서 할 수 있어요. 수집 정보와 실제 보호 상태는 다를 수 있어요.</p>
         </div>
@@ -96,7 +96,7 @@ export default function Animals() {
               {[0, 1, 2, 3].map((item) => <div key={item} className="h-[236px] animate-pulse rounded-2xl border border-brand-border bg-stone-50 dark:bg-stone-900 md:h-[252px]" />)}
             </div>
           ) : error ? (
-            <div role="alert" className="rounded-2xl border border-[#f1c6c6] bg-[#fff8f8] dark:bg-red-950/20 px-6 py-12 text-center">
+            <div role="alert" className="rounded-2xl border border-[#f1c6c6] dark:border-gray-700 bg-[#fff8f8] dark:bg-red-950/20 px-6 py-12 text-center">
               <h3 className="text-lg font-bold text-[#7f1d1d] dark:text-red-300">검색 결과를 불러오지 못했습니다</h3>
               <p className="mt-2 text-sm text-brand-muted dark:text-gray-300">잠시 후 다시 시도해 주세요.</p>
               <button type="button" onClick={() => void refetch()} className="mt-5 h-11 rounded-xl bg-brand-ink px-6 text-sm font-bold text-white">다시 시도</button>

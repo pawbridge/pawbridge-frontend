@@ -89,7 +89,7 @@ function StatisticsContent({ area, range }: { area: Area; range: Range }) {
     </div>
     {trend.isSuccess && <section className={`${adminPanel} space-y-5`}>
       <h2 className="text-xl font-bold">날짜별 상세</h2><p className="text-xs text-brand-muted dark:text-stone-300">달력상의 전일과 비교합니다. 전일 0건에서 증가하면 증감 건수를 표시합니다.</p>
-      <div className="space-y-3">{[...rows].reverse().slice(page * 7, (page + 1) * 7).map(row => <div key={row.date} className={`grid gap-3 rounded-lg border border-brand-border p-4 sm:grid-cols-3 dark:border-stone-700 ${row.date === kstToday() ? 'bg-brand-soft dark:bg-stone-800' : ''}`}><span className="text-sm font-medium">{row.date}{row.date === kstToday() ? ' (오늘)' : ''}</span><span className="text-sm">{row.count.toLocaleString()}{unit}</span><span className="text-xs text-brand-muted dark:text-stone-300">전일 대비 {changes.get(row.date)}</span></div>)}</div>
+      <div className="space-y-3">{[...rows].reverse().slice(page * 7, (page + 1) * 7).map(row => <div key={row.date} className={`grid gap-3 rounded-lg border border-brand-border p-4 sm:grid-cols-3 ${row.date === kstToday() ? 'bg-brand-soft dark:border-accent-border-dark' : 'dark:border-stone-700'}`}><span className="text-sm font-medium">{row.date}{row.date === kstToday() ? ' (오늘)' : ''}</span><span className="text-sm">{row.count.toLocaleString()}{unit}</span><span className="text-xs text-brand-muted dark:text-stone-300">전일 대비 {changes.get(row.date)}</span></div>)}</div>
       <AdminPagination page={page} total={Math.ceil(rows.length / 7)} onChange={setPage} />
     </section>}
   </>;

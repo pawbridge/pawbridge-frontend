@@ -134,11 +134,11 @@ export default function Wishlist() {
       case 'SOLD_OUT':
         return { text: '품절', className: 'bg-gray-600 text-white ring-gray-600/20' };
       case 'HIDDEN':
-        return { text: '숨김', className: 'bg-gray-50 text-gray-600 ring-gray-500/20' };
+        return { text: '숨김', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-300' };
       case 'DELETED':
         return { text: '삭제됨', className: 'bg-red-50 text-red-600 ring-red-600/20' };
       default:
-        return { text: '알 수 없음', className: 'bg-gray-50 text-gray-600 ring-gray-500/20' };
+        return { text: '알 수 없음', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-300' };
     }
   };
 
@@ -220,7 +220,7 @@ export default function Wishlist() {
                   type="checkbox"
                   checked={isAllSelected}
                   onChange={(e) => handleSelectAll(e.target.checked)}
-                  className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-5 w-5"
+                  className="rounded text-brand-ink border-gray-300 dark:border-gray-700 focus:ring-brand-focus h-5 w-5"
                 />
                 <span className="text-sm font-medium text-text-light dark:text-text-dark group-hover:text-brand-accent transition-colors">
                   전체 선택 ({selectedItems.length})
@@ -238,18 +238,18 @@ export default function Wishlist() {
                   }
                 }}
                 disabled={deleteSelectedMutation.isPending || selectedItems.length === 0}
-                className="text-sm font-medium text-subtext-light hover:text-danger dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                className="text-sm font-medium text-subtext-light dark:text-gray-400 hover:text-danger dark:hover:text-red-400 transition-colors disabled:opacity-50"
               >
                 선택 삭제
               </button>
             </div>
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-subtext-light hover:text-text-light dark:hover:text-text-dark transition-colors">
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-subtext-light dark:text-gray-400 hover:text-text-light dark:hover:text-text-dark transition-colors">
                 <input
                   type="checkbox"
                   checked={hideSoldOut}
                   onChange={(e) => setHideSoldOut(e.target.checked)}
-                  className="rounded text-brand-ink border-gray-300 focus:ring-brand-focus h-4 w-4"
+                  className="rounded text-brand-ink border-gray-300 dark:border-gray-700 focus:ring-brand-focus h-4 w-4"
                 />
                 <span>품절 상품 숨기기</span>
               </label>
@@ -379,7 +379,7 @@ export default function Wishlist() {
                             {item.price.toLocaleString()}
                             <span className="text-sm font-normal ml-0.5">원</span>
                           </p>
-                          <p className="text-xs text-subtext-light mt-1">{formatDate(item.createdAt)} 찜함</p>
+                          <p className="text-xs text-subtext-light dark:text-gray-400 mt-1">{formatDate(item.createdAt)} 찜함</p>
                         </div>
                       </div>
                       
@@ -409,7 +409,7 @@ export default function Wishlist() {
                             }
                           }}
                           disabled={deleteItemMutation.isPending}
-                          className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2.5 text-subtext-light hover:bg-red-50 hover:text-danger hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                          className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2.5 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-danger hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
                           title="삭제"
                         >
                           <DeleteIcon aria-hidden="true" className="icon text-[20px]" />
@@ -428,7 +428,7 @@ export default function Wishlist() {
                   onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                   disabled={currentPage === 0}
                   aria-label="이전 페이지"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-subtext-light dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeftIcon aria-hidden="true" className="icon text-sm" />
                 </button>
@@ -438,8 +438,8 @@ export default function Wishlist() {
                     onClick={() => setCurrentPage(i)}
                     className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium transition-colors ${
                       i === currentPage
-                        ? 'bg-brand text-brand-ink border-brand-focus'
-                        : 'text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-brand-accent'
+                        ? 'bg-brand dark:bg-brand text-brand-ink border-brand-focus'
+                        : 'text-subtext-light dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-brand-accent'
                     }`}
                   >
                     {i + 1}
@@ -449,7 +449,7 @@ export default function Wishlist() {
                   onClick={() => setCurrentPage(prev => Math.min(data.totalPages - 1, prev + 1))}
                   disabled={currentPage >= data.totalPages - 1}
                   aria-label="다음 페이지"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-subtext-light hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-subtext-light dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronRightIcon aria-hidden="true" className="icon text-sm" />
                 </button>

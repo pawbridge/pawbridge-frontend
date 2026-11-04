@@ -148,7 +148,7 @@ export default function ProductDetail() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500">상품 정보를 불러오는 중...</p>
+          <p className="text-gray-500 dark:text-gray-400">상품 정보를 불러오는 중...</p>
         </div>
       </main>
     );
@@ -159,7 +159,7 @@ export default function ProductDetail() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">상품을 찾을 수 없습니다.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">상품을 찾을 수 없습니다.</p>
           <button
             onClick={() => navigate('/products')}
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"

@@ -29,7 +29,7 @@ export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo, 
       className="grid min-w-0 grid-cols-[7rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border-light bg-card-light p-4 text-brand-ink transition-colors hover:border-brand-ink xl:grid-cols-[12.5rem_minmax(0,1fr)] xl:gap-x-4 xl:gap-y-1 dark:border-border-dark dark:bg-card-dark dark:text-text-dark dark:hover:border-brand"
     >
       <div className="flex min-w-0 flex-col items-center gap-2 xl:row-span-2">
-        <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl bg-brand-soft xl:h-[200px] xl:w-[200px] dark:bg-gray-800">
+        <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl bg-brand-soft xl:h-[200px] xl:w-[200px] dark:border dark:border-accent-border-dark">
           {animal.imageUrl && animal.imageUrl !== failedImageUrl ? (
             <img
               src={animal.imageUrl}

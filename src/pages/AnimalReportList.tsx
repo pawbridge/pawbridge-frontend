@@ -15,7 +15,7 @@ function ReportPhoto({ src, title }: { src?: string; title: string }) {
   const [failed, setFailed] = useState(false);
   return src && !failed ? <img src={src} alt={title} loading="lazy"
     className="h-[220px] w-full rounded-xl bg-brand-soft object-cover" onError={() => setFailed(true)} />
-    : <div className="flex h-[220px] items-center justify-center rounded-xl bg-brand-soft px-4 text-center text-sm text-brand-muted dark:bg-gray-800 dark:text-gray-300">
+    : <div className="flex h-[220px] items-center justify-center rounded-xl bg-brand-soft px-4 text-center text-sm text-brand-muted dark:border dark:border-accent-border-dark dark:text-gray-300">
       {failed ? '사진을 불러오지 못했어요' : '사진이 등록되지 않았어요'}
     </div>;
 }
@@ -78,7 +78,7 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
     <ReportSearchFilters key={`${kind}:${params.toString()}`} filters={filters} onSearch={value => changeSearch(value)} />
     {filterError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{filterError}</p>}
     <p className="text-xs leading-5 text-brand-muted dark:text-gray-300">지역·종류 필터는 해당 항목이 선택된 제보를 조회합니다. 분류되지 않은 기존 글은 전체 또는 키워드 검색으로 확인해 주세요.</p>
-    <p className="rounded-xl bg-brand-soft p-4 text-sm leading-6 dark:bg-gray-800">
+    <p className="rounded-xl bg-brand-soft p-4 text-sm leading-6 dark:border dark:border-accent-border-dark">
       {missing ? '우리 동물을 잃어버렸다면 실종 알림을, 다른 동물을 봤다면 목격 제보를 남겨 주세요.' : '목격 제보는 발견 당시의 정보입니다. 지금도 같은 장소에 있다는 뜻은 아니에요.'}
     </p>
     <section aria-labelledby="reports-heading" className="flex flex-col gap-6" aria-busy={isLoading}>

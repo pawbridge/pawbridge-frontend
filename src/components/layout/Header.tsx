@@ -164,10 +164,10 @@ export default function Header() {
               // 로그인된 경우: 찜 아이콘 + 사용자 이름 + 관리자 링크(관리자만) + 로그아웃 버튼
               <>
                 <NoteNotificationBell />
-                <Link to="/notes" className={`hidden sm:flex items-center rounded-lg px-3 min-h-11 text-sm ${palette.text} ${palette.focus} hover:bg-brand-soft`}>쪽지함</Link>
+                <Link to="/notes" className={`hidden sm:flex items-center rounded-lg px-3 min-h-11 text-sm ${palette.text} dark:text-gray-300 ${palette.focus} hover:bg-brand-soft dark:hover:bg-gray-700`}>쪽지함</Link>
                 {showPetMarket && <Link
                   to="/wishlist"
-                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
+                  className="relative hidden h-9 w-9 items-center justify-center rounded-full text-subtext-light dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors sm:flex"
                   title="찜한 상품"
                 >
                   <FavoriteIcon aria-hidden="true" className="icon text-[20px]" />

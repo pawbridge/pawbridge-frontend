@@ -71,7 +71,7 @@ export default function AuthorContact({
           });
           setOpen((value) => !value);
         }}
-        className="min-h-11 rounded-lg px-2 text-left hover:bg-brand-soft hover:text-brand-ink focus-visible:outline-brand-focus"
+        className="min-h-11 rounded-lg px-2 text-left hover:bg-brand-soft hover:text-brand-ink dark:hover:bg-gray-700 dark:hover:text-gray-200 focus-visible:outline-brand-focus"
       >
         {nickname}
       </button>
@@ -80,12 +80,12 @@ export default function AuthorContact({
           <span
             ref={menu}
             style={position}
-            className="fixed z-50 block w-44 rounded-xl border border-brand-border bg-white p-2 text-sm text-brand-ink shadow-lg"
+            className="fixed z-50 block w-44 rounded-xl border border-brand-border bg-white p-2 text-sm text-brand-ink shadow-lg dark:bg-gray-800 dark:text-gray-200"
           >
             <Link
               to={user ? href : '/login'}
               state={user ? undefined : { from: href }}
-              className="flex min-h-11 items-center rounded-lg px-3 hover:bg-brand-soft"
+              className="flex min-h-11 items-center rounded-lg px-3 hover:bg-brand-soft dark:hover:bg-gray-700"
               onClick={(event) => {
                 event.stopPropagation();
                 setOpen(false);
@@ -96,7 +96,7 @@ export default function AuthorContact({
             {memberChatEnabled && <Link
               to={user ? `/chats/new?${params}` : '/login'}
               state={user ? undefined : { from: `/chats/new?${params}` }}
-              className="flex min-h-11 items-center rounded-lg px-3 hover:bg-brand-soft focus-visible:outline-brand-focus"
+              className="flex min-h-11 items-center rounded-lg px-3 hover:bg-brand-soft dark:hover:bg-gray-700 focus-visible:outline-brand-focus"
               onClick={(event) => { event.stopPropagation(); setOpen(false); }}
             >1:1 대화</Link>}
           </span>,

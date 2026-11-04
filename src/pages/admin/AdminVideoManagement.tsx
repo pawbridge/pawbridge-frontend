@@ -89,7 +89,7 @@ function VideoOrder({ board, onClose, onSaved }: { board: VideoBoard; onClose: (
   return <VideoDialog title="노출 순서" onClose={onClose} busy={busy} form>
     <p className="text-sm leading-6 text-brand-muted dark:text-stone-300">위에서부터 홈에 표시됩니다.<br />버튼으로 순서를 바꾸고 저장하세요.</p>
     <ol className="mt-6 space-y-4">{ordered.map((video, index) => <li key={video.id} className={adminPanel}>
-      <div className="flex min-w-0 items-start gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm text-brand-ink">{index + 1}</span>
+      <div className="flex min-w-0 items-start gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">{index + 1}</span>
         <AdminImage src={videoThumbnail(video.thumbnailUrl)} alt="" className="aspect-video w-[72px] shrink-0 rounded-lg object-cover" />
         <p className="min-w-0 break-words text-sm">{video.title ?? '정보를 다시 확인해 주세요.'}</p></div>
       <div className="mt-4 flex justify-end gap-3">
@@ -137,7 +137,7 @@ export default function AdminVideoManagement() {
     {error && <div role="alert" className={adminPanel}><p className="text-sm text-red-700 dark:text-red-300">{error}</p>
       <button type="button" className={`mt-3 ${adminControl}`} onClick={() => { void board.refetch(); setError(''); }}>목록 다시 불러오기</button></div>}
     {board.isPending ? <AdminLoading label="영상 목록을 불러오는 중입니다." /> : board.isError ? <AdminError title="영상 목록을 불러오지 못했습니다." retry={() => void board.refetch()} /> : <>
-      <div className={`${adminPanel} flex flex-wrap gap-4 text-sm`}><span className="rounded-full bg-brand-soft px-3 py-1 text-brand-ink">홈 노출 {videos.filter(v => v.published && v.available).length} / 3</span>
+      <div className={`${adminPanel} flex flex-wrap gap-4 text-sm`}><span className="rounded-full bg-brand-soft px-3 py-1 text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">홈 노출 {videos.filter(v => v.published && v.available).length} / 3</span>
         <span>숨김 {videos.filter(v => !v.published).length}</span><span>확인 필요 {videos.filter(v => !v.available).length}</span></div>
       <div className="grid gap-4 sm:grid-cols-[2fr_1fr]"><label className="min-w-0 text-sm font-medium">영상 검색<input type="search" className={adminInput} placeholder="제목 또는 채널명" value={search} onChange={e => setSearch(e.target.value)} /></label>
         <label className="min-w-0 text-sm font-medium">게시 상태<select className={adminInput} value={status} onChange={e => setStatus(e.target.value)}>

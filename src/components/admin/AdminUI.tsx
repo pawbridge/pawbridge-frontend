@@ -3,13 +3,13 @@ import { useState } from 'react';
 
 // PawBridge / SHYU: shared Yellow theme, 4px spacing and 16px panels.
 export const adminPanel = 'min-w-0 rounded-xl border border-brand-border bg-surface-light p-4 sm:p-6 dark:border-stone-700 dark:bg-surface-dark';
-export const adminControl = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-border bg-surface-light px-5 py-3 text-sm font-medium text-brand-ink transition-colors hover:bg-brand-soft disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-700 dark:bg-surface-dark dark:text-white';
+export const adminControl = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-border bg-surface-light px-5 py-3 text-sm font-medium text-brand-ink transition-colors hover:bg-brand-soft dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-700 dark:bg-surface-dark dark:text-white';
 export const adminPrimary = `${adminControl} !border-transparent !bg-brand !text-brand-ink hover:!bg-brand-hover`;
 export const adminInput = 'mt-2 min-h-12 w-full min-w-0 rounded-lg border border-brand-border bg-surface-light px-4 py-3 text-sm text-brand-ink focus:border-brand-focus focus:ring-brand-focus disabled:opacity-50 dark:border-stone-700 dark:bg-surface-dark dark:text-white';
 
 export function AdminImage({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
   const [failedSource, setFailedSource] = useState<string>();
-  return failedSource === src ? <div role="img" aria-label={alt + ', 이미지를 불러오지 못했습니다.'} className={`${className} flex items-center justify-center bg-stone-100 p-2 text-center text-xs text-brand-muted`}>이미지를 불러오지 못했습니다.</div> : <img src={src} alt={alt} className={className} loading="lazy" onError={() => setFailedSource(src)} />;
+  return failedSource === src ? <div role="img" aria-label={alt + ', 이미지를 불러오지 못했습니다.'} className={`${className} flex items-center justify-center bg-stone-100 p-2 text-center text-xs text-brand-muted dark:bg-gray-700`}>이미지를 불러오지 못했습니다.</div> : <img src={src} alt={alt} className={className} loading="lazy" onError={() => setFailedSource(src)} />;
 }
 
 export function AdminLoading({ label = '정보를 불러오는 중입니다.' }: { label?: string }) {

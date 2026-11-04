@@ -80,11 +80,11 @@ export default function RegisteredAnimals() {
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-bold ${
                             animal.status === 'AVAILABLE' || animal.status === 'PROTECT'
-                              ? 'bg-green-500 text-white'
+                              ? 'bg-green-500 dark:bg-green-700 text-white'
                               : animal.status === 'ADOPTED'
-                              ? 'bg-blue-500 text-white'
+                              ? 'bg-blue-500 dark:bg-blue-700 text-white'
                               : animal.status === 'RESERVED' || animal.status === 'ADOPTION_PENDING'
-                              ? 'bg-yellow-500 text-white'
+                              ? 'bg-yellow-500 dark:bg-yellow-700 text-white'
                               : 'bg-gray-500 text-white'
                           }`}
                         >
@@ -183,7 +183,7 @@ export default function RegisteredAnimals() {
 
                   {animal.createdAt && (
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-xs text-gray-500 dark:text-gray-500 flex items-center gap-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <ScheduleIcon aria-hidden="true" className="icon text-sm" />
                         등록일: {new Date(animal.createdAt).toLocaleDateString('ko-KR', {
                           year: 'numeric',

@@ -412,7 +412,7 @@ export default function Checkout() {
                     <div className="flex items-center gap-4 py-2 justify-between">
                       <div className="flex items-center gap-4">
                         <div
-                          className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100"
+                          className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100 dark:bg-gray-700"
                           style={{ backgroundImage: state.directOrder.product.imageUrl ? `url('${state.directOrder.product.imageUrl}')` : undefined }}
                         >
                           {!state.directOrder.product.imageUrl && (
@@ -442,7 +442,7 @@ export default function Checkout() {
                       <div key={item.skuId} className="flex items-center gap-4 py-2 justify-between">
                         <div className="flex items-center gap-4">
                           <div
-                            className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100"
+                            className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100 dark:bg-gray-700"
                             style={{ backgroundImage: item.productImageUrl ? `url('${item.productImageUrl}')` : undefined }}
                           >
                             {!item.productImageUrl && (

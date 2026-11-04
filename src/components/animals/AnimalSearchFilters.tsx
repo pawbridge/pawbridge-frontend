@@ -113,7 +113,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset, shelter
             key={value}
             type="button"
             onClick={() => changeMode(value)}
-            className={`min-h-10 rounded-full px-5 text-sm font-medium transition-colors ${mode === value ? 'bg-brand-soft dark:bg-brand/10 text-brand-accent' : 'bg-white dark:bg-card-dark text-brand-muted dark:text-gray-300 hover:text-brand-accent'}`}
+            className={`min-h-10 rounded-full px-5 text-sm font-medium transition-colors ${mode === value ? 'bg-brand-soft dark:border dark:border-accent-border-dark text-brand-accent' : 'bg-white dark:bg-card-dark text-brand-muted dark:text-gray-300 hover:text-brand-accent'}`}
             aria-pressed={mode === value}
           >
             {label}

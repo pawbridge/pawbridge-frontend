@@ -91,7 +91,7 @@ export default function Products() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-            <p className="text-gray-500">상품을 불러오는 중...</p>
+            <p className="text-gray-500 dark:text-gray-400">상품을 불러오는 중...</p>
           </div>
         </div>
       </main>
@@ -105,7 +105,7 @@ export default function Products() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-            <p className="text-gray-500">상품을 불러오는데 실패했습니다.</p>
+            <p className="text-gray-500 dark:text-gray-400">상품을 불러오는데 실패했습니다.</p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
@@ -155,7 +155,7 @@ export default function Products() {
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('skuId', 'desc')
                   ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-secondary-dark hover:bg-brand/20'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
               }`}
             >
               <p className="text-sm font-medium">기본순</p>
@@ -165,7 +165,7 @@ export default function Products() {
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('createdAt', 'desc')
                   ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-secondary-dark hover:bg-brand/20'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
               }`}
             >
               <p className="text-sm font-medium">신상품순</p>
@@ -175,7 +175,7 @@ export default function Products() {
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('price', 'asc')
                   ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-secondary-dark hover:bg-brand/20'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
               }`}
             >
               <p className="text-sm font-medium">가격 낮은순</p>
@@ -185,7 +185,7 @@ export default function Products() {
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('price', 'desc')
                   ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-secondary-dark hover:bg-brand/20'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
               }`}
             >
               <p className="text-sm font-medium">가격 높은순</p>
@@ -196,7 +196,7 @@ export default function Products() {
           {products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
               <Inventory2Icon aria-hidden="true" className="icon text-6xl text-gray-300 mb-4" />
-              <p className="text-lg text-gray-500 mb-4">검색 결과가 없습니다</p>
+              <p className="text-lg text-gray-500 dark:text-gray-400 mb-4">검색 결과가 없습니다</p>
               <button
                 onClick={handleReset}
                 className="px-6 py-3 bg-brand text-brand-ink font-semibold rounded-lg hover:opacity-90 transition-opacity"
@@ -227,7 +227,7 @@ export default function Products() {
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${
                   currentPage === 0
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                    : 'bg-secondary-light dark:bg-secondary-dark text-gray-500 hover:bg-brand/20 hover:text-brand-accent'
+                    : 'bg-secondary-light dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-brand/20 hover:text-brand-accent'
                 }`}
               >
                 <ChevronLeftIcon aria-hidden="true" className="icon text-xl" />
@@ -269,7 +269,7 @@ export default function Products() {
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${
                   !data?.hasNext
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                    : 'bg-secondary-light dark:bg-secondary-dark text-gray-500 hover:bg-brand/20 hover:text-brand-accent'
+                    : 'bg-secondary-light dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-brand/20 hover:text-brand-accent'
                 }`}
               >
                 <ChevronRightIcon aria-hidden="true" className="icon text-xl" />
