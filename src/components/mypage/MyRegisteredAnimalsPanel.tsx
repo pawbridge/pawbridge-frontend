@@ -62,19 +62,19 @@ export default function MyRegisteredAnimalsPanel({
                           {animal.status && (
                             <span className={`text-xs font-bold rounded-full px-2 py-1 ${
                               animal.status === 'PROTECT'
-                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                ? 'bg-green-100 text-green-700 dark:bg-[#163126] dark:text-[#DDEFE9]'
                                 : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
                             }`}>
                               {animal.status === 'PROTECT' ? '보호중' : animal.status}
                             </span>
                           )}
                           {animal.gender === 'MALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-100">
                               수컷
                             </span>
                           )}
                           {animal.gender === 'FEMALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-100">
                               암컷
                             </span>
                           )}
@@ -84,7 +84,7 @@ export default function MyRegisteredAnimalsPanel({
                             </span>
                           )}
                           {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-100">
                               중성화 완료
                             </span>
                           )}

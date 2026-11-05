@@ -46,19 +46,19 @@ export default function Orders() {
     const statusMap = {
       PENDING: {
         label: '주문 대기',
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+        className: 'bg-yellow-100 text-yellow-800 dark:bg-amber-950 dark:text-amber-50',
       },
       PAID: {
         label: '결제 완료',
-        className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+        className: 'bg-green-100 text-green-800 dark:bg-[#163126] dark:text-[#DDEFE9]',
       },
       COMPLETED: {
         label: '주문 완료',
-        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        className: 'bg-blue-100 text-blue-800 dark:bg-[#102A33] dark:text-[#E2EBEF]',
       },
       CANCELLED: {
         label: '주문 취소',
-        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+        className: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
       },
       FAILED: {
         label: '결제 실패',

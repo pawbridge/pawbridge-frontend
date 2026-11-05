@@ -38,19 +38,19 @@ export default function OrderDetail() {
     const statusMap: Record<string, { label: string; className: string }> = {
       PENDING: {
         label: '주문 대기',
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+        className: 'bg-yellow-100 text-yellow-800 dark:bg-amber-950 dark:text-amber-50',
       },
       PAID: {
         label: '결제 완료',
-        className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+        className: 'bg-green-100 text-green-800 dark:bg-[#163126] dark:text-[#DDEFE9]',
       },
       COMPLETED: {
         label: '주문 완료',
-        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        className: 'bg-blue-100 text-blue-800 dark:bg-[#102A33] dark:text-[#E2EBEF]',
       },
       CANCELLED: {
         label: '주문 취소',
-        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+        className: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
       },
       FAILED: {
         label: '결제 실패',
@@ -120,7 +120,7 @@ export default function OrderDetail() {
         </div>
         <button
           onClick={() => navigate('/orders')}
-          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border-color rounded-lg text-text-main font-bold hover:bg-gray-50 transition-colors dark:bg-stone-800 dark:border-stone-700 dark:text-white dark:hover:bg-stone-800"
+          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-border-light rounded-lg text-text-main font-bold hover:bg-gray-50 transition-colors dark:bg-stone-800 dark:border-stone-700 dark:text-white dark:hover:bg-stone-800"
         >
           <ArrowBackIcon aria-hidden="true" className="icon text-[20px]" />
           목록으로 돌아가기
@@ -128,7 +128,7 @@ export default function OrderDetail() {
       </div>
 
       {/* Order Status */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6 mb-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-light dark:border-gray-700 p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">주문 상태</p>
@@ -144,7 +144,7 @@ export default function OrderDetail() {
       </div>
 
       {/* Delivery Information */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6 mb-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-light dark:border-gray-700 p-6 mb-6">
         <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">배송 정보</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -169,12 +169,12 @@ export default function OrderDetail() {
       </div>
 
       {/* Order Items */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6 mb-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-light dark:border-gray-700 p-6 mb-6">
         <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">주문 상품</h2>
         <div className="space-y-4">
           {order.items.map((item, index) => (
-            <div key={index} className="flex items-start gap-4 pb-4 border-b border-border-color dark:border-gray-700 last:border-0">
-              <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-800 border border-border-color dark:border-gray-700"></div>
+            <div key={index} className="flex items-start gap-4 pb-4 border-b border-border-light dark:border-gray-700 last:border-0">
+              <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-800 border border-border-light dark:border-gray-700"></div>
               <div className="flex-1">
                 <h3 className="font-bold text-text-main dark:text-white mb-1">{item.productName}</h3>
                 <p className="text-sm text-text-secondary dark:text-gray-400 mb-2">SKU: {item.skuCode}</p>
@@ -193,7 +193,7 @@ export default function OrderDetail() {
       </div>
 
       {/* Payment Summary */}
-      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-color dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-stone-800 rounded-xl border border-border-light dark:border-gray-700 p-6">
         <h2 className="text-lg font-bold text-text-main dark:text-white mb-4">결제 정보</h2>
         <div className="space-y-3">
           <div className="flex justify-between">
@@ -204,7 +204,7 @@ export default function OrderDetail() {
             <span className="text-text-secondary dark:text-gray-400">배송비</span>
             <span className="font-medium text-text-main dark:text-white">{formatPrice(shippingFee)}원</span>
           </div>
-          <div className="border-t border-border-color dark:border-gray-700 pt-3 flex justify-between">
+          <div className="border-t border-border-light dark:border-gray-700 pt-3 flex justify-between">
             <span className="text-lg font-bold text-text-main dark:text-white">총 결제 금액</span>
             <span className="text-lg font-bold text-brand-accent">{formatPrice(order.totalAmount)}원</span>
           </div>

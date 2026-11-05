@@ -549,6 +549,15 @@
       "group": "mock"
     },
     {
+      "name": "dark-badge-colors",
+      "origin": "http://127.0.0.1:5274",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "favorite-notifications",
       "origin": "http://127.0.0.1:5273",
       "server": "preview",

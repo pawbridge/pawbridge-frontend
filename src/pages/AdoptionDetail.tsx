@@ -169,7 +169,7 @@ export default function AdoptionDetail() {
                 <button
                   onClick={handleDeletePost}
                   disabled={deletePostMutation.isPending}
-                  className="px-4 py-2 text-sm bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 disabled:opacity-50"
+                  className="px-4 py-2 text-sm bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 disabled:opacity-50"
                 >
                   삭제
                 </button>
