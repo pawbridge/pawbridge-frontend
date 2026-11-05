@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import TodayVisitCount from '../visits/TodayVisitCount';
+import { SUPPORT_EMAIL } from '../../lib/contact';
 
 export default function Footer() {
   const titleColor = 'text-brand-ink';
@@ -18,7 +19,7 @@ export default function Footer() {
             <p className={`mt-2 text-sm ${mutedColor} dark:text-gray-400`}>모든 동물이 새로운 가족을 만날 때까지.</p>
             <p className={`mt-3 text-sm ${mutedColor}`}>
               <span className="block">개선 제안·오류 문의</span>
-              <a href="mailto:shyu6370@pawbridge.kr" className={linkClass}>shyu6370@pawbridge.kr</a>
+              <a href={`mailto:${SUPPORT_EMAIL}`} className={linkClass}>{SUPPORT_EMAIL}</a>
             </p>
           </div>
 

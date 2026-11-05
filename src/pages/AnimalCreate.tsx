@@ -10,16 +10,14 @@ import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import ShelterAnimalSidebar from '../components/layout/ShelterAnimalSidebar';
 import { getApiErrorMessage } from '../lib/apiError';
 import NoteNotificationBell from '../components/contact/NoteNotificationBell';
 import AddPhotoAlternateIcon from '../assets/icons/material-symbols/add_photo_alternate.svg?react';
 import CloseIcon from '../assets/icons/material-symbols/close.svg?react';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
-import ExpandLessIcon from '../assets/icons/material-symbols/expand_less.svg?react';
-import HelpIcon from '../assets/icons/material-symbols/help.svg?react';
 import LogoutIcon from '../assets/icons/material-symbols/logout.svg?react';
 import PersonIcon from '../assets/icons/material-symbols/person.svg?react';
-import PetsIcon from '../assets/icons/material-symbols/pets.svg?react';
 
 export default function AnimalCreate() {
   const navigate = useNavigate();
@@ -207,8 +205,8 @@ export default function AnimalCreate() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-            <p className="text-gray-500 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
+            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
+            <p className="text-gray-500 dark:text-gray-400 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
             <Link
               to="/mypage"
               className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
@@ -229,61 +227,7 @@ export default function AnimalCreate() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex overflow-hidden">
-      {/* 사이드바 */}
-      <aside className="hidden md:flex w-64 bg-surface-light dark:bg-surface-dark border-r border-brand-border dark:border-stone-800 flex-col flex-shrink-0 z-50">
-        {/* 로고 */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-brand-border dark:border-stone-800">
-          <div className="size-8 text-brand-accent">
-            <svg className="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <g clipPath="url(#clip0_6_330)">
-                <path clipRule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fillRule="evenodd"></path>
-              </g>
-              <defs>
-                <clipPath id="clip0_6_330"><rect fill="white" height="48" width="48"></rect></clipPath>
-              </defs>
-            </svg>
-          </div>
-          <p className="text-xl font-display font-bold tracking-tight text-brand-ink dark:text-white">PawBridge</p>
-        </div>
-        
-        {/* 네비게이션 */}
-        <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1 scrollbar-hide">
-          <Link to="/mypage" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors">
-            <PersonIcon aria-hidden="true" className="icon text-[22px]" />
-            <span className="text-sm font-medium">마이페이지</span>
-          </Link>
-          <div className="my-2 h-px bg-brand-border dark:bg-stone-800 mx-3"></div>
-          <Link to="/animals" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors">
-            <PetsIcon aria-hidden="true" className="icon text-[22px]" />
-            <span className="text-sm font-medium">동물 목록</span>
-          </Link>
-          <div className="flex flex-col gap-1 mt-1">
-            <div className="flex items-center justify-between px-3 py-2.5 rounded-lg text-brand-ink dark:text-white bg-brand-soft dark:bg-stone-800 font-bold">
-              <div className="flex items-center gap-3">
-                <PetsIcon aria-hidden="true" className="icon text-[22px] text-brand-accent" />
-                <span className="text-sm">동물 관리</span>
-              </div>
-              <ExpandLessIcon aria-hidden="true" className="icon text-[18px]" />
-            </div>
-            <div className="flex flex-col pl-11 gap-1">
-              <Link to="/mypage" className="block px-3 py-2 rounded-lg text-sm text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:text-white dark:hover:bg-stone-800 transition-colors">
-                내 보호소가 등록한 동물
-              </Link>
-              <Link to="/animals/new" className="block px-3 py-2 rounded-lg text-sm font-bold text-brand-accent bg-brand/10 transition-colors">
-                동물 등록
-              </Link>
-            </div>
-          </div>
-        </nav>
-        
-        {/* 하단 고객지원 */}
-        <div className="p-4 border-t border-brand-border dark:border-stone-800">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-brand-muted hover:text-brand-ink dark:hover:text-white bg-transparent hover:bg-brand-soft dark:hover:bg-stone-800 rounded-lg transition-colors">
-            <HelpIcon aria-hidden="true" className="icon text-[18px]" />
-            고객지원
-          </button>
-        </div>
-      </aside>
+      <ShelterAnimalSidebar current="create" />
 
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
@@ -306,7 +250,7 @@ export default function AnimalCreate() {
             <button 
               onClick={handleLogout}
               aria-label="로그아웃"
-              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2"
+              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2 dark:hover:text-red-300"
             >
               <LogoutIcon aria-hidden="true" className="icon text-[20px]" />
             </button>
@@ -342,7 +286,7 @@ export default function AnimalCreate() {
             <div className="md:col-span-8 flex flex-col gap-5">
                 <label className="flex flex-col gap-2">
                   <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                    종 <span className="text-red-500">*</span>
+                    종 <span className="text-red-500 dark:text-red-300">*</span>
                   </span>
                 <CustomSelect
                   value={species}
@@ -370,7 +314,7 @@ export default function AnimalCreate() {
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex flex-col gap-2">
                     <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                      성별 <span className="text-red-500">*</span>
+                      성별 <span className="text-red-500 dark:text-red-300">*</span>
                     </span>
                     <CustomSelect
                       value={gender}
@@ -386,7 +330,7 @@ export default function AnimalCreate() {
 
                   <label className="flex flex-col gap-2">
                     <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                      중성화 여부 <span className="text-red-500">*</span>
+                      중성화 여부 <span className="text-red-500 dark:text-red-300">*</span>
                     </span>
                     <CustomSelect
                       value={neuterStatus}
@@ -453,7 +397,7 @@ export default function AnimalCreate() {
               {/* 이미지 업로드 영역 */}
               <div className="md:col-span-4 flex flex-col gap-2">
                 <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                  대표 이미지 <span className="text-red-500">*</span>
+                  대표 이미지 <span className="text-red-500 dark:text-red-300">*</span>
                 </span>
                 {imagePreview ? (
                   <div className="relative flex-1 min-h-[240px]">

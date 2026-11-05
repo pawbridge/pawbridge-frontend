@@ -34,7 +34,7 @@ export default function Login() {
         {/* 로그인 폼 카드 */}
         <div className="flex h-full w-full overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700">
         {/* Left Side - Image & Welcome Message */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-brand-soft dark:bg-gray-800 p-12">
+        <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-brand-soft dark:border dark:border-accent-border-dark p-12">
           <div className="flex flex-col items-center text-center gap-6">
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvVy0FVCRXUdSS1RMfqcRZOpupHqPdWMGTlsGKB-sEfuo-bTI7QI5lllkGy__chxfvNt4DFcyA3Ixmoi8rWp_JsFfSLOVPTfBXvC53-AbyRIjyOt98RkWW9mvY1ZCbhgeR9McROS520VWyxIi0CZgZpk5ooy15zMqvvJRg64a43gZA-b6udBnKWRgbAEds9Qm5YgGypudMo32-IhafKYW7PCsC-Az_LrdiYhjengwROMo9LB7xnbONL9P38Jz2eUiAQMoIPrkkxb0"

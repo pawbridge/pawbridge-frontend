@@ -106,8 +106,8 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">잘못된 접근입니다.</p>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
+          <p className="text-gray-500 dark:text-gray-400 mb-4">잘못된 접근입니다.</p>
           <Link
             to="/"
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover inline-block"
@@ -125,7 +125,7 @@ export default function OrderComplete() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500">결제를 진행 중입니다.</p>
+          <p className="text-gray-500 dark:text-gray-400">결제를 진행 중입니다.</p>
         </div>
       </main>
     );
@@ -136,9 +136,9 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <CreditCardIcon aria-hidden="true" className="icon text-6xl text-red-500 mb-4" />
-          <h1 className="text-2xl font-bold text-red-500 mb-2">결제 승인 실패</h1>
-          <p className="text-gray-500 mb-2">결제 처리 중 오류가 발생했습니다.</p>
+          <CreditCardIcon aria-hidden="true" className="icon text-6xl text-red-500 mb-4 dark:text-red-300" />
+          <h1 className="text-2xl font-bold text-red-500 mb-2 dark:text-red-300">결제 승인 실패</h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">결제 처리 중 오류가 발생했습니다.</p>
           <p className="text-gray-400 text-sm mb-6">실제로 결제되지 않았으니 안심하세요.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
@@ -171,7 +171,7 @@ export default function OrderComplete() {
         <div className="text-center">
           <HourglassEmptyIcon aria-hidden="true" className="icon text-6xl text-amber-500 mb-4" />
           <h1 className="text-2xl font-bold text-text-light dark:text-text-dark mb-2">결제 승인 처리 중</h1>
-          <p className="text-gray-500 mb-2">결제 승인 상태를 확인하고 있습니다.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">결제 승인 상태를 확인하고 있습니다.</p>
           <p className="text-gray-400 text-sm mb-6">잠시 후 새로고침하거나, 처리 지연 시 문의해 주세요.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -198,7 +198,7 @@ export default function OrderComplete() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500 mb-2">결제를 진행 중입니다.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">결제를 진행 중입니다.</p>
           <p className="text-gray-400 text-sm">잠시만 기다려 주세요.</p>
         </div>
       </main>
@@ -210,7 +210,7 @@ export default function OrderComplete() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500">주문 정보를 불러오는 중...</p>
+          <p className="text-gray-500 dark:text-gray-400">주문 정보를 불러오는 중...</p>
         </div>
       </main>
     );
@@ -220,8 +220,8 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">주문 정보를 불러올 수 없습니다.</p>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
+          <p className="text-gray-500 dark:text-gray-400 mb-4">주문 정보를 불러올 수 없습니다.</p>
           <Link
             to="/"
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover inline-block"

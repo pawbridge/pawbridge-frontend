@@ -46,7 +46,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={isFirstPage}
-            className={separated ? separatedButton : 'flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors'}
+            className={separated ? separatedButton : 'flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 dark:text-gray-400 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-s-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors'}
             aria-label="이전 페이지"
           >
             <ChevronLeftIcon aria-hidden="true" className="icon text-base" />
@@ -79,7 +79,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={isLastPage}
-            className={separated ? separatedButton : 'flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors'}
+            className={separated ? separatedButton : 'flex items-center justify-center px-4 h-10 leading-tight text-gray-500 dark:text-gray-400 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors'}
             aria-label="다음 페이지"
           >
             <ChevronRightIcon aria-hidden="true" className="icon text-base" />

@@ -43,7 +43,7 @@ export default function ManagementBreadcrumb({ current, items, separatorSrc, col
     };
   }, [expanded]);
 
-  const separator = separatorSrc ? <img src={separatorSrc} alt="" width="16" height="16" /> : (
+  const separator = separatorSrc ? <img src={separatorSrc} alt="" width="16" height="16" className="dark:invert" /> : (
     <ChevronRightIcon aria-hidden="true" className="icon text-base leading-none text-brand-muted" />
   );
 
@@ -62,7 +62,7 @@ export default function ManagementBreadcrumb({ current, items, separatorSrc, col
             {separator}
           </li>
         ))}
-        <li aria-current="page" className={`${collapseAncestors ? 'max-w-56 truncate' : 'break-words'} rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:bg-stone-800 dark:text-white`}>
+        <li aria-current="page" className={`${collapseAncestors ? 'max-w-56 truncate' : 'break-words'} rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:border dark:border-accent-border-dark dark:text-white`}>
           {current}
         </li>
       </ol>
@@ -105,7 +105,7 @@ export default function ManagementBreadcrumb({ current, items, separatorSrc, col
           )}
         </li>
         <li>{separator}</li>
-        <li aria-current="page" className="min-w-0 max-w-[calc(100vw-172px)] truncate rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:bg-stone-800 dark:text-white">
+        <li aria-current="page" className="min-w-0 max-w-[calc(100vw-172px)] truncate rounded-lg bg-brand-soft px-3 py-2 font-bold text-brand-ink dark:border dark:border-accent-border-dark dark:text-white">
           {current}
         </li>
       </ol>}

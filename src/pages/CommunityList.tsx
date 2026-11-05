@@ -128,7 +128,7 @@ export default function CommunityList() {
     return (
       <main className="flex-grow flex items-center justify-center text-gray-800 dark:text-gray-200">
         <div className="text-center">
-          <p role="alert" className="text-lg text-red-600 dark:text-red-400">목록을 불러오지 못했습니다.</p>
+          <p role="alert" className="text-lg text-red-600 dark:text-red-300">목록을 불러오지 못했습니다.</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{(error as Error).message}</p>
         </div>
       </main>
@@ -146,7 +146,7 @@ export default function CommunityList() {
         </div>
 
         {/* Tabs */}
-        <p className="mb-6 rounded-xl bg-brand-soft p-4 text-sm text-brand-ink dark:bg-gray-800 dark:text-white">
+        <p className="mb-6 rounded-xl bg-brand-soft p-4 text-sm text-brand-ink dark:border dark:border-accent-border-dark dark:text-white">
           실종 알림과 목격 제보는 <Link to="/reports/missing" className="font-bold underline underline-offset-4">실종동물 찾기</Link>에서 확인하고 등록해 주세요.
         </p>
         <div className="border-b border-gray-200 dark:border-gray-700">

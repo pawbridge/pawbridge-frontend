@@ -1,5 +1,6 @@
 // Animal registration and edit screens (own header) on mocked data: the bell is the same contact alert as the
-// site header. It shows a count only when there are unread notes, and opens the note alert list.
+// site header. It shows a count only when there are unread notes, and opens the note alert list. Both screens use the
+// shelter sidebar (not the admin console one) on desktop, with the current menu marked and support as a mail link.
 async page => {
   const origin = 'http://127.0.0.1:5269';
   const checks = [], pageErrors = [];
@@ -34,6 +35,15 @@ async page => {
       await page.goto(origin + path);
       await page.getByRole('heading', { level: 1, name: title }).waitFor();
       await bell().waitFor();
+      const sidebar = page.getByRole('navigation', { name: '보호소 동물 관리' });
+      if (width === 1920) {
+        const current = name === 'create' ? '동물 등록' : '내 보호소가 등록한 동물';
+        assert(await sidebar.getByRole('link', { name: current, exact: true }).getAttribute('aria-current') === 'page', `${name}-${width}-sidebar-current`);
+        assert(await page.getByRole('link', { name: '대시보드', exact: true }).count() === 0, `${name}-${width}-no-admin-menu`);
+        assert(await page.getByRole('link', { name: '고객지원', exact: true }).getAttribute('href') === 'mailto:shyu6370@pawbridge.kr', `${name}-${width}-support-mail`);
+      } else {
+        assert(!(await sidebar.isVisible()), `${name}-${width}-sidebar-hidden`);
+      }
       assert(await bell().count() === 1, `${name}-${width}-one-bell`);
       assert((await bell().getAttribute('aria-label')).includes('읽지 않은 쪽지 0개'), `${name}-${width}-zero-label`);
       assert((await bell().innerText()).trim() === '', `${name}-${width}-no-badge`);

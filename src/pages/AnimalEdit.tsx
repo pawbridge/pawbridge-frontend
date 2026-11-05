@@ -8,7 +8,7 @@ import { useAuthStore } from '../store/authStore';
 import { logoutWithoutWaiting } from '../api/auth.api';
 import CustomSelect from '../components/common/CustomSelect';
 import ManagementBreadcrumb from '../components/common/ManagementBreadcrumb';
-import AdminSidebar from '../components/layout/AdminSidebar';
+import ShelterAnimalSidebar from '../components/layout/ShelterAnimalSidebar';
 import { getApiErrorMessage } from '../lib/apiError';
 import NoteNotificationBell from '../components/contact/NoteNotificationBell';
 import AddPhotoAlternateIcon from '../assets/icons/material-symbols/add_photo_alternate.svg?react';
@@ -203,7 +203,7 @@ export default function AnimalEdit() {
       <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500">동물 정보를 불러오는 중...</p>
+          <p className="text-gray-500 dark:text-gray-400">동물 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -213,8 +213,8 @@ export default function AnimalEdit() {
     return (
       <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">동물 정보를 불러올 수 없습니다.</p>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
+          <p className="text-gray-500 dark:text-gray-400 mb-4">동물 정보를 불러올 수 없습니다.</p>
           <Link
             to={fromMyPage ? '/mypage' : '/animals'}
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
@@ -238,8 +238,8 @@ export default function AnimalEdit() {
     return (
       <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">보호소가 직접 등록한 동물만 수정할 수 있습니다.</p>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
+          <p className="text-gray-500 dark:text-gray-400 mb-4">보호소가 직접 등록한 동물만 수정할 수 있습니다.</p>
           <Link
             to={`/animals/${id}`}
             className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
@@ -258,7 +258,7 @@ export default function AnimalEdit() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-brand-ink dark:text-gray-100 font-body h-screen flex overflow-hidden">
-      <div className="hidden md:block"><AdminSidebar /></div>
+      <ShelterAnimalSidebar current="registered" />
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         <header className="flex items-center justify-between md:justify-end h-16 px-4 md:px-8 border-b border-brand-border dark:border-stone-800 bg-surface-light dark:bg-surface-dark flex-shrink-0">
           <Link to="/" className="md:hidden text-lg font-display font-bold text-brand-ink dark:text-white">PawBridge</Link>
@@ -278,7 +278,7 @@ export default function AnimalEdit() {
             <button
               onClick={handleLogout}
               aria-label="로그아웃"
-              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2"
+              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2 dark:hover:text-red-300"
             >
               <LogoutIcon aria-hidden="true" className="icon text-[20px]" />
             </button>
@@ -311,7 +311,7 @@ export default function AnimalEdit() {
                 <div className="md:col-span-8 flex flex-col gap-5">
                   <label className="flex flex-col gap-2">
                     <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                      종 <span className="text-red-500">*</span>
+                      종 <span className="text-red-500 dark:text-red-300">*</span>
                     </span>
                     <CustomSelect
                       value={species}
@@ -339,7 +339,7 @@ export default function AnimalEdit() {
                   <div className="grid grid-cols-2 gap-4">
                     <label className="flex flex-col gap-2">
                       <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                        성별 <span className="text-red-500">*</span>
+                        성별 <span className="text-red-500 dark:text-red-300">*</span>
                       </span>
                       <CustomSelect
                         value={gender}
@@ -355,7 +355,7 @@ export default function AnimalEdit() {
 
                     <label className="flex flex-col gap-2">
                       <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                        중성화 여부 <span className="text-red-500">*</span>
+                        중성화 여부 <span className="text-red-500 dark:text-red-300">*</span>
                       </span>
                       <CustomSelect
                         value={neuterStatus}
@@ -432,7 +432,7 @@ export default function AnimalEdit() {
 
                 <div className="md:col-span-4 flex flex-col gap-2">
                   <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                    대표 이미지 <span className="text-red-500">*</span>
+                    대표 이미지 <span className="text-red-500 dark:text-red-300">*</span>
                   </span>
                   {imagePreview ? (
                     <div className="relative flex-1 min-h-[240px]">
@@ -516,7 +516,7 @@ export default function AnimalEdit() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <label className="flex flex-col gap-2">
                       <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                        공고 시작일 <span className="text-red-500">*</span>
+                        공고 시작일 <span className="text-red-500 dark:text-red-300">*</span>
                       </span>
                       <input
                         type="date"
@@ -528,7 +528,7 @@ export default function AnimalEdit() {
 
                     <label className="flex flex-col gap-2">
                       <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                        공고 종료일 <span className="text-red-500">*</span>
+                        공고 종료일 <span className="text-red-500 dark:text-red-300">*</span>
                       </span>
                       <input
                         type="date"

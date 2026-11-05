@@ -14,7 +14,7 @@ export default function ReportSearchFilters({ filters, onSearch }: { filters: Re
     if (!error) onSearch(next);
   }
   return <form role="search" aria-label="제보 검색" onSubmit={submit}
-    className="flex flex-col gap-4 rounded-xl bg-brand-soft p-6 dark:bg-gray-800">
+    className="flex flex-col gap-4 rounded-xl bg-brand-soft p-6 dark:border dark:border-accent-border-dark">
     <ReportClassificationFields province={draft.province} district={draft.district} animalType={draft.animalType}
       onChange={value => { setDraft({ ...draft, ...value }); setError(''); }} />
     <fieldset className="min-w-0">

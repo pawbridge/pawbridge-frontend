@@ -412,7 +412,7 @@ export default function Checkout() {
                     <div className="flex items-center gap-4 py-2 justify-between">
                       <div className="flex items-center gap-4">
                         <div
-                          className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100"
+                          className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100 dark:bg-gray-700"
                           style={{ backgroundImage: state.directOrder.product.imageUrl ? `url('${state.directOrder.product.imageUrl}')` : undefined }}
                         >
                           {!state.directOrder.product.imageUrl && (
@@ -442,7 +442,7 @@ export default function Checkout() {
                       <div key={item.skuId} className="flex items-center gap-4 py-2 justify-between">
                         <div className="flex items-center gap-4">
                           <div
-                            className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100"
+                            className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 bg-gray-100 dark:bg-gray-700"
                             style={{ backgroundImage: item.productImageUrl ? `url('${item.productImageUrl}')` : undefined }}
                           >
                             {!item.productImageUrl && (
@@ -480,7 +480,7 @@ export default function Checkout() {
                   {/* 받는 사람 이름 */}
                   <div>
                     <label htmlFor="checkout-receiver-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      받는 사람 이름 <span className="text-red-500">*</span>
+                      받는 사람 이름 <span className="text-red-500 dark:text-red-300">*</span>
                     </label>
                     <input
                       id="checkout-receiver-name"
@@ -497,14 +497,14 @@ export default function Checkout() {
                       }`}
                     />
                     {errors.receiverName && (
-                      <p className="mt-1 text-xs text-red-500">{errors.receiverName}</p>
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.receiverName}</p>
                     )}
                   </div>
 
                   {/* 연락처 */}
                   <div>
                     <label htmlFor="checkout-receiver-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      연락처 <span className="text-red-500">*</span>
+                      연락처 <span className="text-red-500 dark:text-red-300">*</span>
                     </label>
                     <input
                       id="checkout-receiver-phone"
@@ -521,14 +521,14 @@ export default function Checkout() {
                       }`}
                     />
                     {errors.receiverPhone && (
-                      <p className="mt-1 text-xs text-red-500">{errors.receiverPhone}</p>
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.receiverPhone}</p>
                     )}
                   </div>
 
                   {/* 배송 주소 */}
                   <div>
                     <label htmlFor="checkout-address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      배송 주소 <span className="text-red-500">*</span>
+                      배송 주소 <span className="text-red-500 dark:text-red-300">*</span>
                     </label>
                     <div className="flex gap-2">
                       <input
@@ -564,7 +564,7 @@ export default function Checkout() {
                       className="mt-2 block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-brand-focus focus:border-brand-focus focus:outline-none"
                     />
                     {errors.deliveryAddress && (
-                      <p className="mt-1 text-xs text-red-500">{errors.deliveryAddress}</p>
+                      <p className="mt-1 text-xs text-red-500 dark:text-red-300">{errors.deliveryAddress}</p>
                     )}
                   </div>
 

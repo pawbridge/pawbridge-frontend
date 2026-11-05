@@ -311,7 +311,7 @@ export default function AdminCategoryManagement() {
           <label className="block text-sm font-medium">설명<textarea className={`${adminInput} min-h-32 resize-y`} value={formData.description ?? ''} onChange={e => setFormData({ ...formData, description: e.target.value })} /></label>
         </fieldset>
         <div className="flex flex-wrap gap-2">{isEditMode ? <button type="submit" className={adminPrimary}>{busy ? '저장 중…' : '저장'}</button> : <button type="button" className={adminPrimary} onClick={handleEditClick}>수정하기</button>}<button type="button" className={adminControl} onClick={handleCancel}>취소</button>
-          {!isCreateMode && <button type="button" className={`${adminControl} text-red-700`} disabled={!!selectedCategory?.children?.length} onClick={handleDelete}>삭제</button>}
+          {!isCreateMode && <button type="button" className={`${adminControl} text-red-700 dark:!text-red-300`} disabled={!!selectedCategory?.children?.length} onClick={handleDelete}>삭제</button>}
         </div>
         {!!selectedCategory?.children?.length && <p className="text-xs text-brand-muted">하위 카테고리가 있는 분류는 삭제할 수 없습니다.</p>}
         </form>

@@ -19,7 +19,7 @@ export function NavigationLinks({ id, destinations, mobile = false, onNavigate }
     return <Link key={item.to} to={item.to} onClick={onNavigate}
       aria-current={current ? 'page' : undefined}
       aria-labelledby={`${labelId}-title`} aria-describedby={`${labelId}-description`}
-      className={`flex min-w-0 flex-col gap-2 rounded-lg p-4 text-brand-ink hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-focus dark:text-white dark:hover:bg-gray-800 ${mobile ? 'py-3' : ''} ${current ? 'bg-brand-soft dark:bg-gray-800' : ''}`}>
+      className={`flex min-w-0 flex-col gap-2 rounded-lg p-4 text-brand-ink hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-focus dark:text-white dark:hover:bg-gray-800 ${mobile ? 'py-3' : ''} ${current ? 'bg-brand-soft dark:border dark:border-accent-border-dark' : ''}`}>
       <span id={`${labelId}-title`} className={current ? 'text-sm font-bold leading-5' : mobile ? 'text-sm font-medium leading-5' : 'text-lg font-normal leading-[30px]'}>
         {item.title}
       </span>

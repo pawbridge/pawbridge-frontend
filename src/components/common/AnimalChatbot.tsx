@@ -227,7 +227,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 <SendIcon aria-hidden="true" className="icon text-[20px]" />
               </button>
             </form>
-            <p className="mt-2 text-right text-[11px] text-gray-500">
+            <p className="mt-2 text-right text-[11px] text-gray-500 dark:text-gray-400">
               {question.length}/{MAX_QUESTION_LENGTH}
             </p>
           </div>

@@ -128,8 +128,8 @@ export default function LostAnimalSearch() {
 
   function searchOption(title: string, help: string, checked: boolean, setChecked: (value: boolean) => void) {
     return <label className={`flex cursor-pointer items-start gap-3 rounded-xl border p-4 ${checked ? 'border-brand-ink dark:border-text-dark' : 'border-border-light dark:border-border-dark'}`}>
-      <input type="checkbox" aria-label={title} checked={checked} onChange={e => { invalidate(); setChecked(e.target.checked); }} className="mt-0.5 rounded border-gray-300 text-brand-ink focus:ring-brand-focus" />
-      <span><span className="block text-sm font-bold">{title}</span><span className="mt-1 block text-xs leading-5 text-gray-500">{help}</span></span>
+      <input type="checkbox" aria-label={title} checked={checked} onChange={e => { invalidate(); setChecked(e.target.checked); }} className="mt-0.5 rounded border-gray-300 dark:border-gray-700 text-brand-ink focus:ring-brand-focus" />
+      <span><span className="block text-sm font-bold">{title}</span><span className="mt-1 block text-xs leading-5 text-gray-500 dark:text-gray-400">{help}</span></span>
     </label>;
   }
 
@@ -150,7 +150,7 @@ export default function LostAnimalSearch() {
   }
 
   return <main className="container mx-auto px-4 pb-16 pt-8 md:pt-12">
-    <nav aria-label="현재 위치" className="mb-6 text-xs text-gray-500"><Link to="/" className="hover:underline">홈</Link> / 실종동물 찾기</nav>
+    <nav aria-label="현재 위치" className="mb-6 text-xs text-gray-500 dark:text-gray-400"><Link to="/" className="hover:underline">홈</Link> / 실종동물 찾기</nav>
     <p className="mb-3 text-xs font-bold text-brand-accent">실종동물 찾기</p>
     <h1 className="text-2xl font-bold leading-snug md:text-3xl">다시 만날 단서,<br className="sm:hidden" /> 사진으로 찾아보세요</h1>
     <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">올려주신 사진과 닮은 동물을 수집된 구조동물 공고에서 찾아드려요.</p>
@@ -166,7 +166,7 @@ export default function LostAnimalSearch() {
         <h2 id="input-heading" className="mb-5 text-xl font-bold">찾는 동물 정보</h2>
         <form onSubmit={search} className="space-y-5">
 
-          <div className="rounded-2xl border border-border-light bg-brand-soft p-4 dark:border-border-dark dark:bg-card-dark">
+          <div className="rounded-2xl border border-border-light bg-brand-soft p-4 dark:border-accent-border-dark">
             {photo ? <img src={preview || undefined} alt="선택한 실종동물 사진" className="mb-4 h-56 w-full rounded-xl bg-white object-contain dark:bg-black/20" /> : <>
               <img src={uploadIcon} alt="" className="mb-3 h-7 w-7" />
               <p className="font-bold">아이의 사진을 올려주세요</p><p className="mb-4 mt-2 text-xs leading-5 text-gray-600 dark:text-gray-300">얼굴과 몸의 무늬가 잘 보이는<br />사진 한 장을 선택해 주세요.</p>
@@ -174,14 +174,14 @@ export default function LostAnimalSearch() {
             <input ref={fileInput} type="file" accept="image/jpeg,image/png" aria-label="실종동물 사진" className="sr-only" tabIndex={-1} onChange={e => { const file = e.target.files?.[0]; e.target.value = ''; void selectPhoto(file); }} />
             <div className="flex gap-2"><button type="button" onClick={() => fileInput.current?.click()} className={`${secondary} flex-1 bg-white dark:bg-card-dark`}>{photo ? '사진 변경하기' : '사진 선택하기'}</button>
               {photo && <button type="button" className={secondary} onClick={removePhoto}>삭제</button>}</div>
-            <p className="mt-3 text-xs text-gray-500">JPG 또는 PNG, 최대 5MiB, 1600만 픽셀</p>
+            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">JPG 또는 PNG, 최대 5MiB, 1600만 픽셀</p>
             {validating && <p role="status" className="mt-2 text-sm">사진을 확인하고 있어요…</p>}
           </div>
           <fieldset className="space-y-4"><legend className="mb-3 text-sm font-bold">기억나는 정보를 더해 주세요 (선택)</legend>
             <label className="block text-sm font-medium">실종 날짜<input type="date" value={lostDate} onChange={e => { invalidate(); setLostDate(e.target.value); }} className={`${fieldClass} mt-2`} /></label>
             <label className="block text-sm font-medium">실종 지역<input value={region} maxLength={100} onChange={e => { invalidate(); setRegion(e.target.value); }} placeholder="예: 상주시 동문동" className={`${fieldClass} mt-2`} /></label>
             <label className="block text-sm font-medium">털색·무늬·특징<textarea aria-label="털색·무늬·특징" value={description} maxLength={500} rows={3} onChange={e => { invalidate(); setDescription(e.target.value); }} placeholder="예: 흰 털, 갈색 귀, 목에 빨간 목줄" className={`${fieldClass} mt-2 resize-y`} /></label>
-            <p className="text-xs leading-5 text-gray-500">모르는 항목은 비워 두셔도 돼요. 부가정보는 후보 순서를 보완하며, 조건이 다르다고 제외하지 않아요.</p>
+            <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">모르는 항목은 비워 두셔도 돼요. 부가정보는 후보 순서를 보완하며, 조건이 다르다고 제외하지 않아요.</p>
           </fieldset>
           <fieldset className="space-y-3"><legend className="mb-3 text-sm font-bold">검색 범위</legend>
             {searchOption('보호소를 떠난 동물도 포함', '입양, 반환, 기증, 방사로 보호소를 떠난 동물도 단서로 확인해요.', includeAdoptedOrReturned, setIncludeAdoptedOrReturned)}
@@ -189,14 +189,14 @@ export default function LostAnimalSearch() {
           </fieldset>
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm leading-6 text-red-700 dark:bg-red-950/30 dark:text-red-300">{error}</p>}
           {phase === 'loading' ? <button key="cancel" type="button" onClick={event => { event.preventDefault(); invalidate(); }} className={`${secondary} w-full`}>검색 취소</button> : <button key="submit" type="submit" disabled={!photo || validating} className="min-h-12 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-text-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 focus-visible:outline-brand-focus">{phase === 'error' ? '다시 시도하기' : '사진으로 후보 찾기'}</button>}
-          <p className="text-xs leading-5 text-gray-500">사진은 검색에만 사용하며 저장하지 않아요.</p>
+          <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">사진은 검색에만 사용하며 저장하지 않아요.</p>
         </form>
       </section>
       <section aria-labelledby="result-heading" aria-busy={phase === 'loading'} className="min-w-0">
         <h2 ref={resultHeading} tabIndex={-1} id="result-heading" className="scroll-mt-24 mb-5 text-xl font-bold focus:outline-none">{phase === 'success' ? `확인할 후보 ${results.length}마리` : '함께 확인할 후보'}</h2>
         <div aria-live="polite">
-          {phase === 'loading' && <div className="rounded-2xl border border-border-light p-8 text-center dark:border-border-dark"><span className="mx-auto mb-4 block h-9 w-9 animate-spin rounded-full border-4 border-brand-focus border-t-brand-focus motion-reduce:animate-none" /><p className="font-bold">닮은 동물을 찾고 있어요</p><p className="mt-2 text-sm text-gray-500">사진과 공고 정보를 확인하고 있어요. 잠시만 기다려 주세요.</p></div>}
-          {phase === 'idle' && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:bg-card-dark"><p className="font-bold">사진을 선택하고 후보를 찾아보세요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">기본 검색은 현재 공고·보호 중인 동물을 확인해요.<br />사진이 닮아도 다른 동물일 수 있어요.<br />막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
+          {phase === 'loading' && <div className="rounded-2xl border border-border-light p-8 text-center dark:border-border-dark"><span className="mx-auto mb-4 block h-9 w-9 animate-spin rounded-full border-4 border-brand-focus border-t-brand-focus motion-reduce:animate-none" /><p className="font-bold">닮은 동물을 찾고 있어요</p><p className="mt-2 text-sm text-gray-500 dark:text-gray-400">사진과 공고 정보를 확인하고 있어요. 잠시만 기다려 주세요.</p></div>}
+          {phase === 'idle' && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:border-accent-border-dark"><p className="font-bold">사진을 선택하고 후보를 찾아보세요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">기본 검색은 현재 공고·보호 중인 동물을 확인해요.<br />사진이 닮아도 다른 동물일 수 있어요.<br />막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
           {phase === 'error' && <p className="rounded-2xl border border-border-light p-6 text-sm dark:border-border-dark">검색이 완료되지 않았어요. 조건과 사진을 유지했으니 다시 시도해 주세요.</p>}
           {phase === 'success' && results.length === 0 && <div className="rounded-2xl border border-border-light p-8 dark:border-border-dark"><p className="font-bold">이번 검색에서는 후보를 찾지 못했어요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">수집되지 않았거나 검색 가능한 사진이 없는 공고도 있어요. 막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요.<br />다른 사진으로 다시 확인하거나 보호소에 문의해 주세요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
         </div>

@@ -62,7 +62,7 @@ export default function AdoptionList() {
   if (error) {
     return (
       <main className="flex-grow flex items-center justify-center">
-        <p className="text-lg text-red-600 dark:text-red-400">게시글을 불러오는데 실패했습니다.</p>
+        <p className="text-lg text-red-600 dark:text-red-300">게시글을 불러오는데 실패했습니다.</p>
       </main>
     );
   }

@@ -33,11 +33,11 @@ export default function MyFavoriteAnimalsPanel({ feedback, favoriteAnimals, curr
             </div>
             {totalPages > 1 && (
               <nav aria-label="관심 동물 페이지" className="mt-8 flex flex-wrap items-center justify-center gap-2">
-                <button type="button" onClick={() => onPageChange(Math.max(0, visiblePage - 1))} disabled={visiblePage === 0} className="min-h-11 rounded-lg border border-border-light px-4 disabled:opacity-50">이전</button>
+                <button type="button" onClick={() => onPageChange(Math.max(0, visiblePage - 1))} disabled={visiblePage === 0} className="min-h-11 rounded-lg border border-border-light px-4 disabled:opacity-50 dark:border-gray-700">이전</button>
                 {Array.from({ length: totalPages }, (_, page) => (
-                  <button key={page} type="button" onClick={() => onPageChange(page)} aria-current={visiblePage === page ? 'page' : undefined} aria-label={String(page + 1) + '페이지'} className={'min-h-11 min-w-11 rounded-lg px-3 ' + (visiblePage === page ? 'bg-brand font-bold text-brand-ink' : 'border border-border-light')}>{page + 1}</button>
+                  <button key={page} type="button" onClick={() => onPageChange(page)} aria-current={visiblePage === page ? 'page' : undefined} aria-label={String(page + 1) + '페이지'} className={'min-h-11 min-w-11 rounded-lg px-3 ' + (visiblePage === page ? 'bg-brand font-bold text-brand-ink' : 'border border-border-light dark:border-gray-700')}>{page + 1}</button>
                 ))}
-                <button type="button" onClick={() => onPageChange(Math.min(totalPages - 1, visiblePage + 1))} disabled={visiblePage >= totalPages - 1} className="min-h-11 rounded-lg border border-border-light px-4 disabled:opacity-50">다음</button>
+                <button type="button" onClick={() => onPageChange(Math.min(totalPages - 1, visiblePage + 1))} disabled={visiblePage >= totalPages - 1} className="min-h-11 rounded-lg border border-border-light px-4 disabled:opacity-50 dark:border-gray-700">다음</button>
               </nav>
             )}
           </div>

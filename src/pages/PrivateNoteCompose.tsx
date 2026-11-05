@@ -84,7 +84,7 @@ export default function PrivateNoteCompose() {
         </div>
       ) : (
         <form onSubmit={submit} className="mt-6 space-y-6">
-          <div className="rounded-xl bg-brand-soft p-4 text-brand-ink">
+          <div className="rounded-xl bg-brand-soft p-4 text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">
             <span className="text-sm">받는 사람</span>
             <p className="mt-1 font-bold">{target.data.nickname}</p>
           </div>
@@ -117,7 +117,7 @@ export default function PrivateNoteCompose() {
             </p>
           </div>
           {error && (
-            <p role="alert" className="rounded-lg bg-red-50 p-4 text-sm text-red-800">
+            <p role="alert" className="rounded-lg bg-red-50 p-4 text-sm text-red-800 dark:text-red-300 dark:bg-red-950">
               {error}
             </p>
           )}

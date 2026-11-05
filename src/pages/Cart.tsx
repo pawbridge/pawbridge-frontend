@@ -70,7 +70,7 @@ export default function Cart() {
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-focus mx-auto mb-4"></div>
-          <p className="text-gray-500">장바구니를 불러오는 중...</p>
+          <p className="text-gray-500 dark:text-gray-400">장바구니를 불러오는 중...</p>
         </div>
       </main>
     );
@@ -80,8 +80,8 @@ export default function Cart() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
-          <p className="text-gray-500 mb-4">장바구니를 불러오는데 실패했습니다.</p>
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
+          <p className="text-gray-500 dark:text-gray-400 mb-4">장바구니를 불러오는데 실패했습니다.</p>
           <p className="text-gray-400 text-sm mb-4">로그인이 필요합니다.</p>
           <button
             onClick={() => navigate('/login')}
@@ -130,7 +130,7 @@ export default function Cart() {
           </h1>
           <button
             onClick={handleClearCart}
-            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors"
+            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors dark:hover:text-red-300"
             disabled={clearCartMutation.isPending}
           >
             장바구니 비우기
@@ -159,7 +159,7 @@ export default function Cart() {
                     {/* 상품 정보 */}
                     <div className="md:col-span-2 flex items-center gap-4">
                       <div
-                        className="w-20 h-20 rounded-md bg-cover bg-center flex-shrink-0 bg-gray-100"
+                        className="w-20 h-20 rounded-md bg-cover bg-center flex-shrink-0 bg-gray-100 dark:bg-gray-700"
                         style={{ backgroundImage: item.productImageUrl ? `url('${item.productImageUrl}')` : undefined }}
                       >
                         {!item.productImageUrl && (
