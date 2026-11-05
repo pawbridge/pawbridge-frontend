@@ -26,7 +26,7 @@ function SearchForm({ filters, onSearch }: { filters: ShelterDiscoveryFilters; o
     {custom && <div className="mt-3 grid max-w-lg grid-cols-1 gap-3 sm:grid-cols-2"><label className="text-sm">접수 시작일<input type="date" required value={draft.intakeFrom} onChange={e => setDraft({ ...draft, intakeFrom: e.target.value })} className={inputClass} /></label><label className="text-sm">접수 종료일<input type="date" required value={draft.intakeTo} onChange={e => setDraft({ ...draft, intakeTo: e.target.value })} className={inputClass} /></label></div>}
     <p className="mt-3 text-xs leading-5">선택한 접수일: {draft.intakeFrom} – {draft.intakeTo}. 검색 버튼을 눌러야 적용됩니다.</p>
     <p className="mt-1 text-xs leading-5 text-brand-muted">선택한 기간에 접수된 동물 중, 현재 수집 정보가 ‘보호중’인 동물을 보여드려요.</p>
-    {error && <p role="alert" className="mt-2 text-sm text-red-800">{error}</p>}</fieldset>
+    {error && <p role="alert" className="mt-2 text-sm text-red-800 dark:text-red-300">{error}</p>}</fieldset>
   </form>;
 }
 

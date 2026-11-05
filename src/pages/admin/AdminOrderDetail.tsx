@@ -41,7 +41,7 @@ function OrderEditor({ order, refresh }: { order: Order; refresh: () => Promise<
     <p className="text-xs text-brand-muted">상태 변경은 결제 승인·환불·송장 등록 기능이 아닙니다.</p>
     {confirming && <StatsDialog compact title="주문 상태를 변경하시겠어요?" busy={busy} onClose={() => setConfirming(false)}>
       <div className="space-y-4"><p className="text-sm">주문: {adminOrderLabels[order.status]} → {adminOrderLabels[status]}</p><p className="text-sm">배송: {adminDeliveryLabels[order.deliveryStatus]} → {adminDeliveryLabels[delivery]}</p>
-        {uncertain && <p role="alert" className="text-sm text-red-700">{notice}</p>}
+        {uncertain && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{notice}</p>}
         <div className="flex flex-wrap gap-2"><button disabled={busy} className={adminControl} onClick={() => setConfirming(false)}>취소</button>{uncertain ? <button disabled={busy} className={adminPrimary} onClick={recover}>최신 상태 확인</button> : <button disabled={busy} className={adminPrimary} onClick={() => mutation.mutate()}>{busy ? '저장 중…' : '확인하고 저장'}</button>}</div>
       </div>
     </StatsDialog>}

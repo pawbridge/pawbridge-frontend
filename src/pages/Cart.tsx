@@ -80,7 +80,7 @@ export default function Cart() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">장바구니를 불러오는데 실패했습니다.</p>
           <p className="text-gray-400 text-sm mb-4">로그인이 필요합니다.</p>
           <button
@@ -130,7 +130,7 @@ export default function Cart() {
           </h1>
           <button
             onClick={handleClearCart}
-            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors"
+            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors dark:hover:text-red-300"
             disabled={clearCartMutation.isPending}
           >
             장바구니 비우기

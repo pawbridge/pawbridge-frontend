@@ -220,8 +220,8 @@ export default function MyPageSidebar({
             onClick={onLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50"
           >
-            <LogoutIcon aria-hidden="true" className="icon text-red-500" />
-            <p className="text-red-500 text-sm font-medium leading-normal">로그아웃</p>
+            <LogoutIcon aria-hidden="true" className="icon text-red-500 dark:text-red-300" />
+            <p className="text-red-500 text-sm font-medium leading-normal dark:text-red-300">로그아웃</p>
           </button>
         </div>
       </div>

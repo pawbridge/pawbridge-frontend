@@ -54,7 +54,7 @@ export default function FavoriteAnimalCard({ favorite, fromMyPage = false }: { f
               {remove.isPending ? '삭제 중…' : '관심 동물에서 삭제'}
             </button>
           </div>
-          {removeError && <p role="alert" className="mt-2 text-sm text-red-700">{removeError}</p>}
+          {removeError && <p role="alert" className="mt-2 text-sm text-red-700 dark:text-red-300">{removeError}</p>}
         </div>
       </div>
     </article>

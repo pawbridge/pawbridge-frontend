@@ -50,7 +50,7 @@ export default function OrderDetail() {
       },
       CANCELLED: {
         label: '주문 취소',
-        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
       },
       FAILED: {
         label: '결제 실패',
@@ -78,7 +78,7 @@ export default function OrderDetail() {
       <main className="flex-grow w-full max-w-[1200px] mx-auto px-4 md:px-10 py-8">
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <p className="text-red-500 mb-4">주문 정보를 불러올 수 없습니다.</p>
+            <p className="text-red-500 mb-4 dark:text-red-300">주문 정보를 불러올 수 없습니다.</p>
             <button
               onClick={() => navigate('/orders')}
               className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"

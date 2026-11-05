@@ -106,7 +106,7 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">잘못된 접근입니다.</p>
           <Link
             to="/"
@@ -136,8 +136,8 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <CreditCardIcon aria-hidden="true" className="icon text-6xl text-red-500 mb-4" />
-          <h1 className="text-2xl font-bold text-red-500 mb-2">결제 승인 실패</h1>
+          <CreditCardIcon aria-hidden="true" className="icon text-6xl text-red-500 mb-4 dark:text-red-300" />
+          <h1 className="text-2xl font-bold text-red-500 mb-2 dark:text-red-300">결제 승인 실패</h1>
           <p className="text-gray-500 dark:text-gray-400 mb-2">결제 처리 중 오류가 발생했습니다.</p>
           <p className="text-gray-400 text-sm mb-6">실제로 결제되지 않았으니 안심하세요.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -220,7 +220,7 @@ export default function OrderComplete() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">주문 정보를 불러올 수 없습니다.</p>
           <Link
             to="/"

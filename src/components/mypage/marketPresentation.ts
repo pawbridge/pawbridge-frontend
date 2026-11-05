@@ -9,15 +9,15 @@ export const formatPrice = (price: number) => {
 export const getStatusBadge = (status: ProductStatus) => {
   switch (status) {
     case 'ACTIVE':
-      return { text: '판매중', className: 'bg-green-50 text-green-700 ring-green-600/20' };
+      return { text: '판매중', className: 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-[#163126] dark:text-[#DDEFE9]' };
     case 'SOLD_OUT':
       return { text: '품절', className: 'bg-gray-600 text-white ring-gray-600/20' };
     case 'HIDDEN':
-      return { text: '숨김', className: 'bg-gray-50 text-gray-600 ring-gray-500/20' };
+      return { text: '숨김', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-800 dark:text-gray-300' };
     case 'DELETED':
-      return { text: '삭제됨', className: 'bg-red-50 text-red-600 ring-red-600/20' };
+      return { text: '삭제됨', className: 'bg-red-50 text-red-600 ring-red-600/20 dark:text-red-300 dark:bg-red-950' };
     default:
-      return { text: '알 수 없음', className: 'bg-gray-50 text-gray-600 ring-gray-500/20' };
+      return { text: '알 수 없음', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-800 dark:text-gray-300' };
   }
 };
 
@@ -38,7 +38,7 @@ export const getOrderStatusBadge = (status: OrderStatus) => {
     },
     CANCELLED: {
       label: '주문 취소',
-      className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+      className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
     },
     FAILED: {
       label: '결제 실패',

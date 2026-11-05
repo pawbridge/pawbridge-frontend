@@ -139,7 +139,7 @@ export default function AnimalReportForm() {
         <p className="text-sm font-bold text-brand-accent">동물을 다시 만날 수 있도록</p>
         <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{reportId === null ? (missing ? '실종 동물 알리기' : '목격 제보하기') : '제보 수정'}</h1>
         <p className="mt-3 text-base leading-7 text-gray-600 dark:text-gray-300">정확히 아는 정보만 적어 주세요. 위치와 특징은 공개되지만 개인 연락처는 적지 않는 편이 안전합니다.</p>
-        {error && <div role="alert" className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-700 dark:bg-red-950 dark:text-red-200">{error}</div>}
+        {error && <div role="alert" className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-700 dark:bg-red-950 dark:text-red-300">{error}</div>}
         <form onSubmit={submit} className="mt-8 space-y-9">
           <section aria-labelledby="kind-heading">
             <h2 id="kind-heading" className="text-xl font-bold">어떤 상황인가요?</h2>

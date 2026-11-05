@@ -78,7 +78,7 @@ export default function MyWishlistPanel({
                 <button
                   onClick={onDeleteSelected}
                   disabled={isDeletingSelected || selectedWishlistItems.length === 0}
-                  className="text-sm font-medium text-subtext-light dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                  className="text-sm font-medium text-subtext-light dark:text-gray-400 hover:text-red-500 dark:hover:text-red-300 transition-colors disabled:opacity-50"
                 >
                   선택 삭제
                 </button>
@@ -203,7 +203,7 @@ export default function MyWishlistPanel({
                           <button
                             onClick={() => onDeleteItem(item.wishlistId)}
                             disabled={isDeletingItem}
-                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-colors disabled:opacity-50"
                             title="삭제"
                           >
                             <DeleteIcon aria-hidden="true" className="icon text-[18px]" />
