@@ -34,7 +34,7 @@ export default function AdminPostManagement() {
       {filtered.length === 0 ? <AdminEmpty title="검색 결과가 없습니다."><button className={adminControl} onClick={reset}>조건 초기화</button></AdminEmpty> : <ul className="space-y-3">{filtered.slice(currentPage * 20, (currentPage + 1) * 20).map(post => {
         const id = post.postId ?? post.id;
         return <AdminRecord key={id} title={post.title} description={post.authorNickname || post.authorName} meta={`게시글 ${id} · ${adminDate(post.createdAt)} · 조회 ${post.viewCount ?? 0}`} status={<span className="rounded-lg bg-brand-soft px-3 py-2 text-xs dark:border dark:border-accent-border-dark">{adminBoardLabels[post.boardType]}</span>}>
-          <Link className={adminPrimary} to={`/admin/posts/${id}`}>상세 보기</Link><button className={adminControl} onClick={() => setEditing(post)}>수정</button><button className={`${adminControl} text-red-700`} onClick={() => setDeleting(post)}>삭제</button>
+          <Link className={adminPrimary} to={`/admin/posts/${id}`}>상세 보기</Link><button className={adminControl} onClick={() => setEditing(post)}>수정</button><button className={`${adminControl} text-red-700 dark:!text-red-300`} onClick={() => setDeleting(post)}>삭제</button>
         </AdminRecord>;
       })}</ul>}
       <AdminPagination page={currentPage} total={total} onChange={setPage} />

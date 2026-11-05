@@ -175,7 +175,7 @@ export default function RegisteredAnimals() {
 
                     {animal.favoriteCount !== undefined && animal.favoriteCount > 0 && (
                       <div className="flex items-center gap-2">
-                        <FavoriteIcon aria-hidden="true" className="icon text-base text-red-500" />
+                        <FavoriteIcon aria-hidden="true" className="icon text-base text-red-500 dark:text-red-300" />
                         <span>{animal.favoriteCount}명이 찜했습니다</span>
                       </div>
                     )}

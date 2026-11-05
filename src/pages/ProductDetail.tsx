@@ -158,7 +158,7 @@ export default function ProductDetail() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
+          <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">상품을 찾을 수 없습니다.</p>
           <button
             onClick={() => navigate('/products')}

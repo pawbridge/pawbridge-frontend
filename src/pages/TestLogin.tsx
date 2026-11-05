@@ -98,7 +98,7 @@ export default function TestLogin() {
                   disabled={loginMutation.isPending}
                 />
                 {emailError && (
-                  <p className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
+                  <p className="text-red-500 dark:text-red-300 text-sm mt-1 flex items-center gap-1">
                     <ErrorIcon aria-hidden="true" className="icon text-base" />
                     {emailError}
                   </p>
@@ -140,7 +140,7 @@ export default function TestLogin() {
                   </button>
                 </div>
                 {(passwordError || errorMessage) && (
-                  <p role="alert" className="text-red-500 dark:text-red-400 text-sm mt-1 flex items-center gap-1">
+                  <p role="alert" className="text-red-500 dark:text-red-300 text-sm mt-1 flex items-center gap-1">
                     <ErrorIcon aria-hidden="true" className="icon text-base" />
                     {errorMessage || passwordError}
                   </p>

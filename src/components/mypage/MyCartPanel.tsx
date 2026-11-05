@@ -38,7 +38,7 @@ export default function MyCartPanel({
         {!feedback.isError && cartItems.length > 0 && (
           <button
             onClick={onClearCart}
-            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors"
+            className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors dark:hover:text-red-300"
             disabled={isClearingCart}
           >
             장바구니 비우기

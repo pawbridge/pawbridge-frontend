@@ -194,8 +194,8 @@ export default function ProductEdit() {
         </div>
         <section className={`${adminPanel} space-y-4 xl:sticky xl:top-6`}><h2 className="text-xl font-bold">대표 이미지</h2>
           <AdminProductImage preview={imagePreview} onChange={handleImageChange} onRemove={handleRemoveImage} />
-          {notice && <p role="alert" className="text-sm text-red-700">{notice}</p>}
-          <div className="flex flex-wrap gap-2"><button type="submit" className={adminPrimary}>{busy ? '저장 중…' : '변경 저장'}</button><button type="button" className={adminControl} onClick={() => navigate('/admin/products')}>취소</button><button type="button" className={`${adminControl} text-red-700`} onClick={() => setShowDeleteModal(true)}>상품 삭제</button></div>
+          {notice && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{notice}</p>}
+          <div className="flex flex-wrap gap-2"><button type="submit" className={adminPrimary}>{busy ? '저장 중…' : '변경 저장'}</button><button type="button" className={adminControl} onClick={() => navigate('/admin/products')}>취소</button><button type="button" className={`${adminControl} text-red-700 dark:!text-red-300`} onClick={() => setShowDeleteModal(true)}>상품 삭제</button></div>
         </section>
       </fieldset>
     </form>}

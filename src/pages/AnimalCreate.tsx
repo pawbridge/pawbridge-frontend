@@ -205,7 +205,7 @@ export default function AnimalCreate() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
+            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
             <p className="text-gray-500 dark:text-gray-400 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
             <Link
               to="/mypage"
@@ -250,7 +250,7 @@ export default function AnimalCreate() {
             <button 
               onClick={handleLogout}
               aria-label="로그아웃"
-              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2"
+              className="flex items-center justify-center size-9 rounded-lg hover:bg-brand-soft dark:hover:bg-stone-800 text-brand-muted hover:text-red-500 transition-colors ml-2 dark:hover:text-red-300"
             >
               <LogoutIcon aria-hidden="true" className="icon text-[20px]" />
             </button>
@@ -286,7 +286,7 @@ export default function AnimalCreate() {
             <div className="md:col-span-8 flex flex-col gap-5">
                 <label className="flex flex-col gap-2">
                   <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                    종 <span className="text-red-500">*</span>
+                    종 <span className="text-red-500 dark:text-red-300">*</span>
                   </span>
                 <CustomSelect
                   value={species}
@@ -314,7 +314,7 @@ export default function AnimalCreate() {
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex flex-col gap-2">
                     <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                      성별 <span className="text-red-500">*</span>
+                      성별 <span className="text-red-500 dark:text-red-300">*</span>
                     </span>
                     <CustomSelect
                       value={gender}
@@ -330,7 +330,7 @@ export default function AnimalCreate() {
 
                   <label className="flex flex-col gap-2">
                     <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                      중성화 여부 <span className="text-red-500">*</span>
+                      중성화 여부 <span className="text-red-500 dark:text-red-300">*</span>
                     </span>
                     <CustomSelect
                       value={neuterStatus}
@@ -397,7 +397,7 @@ export default function AnimalCreate() {
               {/* 이미지 업로드 영역 */}
               <div className="md:col-span-4 flex flex-col gap-2">
                 <span className="text-brand-ink dark:text-gray-200 text-sm font-bold">
-                  대표 이미지 <span className="text-red-500">*</span>
+                  대표 이미지 <span className="text-red-500 dark:text-red-300">*</span>
                 </span>
                 {imagePreview ? (
                   <div className="relative flex-1 min-h-[240px]">

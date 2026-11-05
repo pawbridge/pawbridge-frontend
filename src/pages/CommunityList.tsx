@@ -128,7 +128,7 @@ export default function CommunityList() {
     return (
       <main className="flex-grow flex items-center justify-center text-gray-800 dark:text-gray-200">
         <div className="text-center">
-          <p role="alert" className="text-lg text-red-600 dark:text-red-400">목록을 불러오지 못했습니다.</p>
+          <p role="alert" className="text-lg text-red-600 dark:text-red-300">목록을 불러오지 못했습니다.</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{(error as Error).message}</p>
         </div>
       </main>

@@ -28,8 +28,8 @@ export default function AdminPostEditDialog({ post, onClose }: { post: PostRespo
         <label className="block text-sm font-medium">제목 (필수)<input className={adminInput} maxLength={200} value={title} onChange={event => setTitle(event.target.value)} /></label>
         <label className="block text-sm font-medium">내용 (필수)<textarea className={`${adminInput} min-h-40 resize-y`} value={content} onChange={event => setContent(event.target.value)} /></label>
       </fieldset>
-      {validation && <p role="alert" className="text-sm text-red-700">{validation}</p>}
-      {mutation.isError && <p role="alert" className="text-sm text-red-700">저장에 실패했습니다. 입력 내용을 보존했으니 확인 후 다시 시도해 주세요.</p>}
+      {validation && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{validation}</p>}
+      {mutation.isError && <p role="alert" className="text-sm text-red-700 dark:text-red-300">저장에 실패했습니다. 입력 내용을 보존했으니 확인 후 다시 시도해 주세요.</p>}
       <div className="flex flex-wrap gap-2"><button type="button" disabled={mutation.isPending} className={adminControl} onClick={onClose}>취소</button><button type="submit" disabled={mutation.isPending} className={adminPrimary}>{mutation.isPending ? '저장 중…' : '저장'}</button></div>
     </form>
   </StatsDialog>;

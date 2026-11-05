@@ -104,7 +104,7 @@ export default function Products() {
       <main className="container mx-auto px-4 py-8 flex-1">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4" />
+            <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
             <p className="text-gray-500 dark:text-gray-400">상품을 불러오는데 실패했습니다.</p>
             <button
               onClick={() => window.location.reload()}

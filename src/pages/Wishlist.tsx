@@ -130,13 +130,13 @@ export default function Wishlist() {
   const getStatusBadge = (status: ProductStatus) => {
     switch (status) {
       case 'ACTIVE':
-        return { text: '판매중', className: 'bg-green-50 text-green-700 ring-green-600/20' };
+        return { text: '판매중', className: 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-[#163126] dark:text-[#DDEFE9]' };
       case 'SOLD_OUT':
         return { text: '품절', className: 'bg-gray-600 text-white ring-gray-600/20' };
       case 'HIDDEN':
         return { text: '숨김', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-300' };
       case 'DELETED':
-        return { text: '삭제됨', className: 'bg-red-50 text-red-600 ring-red-600/20' };
+        return { text: '삭제됨', className: 'bg-red-50 text-red-600 ring-red-600/20 dark:text-red-300 dark:bg-red-950' };
       default:
         return { text: '알 수 없음', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-300' };
     }
@@ -183,7 +183,7 @@ export default function Wishlist() {
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30">
-            <ErrorIcon aria-hidden="true" className="icon text-4xl text-danger mb-4" />
+            <ErrorIcon aria-hidden="true" className="icon text-4xl text-red-500 mb-4 dark:text-red-300" />
             <h3 className="text-lg font-bold text-text-light dark:text-text-dark">데이터를 불러오지 못했습니다.</h3>
             <p className="mt-1 text-sm text-subtext-light dark:text-subtext-dark mb-6">일시적인 오류입니다. 잠시 후 다시 시도해주세요.</p>
             <button
@@ -238,7 +238,7 @@ export default function Wishlist() {
                   }
                 }}
                 disabled={deleteSelectedMutation.isPending || selectedItems.length === 0}
-                className="text-sm font-medium text-subtext-light dark:text-gray-400 hover:text-danger dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                className="text-sm font-medium text-subtext-light dark:text-gray-400 hover:text-red-500 dark:hover:text-red-300 transition-colors disabled:opacity-50"
               >
                 선택 삭제
               </button>
@@ -409,7 +409,7 @@ export default function Wishlist() {
                             }
                           }}
                           disabled={deleteItemMutation.isPending}
-                          className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2.5 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-danger hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                          className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2.5 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-colors disabled:opacity-50"
                           title="삭제"
                         >
                           <DeleteIcon aria-hidden="true" className="icon text-[20px]" />

@@ -127,7 +127,7 @@ export default function CommunityDetail() {
     return (
       <main className="flex-grow flex items-center justify-center">
         <div className="text-center">
-          <p className="text-lg text-red-600 dark:text-red-400">게시글을 찾을 수 없습니다.</p>
+          <p className="text-lg text-red-600 dark:text-red-300">게시글을 찾을 수 없습니다.</p>
           <Link to="/community" className="mt-4 inline-block text-brand-accent underline">
             목록으로 돌아가기
           </Link>
@@ -179,7 +179,7 @@ export default function CommunityDetail() {
                 <button
                   onClick={handleDeletePost}
                   disabled={deletePostMutation.isPending}
-                  className="px-4 py-2 text-sm bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 disabled:opacity-50"
+                  className="px-4 py-2 text-sm bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 disabled:opacity-50"
                 >
                   삭제
                 </button>
@@ -277,7 +277,7 @@ export default function CommunityDetail() {
                       <button
                         onClick={() => handleDeleteComment(comment.commentId || comment.id)}
                         disabled={deleteCommentMutation.isPending}
-                        className="text-sm text-red-600 dark:text-red-400 hover:underline disabled:opacity-50"
+                        className="text-sm text-red-600 dark:text-red-300 hover:underline disabled:opacity-50"
                       >
                         삭제
                       </button>

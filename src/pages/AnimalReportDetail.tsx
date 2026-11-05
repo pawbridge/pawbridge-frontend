@@ -81,7 +81,7 @@ export default function AnimalReportDetail() {
           <button type="button" onClick={handleDelete} disabled={deleteMutation.isPending} className="rounded-lg bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 disabled:opacity-50 dark:bg-red-900/30 dark:text-red-300">삭제</button>
         </div>}
       </div>
-      {deleteMutation.isError && <p role="alert" className="mt-4 text-sm text-red-600">삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>}
+      {deleteMutation.isError && <p role="alert" className="mt-4 text-sm text-red-600 dark:text-red-300">삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>}
       {report.imageUrls.length > 0 && <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         {report.imageUrls.map((url, index) => <img key={`${url}-${index}`} src={url} alt={`${report.kind === 'MISSING' ? '실종 동물' : '목격 동물'} 사진 ${index + 1}`} className="max-h-96 w-full rounded-lg bg-gray-100 dark:bg-gray-700 object-contain" onError={(event) => { event.currentTarget.src = placeholderImg; }} />)}
       </div>}

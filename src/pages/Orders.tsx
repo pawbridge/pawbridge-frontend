@@ -58,7 +58,7 @@ export default function Orders() {
       },
       CANCELLED: {
         label: '주문 취소',
-        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
       },
       FAILED: {
         label: '결제 실패',
@@ -91,7 +91,7 @@ export default function Orders() {
       <main className="flex-1 w-full max-w-[1080px] mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <p className="text-red-500 mb-4">주문 내역을 불러오는 중 오류가 발생했습니다.</p>
+            <p className="text-red-500 mb-4 dark:text-red-300">주문 내역을 불러오는 중 오류가 발생했습니다.</p>
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
