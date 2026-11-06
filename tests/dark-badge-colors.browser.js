@@ -32,7 +32,8 @@ async page => {
     for (const dark of [false, true]) {
       await setDark(dark);
       for (const [label, light, darkValue] of rows) {
-        const chip = page.locator('span.rounded-full', { hasText: label }).first();
+        // 주문 내역은 화면 폭에 따라 카드와 표 중 하나만 보이므로 보이는 칩만 고른다.
+        const chip = page.locator('span.rounded-full:visible', { hasText: label }).first();
         await chip.waitFor().catch(async () => { throw new Error(`${prefix}-${label}-missing: ${page.url()} ${(await page.locator('main').innerText().catch(() => '')).slice(0, 200)}`); });
         const expected = dark ? darkValue : light;
         const actual = await colors(chip);
