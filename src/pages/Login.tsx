@@ -59,7 +59,7 @@ export default function Login() {
             </div>
 
             {oauthError && (
-              <p role="alert" className="mb-4 flex items-start gap-1 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
+              <p role="alert" className="mb-4 flex items-start gap-1 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
                 <ErrorIcon aria-hidden="true" className="icon text-base" />
                 {oauthError}
               </p>
