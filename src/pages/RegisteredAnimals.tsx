@@ -98,12 +98,12 @@ export default function RegisteredAnimals() {
                         </span>
                       )}
                       {animal.gender === 'MALE' && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-100">
                           수컷
                         </span>
                       )}
                       {animal.gender === 'FEMALE' && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-100">
                           암컷
                         </span>
                       )}
@@ -113,7 +113,7 @@ export default function RegisteredAnimals() {
                         </span>
                       )}
                       {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-100">
                           중성화 완료
                         </span>
                       )}

@@ -52,6 +52,13 @@
       "env": {
         "VITE_API_BASE_URL": "http://127.0.0.1:28089"
       }
+    },
+    "dev-lost-paused": {
+      "description": "Dev server with the lost-search pause notice on (production builds turn it on by mode).",
+      "env": {
+        "VITE_API_BASE_URL": "http://localhost:28080",
+        "VITE_LOST_SEARCH_PAUSED": "true"
+      }
     }
   },
   "tests": [
@@ -276,6 +283,15 @@
       "origin": "http://127.0.0.1:5187",
       "server": "dev",
       "profile": "dev-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "lost-search-paused",
+      "origin": "http://127.0.0.1:5189",
+      "server": "dev",
+      "profile": "dev-lost-paused",
       "call": "page",
       "preNavigate": false,
       "group": "mock"
@@ -541,6 +557,24 @@
     },
     {
       "name": "dark-danger-colors",
+      "origin": "http://127.0.0.1:5274",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "dark-badge-colors",
+      "origin": "http://127.0.0.1:5274",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
+      "name": "orders-mobile-cards",
       "origin": "http://127.0.0.1:5274",
       "server": "preview",
       "profile": "preview-local",

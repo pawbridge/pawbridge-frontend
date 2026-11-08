@@ -46,19 +46,19 @@ export default function Orders() {
     const statusMap = {
       PENDING: {
         label: '주문 대기',
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+        className: 'bg-yellow-100 text-yellow-800 dark:bg-amber-950 dark:text-amber-50',
       },
       PAID: {
         label: '결제 완료',
-        className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+        className: 'bg-green-100 text-green-800 dark:bg-[#163126] dark:text-[#DDEFE9]',
       },
       COMPLETED: {
         label: '주문 완료',
-        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+        className: 'bg-blue-100 text-blue-800 dark:bg-[#102A33] dark:text-[#E2EBEF]',
       },
       CANCELLED: {
         label: '주문 취소',
-        className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+        className: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
       },
       FAILED: {
         label: '결제 실패',
@@ -164,96 +164,149 @@ export default function Orders() {
           </div>
         </div>
       ) : (
-        <div className="w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-surface dark:bg-surface-dark shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-gray-700">
-                  <th className="p-4 md:pl-6 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[40%] min-w-[300px]">
-                    상품 정보
-                  </th>
-                  <th className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[20%] min-w-[140px]">
-                    주문일자 / 번호
-                  </th>
-                  <th className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[20%] min-w-[120px]">
-                    결제 금액
-                  </th>
-                  <th className="p-4 md:pr-6 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[20%] min-w-[120px] text-center">
-                    상태
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
-                {orders.map((order) => {
-                  const firstItem = order.items[0];
-                  const statusBadge = getStatusBadge(order.status);
-                  return (
-                    <tr
-                      key={order.orderId}
-                      className="group hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
+        <>
+          {/* 모바일 카드 목록: 768px 미만에서는 표가 가로로 넘쳐 금액과 상태가 가려지므로 주문마다 세로로 쌓는다 */}
+          <ul className="md:hidden flex flex-col gap-3">
+            {orders.map((order) => {
+              const firstItem = order.items[0];
+              const statusBadge = getStatusBadge(order.status);
+              return (
+                <li
+                  key={order.orderId}
+                  className="flex flex-col gap-3 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-surface dark:bg-surface-dark shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <span className="text-sm font-medium text-background-dark dark:text-white">
+                        {formatDate(order.createdAt)}
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">No. {order.orderUuid.slice(0, 13)}</span>
+                    </div>
+                    <span
+                      className={`flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.className}`}
                     >
-                      <td className="p-4 md:pl-6 align-top">
-                        <div className="flex gap-4">
-                          <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"></div>
-                          <div className="flex flex-col gap-1">
-                            <div className="font-bold text-background-dark dark:text-white line-clamp-2 leading-snug">
-                              {firstItem.productName}
-                              {order.items.length > 1 && ` 외 ${order.items.length - 1}개`}
+                      {statusBadge.label}
+                    </span>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"></div>
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <div className="font-bold text-background-dark dark:text-white line-clamp-2 leading-snug">
+                        {firstItem.productName}
+                        {order.items.length > 1 && ` 외 ${order.items.length - 1}개`}
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        수량: {order.items.reduce((sum, item) => sum + item.quantity, 0)}개
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">결제 금액</span>
+                    <span className="text-lg font-bold text-background-dark dark:text-white">
+                      {formatPrice(order.totalAmount)}원
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleViewDetail(order.orderId)}
+                    className="w-full h-11 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium hover:bg-white hover:border-brand-focus hover:text-brand-accent dark:hover:bg-gray-700 transition-colors bg-transparent"
+                  >
+                    상세 보기
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="hidden md:block w-full overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-surface dark:bg-surface-dark shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-gray-700">
+                    <th className="p-4 md:pl-6 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[40%] min-w-[300px]">
+                      상품 정보
+                    </th>
+                    <th className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[20%] min-w-[140px]">
+                      주문일자 / 번호
+                    </th>
+                    <th className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[20%] min-w-[120px]">
+                      결제 금액
+                    </th>
+                    <th className="p-4 md:pr-6 text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap w-[20%] min-w-[120px] text-center">
+                      상태
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
+                  {orders.map((order) => {
+                    const firstItem = order.items[0];
+                    const statusBadge = getStatusBadge(order.status);
+                    return (
+                      <tr
+                        key={order.orderId}
+                        className="group hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors"
+                      >
+                        <td className="p-4 md:pl-6 align-top">
+                          <div className="flex gap-4">
+                            <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"></div>
+                            <div className="flex flex-col gap-1">
+                              <div className="font-bold text-background-dark dark:text-white line-clamp-2 leading-snug">
+                                {firstItem.productName}
+                                {order.items.length > 1 && ` 외 ${order.items.length - 1}개`}
+                              </div>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">SKU: {firstItem.skuCode}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                수량: {order.items.reduce((sum, item) => sum + item.quantity, 0)}개
+                              </p>
                             </div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">SKU: {firstItem.skuCode}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              수량: {order.items.reduce((sum, item) => sum + item.quantity, 0)}개
-                            </p>
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-4 align-top">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-sm font-medium text-background-dark dark:text-white">
-                            {formatDate(order.createdAt)}
-                          </span>
-                          <button
-                            onClick={() => handleViewDetail(order.orderId)}
-                            className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-accent hover:underline text-left"
-                          >
-                            No. {order.orderUuid.slice(0, 13)}
-                          </button>
-                          <div className="mt-2 text-xs text-gray-400 leading-relaxed hidden sm:block">
-                            수령인: {order.receiverName}
-                            <br />
-                            {order.deliveryAddress.length > 20
-                              ? `${order.deliveryAddress.slice(0, 20)}...`
-                              : order.deliveryAddress}
+                        </td>
+                        <td className="p-4 align-top">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-sm font-medium text-background-dark dark:text-white">
+                              {formatDate(order.createdAt)}
+                            </span>
+                            <button
+                              onClick={() => handleViewDetail(order.orderId)}
+                              className="text-xs text-gray-500 dark:text-gray-400 hover:text-brand-accent hover:underline text-left"
+                            >
+                              No. {order.orderUuid.slice(0, 13)}
+                            </button>
+                            <div className="mt-2 text-xs text-gray-400 leading-relaxed hidden sm:block">
+                              수령인: {order.receiverName}
+                              <br />
+                              {order.deliveryAddress.length > 20
+                                ? `${order.deliveryAddress.slice(0, 20)}...`
+                                : order.deliveryAddress}
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-4 align-top">
-                        <span className="text-base font-bold text-background-dark dark:text-white">
-                          {formatPrice(order.totalAmount)}원
-                        </span>
-                      </td>
-                      <td className="p-4 md:pr-6 align-top text-center">
-                        <div className="flex flex-col gap-2 items-center">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.className}`}
-                          >
-                            {statusBadge.label}
+                        </td>
+                        <td className="p-4 align-top">
+                          <span className="text-base font-bold text-background-dark dark:text-white">
+                            {formatPrice(order.totalAmount)}원
                           </span>
-                          <button
-                            onClick={() => handleViewDetail(order.orderId)}
-                            className="w-full max-w-[100px] py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-xs font-medium hover:bg-white hover:border-brand-focus hover:text-brand-accent dark:hover:bg-gray-700 transition-colors bg-transparent"
-                          >
-                            상세 보기
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="p-4 md:pr-6 align-top text-center">
+                          <div className="flex flex-col gap-2 items-center">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.className}`}
+                            >
+                              {statusBadge.label}
+                            </span>
+                            <button
+                              onClick={() => handleViewDetail(order.orderId)}
+                              className="w-full max-w-[100px] py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-xs font-medium hover:bg-white hover:border-brand-focus hover:text-brand-accent dark:hover:bg-gray-700 transition-colors bg-transparent"
+                            >
+                              상세 보기
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* 페이지네이션 */}
