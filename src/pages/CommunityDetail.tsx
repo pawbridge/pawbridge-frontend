@@ -16,6 +16,7 @@ import { useAuthStore } from '../store/authStore';
 
 import { getApiErrorMessage } from '../lib/apiError';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
+import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 const boardLabel: Record<string, string> = {
   MISSING: '실종',
@@ -40,6 +41,7 @@ export default function CommunityDetail() {
     queryFn: () => getPost(postId),
     enabled: !!postId,
   });
+  useNotFoundNoindex(!postId || isMissingResponse(postError));
   const blocks = useBlockedAuthors(post ? [post.authorId] : []);
 
   // 댓글 목록 조회

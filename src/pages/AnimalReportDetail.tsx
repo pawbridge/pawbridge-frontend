@@ -9,6 +9,7 @@ import placeholderImg from '../assets/image-placeholder.svg';
 import { deleteAnimalReport, getAnimalReport } from '../api/animalReports.api';
 import { useAuthStore } from '../store/authStore';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
+import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 export default function AnimalReportDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +23,7 @@ export default function AnimalReportDetail() {
     enabled: Number.isSafeInteger(reportId) && reportId > 0,
     retry: false,
   });
+  useNotFoundNoindex(!Number.isSafeInteger(reportId) || reportId <= 0 || isMissingResponse(error));
   const deleteMutation = useMutation({
     mutationFn: () => deleteAnimalReport(reportId),
     onSuccess: () => {
