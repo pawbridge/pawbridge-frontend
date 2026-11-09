@@ -7,6 +7,7 @@ import { shelterMapUrl, shelterTelephone } from '../lib/shelters';
 import ShelterAnimals, { ShelterAnimalSummary } from '../components/shelters/ShelterAnimals';
 import ShelterHistory from '../components/shelters/ShelterHistory';
 import { shelterDetailReturnTo } from '../lib/shelterDetail';
+import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 function AddressActions({ name, address }: { name: string; address?: string }) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
@@ -38,6 +39,7 @@ export default function ShelterDetail() {
   const location = useLocation();
   const returnTo = shelterDetailReturnTo(params.get('returnTo') || (params.has('keyword') || params.has('address') ? `/shelters?${params}` : undefined));
   const result = useQuery({ queryKey: ['public-shelter', registration], queryFn: ({ signal }) => findPublicShelter(registration, signal), enabled: /^\d{15}$/.test(registration), retry: false });
+  useNotFoundNoindex(!/^\d{15}$/.test(registration) || isMissingResponse(result.error));
   const shelter = result.data;
   const info = shelter?.publicInformation;
   const phone = shelter?.phone || info?.phone;
