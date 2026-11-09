@@ -7,6 +7,7 @@ import placeholderImg from '../assets/image-placeholder.svg';
 import AddShoppingCartIcon from '../assets/icons/material-symbols/add_shopping_cart.svg?react';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
+import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +24,7 @@ export default function ProductDetail() {
     queryFn: () => getProductById(Number(id)),
     enabled: !!id,
   });
+  useNotFoundNoindex(!Number.isSafeInteger(Number(id)) || Number(id) <= 0 || isMissingResponse(error));
 
   // SKU가 로드되면 첫 번째 SKU 자동 선택
   useEffect(() => {

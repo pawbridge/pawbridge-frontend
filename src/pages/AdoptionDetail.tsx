@@ -12,6 +12,7 @@ import {
 import { useAuthStore } from '../store/authStore';
 import { getApiErrorMessage } from '../lib/apiError';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
+import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 export default function AdoptionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +33,7 @@ export default function AdoptionDetail() {
     queryFn: () => getPost(postId),
     enabled: !!postId,
   });
+  useNotFoundNoindex(!postId || isMissingResponse(postError));
 
   // 댓글 목록 조회
   const { data: comments = [] } = useQuery({

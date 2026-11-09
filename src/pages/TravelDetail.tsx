@@ -8,6 +8,7 @@ import TravelFeedback from '../components/travel/TravelFeedback';
 import TravelImage from '../components/travel/TravelImage';
 import { isTravelContentId, travelListPath, travelText, travelConditionsNotice, travelPage } from '../lib/travel';
 import type { TravelConditions } from '../types/travel.types';
+import { useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 const coreFields = [
   ['areas', '동반 가능 구역'], ['allowedAnimals', '동반 가능한 동물'], ['requirements', '필수 준비물·이용 조건'],
@@ -35,6 +36,7 @@ export default function TravelDetail() {
   const conditionsNotice = data ? travelConditionsNotice(data.petInformationStatus, data.petInformationAvailable) : null;
   const status = isAxiosError(detail.error) ? detail.error.response?.status : undefined;
   const missing = status === 404 || status === 400;
+  useNotFoundNoindex(!validId || missing);
 
   useEffect(() => { window.scrollTo(0, 0); }, [contentId]);
 
