@@ -23,7 +23,7 @@ test('동물 상세는 API 데이터로 제목, 설명, https 사진을 만든�
 
   assert.equal(detail?.kind, 'found');
   assert.ok(detail.kind === 'found');
-  assert.equal(detail.text.title, '믹스견 수컷 검정색, 인천 서구 보호 중 | 포우브릿지');
+  assert.equal(detail.text.title, '믹스견 수컷 검정색, 인천 서구 보호 중 - 포우브릿지');
   assert.match(detail.text.description, /공고번호 인천-서구-2026-00297/);
   assert.equal(detail.image, 'https://openapi.animal.go.kr/openapi/service/rest/fileDownload?file=a.jpg');
   assert.equal(calls[0].url, `${API_ORIGIN}/api/v1/animals/35798`);
@@ -38,7 +38,7 @@ test('보호소 상세는 등록번호로 읽고 전화번호가 없으면 공�
   const detail = await resolveDetailMetadata('/shelters/327346201900001', fetcher);
 
   assert.ok(detail?.kind === 'found');
-  assert.equal(detail.text.title, '펫동물병원, 대구광역시 수성구 동물보호소 | 포우브릿지');
+  assert.equal(detail.text.title, '펫동물병원, 대구광역시 수성구 동물보호소 - 포우브릿지');
   assert.match(detail.text.description, /연락처 053-474-9820/);
   assert.equal(calls[0].url, `${API_ORIGIN}/api/v1/shelters/by-care-reg-no/327346201900001`);
 });

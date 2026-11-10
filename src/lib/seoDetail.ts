@@ -30,7 +30,7 @@ function clip(value: string): string {
 }
 
 function titled(title: string): string {
-  return `${title} | ${SITE_NAME}`;
+  return `${title} - ${SITE_NAME}`;
 }
 
 function dateLabel(date?: string | null): string {

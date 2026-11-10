@@ -24,7 +24,7 @@ export function useNotFoundNoindex(missing: boolean) {
     const previousTitle = document.title;
 
     if (robots) robots.content = 'noindex,nofollow';
-    document.title = `페이지를 찾을 수 없습니다 | ${SITE_NAME}`;
+    document.title = `페이지를 찾을 수 없습니다 - ${SITE_NAME}`;
 
     return () => {
       if (robots && previousRobots !== undefined) robots.content = previousRobots;
