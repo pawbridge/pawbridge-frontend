@@ -6,8 +6,6 @@ import { findLostCandidates } from '../api/lostSearch.api';
 import type { LostCandidate } from '../api/lostSearch.api';
 import placeholder from '../assets/image-placeholder.svg';
 import uploadIcon from '../assets/lost-search-upload.svg';
-import InlineAlert from '../components/common/InlineAlert';
-import { lostSearchPaused, lostSearchPauseNotice } from '../lib/lostSearchPause';
 
 const statusLabels: Record<string, string> = {
   NOTICE: '공고 중', PROTECT: '보호 중', ADOPTION_PENDING: '입양 대기', ADOPTED: '종료(입양)',
@@ -105,7 +103,7 @@ export default function LostAnimalSearch() {
 
   async function search(event: FormEvent) {
     event.preventDefault();
-    if (lostSearchPaused || !photo || validating || phase === 'loading') return;
+    if (!photo || validating || phase === 'loading') return;
     invalidate();
     const version = revision.current;
     const controller = new AbortController(); request.current = controller;
@@ -157,7 +155,6 @@ export default function LostAnimalSearch() {
     <h1 className="text-2xl font-bold leading-snug md:text-3xl">다시 만날 단서,<br className="sm:hidden" /> 사진으로 찾아보세요</h1>
     <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">올려주신 사진과 닮은 동물을 수집된 구조동물 공고에서 찾아드려요.</p>
     <p className="mb-6 mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">사진이 닮아도 다른 동물일 수 있어요. 발견일·장소와 몸의 무늬를 확인한 뒤 보호소에 문의해 주세요.</p>
-    {lostSearchPaused && <InlineAlert title={lostSearchPauseNotice.title} className="mb-6">{lostSearchPauseNotice.description}</InlineAlert>}
           <fieldset className="mb-8 max-w-[400px]"><legend className="mb-3 text-sm font-bold">어떤 동물을 찾고 계세요?</legend>
             <div className="grid grid-cols-2 gap-3">{(['DOG', 'CAT'] as const).map(value => <label key={value} className={`flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border text-sm font-bold ${species === value ? 'border-brand-focus bg-brand text-text-light' : 'border-border-light dark:border-border-dark'}`}>
               <input type="radio" name="species" value={value} checked={species === value} onChange={() => { invalidate(); setSpecies(value); }} className="accent-brand-ink" />
@@ -191,7 +188,7 @@ export default function LostAnimalSearch() {
             {searchOption('보호 중 사망한 기록도 확인', '보호소에서 자연사하거나 안락사된 동물의 기록을 살아 있는 후보와 섞지 않고 아래에 따로 보여드려요.', includeDeceased, setIncludeDeceased)}
           </fieldset>
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm leading-6 text-red-700 dark:bg-red-950/30 dark:text-red-300">{error}</p>}
-          {phase === 'loading' ? <button key="cancel" type="button" onClick={event => { event.preventDefault(); invalidate(); }} className={`${secondary} w-full`}>검색 취소</button> : <button key="submit" type="submit" disabled={lostSearchPaused || !photo || validating} className="min-h-12 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-text-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 focus-visible:outline-brand-focus">{lostSearchPaused ? '사진 검색 일시 중지 중' : phase === 'error' ? '다시 시도하기' : '사진으로 후보 찾기'}</button>}
+          {phase === 'loading' ? <button key="cancel" type="button" onClick={event => { event.preventDefault(); invalidate(); }} className={`${secondary} w-full`}>검색 취소</button> : <button key="submit" type="submit" disabled={!photo || validating} className="min-h-12 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-text-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 focus-visible:outline-brand-focus">{phase === 'error' ? '다시 시도하기' : '사진으로 후보 찾기'}</button>}
           <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">사진은 검색에만 사용하며 저장하지 않아요.</p>
         </form>
       </section>
@@ -199,8 +196,7 @@ export default function LostAnimalSearch() {
         <h2 ref={resultHeading} tabIndex={-1} id="result-heading" className="scroll-mt-24 mb-5 text-xl font-bold focus:outline-none">{phase === 'success' ? `확인할 후보 ${results.length}마리` : '함께 확인할 후보'}</h2>
         <div aria-live="polite">
           {phase === 'loading' && <div className="rounded-2xl border border-border-light p-8 text-center dark:border-border-dark"><span className="mx-auto mb-4 block h-9 w-9 animate-spin rounded-full border-4 border-brand-focus border-t-brand-focus motion-reduce:animate-none" /><p className="font-bold">닮은 동물을 찾고 있어요</p><p className="mt-2 text-sm text-gray-500 dark:text-gray-400">사진과 공고 정보를 확인하고 있어요. 잠시만 기다려 주세요.</p></div>}
-          {phase === 'idle' && lostSearchPaused && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:border-accent-border-dark"><p className="font-bold">사진 검색을 다시 열면 이곳에서 후보를 찾을 수 있어요</p></div>}
-          {phase === 'idle' && !lostSearchPaused && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:border-accent-border-dark"><p className="font-bold">사진을 선택하고 후보를 찾아보세요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">기본 검색은 현재 공고·보호 중인 동물을 확인해요.<br />사진이 닮아도 다른 동물일 수 있어요.<br />막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
+          {phase === 'idle' && <div className="rounded-2xl border border-dashed border-brand-focus bg-brand-soft p-8 text-center dark:border-accent-border-dark"><p className="font-bold">사진을 선택하고 후보를 찾아보세요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">기본 검색은 현재 공고·보호 중인 동물을 확인해요.<br />사진이 닮아도 다른 동물일 수 있어요.<br />막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
           {phase === 'error' && <p className="rounded-2xl border border-border-light p-6 text-sm dark:border-border-dark">검색이 완료되지 않았어요. 조건과 사진을 유지했으니 다시 시도해 주세요.</p>}
           {phase === 'success' && results.length === 0 && <div className="rounded-2xl border border-border-light p-8 dark:border-border-dark"><p className="font-bold">이번 검색에서는 후보를 찾지 못했어요</p><p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">수집되지 않았거나 검색 가능한 사진이 없는 공고도 있어요. 막 등록된 공고는 검색에 반영되기까지 시간이 걸릴 수 있어요.<br />다른 사진으로 다시 확인하거나 보호소에 문의해 주세요. 최근 공고는 동물 목록에서도 확인해 주세요.</p></div>}
         </div>
