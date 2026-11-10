@@ -13,7 +13,7 @@ function withDetail(metadata: SeoMetadata, detail: DetailMetadata | null): SeoMe
   if (detail.kind === 'missing') {
     return {
       ...metadata,
-      title: `페이지를 찾을 수 없습니다 | ${SITE_NAME}`,
+      title: `페이지를 찾을 수 없습니다 - ${SITE_NAME}`,
       description: '요청한 포우브릿지 페이지를 찾을 수 없습니다.',
       robots: 'noindex,nofollow',
       knownRoute: false,

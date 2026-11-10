@@ -29,19 +29,19 @@ async page => {
     .then(() => assert(true, name), async () => assert(false, `${name}: ${await page.title()}`));
 
   await page.goto(origin + '/animals/35798');
-  await waitTitle('믹스견 수컷 검정색, 인천 서구 보호 중 | 포우브릿지', 'animal-title');
+  await waitTitle('믹스견 수컷 검정색, 인천 서구 보호 중 - 포우브릿지', 'animal-title');
   assert((await description()).startsWith('2026.06.05 인천 서구 오류동에서 구조된 믹스견'), 'animal-description: ' + await description());
-  assert(await ogTitle() === '믹스견 수컷 검정색, 인천 서구 보호 중 | 포우브릿지', 'animal-og-title: ' + await ogTitle());
+  assert(await ogTitle() === '믹스견 수컷 검정색, 인천 서구 보호 중 - 포우브릿지', 'animal-og-title: ' + await ogTitle());
 
   await page.goto(origin + '/shelters/327346201900001');
-  await waitTitle('펫동물병원, 대구광역시 수성구 동물보호소 | 포우브릿지', 'shelter-title');
+  await waitTitle('펫동물병원, 대구광역시 수성구 동물보호소 - 포우브릿지', 'shelter-title');
   assert((await description()).includes('연락처 053-474-9820'), 'shelter-description: ' + await description());
 
   // 상세에서 앱 안에서 목록으로 나가면 목록 문구가 돌아와야 한다.
   await page.goto(origin + '/animals/35798');
-  await waitTitle('믹스견 수컷 검정색, 인천 서구 보호 중 | 포우브릿지', 'animal-title-again');
+  await waitTitle('믹스견 수컷 검정색, 인천 서구 보호 중 - 포우브릿지', 'animal-title-again');
   await page.evaluate(() => { window.history.pushState({}, '', '/animals'); window.dispatchEvent(new PopStateEvent('popstate')); });
-  await waitTitle('보호 동물 검색 | 포우브릿지', 'list-title-restored');
+  await waitTitle('보호 동물 검색 - 포우브릿지', 'list-title-restored');
   assert((await description()).startsWith('지역, 동물 종류, 특징으로'), 'list-description-restored: ' + await description());
 
   assert(pageErrors.length === 0, 'no-page-errors: ' + pageErrors.join(' | '));

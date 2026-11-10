@@ -47,14 +47,14 @@ async page => {
   await page.waitForResponse(response => response.url().endsWith('/api/v1/animals/503'));
   await page.waitForTimeout(300);
   assert(await robots() === 'index,follow', 'server-error-stays-indexed: ' + await robots());
-  assert((await page.title()) === '보호 동물 상세 | 포우브릿지', 'server-error-title: ' + await page.title());
+  assert((await page.title()) === '보호 동물 상세 - 포우브릿지', 'server-error-title: ' + await page.title());
 
   // 없는 상세에서 앱 안에서 목록으로 나가면 목록의 index가 돌아와야 한다.
   await page.goto(origin + '/animals/404');
   await waitRobots('noindex,nofollow', 'missing-animal-noindex-again');
   await page.evaluate(() => { window.history.pushState({}, '', '/animals'); window.dispatchEvent(new PopStateEvent('popstate')); });
   await waitRobots('index,follow', 'list-after-missing-indexed');
-  assert((await page.title()) === '보호 동물 검색 | 포우브릿지', 'list-title-restored: ' + await page.title());
+  assert((await page.title()) === '보호 동물 검색 - 포우브릿지', 'list-title-restored: ' + await page.title());
 
   assert(pageErrors.length === 0, 'no-page-errors: ' + pageErrors.join(' | '));
   return { checks };
