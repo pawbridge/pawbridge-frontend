@@ -8,6 +8,8 @@ import ShelterAnimals, { ShelterAnimalSummary } from '../components/shelters/She
 import ShelterHistory from '../components/shelters/ShelterHistory';
 import { shelterDetailReturnTo } from '../lib/shelterDetail';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
+import { usePageText } from '../components/seo/usePageText';
+import { shelterPageText } from '../lib/seoDetail';
 
 function AddressActions({ name, address }: { name: string; address?: string }) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
@@ -44,6 +46,7 @@ export default function ShelterDetail() {
   const info = shelter?.publicInformation;
   const phone = shelter?.phone || info?.phone;
   const telephone = shelterTelephone(phone);
+  usePageText(shelter ? shelterPageText({ ...shelter, phone }) : null);
   const hours = (start?: string, end?: string) => start && end ? `${start} – ${end}` : '등록된 정보가 없어요';
   return <ShelterLayout><div className="mx-auto max-w-[1320px]">
     <Link to={returnTo} state={{ ...location.state?.shelterReturnState, shelterRestoreKey: location.state?.shelterReturnKey }} className="mb-6 inline-flex min-h-11 items-center text-sm font-semibold text-brand-accent">← {/^\/animals\/\d+/.test(returnTo) ? '동물 상세로 돌아가기' : returnTo.startsWith('/animals') ? '동물 검색으로 돌아가기' : '보호소 목록으로 돌아가기'}</Link>

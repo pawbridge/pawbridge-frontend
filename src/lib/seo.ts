@@ -16,8 +16,8 @@ interface PageDefinition {
 }
 
 const defaultPage: PageDefinition = {
-  title: '포우브릿지 | 유기동물 입양과 보호소 찾기',
-  description: '전국 보호 동물과 동물보호소를 찾고 유기동물 현황, 입양 후기, 반려동물 동반여행 정보를 확인하세요.',
+  title: '포우브릿지 | 유기동물 입양, 보호소와 실종동물 사진으로 찾기',
+  description: '전국 보호 동물과 동물보호소를 찾고, 잃어버린 반려동물 사진으로 보호 중인 닮은 동물을 찾아보세요. 지역별 유기동물 현황, 입양 후기, 반려동물 동반여행 정보도 확인할 수 있어요.',
   indexable: true,
 };
 
@@ -29,8 +29,8 @@ const exactPages = new Map<string, PageDefinition>([
     indexable: true,
   }],
   ['/animals/lost', {
-    title: '실종동물 찾기 | 포우브릿지',
-    description: '사진과 특징을 바탕으로 보호 중인 동물에서 닮은 실종동물 후보를 찾아보세요.',
+    title: '사진으로 실종동물 찾기 | 포우브릿지',
+    description: '잃어버린 반려동물 사진을 올리면 전국 보호소에서 보호 중인 동물 가운데 닮은 후보를 찾아 드려요. 지역으로 좁혀 볼 수도 있어요.',
     indexable: true,
   }],
   ['/animals/stats', {

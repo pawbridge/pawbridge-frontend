@@ -576,6 +576,15 @@
       "group": "mock"
     },
     {
+      "name": "detail-page-text",
+      "origin": "http://127.0.0.1:5276",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "favorite-notifications",
       "origin": "http://127.0.0.1:5273",
       "server": "preview",

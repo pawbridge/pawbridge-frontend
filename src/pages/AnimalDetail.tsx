@@ -14,6 +14,8 @@ import { shelterDetailPath, shelterDetailUrl } from '../lib/shelterDetail';
 import useShelterScroll from '../hooks/useShelterScroll';
 import AnimalChatbot from '../components/common/AnimalChatbot';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
+import { usePageText } from '../components/seo/usePageText';
+import { animalPageText } from '../lib/seoDetail';
 
 const dateLabel = (date?: string) => date ? date.slice(0, 10).replace(/-/g, '.') : null;
 const errorMessage = (error: unknown, fallback: string) =>
@@ -63,6 +65,7 @@ export default function AnimalDetail() {
     queryKey: ['animal', id], queryFn: () => getAnimalById(animalId), enabled: Number.isInteger(animalId) && animalId > 0,
   });
   useNotFoundNoindex(!(Number.isInteger(animalId) && animalId > 0) || isMissingResponse(animalError));
+  usePageText(animal ? animalPageText(animal) : null);
   useShelterScroll(!isLoading && !shelterReturnTo);
   const weight = animalWeightLabel(animal?.weight);
   const { data: shelter } = useQuery({
