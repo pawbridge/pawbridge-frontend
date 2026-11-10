@@ -8,6 +8,8 @@ import ShelterAnimals, { ShelterAnimalSummary } from '../components/shelters/She
 import ShelterHistory from '../components/shelters/ShelterHistory';
 import { shelterDetailReturnTo } from '../lib/shelterDetail';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
+import { usePageText } from '../components/seo/usePageText';
+import { shelterPageText } from '../lib/seoDetail';
 
 function AddressActions({ name, address }: { name: string; address?: string }) {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
@@ -37,13 +39,15 @@ export default function ShelterDetail() {
   const { registration = '' } = useParams();
   const [params] = useSearchParams();
   const location = useLocation();
-  const returnTo = shelterDetailReturnTo(params.get('returnTo') || (params.has('keyword') || params.has('address') ? `/shelters?${params}` : undefined));
+  // 예전 링크와 검색엔진에 남은 주소는 아직 ?returnTo=를 달고 들어온다.
+  const returnTo = shelterDetailReturnTo(location.state?.shelterReturnTo || params.get('returnTo') || (params.has('keyword') || params.has('address') ? `/shelters?${params}` : undefined));
   const result = useQuery({ queryKey: ['public-shelter', registration], queryFn: ({ signal }) => findPublicShelter(registration, signal), enabled: /^\d{15}$/.test(registration), retry: false });
   useNotFoundNoindex(!/^\d{15}$/.test(registration) || isMissingResponse(result.error));
   const shelter = result.data;
   const info = shelter?.publicInformation;
   const phone = shelter?.phone || info?.phone;
   const telephone = shelterTelephone(phone);
+  usePageText(shelter ? shelterPageText({ ...shelter, phone }) : null);
   const hours = (start?: string, end?: string) => start && end ? `${start} – ${end}` : '등록된 정보가 없어요';
   return <ShelterLayout><div className="mx-auto max-w-[1320px]">
     <Link to={returnTo} state={{ ...location.state?.shelterReturnState, shelterRestoreKey: location.state?.shelterReturnKey }} className="mb-6 inline-flex min-h-11 items-center text-sm font-semibold text-brand-accent">← {/^\/animals\/\d+/.test(returnTo) ? '동물 상세로 돌아가기' : returnTo.startsWith('/animals') ? '동물 검색으로 돌아가기' : '보호소 목록으로 돌아가기'}</Link>

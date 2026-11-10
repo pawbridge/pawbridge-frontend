@@ -30,10 +30,10 @@ test('마지막 페이지가 줄거나 빈 결과가 되면 유효한 마지막 
   assert.equal(shelterLastValidPage(21, 0), 0);
   assert.equal(shelterLastValidPage(0, 1), 0);
 });
-test('찾기에서 상세로 이동하면 찾기 기간은 복귀 주소에 남고 동물 목록은 기간 전체다', () => {
-  const finder = '/shelters?keyword=제주&page=3&intakeFrom=2026-09-11&intakeTo=2026-10-10';
-  const url = new URL(shelterDetailUrl('350650201200001', finder), 'https://example.test');
-  assert.equal(url.searchParams.get('returnTo'), finder);
+test('보호소 상세 주소에는 출발 화면을 넣지 않고 동물 목록은 기간 전체다', () => {
+  const url = new URL(shelterDetailUrl('350650201200001'), 'https://example.test');
+  assert.equal(url.pathname, '/shelters/350650201200001');
+  assert.equal(url.search, '');
   assert.equal(readShelterAnimals(url.searchParams).intakeFrom, undefined);
 });
 test('복귀 주소는 내부 동물·보호소 경로만 허용한다', () => {

@@ -14,6 +14,8 @@ import { shelterDetailPath, shelterDetailUrl } from '../lib/shelterDetail';
 import useShelterScroll from '../hooks/useShelterScroll';
 import AnimalChatbot from '../components/common/AnimalChatbot';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
+import { usePageText } from '../components/seo/usePageText';
+import { animalPageText } from '../lib/seoDetail';
 
 const dateLabel = (date?: string) => date ? date.slice(0, 10).replace(/-/g, '.') : null;
 const errorMessage = (error: unknown, fallback: string) =>
@@ -63,6 +65,7 @@ export default function AnimalDetail() {
     queryKey: ['animal', id], queryFn: () => getAnimalById(animalId), enabled: Number.isInteger(animalId) && animalId > 0,
   });
   useNotFoundNoindex(!(Number.isInteger(animalId) && animalId > 0) || isMissingResponse(animalError));
+  usePageText(animal ? animalPageText(animal) : null);
   useShelterScroll(!isLoading && !shelterReturnTo);
   const weight = animalWeightLabel(animal?.weight);
   const { data: shelter } = useQuery({
@@ -204,7 +207,7 @@ export default function AnimalDetail() {
               <h2 className="text-lg font-bold">보호소 연락처</h2>
               <p className="mt-4 break-words text-sm">{shelterName || '보호소 정보 없음'}</p>
               {phone && <p className="mt-2 text-sm">전화 {telephone ? <a href={telephone} className="underline underline-offset-4">{phone}</a> : phone}</p>}
-              {shelter?.careRegNo && <Link to={shelterReturnTo?.startsWith(`/shelters/${shelter.careRegNo}`) ? shelterReturnTo : shelterDetailUrl(shelter.careRegNo, location.pathname + location.search)} state={shelterReturnTo?.startsWith(`/shelters/${shelter.careRegNo}`) ? { ...location.state?.shelterDetailState, shelterRestoreKey: location.state?.shelterRestoreKey } : { shelterReturnState: location.state, shelterReturnKey: location.key }} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">보호소 상세 보기</Link>}
+              {shelter?.careRegNo && <Link to={shelterReturnTo?.startsWith(`/shelters/${shelter.careRegNo}`) ? shelterReturnTo : shelterDetailUrl(shelter.careRegNo)} state={shelterReturnTo?.startsWith(`/shelters/${shelter.careRegNo}`) ? { ...location.state?.shelterDetailState, shelterRestoreKey: location.state?.shelterRestoreKey } : { shelterReturnState: location.state, shelterReturnKey: location.key, shelterReturnTo: location.pathname + location.search }} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">보호소 상세 보기</Link>}
               {!phone && <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">등록된 연락처가 없습니다.</p>}
             </section>
           </div>
