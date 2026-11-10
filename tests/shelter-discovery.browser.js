@@ -47,6 +47,8 @@ async page => {
   // list request must carry the shelter. The shelter-scoped /animals search is checked below.
   await page.getByRole('link', { name: '보호소 상세 보기 →' }).first().click();
   await page.getByRole('heading', { level: 1, name: sample.name, exact: true }).waitFor();
+  // 돌아갈 화면은 state로 넘긴다. 주소에 ?returnTo=가 붙으면 구글이 같은 보호소를 출발 화면마다 따로 수집한다.
+  if (new URL(page.url()).search) throw Error(`Return path leaked into URL: ${new URL(page.url()).search}`);
   await page.getByRole('heading', { name: '보호 중인 동물', exact: true }).waitFor();
   await page.getByTestId('shelter-animal-list').waitFor();
   const animalRequest = [...requests].reverse().find(url => url.startsWith('/api/v1/animals?') && !url.includes('size=1&') && !url.endsWith('size=1'));
@@ -62,6 +64,12 @@ async page => {
   // returns to that search through '동물 목록으로'.
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator(`a[href="/animals/${sample.animals[0].id}"]`).first().click();
+  // 동물 상세 → 보호소 상세 → '동물 상세로 돌아가기'도 주소에 출발 화면을 넣지 않고 왕복한다.
+  await page.getByRole('link', { name: '보호소 상세 보기', exact: true }).click();
+  await page.getByRole('heading', { level: 1, name: sample.name, exact: true }).waitFor();
+  if (new URL(page.url()).pathname !== `/shelters/${sample.careRegNo}` || new URL(page.url()).search) throw Error(`Shelter link from animal: ${new URL(page.url()).pathname}${new URL(page.url()).search}`);
+  await page.getByRole('link', { name: '← 동물 상세로 돌아가기' }).click();
+  await page.waitForURL(`**/animals/${sample.animals[0].id}`);
   await page.getByRole('button', { name: '동물 목록으로', exact: true }).click();
   await page.getByRole('heading', { name: '이 보호소의 동물을 만나보세요' }).waitFor();
   await page.getByRole('heading', { name: /검색 결과 3마리/ }).waitFor();
@@ -95,5 +103,5 @@ async page => {
   await page.getByRole('heading', { name: '보호소를 불러오지 못했어요' }).waitFor();
   mode = 'normal'; await page.getByRole('button', { name: '다시 시도', exact: true }).click();
   await page.getByRole('heading', { name: sample.name, exact: true }).waitFor();
-  return { passed: ['desktop', 'mobile-no-overflow', 'lazy-history', 'missing-vs-zero', 'detail-animal-api-context', 'search-animal-api-date-contract', 'list-return', 'invalid-range', 'empty', 'error-retry'], requests: requests.length };
+  return { passed: ['desktop', 'mobile-no-overflow', 'lazy-history', 'missing-vs-zero', 'detail-animal-api-context', 'search-animal-api-date-contract', 'list-return', 'shelter-url-without-return', 'animal-shelter-round-trip', 'invalid-range', 'empty', 'error-retry'], requests: requests.length };
 }

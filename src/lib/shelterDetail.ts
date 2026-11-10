@@ -64,6 +64,8 @@ export function shelterDetailPath(value: unknown): string | undefined {
   return typeof value === 'string' && /^\/shelters\/\d{15}(?:\?[^#]*)?$/.test(value) ? value : undefined;
 }
 
-export function shelterDetailUrl(registration: string, returnTo: string): string {
-  return `/shelters/${encodeURIComponent(registration)}?${new URLSearchParams({ returnTo: shelterDetailReturnTo(returnTo) })}`;
+// 돌아갈 화면은 주소 대신 화면 이동 정보(state의 shelterReturnTo)로 넘긴다.
+// 주소에 넣으면 같은 보호소가 출발 화면마다 다른 주소가 되어, 구글이 noindex 주소를 1,000개 넘게 수집했다.
+export function shelterDetailUrl(registration: string): string {
+  return `/shelters/${encodeURIComponent(registration)}`;
 }

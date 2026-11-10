@@ -22,8 +22,8 @@ export default function ShelterDiscoveryCard({ shelter, filters }: { shelter: Sh
   const location = useLocation();
   const [historyOpen, setHistoryOpen] = useState(() => readShelterView(location.state?.shelterRestoreKey || location.key)?.expanded.includes(shelter.id) || false);
   const animalUrl = shelterAnimalUrl(shelter.id, filters);
-  const detailUrl = shelterDetailUrl(shelter.careRegNo, `/shelters?${writeShelterDiscovery(filters)}`);
-  const detailState = { shelterReturnKey: location.key };
+  const detailUrl = shelterDetailUrl(shelter.careRegNo);
+  const detailState = { shelterReturnKey: location.key, shelterReturnTo: `/shelters?${writeShelterDiscovery(filters)}` };
   const toggleHistory = () => {
     const open = !historyOpen;
     setHistoryOpen(open);
