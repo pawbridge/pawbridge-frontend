@@ -13,8 +13,6 @@ import AnimalCardSimple from '../components/common/AnimalCardSimple';
 import { shelterDetailPath, shelterDetailUrl } from '../lib/shelterDetail';
 import useShelterScroll from '../hooks/useShelterScroll';
 import AnimalChatbot from '../components/common/AnimalChatbot';
-import InlineAlert from '../components/common/InlineAlert';
-import { lostSearchPaused, similarAnimalsPauseNotice } from '../lib/lostSearchPause';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 
 const dateLabel = (date?: string) => date ? date.slice(0, 10).replace(/-/g, '.') : null;
@@ -75,8 +73,7 @@ export default function AnimalDetail() {
   });
   const similarQuery = useQuery({
     queryKey: ['similarAnimals', id], queryFn: () => getSimilarAnimals(animalId),
-    // 추천도 실종 검색 서비스가 계산하므로, 내려 둔 동안에는 요청하지 않는다.
-    enabled: !!animal && !lostSearchPaused, retry: 1,
+    enabled: !!animal, retry: 1,
   });
   const favoriteQuery = useQuery({
     queryKey: ['favorite', id, user?.id],
@@ -240,7 +237,6 @@ export default function AnimalDetail() {
         <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-ink sm:w-auto">{returnButtonLabel}</button>
         <section aria-labelledby="similar-animals-title" className="mt-14 border-t border-border-light pt-10 dark:border-border-dark">
           <h2 id="similar-animals-title" className="mb-6 text-xl font-bold">비슷한 동물</h2>
-          {lostSearchPaused ? <InlineAlert title={similarAnimalsPauseNotice.title}>{similarAnimalsPauseNotice.description}</InlineAlert> : <>
           {similarQuery.isPending && <p role="status" className="rounded-2xl border border-border-light p-6 text-sm text-brand-muted dark:border-border-dark dark:text-gray-300">비슷한 동물을 불러오는 중입니다…</p>}
           {similarQuery.isError && <div className="mb-4 rounded-2xl border border-border-light p-6 dark:border-border-dark">
             <p role="alert" className="text-sm">비슷한 동물을 아직 준비하지 못했어요. 새로 등록된 공고는 반영까지 시간이 걸릴 수 있어요.</p>
@@ -255,7 +251,6 @@ export default function AnimalDetail() {
           {!!similarQuery.data?.length && <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {similarQuery.data.slice(0, 6).map(item => <AnimalCardSimple key={item.id} animal={item} searchReturnTo={searchReturnTo} />)}
           </div>}
-          </>}
         </section>
       </main>
       <AnimalChatbot animalId={animal.id} animalName={animal.name || animal.breed || '보호 동물'} />
