@@ -16,7 +16,7 @@ interface PageDefinition {
 }
 
 const defaultPage: PageDefinition = {
-  title: '포우브릿지 | 유기동물 입양, 보호소와 실종동물 사진으로 찾기',
+  title: '포우브릿지 - 유기동물 입양, 보호소와 실종동물 사진으로 찾기',
   description: '전국 보호 동물과 동물보호소를 찾고, 잃어버린 반려동물 사진으로 보호 중인 닮은 동물을 찾아보세요. 지역별 유기동물 현황, 입양 후기, 반려동물 동반여행 정보도 확인할 수 있어요.',
   indexable: true,
 };
@@ -24,62 +24,62 @@ const defaultPage: PageDefinition = {
 const exactPages = new Map<string, PageDefinition>([
   ['/', defaultPage],
   ['/animals', {
-    title: '보호 동물 검색 | 포우브릿지',
+    title: '보호 동물 검색 - 포우브릿지',
     description: '지역, 동물 종류, 특징으로 새로운 가족을 기다리는 전국 보호 동물을 검색해 보세요.',
     indexable: true,
   }],
   ['/animals/lost', {
-    title: '사진으로 실종동물 찾기 | 포우브릿지',
+    title: '사진으로 실종동물 찾기 - 포우브릿지',
     description: '잃어버린 반려동물 사진을 올리면 전국 보호소에서 보호 중인 동물 가운데 닮은 후보를 찾아 드려요. 지역으로 좁혀 볼 수도 있어요.',
     indexable: true,
   }],
   ['/animals/stats', {
-    title: '지역별 유기동물 현황 | 포우브릿지',
+    title: '지역별 유기동물 현황 - 포우브릿지',
     description: '전국 구조 동물의 지역별 현황과 보호 상태를 지도와 통계로 비교해 보세요.',
     indexable: true,
   }],
   ['/shelters', {
-    title: '전국 동물보호소 찾기 | 포우브릿지',
+    title: '전국 동물보호소 찾기 - 포우브릿지',
     description: '지역과 보호소 이름으로 전국 동물보호소의 주소, 연락처와 운영 정보를 찾아보세요.',
     indexable: true,
   }],
   ['/travel', {
-    title: '반려동물 동반여행 | 포우브릿지',
+    title: '반려동물 동반여행 - 포우브릿지',
     description: '반려동물과 함께 방문할 수 있는 여행지와 이용 정보를 지역별로 찾아보세요.',
     indexable: true,
   }],
   ['/adoption', {
-    title: '입양 후기 | 포우브릿지',
+    title: '입양 후기 - 포우브릿지',
     description: '보호 동물과 가족이 된 이후의 따뜻한 입양 이야기를 만나보세요.',
     indexable: true,
   }],
   ['/community', {
-    title: '반려동물 커뮤니티 | 포우브릿지',
+    title: '반려동물 커뮤니티 - 포우브릿지',
     description: '반려동물과 보호 동물에 관한 이야기를 함께 나누세요.',
     indexable: true,
   }],
   ['/reports/missing', {
-    title: '실종 알림 | 포우브릿지',
+    title: '실종 알림 - 포우브릿지',
     description: '이용자가 등록한 실종 동물의 사진, 위치와 특징을 확인하세요.',
     indexable: false,
   }],
   ['/reports/sightings', {
-    title: '목격 제보 | 포우브릿지',
+    title: '목격 제보 - 포우브릿지',
     description: '이용자가 목격한 동물의 발견 당시 위치와 특징을 확인하세요.',
     indexable: false,
   }],
   ['/privacy', {
-    title: '개인정보처리방침 | 포우브릿지',
+    title: '개인정보처리방침 - 포우브릿지',
     description: '포우브릿지의 개인정보 처리 방침과 이용자 권리를 안내합니다.',
     indexable: false,
   }],
   ['/terms', {
-    title: '이용약관 | 포우브릿지',
+    title: '이용약관 - 포우브릿지',
     description: '포우브릿지 서비스 이용약관을 안내합니다.',
     indexable: false,
   }],
   ['/products', {
-    title: '펫마켓 | 포우브릿지',
+    title: '펫마켓 - 포우브릿지',
     description: '포우브릿지 펫마켓입니다.',
     indexable: false,
   }],
@@ -89,7 +89,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/(?:community\/)?reports\/\d+$/,
     page: {
-      title: '실종·목격 제보 | 포우브릿지',
+      title: '실종·목격 제보 - 포우브릿지',
       description: '이용자가 등록한 실종 알림과 목격 제보를 확인하세요.',
       indexable: false,
     },
@@ -97,7 +97,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/animals\/[^/]+$/,
     page: {
-      title: '보호 동물 상세 | 포우브릿지',
+      title: '보호 동물 상세 - 포우브릿지',
       description: '보호 동물의 사진, 특징, 공고와 보호소 정보를 확인하세요.',
       indexable: true,
     },
@@ -105,7 +105,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/shelters\/[^/]+$/,
     page: {
-      title: '동물보호소 상세 | 포우브릿지',
+      title: '동물보호소 상세 - 포우브릿지',
       description: '동물보호소의 주소, 연락처와 운영 정보를 확인하세요.',
       indexable: true,
     },
@@ -113,7 +113,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/travel\/[^/]+$/,
     page: {
-      title: '반려동물 동반여행지 상세 | 포우브릿지',
+      title: '반려동물 동반여행지 상세 - 포우브릿지',
       description: '반려동물 동반여행지의 위치와 이용 정보를 확인하세요.',
       indexable: true,
     },
@@ -121,7 +121,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/adoption\/[^/]+$/,
     page: {
-      title: '입양 후기 상세 | 포우브릿지',
+      title: '입양 후기 상세 - 포우브릿지',
       description: '보호 동물과 가족이 된 이후의 입양 이야기를 확인하세요.',
       indexable: true,
     },
@@ -129,7 +129,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/community\/[^/]+$/,
     page: {
-      title: '커뮤니티 글 | 포우브릿지',
+      title: '커뮤니티 글 - 포우브릿지',
       description: '실종, 보호, 목격 정보와 반려동물 이야기를 확인하세요.',
       indexable: true,
     },
@@ -137,7 +137,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/products\/[^/]+$/,
     page: {
-      title: '펫마켓 상품 | 포우브릿지',
+      title: '펫마켓 상품 - 포우브릿지',
       description: '포우브릿지 펫마켓 상품입니다.',
       indexable: false,
     },
@@ -179,7 +179,7 @@ export function resolveSeoMetadata(pathname: string, search = ''): SeoMetadata {
 
   if (privateRoute) {
     return {
-      title: `로그인이 필요한 화면 | ${SITE_NAME}`,
+      title: `로그인이 필요한 화면 - ${SITE_NAME}`,
       description: '로그인한 사용자에게만 제공되는 포우브릿지 화면입니다.',
       canonicalUrl: canonicalUrl(normalizedPathname),
       robots: 'noindex,nofollow',
@@ -202,7 +202,7 @@ export function resolveSeoMetadata(pathname: string, search = ''): SeoMetadata {
   }
 
   return {
-    title: `페이지를 찾을 수 없습니다 | ${SITE_NAME}`,
+    title: `페이지를 찾을 수 없습니다 - ${SITE_NAME}`,
     description: '요청한 포우브릿지 페이지를 찾을 수 없습니다.',
     canonicalUrl: canonicalUrl(normalizedPathname),
     robots: 'noindex,nofollow',
