@@ -37,7 +37,8 @@ export default function ShelterDetail() {
   const { registration = '' } = useParams();
   const [params] = useSearchParams();
   const location = useLocation();
-  const returnTo = shelterDetailReturnTo(params.get('returnTo') || (params.has('keyword') || params.has('address') ? `/shelters?${params}` : undefined));
+  // 예전 링크와 검색엔진에 남은 주소는 아직 ?returnTo=를 달고 들어온다.
+  const returnTo = shelterDetailReturnTo(location.state?.shelterReturnTo || params.get('returnTo') || (params.has('keyword') || params.has('address') ? `/shelters?${params}` : undefined));
   const result = useQuery({ queryKey: ['public-shelter', registration], queryFn: ({ signal }) => findPublicShelter(registration, signal), enabled: /^\d{15}$/.test(registration), retry: false });
   useNotFoundNoindex(!/^\d{15}$/.test(registration) || isMissingResponse(result.error));
   const shelter = result.data;
