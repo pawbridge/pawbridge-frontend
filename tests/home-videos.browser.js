@@ -137,11 +137,24 @@ async (page, fixture) => {
   await dialog.getByText('게시 가능 · 공개 상태 · 한국에서 외부 재생 가능').waitFor();
   await dialog.getByRole('button', { name: '변경 저장' }).click(); await dialog.waitFor({ state: 'hidden' });
   await page.getByRole('heading', { name: '함께하는 일상 AbCdEfGhI_4', exact: true }).waitFor(); assert(true, 'edit-revalidates-provider-metadata');
+  // 제목 길이가 카드마다 달라도 같은 줄 카드의 썸네일 윗선이 맞고 제목은 두 줄에서 잘린다(11/11 운영: 3줄 제목 옆 카드가 세로 가운데로 밀림).
+  board.videos.find(video => video.videoId === 'AbCdEfGhI_3').title = '함께하는 일상 AbCdEfGhI_3 ' + '제목이 여러 줄로 넘어가는 긴 영상 '.repeat(6);
   await page.goto(origin);
   const section = page.getByRole('region', { name: '함께하는 일상' });
   await section.getByRole('button', { name: '함께하는 일상 AbCdEfGhI_2 재생' }).waitFor();
   assert(providerFrames === 0 && await page.locator('iframe').count() === 0, 'no-player-before-explicit-action');
   assert((await section.getByRole('button').allTextContents())[0].includes('AbCdEfGhI_2'), 'home-reflects-saved-order');
+  for (const width of [1440, 768]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const cards = await section.getByRole('button', { name: / 재생$/ }).evaluateAll(nodes => nodes.map(card => {
+      const title = card.lastElementChild.firstElementChild;
+      return { top: Math.round(card.firstElementChild.getBoundingClientRect().top - card.getBoundingClientRect().top),
+        lines: Math.round(title.getBoundingClientRect().height / parseFloat(getComputedStyle(title).lineHeight)) };
+    }));
+    assert(cards.length === 3 && cards.every(card => card.top <= 1), 'home-card-thumbnail-top-' + width);
+    assert(cards.every(card => card.lines <= 2), 'home-card-title-two-lines-' + width);
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: '/tmp/pawbridge-video-' + fixture.mode + '-home-desktop.png', fullPage: true });
   const play = section.getByRole('button', { name: '함께하는 일상 AbCdEfGhI_2 재생' });
   await play.focus(); await page.keyboard.press('Enter');
