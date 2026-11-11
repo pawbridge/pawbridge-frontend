@@ -89,7 +89,7 @@ const detailPages: Array<{ pattern: RegExp; page: PageDefinition }> = [
   {
     pattern: /^\/(?:community\/)?reports\/\d+$/,
     page: {
-      title: '실종·목격 제보 - 포우브릿지',
+      title: '실종, 목격 제보 - 포우브릿지',
       description: '이용자가 등록한 실종 알림과 목격 제보를 확인하세요.',
       indexable: false,
     },
