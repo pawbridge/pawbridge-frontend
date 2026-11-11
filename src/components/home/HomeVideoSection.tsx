@@ -8,14 +8,14 @@ import { AdminImage, adminControl } from '../admin/AdminUI';
 
 function VideoCard({ video, onPlay, className }: { video: HomeVideo; onPlay: () => void; className: string }) {
   return <button type="button" onClick={onPlay} aria-label={`${video.title} 재생`}
-    className={`${className} min-w-0 overflow-hidden rounded-xl border border-brand-border bg-white text-left text-brand-ink transition-colors hover:border-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus dark:border-stone-700 dark:bg-surface-dark dark:text-white`}>
+    className={`${className} min-w-0 flex-col overflow-hidden rounded-xl border border-brand-border bg-white text-left text-brand-ink transition-colors hover:border-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus dark:border-stone-700 dark:bg-surface-dark dark:text-white`}>
     <span className="relative block aspect-video overflow-hidden rounded-xl">
       <AdminImage src={videoThumbnail(video.thumbnailUrl)} alt="" className="h-full w-full object-cover" />
       <span className="absolute left-1/2 top-1/2 flex size-[52px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-sm"><img src="/video/play.svg" alt="" width="24" height="24" /></span>
       <span className="absolute bottom-2 right-2 rounded-lg bg-brand-ink px-1.5 py-1 text-xs leading-[18px] text-white">{videoDuration(video.durationSeconds)}</span>
     </span>
     <span className="block space-y-2 p-4">
-      <span className="block line-clamp-2 break-words text-xl font-bold leading-7">{video.title}</span>
+      <span className="line-clamp-2 break-words text-xl font-bold leading-7">{video.title}</span>
       <span className="block break-words text-sm leading-6 text-brand-muted dark:text-stone-300">YouTube · {video.channelTitle}</span>
     </span>
   </button>;
@@ -36,7 +36,7 @@ export default function HomeVideoSection() {
       {[0, 1, 2].map(i => <div key={i} aria-hidden="true" className={`${i ? 'hidden md:block' : ''} aspect-video rounded-xl bg-brand-soft motion-safe:animate-pulse`} />)}
     </div> : <>
       <div className="mt-6 grid gap-6 md:grid-cols-3">{list.map((video, i) =>
-        <VideoCard key={video.id} video={video} onPlay={() => setPlaying(video)} className={i === current ? 'block' : 'hidden md:block'} />)}</div>
+        <VideoCard key={video.id} video={video} onPlay={() => setPlaying(video)} className={i === current ? 'flex' : 'hidden md:flex'} />)}</div>
       {list.length > 1 && <nav aria-label="홈 영상 탐색" className="mt-6 flex items-center justify-between gap-4 md:hidden">
         <button type="button" className={adminControl} disabled={current === 0} onClick={() => setIndex(current - 1)}>이전</button>
         <span aria-live="polite" className="text-sm">{current + 1} / {list.length}</span>
