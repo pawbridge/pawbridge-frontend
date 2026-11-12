@@ -4,7 +4,7 @@ import { useState } from 'react';
 // PawBridge / SHYU: shared Yellow theme, 4px spacing and 16px panels.
 export const adminPanel = 'min-w-0 rounded-xl border border-brand-border bg-surface-light p-4 sm:p-6 dark:border-stone-700 dark:bg-surface-dark';
 export const adminControl = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-border bg-surface-light px-5 py-3 text-sm font-medium text-brand-ink transition-colors hover:bg-brand-soft dark:hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-stone-700 dark:bg-surface-dark dark:text-white';
-export const adminPrimary = `${adminControl} !border-transparent !bg-brand !text-brand-ink hover:!bg-brand-hover`;
+export const adminPrimary = `${adminControl} !border-transparent !bg-brand !text-brand-contrast hover:!bg-brand-hover`;
 export const adminInput = 'mt-2 min-h-12 w-full min-w-0 rounded-lg border border-brand-border bg-surface-light px-4 py-3 text-sm text-brand-ink focus:border-brand-focus focus:ring-brand-focus disabled:opacity-50 dark:border-stone-700 dark:bg-surface-dark dark:text-white';
 
 export function AdminImage({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {

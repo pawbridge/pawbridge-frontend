@@ -193,7 +193,7 @@ export default function CommunityList() {
             </div>
             <button
               onClick={handleWriteClick}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-gray-900 text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-brand-contrast text-sm font-bold rounded-lg hover:bg-opacity-90 transition-colors"
             >
               <EditIcon aria-hidden="true" className="icon text-base" />
               <span>글쓰기</span>

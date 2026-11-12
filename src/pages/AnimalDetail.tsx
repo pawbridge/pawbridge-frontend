@@ -129,7 +129,7 @@ export default function AnimalDetail() {
       <h1 className="text-2xl font-bold">동물 정보를 볼 수 없습니다</h1>
       <p className="mt-3 text-gray-600 dark:text-gray-300">잠시 후 다시 시도하거나 목록으로 돌아가 주세요.</p>
       <div className="mt-6 flex justify-center gap-3">
-        <button onClick={() => void refetch()} className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-brand-ink">다시 시도</button>
+        <button onClick={() => void refetch()} className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-brand-contrast">다시 시도</button>
         <button onClick={returnToSearch} className="min-h-11 rounded-lg border border-border-light px-5 dark:border-gray-700">목록으로</button>
       </div>
     </main>
@@ -237,7 +237,7 @@ export default function AnimalDetail() {
             </dl>
           </section>
         </div>
-        <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-ink sm:w-auto">{returnButtonLabel}</button>
+        <button type="button" onClick={returnToSearch} className="mt-8 min-h-12 w-full rounded-lg bg-brand px-6 font-semibold text-brand-contrast sm:w-auto">{returnButtonLabel}</button>
         <section aria-labelledby="similar-animals-title" className="mt-14 border-t border-border-light pt-10 dark:border-border-dark">
           <h2 id="similar-animals-title" className="mb-6 text-xl font-bold">비슷한 동물</h2>
           {similarQuery.isPending && <p role="status" className="rounded-2xl border border-border-light p-6 text-sm text-brand-muted dark:border-border-dark dark:text-gray-300">비슷한 동물을 불러오는 중입니다…</p>}

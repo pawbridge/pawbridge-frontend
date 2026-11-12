@@ -140,15 +140,15 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
     <div className="fixed bottom-5 right-5 z-40 flex w-[calc(100%-2rem)] max-w-[380px] flex-col items-end sm:bottom-6 sm:right-6">
       {isOpen && (
         <section className="mb-3 flex h-[560px] max-h-[calc(100vh-7rem)] w-full flex-col overflow-hidden rounded-2xl border border-border-light bg-white shadow-2xl dark:border-border-dark dark:bg-card-dark">
-          <div className="flex items-start justify-between gap-3 bg-brand px-5 py-4 text-text-light">
+          <div className="flex items-start justify-between gap-3 bg-brand px-5 py-4 text-brand-contrast">
             <div>
               <p className="text-sm font-bold">AI 입양 준비 도우미</p>
-              <p className="mt-1 text-xs font-medium text-text-light/80">{animalName}에 대해 물어보세요</p>
+              <p className="mt-1 text-xs font-medium text-brand-contrast">{animalName}에 대해 물어보세요</p>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded-full p-1 text-text-light hover:bg-white/20"
+              className="rounded-full p-1 text-brand-contrast hover:bg-white/20"
               aria-label="AI 입양 준비 도우미 닫기"
             >
               <CloseIcon aria-hidden="true" className="icon text-[20px]" />
@@ -173,7 +173,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 <div
                   className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm ${
                     message.role === 'user'
-                      ? 'bg-brand text-text-light'
+                      ? 'bg-brand text-brand-contrast'
                       : 'border border-border-light bg-white text-text-light dark:border-border-dark dark:bg-stone-900 dark:text-text-dark'
                   }`}
                 >
@@ -221,7 +221,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
               <button
                 type="submit"
                 disabled={isSending || !question.trim()}
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-text-light transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-contrast transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="질문 보내기"
               >
                 <SendIcon aria-hidden="true" className="icon text-[20px]" />
@@ -237,7 +237,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex h-14 items-center gap-2 rounded-full bg-brand px-5 font-bold text-text-light shadow-xl transition-transform hover:scale-[1.02] hover:bg-brand-hover"
+        className="inline-flex h-14 items-center gap-2 rounded-full bg-brand px-5 font-bold text-brand-contrast shadow-xl transition-transform hover:scale-[1.02] hover:bg-brand-hover"
         aria-expanded={isOpen}
         aria-label={isOpen ? 'AI 입양 준비 도우미 닫기' : 'AI 입양 준비 도우미 열기'}
       >

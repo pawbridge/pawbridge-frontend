@@ -19,8 +19,8 @@ import { useTheme } from '../../lib/theme';
 const palette = {
   text: 'text-brand-ink',
   navigation: 'rounded-lg px-3 py-2 hover:bg-neutral-100 dark:hover:bg-gray-800',
-  active: 'aria-[current=page]:bg-brand aria-[current=page]:font-bold aria-[current=page]:text-brand-ink aria-[current=page]:hover:bg-brand-hover dark:aria-[current=page]:text-brand-ink dark:aria-[current=page]:hover:bg-brand-hover',
-  filled: 'bg-brand text-brand-ink hover:bg-brand-hover',
+  active: 'aria-[current=page]:bg-brand-selected aria-[current=page]:font-bold aria-[current=page]:text-brand-selected-ink aria-[current=page]:hover:bg-brand-selected-hover',
+  filled: 'bg-brand text-brand-contrast hover:bg-brand-hover',
   outline: 'text-brand-accent border-brand-border',
   border: 'border-brand-border dark:border-border-dark',
   focus: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus',

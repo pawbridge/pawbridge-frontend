@@ -380,7 +380,7 @@ export default function Checkout() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => setPaymentModal(null)}
-                className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+                className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
               >
                 확인
               </button>
@@ -615,7 +615,7 @@ export default function Checkout() {
                 <button
                   onClick={handleSubmit}
                   disabled={isPending}
-                  className="w-full flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-contrast text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isPending ? '처리 중...' : '결제하기'}
                 </button>

@@ -54,7 +54,7 @@ export default function MyCartPanel({
             <p className="text-gray-400 dark:text-gray-400 text-sm mb-6">마음에 드는 상품을 담아보세요.</p>
             <Link
               to="/products"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-contrast shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑 계속하기
               <ArrowForwardIcon aria-hidden="true" className="icon text-sm" />
@@ -128,7 +128,7 @@ export default function MyCartPanel({
               </div>
               <button
                 onClick={onOrder}
-                className="w-full mt-6 flex items-center justify-center rounded-lg h-12 bg-brand text-brand-ink text-base font-bold hover:bg-brand-hover transition-colors"
+                className="w-full mt-6 flex items-center justify-center rounded-lg h-12 bg-brand text-brand-contrast text-base font-bold hover:bg-brand-hover transition-colors"
               >
                 주문하기
               </button>

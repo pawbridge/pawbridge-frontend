@@ -62,7 +62,7 @@ async page => {
     check(await lost.getAttribute('aria-current') === 'page', 'Lost group must identify current section');
     await page.mouse.move(0, 900);
     const style = await lost.evaluate(el => ({ bg: getComputedStyle(el).backgroundColor, weight: getComputedStyle(el).fontWeight }));
-    check(style.bg === 'rgb(255, 242, 166)' && style.weight === '700', 'Approved active pill styling missing');
+    check(style.bg === 'rgb(224, 236, 255)' && style.weight === '700', 'Approved active pill styling missing');
     await lost.click();
     const panel = page.locator('#lost-animal-navigation'); await panel.waitFor();
     const links = panel.getByRole('link');
@@ -180,7 +180,7 @@ async page => {
     await page.evaluate(() => document.documentElement.classList.add('dark'));
     await page.mouse.move(0, 900);
     const darkCurrent = await lost.evaluate(el => ({ color: getComputedStyle(el).color, bg: getComputedStyle(el).backgroundColor }));
-    check(darkCurrent.color === 'rgb(48, 48, 46)' && darkCurrent.bg === 'rgb(255, 242, 166)', 'Dark active menu contrast');
+    check(darkCurrent.color === 'rgb(231, 229, 228)' && darkCurrent.bg === 'rgb(25, 46, 78)', `Dark active menu contrast ${JSON.stringify(darkCurrent)}`);
     await page.screenshot({ path: '/tmp/pawbridge-report-nav-v14-dark.png', fullPage: true });
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
     checks.push('dark mode active menu foreground/background');

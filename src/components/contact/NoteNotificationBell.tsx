@@ -53,7 +53,7 @@ export default function NoteNotificationBell() {
         {totalUnread > 0 && (
           <span
             aria-hidden="true"
-            className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-xs font-bold text-brand-ink"
+            className="absolute right-0 top-0 rounded-full bg-brand px-1.5 text-xs font-bold text-brand-contrast"
           >
             {totalUnread > 99 ? '99+' : totalUnread}
           </span>

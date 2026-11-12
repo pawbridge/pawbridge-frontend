@@ -220,7 +220,7 @@ export default function RegisteredAnimals() {
                       onClick={() => handlePageChange(pageNum)}
                       className={`px-4 py-2 rounded-lg border transition-colors ${
                         currentPage === pageNum
-                          ? 'bg-brand text-text-main border-brand-focus font-bold'
+                          ? 'bg-brand text-brand-contrast border-brand font-bold'
                           : 'bg-white dark:bg-gray-800 text-text-main dark:text-white border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >

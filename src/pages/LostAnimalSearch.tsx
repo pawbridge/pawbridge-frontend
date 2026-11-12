@@ -17,7 +17,7 @@ const evidenceLabels: Record<string, string> = {
   REGISTERED_DESCRIPTION_TEXT_MATCH: '등록된 특징에 일치하는 표현',
 };
 const fieldClass = 'w-full rounded-xl border border-border-light bg-white p-3 text-sm text-text-light focus:outline-none focus:ring-2 focus:ring-brand-focus dark:border-border-dark dark:bg-card-dark dark:text-text-dark';
-const secondary = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-border-light px-4 py-2 text-sm font-bold hover:bg-brand/10 focus-visible:outline-brand-focus dark:border-border-dark';
+const secondary = 'inline-flex min-h-11 items-center justify-center rounded-xl border border-border-light px-4 py-2 text-sm font-bold hover:bg-brand-soft focus-visible:outline-brand-focus dark:border-border-dark';
 
 export default function LostAnimalSearch() {
   const routeLocation = useLocation();
@@ -142,7 +142,7 @@ export default function LostAnimalSearch() {
       <div className="space-y-3 p-4"><p className={`text-xs font-bold ${deceased ? 'text-gray-600 dark:text-gray-300' : 'text-emerald-700 dark:text-brand-accent'}`}>{statusLabels[animal.status] || '상태 확인 필요'}</p>
         <Title className="break-words text-lg font-bold">{animal.breed || (animal.species === 'CAT' ? '고양이' : '강아지')} · {animal.gender === 'MALE' ? '수컷' : animal.gender === 'FEMALE' ? '암컷' : '성별 미상'}</Title>
         <dl className="space-y-2 break-words text-sm leading-5 text-gray-600 dark:text-gray-300"><div><dt className="inline">발견일 </dt><dd className="inline">{animal.happenDate || '미상'}</dd></div><div><dt>발견 장소</dt><dd>{animal.happenPlace || '미상'}</dd></div><div><dt className="sr-only">보호소</dt><dd>{animal.shelterName || '보호소 정보 확인 필요'}</dd></div></dl>
-        {matchedEvidence.filter(e => evidenceLabels[e]).length > 0 && <ul className="flex flex-wrap gap-1.5">{[...new Set(matchedEvidence)].filter(e => evidenceLabels[e]).map(e => <li key={e} className="rounded-lg bg-brand/10 px-2 py-1 text-xs leading-5">{evidenceLabels[e]}</li>)}</ul>}
+        {matchedEvidence.filter(e => evidenceLabels[e]).length > 0 && <ul className="flex flex-wrap gap-1.5">{[...new Set(matchedEvidence)].filter(e => evidenceLabels[e]).map(e => <li key={e} className="rounded-lg bg-brand-soft px-2 py-1 text-xs leading-5">{evidenceLabels[e]}</li>)}</ul>}
         <Link to={`/animals/${animal.id}`} onClick={rememberSearch} state={{ from: 'lost-search', lostSearchEntryKey: routeLocation.key }} className={`${secondary} w-full`}>공고 상세 보기</Link>
         {shelterPhone && /^\+?[0-9 ()-]{5,30}$/.test(shelterPhone) && <a href={`tel:${shelterPhone.replace(/[^+0-9]/g, '')}`} className="block py-2 text-center text-sm font-medium text-brand-accent underline">보호소 문의: {shelterPhone}</a>}
       </div>
@@ -156,7 +156,7 @@ export default function LostAnimalSearch() {
     <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">올려주신 사진과 닮은 동물을 수집된 구조동물 공고에서 찾아드려요.</p>
     <p className="mb-6 mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">사진이 닮아도 다른 동물일 수 있어요. 발견일·장소와 몸의 무늬를 확인한 뒤 보호소에 문의해 주세요.</p>
           <fieldset className="mb-8 max-w-[400px]"><legend className="mb-3 text-sm font-bold">어떤 동물을 찾고 계세요?</legend>
-            <div className="grid grid-cols-2 gap-3">{(['DOG', 'CAT'] as const).map(value => <label key={value} className={`flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border text-sm font-bold ${species === value ? 'border-brand-focus bg-brand text-text-light' : 'border-border-light dark:border-border-dark'}`}>
+            <div className="grid grid-cols-2 gap-3">{(['DOG', 'CAT'] as const).map(value => <label key={value} className={`flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border text-sm font-bold ${species === value ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-border-light dark:border-border-dark'}`}>
               <input type="radio" name="species" value={value} checked={species === value} onChange={() => { invalidate(); setSpecies(value); }} className="accent-brand-ink" />
               {value === 'DOG' ? '강아지' : '고양이'}
             </label>)}</div>
@@ -188,7 +188,7 @@ export default function LostAnimalSearch() {
             {searchOption('보호 중 사망한 기록도 확인', '보호소에서 자연사하거나 안락사된 동물의 기록을 살아 있는 후보와 섞지 않고 아래에 따로 보여드려요.', includeDeceased, setIncludeDeceased)}
           </fieldset>
           {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm leading-6 text-red-700 dark:bg-red-950/30 dark:text-red-300">{error}</p>}
-          {phase === 'loading' ? <button key="cancel" type="button" onClick={event => { event.preventDefault(); invalidate(); }} className={`${secondary} w-full`}>검색 취소</button> : <button key="submit" type="submit" disabled={!photo || validating} className="min-h-12 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-text-light disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 focus-visible:outline-brand-focus">{phase === 'error' ? '다시 시도하기' : '사진으로 후보 찾기'}</button>}
+          {phase === 'loading' ? <button key="cancel" type="button" onClick={event => { event.preventDefault(); invalidate(); }} className={`${secondary} w-full`}>검색 취소</button> : <button key="submit" type="submit" disabled={!photo || validating} className="min-h-12 w-full rounded-xl bg-brand px-4 py-3 text-sm font-bold text-brand-contrast disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 focus-visible:outline-brand-focus">{phase === 'error' ? '다시 시도하기' : '사진으로 후보 찾기'}</button>}
           <p className="text-xs leading-5 text-gray-500 dark:text-gray-400">사진은 검색에만 사용하며 저장하지 않아요.</p>
         </form>
       </section>

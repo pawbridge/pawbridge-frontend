@@ -127,7 +127,7 @@ export default function CustomSelect({
                     transition-colors
                     ${
                       value === option.value
-                        ? 'bg-brand/10 text-brand-accent font-medium'
+                        ? 'bg-brand-selected text-brand-accent font-medium'
                         : 'text-brand-ink dark:text-white hover:bg-brand-soft dark:hover:bg-stone-800'
                     }
                     ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}

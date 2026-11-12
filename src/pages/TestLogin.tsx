@@ -151,7 +151,7 @@ export default function TestLogin() {
             <button
               type="submit"
               disabled={loginMutation.isPending}
-              className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-md h-12 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-wide hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-focus dark:focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-md h-12 px-5 bg-brand text-brand-contrast text-base font-bold leading-normal tracking-wide hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-focus dark:focus:ring-offset-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="truncate">{loginMutation.isPending ? '로그인 중...' : '로그인'}</span>
             </button>

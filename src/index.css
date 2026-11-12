@@ -4,34 +4,42 @@
 
 @layer base {
   :root {
-    --brand-accent: 48 48 46;
-    --brand-focus: 48 48 46;
-    --brand-soft: 255 252 233;
+    /* SHYU Semantic PawBridge Blue v1: 강조 글자 #0060DA, 포커스 #3283FD */
+    --brand-accent: 0 96 218;
+    --brand-focus: 50 131 253;
+    --brand-soft: 242 247 255;
+    --brand-selected: 224 236 255;
+    --brand-selected-hover: 203 223 255;
+    --brand-selected-ink: 48 48 46;
     --brand-muted: 100 100 96;
     --brand-border: 221 221 216;
+    /* 지도 색: 라이트에서는 진할수록 구조 동물이 많다 */
     --chart-zero: #e7e5e4;
-    --chart-low: #fff2a6;
-    --chart-mid: #c4b66a;
-    --chart-high: #7c7350;
-    --chart-highest: #30302e;
+    --chart-low: #e0ecff;
+    --chart-mid: #7fb0fc;
+    --chart-high: #006cf3;
+    --chart-highest: #003a85;
     --chart-outline: #30302e;
     --chart-surface: #ffffff;
   }
 
   .dark {
     color-scheme: dark;
-    --brand-accent: 255 242 166;
-    --brand-focus: 255 242 166;
-    /* SHYU 다크: bg/accent #1A1A1A, text/secondary #A8A29E, border/default #333333 */
-    --brand-soft: 26 26 26;
+    /* PawBridge Blue v1 Dark: 강조 글자와 포커스 #5196FD, 선택 바탕 #192E4E */
+    --brand-accent: 81 150 253;
+    --brand-focus: 81 150 253;
+    --brand-soft: 22 32 47;
+    --brand-selected: 25 46 78;
+    --brand-selected-hover: 32 56 93;
+    --brand-selected-ink: 231 229 228;
     --brand-muted: 168 162 158;
     --brand-border: 51 51 51;
     /* 지도 색: 다크에서는 밝을수록 구조 동물이 많다(Figma 21 다크) */
     --chart-zero: #2a2a2a;
-    --chart-low: #4a4636;
-    --chart-mid: #8a8150;
-    --chart-high: #c4b66a;
-    --chart-highest: #fff2a6;
+    --chart-low: #192e4e;
+    --chart-mid: #20589e;
+    --chart-high: #3283fd;
+    --chart-highest: #a8cbff;
     --chart-outline: #e7e5e4;
     --chart-surface: #1a1a1a;
   }

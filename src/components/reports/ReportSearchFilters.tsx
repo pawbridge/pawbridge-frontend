@@ -22,7 +22,7 @@ export default function ReportSearchFilters({ filters, onSearch }: { filters: Re
       <div className="mt-2 flex flex-wrap gap-2">
         {([{ value: 'all', label: '전체' }, { value: '7', label: '최근 7일' }, { value: '30', label: '최근 30일' }, { value: 'custom', label: '직접 선택' }] as const).map(option =>
           <button type="button" key={option.value} aria-pressed={draft.period === option.value}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm font-medium ${draft.period === option.value ? 'border-brand-ink bg-brand text-brand-ink' : 'border-brand-border bg-white hover:bg-neutral-100 dark:bg-gray-900 dark:hover:bg-gray-700'}`}
+            className={`inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm font-medium ${draft.period === option.value ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white hover:bg-neutral-100 dark:bg-gray-900 dark:hover:bg-gray-700'}`}
             onClick={() => { setDraft({ ...draft, period: option.value,
               ...(option.value === '7' || option.value === '30' ? reportPeriodRange(Number(option.value) as 7 | 30)
                 : option.value === 'all' ? { from: '', to: '' } : { from: draft.from, to: draft.to }) }); setError(''); }}>
@@ -47,7 +47,7 @@ export default function ReportSearchFilters({ filters, onSearch }: { filters: Re
       <div className="flex gap-3">
         <button type="button" className="min-h-12 rounded-lg border border-brand-border bg-white px-5 text-sm font-bold dark:bg-gray-900"
           onClick={() => { setDraft(emptyReportSearch); setError(''); onSearch(emptyReportSearch); }}>초기화</button>
-        <button type="submit" className="min-h-12 flex-1 rounded-lg bg-brand px-8 text-sm font-bold text-brand-ink hover:bg-brand-hover">검색</button>
+        <button type="submit" className="min-h-12 flex-1 rounded-lg bg-brand px-8 text-sm font-bold text-brand-contrast hover:bg-brand-hover">검색</button>
       </div>
     </div>
     {error && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{error}</p>}

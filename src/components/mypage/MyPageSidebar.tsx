@@ -37,14 +37,14 @@ export default function MyPageSidebar({
       <div className="flex flex-col gap-6 p-4 bg-white dark:bg-gray-800/20 rounded-xl shadow-sm sticky top-24">
         {/* 프로필 정보 */}
         <div className="flex gap-4 items-center pb-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="size-12 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold text-xl">
+          <div className="size-12 rounded-full bg-brand-selected flex items-center justify-center text-brand-accent font-bold text-xl">
             {userInfo.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col">
             <p className="text-text-main dark:text-gray-100 text-base font-bold leading-normal">
               {userInfo.name}
             </p>
-            <p className="text-brand-accent dark:text-brand text-sm font-normal leading-normal">
+            <p className="text-brand-accent dark:text-brand-accent text-sm font-normal leading-normal">
               {userInfo.email}
             </p>
           </div>
@@ -68,7 +68,7 @@ export default function MyPageSidebar({
             onClick={() => onTabChange('profile')}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
               activeTab === 'profile'
-                ? 'bg-brand/20 dark:bg-brand/30'
+                ? 'bg-brand-selected'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
@@ -92,7 +92,7 @@ export default function MyPageSidebar({
             onClick={() => onTabChange('favoriteAnimals')}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
               activeTab === 'favoriteAnimals'
-                ? 'bg-brand/20 dark:bg-brand/30'
+                ? 'bg-brand-selected'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
@@ -117,7 +117,7 @@ export default function MyPageSidebar({
               onClick={() => onTabChange('registeredAnimals')}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                 activeTab === 'registeredAnimals'
-                  ? 'bg-brand/20 dark:bg-brand/30'
+                  ? 'bg-brand-selected'
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
               }`}
             >
@@ -143,7 +143,7 @@ export default function MyPageSidebar({
             onClick={() => onTabChange('wishlist')}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
               activeTab === 'wishlist'
-                ? 'bg-brand/20 dark:bg-brand/30'
+                ? 'bg-brand-selected'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
@@ -167,7 +167,7 @@ export default function MyPageSidebar({
             onClick={() => onTabChange('cart')}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
               activeTab === 'cart'
-                ? 'bg-brand/20 dark:bg-brand/30'
+                ? 'bg-brand-selected'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >
@@ -191,7 +191,7 @@ export default function MyPageSidebar({
             onClick={() => onTabChange('orders')}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
               activeTab === 'orders'
-                ? 'bg-brand/20 dark:bg-brand/30'
+                ? 'bg-brand-selected'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
             }`}
           >

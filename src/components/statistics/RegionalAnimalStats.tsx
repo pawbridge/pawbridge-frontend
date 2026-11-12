@@ -7,7 +7,7 @@ import RegionalMapGeography from './RegionalMapGeography';
 import { useIsDark } from '../../lib/theme';
 
 const mapCenter: [number, number] = [127.7, 35.95];
-const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-brand/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:opacity-40 dark:border-border-dark';
+const buttonClass = 'text-text-light dark:text-text-dark min-h-11 rounded-lg border border-border-light px-4 text-sm font-semibold transition-colors hover:bg-brand-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:opacity-40 dark:border-border-dark';
 
 export default function RegionalAnimalStats({ data }: { data: RegionalStats[] }) {
   const rows = useMemo(() => buildRegionRows(data), [data]);
@@ -47,7 +47,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
   })];
 
   const details = (
-    <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-brand-focus bg-brand/10 p-4 sm:p-5">
+    <div aria-live="polite" aria-atomic="true" className="rounded-xl border border-brand-focus bg-brand-soft p-4 sm:p-5">
       {selectedRow ? <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h3 className="text-lg font-bold">{selectedRow.name}</h3>
           <p className="mt-1"><strong className="text-2xl">{selectedRow.count.toLocaleString()}마리</strong><span className="ml-3 text-sm">지역 집계 전체의 {total ? (selectedRow.count / total * 100).toFixed(1) : '0'}%</span></p>
@@ -143,7 +143,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
       <ul className="space-y-2">
         {rows.map(row => <li key={row.name}>
           <button type="button" aria-pressed={selected === row.name} onClick={() => setSelected(row.name)}
-            className={`text-text-light dark:text-text-dark min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${selected === row.name ? 'bg-brand/15 ring-1 ring-brand-focus' : 'hover:bg-brand/10'}`}>
+            className={`text-text-light dark:text-text-dark min-h-12 w-full rounded-lg px-3 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${selected === row.name ? 'bg-brand-selected ring-1 ring-brand-focus' : 'hover:bg-brand-selected'}`}>
             <span className="mb-2 flex items-baseline justify-between gap-3 text-sm"><span className="font-medium">{row.name}</span><strong className="shrink-0 tabular-nums">{row.count.toLocaleString()}마리</strong></span>
             <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800"><span className="block h-full rounded-full bg-brand-accent" style={{ width: `${maximum ? row.count / maximum * 100 : 0}%` }} /></span>
           </button>
@@ -160,7 +160,7 @@ export default function RegionalAnimalStats({ data }: { data: RegionalStats[] })
         <label className="ml-auto flex min-h-11 items-center gap-2 text-sm">지역 선택<select value={selected ?? ''} onChange={e => setSelected(e.target.value || null)} className="min-h-11 max-w-48 rounded-lg border-border-light bg-card-light text-text-light focus:ring-brand-focus dark:border-border-dark dark:bg-card-dark dark:text-text-dark"><option value="">전국</option>{rows.map(row => <option key={row.name} value={row.name}>{row.name}</option>)}</select></label>
       </div>
       <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">확대 후 지도를 드래그하거나, 지역 선택 메뉴를 이용하세요.</p>
-      <div className="my-3 overflow-hidden rounded-lg bg-brand/5">{drawMap(true)}</div>
+      <div className="my-3 overflow-hidden rounded-lg bg-brand-soft">{drawMap(true)}</div>
       {details}
     </StatsDialog>}
   </div>;

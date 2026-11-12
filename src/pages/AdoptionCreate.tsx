@@ -145,7 +145,7 @@ export default function AdoptionCreate() {
               <button
                 onClick={handleSubmit}
                 disabled={createPostMutation.isPending}
-                className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-ink hover:bg-brand-hover transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-contrast hover:bg-brand-hover transition-colors text-base font-bold leading-normal disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="truncate">{createPostMutation.isPending ? '등록 중...' : '등록'}</span>
               </button>

@@ -26,7 +26,7 @@ export default function FavoriteAnimals() {
       ) : isError ? (
         <div role="alert" className="rounded-2xl border border-border-light p-12 text-center dark:border-border-dark">
           <p>관심 동물을 불러오지 못했습니다.</p>
-          <button type="button" onClick={() => void refetch()} className="mt-5 min-h-11 rounded-lg bg-brand px-6 font-semibold text-brand-ink">다시 시도</button>
+          <button type="button" onClick={() => void refetch()} className="mt-5 min-h-11 rounded-lg bg-brand px-6 font-semibold text-brand-contrast">다시 시도</button>
         </div>
       ) : data?.favorites.length ? (
         <div className="grid gap-5 xl:grid-cols-2">
@@ -36,7 +36,7 @@ export default function FavoriteAnimals() {
         <div className="rounded-2xl border border-border-light px-5 py-16 text-center dark:border-border-dark">
           <h2 className="text-xl font-bold">아직 관심 동물이 없습니다</h2>
           <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">동물 목록에서 관심 동물을 추가할 수 있습니다.</p>
-          <Link to="/animals" className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-brand px-6 font-semibold text-brand-ink">동물 찾아보기</Link>
+          <Link to="/animals" className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-brand px-6 font-semibold text-brand-contrast">동물 찾아보기</Link>
         </div>
       )}
     </main>

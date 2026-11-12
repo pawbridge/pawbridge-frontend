@@ -164,7 +164,7 @@ export default function ProductDetail() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">상품을 찾을 수 없습니다.</p>
           <button
             onClick={() => navigate('/products')}
-            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
+            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
           >
             상품 목록으로
           </button>
@@ -216,7 +216,7 @@ export default function ProductDetail() {
           <div className="flex flex-col">
             {product.categoryName && (
               <div className="mb-2">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand/10 text-brand-accent">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-selected text-brand-accent">
                   {product.categoryName}
                 </span>
               </div>
@@ -251,7 +251,7 @@ export default function ProductDetail() {
                           className={`
                             px-4 py-2 rounded-full text-sm font-medium transition-all
                             ${isSelected 
-                              ? 'bg-brand text-brand-ink ring-2 ring-brand-focus ring-offset-2'
+                              ? 'bg-brand-selected text-brand-selected-ink ring-2 ring-brand-focus ring-offset-2'
                               : 'bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark hover:bg-gray-200 dark:hover:bg-gray-700'
                             }
                             ${isOutOfStock 
@@ -328,7 +328,7 @@ export default function ProductDetail() {
                 <span>장바구니 담기</span>
               </button>
               <button
-                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-brand text-brand-ink gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-brand text-brand-contrast gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleBuyNow}
                 disabled={!selectedSku || selectedSku.stockQuantity <= 0}
               >
