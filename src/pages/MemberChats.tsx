@@ -179,7 +179,7 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
       <ol className="space-y-3">{messages.map((message) => {
         const mine = message.senderId === owner;
         return <li key={message.sequence} data-sequence={message.sequence} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-[85%] break-words rounded-xl p-4 ${mine ? 'bg-brand text-brand-ink' : 'bg-gray-100 dark:bg-gray-800'}`}>
+          <div className={`max-w-[85%] break-words rounded-xl p-4 ${mine ? 'bg-brand text-brand-contrast' : 'bg-gray-100 dark:bg-gray-800'}`}>
             {message.contextHref && <Link className="mb-2 inline-flex min-h-11 items-center text-sm underline" to={message.contextHref}>관련 글 보기</Link>}
             <p className="whitespace-pre-wrap text-base leading-7">{message.body}</p>
             <div className="mt-2 flex flex-wrap justify-end gap-2 text-xs">
@@ -199,7 +199,7 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
       <p id="chat-compose-help" className="text-sm text-brand-muted dark:text-gray-400">{canSend ? `${Array.from(body.trim()).length.toLocaleString()} / 2,000자 · ${chat.connected ? '연결됨' : '연결 중'}` : '탈퇴하거나 차단된 상대에게는 새 메시지를 보낼 수 없습니다.'}</p>
       {failure && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{failure}</p>}
       <button type="submit" disabled={sending || !canSend || !chat.connected || (!uncertain && !validChatBody(body))}
-        className={`${contactButton} w-full !border-brand bg-brand text-brand-ink`}>{sending ? '전송 중…' : uncertain ? '같은 메시지 다시 확인·전송' : '보내기'}</button>
+        className={`${contactButton} w-full !border-brand bg-brand text-brand-contrast`}>{sending ? '전송 중…' : uncertain ? '같은 메시지 다시 확인·전송' : '보내기'}</button>
     </form>
     {roomId && <div className="mt-6 rounded-xl bg-brand-soft p-4 text-sm dark:border dark:border-accent-border-dark">
       <h4 className="font-bold">대화 관리</h4>

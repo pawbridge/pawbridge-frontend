@@ -85,7 +85,7 @@ export default function Cart() {
           <p className="text-gray-400 text-sm mb-4">로그인이 필요합니다.</p>
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
+            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
           >
             로그인하기
           </button>
@@ -110,7 +110,7 @@ export default function Cart() {
             </div>
             <Link
               to="/products"
-              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-ink text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-contrast text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
             >
               쇼핑 계속하기
             </Link>
@@ -234,7 +234,7 @@ export default function Cart() {
               <div className="mt-8 flex flex-col gap-3">
                 <button
                   onClick={handleOrder}
-                  className="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-brand text-brand-ink text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
+                  className="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-brand text-brand-contrast text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
                 >
                   주문하기
                 </button>

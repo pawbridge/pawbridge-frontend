@@ -13,7 +13,7 @@ export function ScreenErrorCard() {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
         >
           새로고침
         </button>

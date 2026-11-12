@@ -56,8 +56,8 @@ export default function AnimalStats() {
       <section aria-labelledby="period-heading" className="my-8 rounded-xl border border-border-light p-4 sm:p-5 dark:border-border-dark">
         <h2 id="period-heading" className="mb-3 text-sm font-bold">조회 기간</h2>
         <div className="flex flex-wrap gap-2">
-          {[{ days: 1, label: '오늘' }, { days: 7, label: '7일' }, { days: 30, label: '30일' }].map(item => <button type="button" key={item.days} aria-pressed={period === item.days} onClick={() => setPeriod(item.days)} className={`${control} ${period === item.days ? 'border-brand-focus bg-brand text-brand-ink' : 'hover:bg-brand/10'}`}>{item.label}</button>)}
-          <button type="button" aria-pressed={period === 'custom'} onClick={() => { setDraft({ start: startDate, end: endDate }); setDateError(''); setEditingDates(true); }} className={`${control} ${period === 'custom' ? 'border-brand-focus bg-brand text-brand-ink' : 'hover:bg-brand/10'}`}>직접 선택</button>
+          {[{ days: 1, label: '오늘' }, { days: 7, label: '7일' }, { days: 30, label: '30일' }].map(item => <button type="button" key={item.days} aria-pressed={period === item.days} onClick={() => setPeriod(item.days)} className={`${control} ${period === item.days ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'hover:bg-brand-soft'}`}>{item.label}</button>)}
+          <button type="button" aria-pressed={period === 'custom'} onClick={() => { setDraft({ start: startDate, end: endDate }); setDateError(''); setEditingDates(true); }} className={`${control} ${period === 'custom' ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'hover:bg-brand-soft'}`}>직접 선택</button>
         </div>
         <p className="mt-3 text-sm text-gray-600 dark:text-gray-300" aria-live="polite">{startDate} ~ {endDate}</p>
       </section>
@@ -72,8 +72,8 @@ export default function AnimalStats() {
 
       <section aria-labelledby="regional-heading" className="mt-10">
         <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3"><div><h2 id="regional-heading" className="text-2xl font-bold">지역별 구조 현황</h2><p className="mt-2 text-sm text-gray-600 dark:text-gray-300">보호소 소재지와 구조일(APMS 접수일) 기준이며, 소재지가 확인된 동물만 집계합니다.</p></div>{regionalQuery.isSuccess && <p className="text-sm">전국 <strong className="text-xl">{regionalTotal?.toLocaleString()}</strong>마리</p>}</div>
-        {regionalQuery.isPending ? <p role="status" className="rounded-xl bg-brand/5 p-8 text-center">지역별 현황을 불러오는 중입니다.</p> : regionalQuery.isError ? <QueryError retry={() => { void regionalQuery.refetch(); }} /> : <>
-          {regionalTotal === 0 && <p role="status" className="mb-4 rounded-lg bg-brand/10 p-4 text-sm">선택한 기간에 집계된 구조 동물이 없습니다.</p>}
+        {regionalQuery.isPending ? <p role="status" className="rounded-xl bg-brand-soft p-8 text-center">지역별 현황을 불러오는 중입니다.</p> : regionalQuery.isError ? <QueryError retry={() => { void regionalQuery.refetch(); }} /> : <>
+          {regionalTotal === 0 && <p role="status" className="mb-4 rounded-lg bg-brand-soft p-4 text-sm">선택한 기간에 집계된 구조 동물이 없습니다.</p>}
           <RegionalAnimalStats key={`${startDate}:${endDate}`} data={regionalQuery.data} />
         </>}
       </section>
@@ -82,7 +82,7 @@ export default function AnimalStats() {
       <form noValidate onSubmit={event => { event.preventDefault(); const error = validateDateRange(draft.start, draft.end, today); setDateError(error); if (!error) { setRange(draft); setPeriod('custom'); setEditingDates(false); } }}>
         <div className="grid gap-4 sm:grid-cols-2">{([{ key: 'start', label: '시작일' }, { key: 'end', label: '종료일' }] as const).map(field => <label key={field.key} className="flex min-w-0 flex-col gap-2 text-sm font-medium">{field.label}<input type="date" value={draft[field.key]} max={today} aria-invalid={!!dateError} aria-describedby={dateError ? 'date-error' : undefined} onChange={event => { setDraft({ ...draft, [field.key]: event.target.value }); setDateError(''); }} className="min-h-11 min-w-0 rounded-lg border-border-light bg-card-light text-text-light focus:border-brand-focus focus:ring-brand-focus dark:border-border-dark dark:bg-card-dark dark:text-text-dark" /></label>)}</div>
         {dateError && <p id="date-error" role="alert" className="mt-3 text-sm text-red-700 dark:text-red-300">{dateError}</p>}
-        <div className="mt-6 flex justify-end gap-2"><button type="button" className={control} onClick={() => setEditingDates(false)}>취소</button><button type="submit" className={`${control} border-brand-focus bg-brand text-brand-ink`}>기간 적용</button></div>
+        <div className="mt-6 flex justify-end gap-2"><button type="button" className={control} onClick={() => setEditingDates(false)}>취소</button><button type="submit" className={`${control} border-brand bg-brand text-brand-contrast`}>기간 적용</button></div>
       </form>
     </StatsDialog>}
   </>;

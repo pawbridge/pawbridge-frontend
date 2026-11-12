@@ -44,7 +44,7 @@ export default function AnimalSearchPagination({ currentPage, totalPages, onPage
         <label htmlFor="animal-page-input">페이지</label>
         <input id="animal-page-input" type="number" min="1" max={totalPages} inputMode="numeric" value={pageInput} onChange={(event) => setPageInput(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') moveToInputPage(); }} className={`${compactOnMobile ? 'h-11' : 'h-10'} w-[72px] rounded-lg border border-brand-border bg-white dark:bg-card-dark px-2 text-center text-sm font-bold text-brand-ink dark:text-text-dark focus:border-brand-focus focus:outline-none focus:ring-2 focus:ring-brand-focus`} />
         <span>/ {totalPages.toLocaleString()}</span>
-        <button type="button" onClick={moveToInputPage} className={`${compactOnMobile ? 'h-11' : 'h-10'} rounded-xl bg-brand px-5 text-sm font-bold text-brand-ink`}>이동</button>
+        <button type="button" onClick={moveToInputPage} className={`${compactOnMobile ? 'h-11' : 'h-10'} rounded-xl bg-brand px-5 text-sm font-bold text-brand-contrast`}>이동</button>
         <span className="hidden xl:inline">원하는 페이지로 바로 이동</span>
       </div>
     </nav>
@@ -52,5 +52,5 @@ export default function AnimalSearchPagination({ currentPage, totalPages, onPage
 }
 
 function PageButton({ children, active = false, disabled = false, large = false, label, onClick }: { children: ReactNode; active?: boolean; disabled?: boolean; large?: boolean; label: string; onClick: () => void }) {
-  return <button type="button" disabled={disabled} aria-label={label} aria-current={active ? 'page' : undefined} onClick={onClick} className={`flex ${large ? 'size-11' : 'size-10'} items-center justify-center rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${active ? 'border-brand-focus bg-brand font-bold text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-muted dark:text-gray-300 hover:border-brand-focus hover:text-brand-accent'}`}>{children}</button>;
+  return <button type="button" disabled={disabled} aria-label={label} aria-current={active ? 'page' : undefined} onClick={onClick} className={`flex ${large ? 'size-11' : 'size-10'} items-center justify-center rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${active ? 'border-brand bg-brand font-bold text-brand-contrast' : 'border-brand-border bg-white dark:bg-card-dark text-brand-muted dark:text-gray-300 hover:border-brand-focus hover:text-brand-accent'}`}>{children}</button>;
 }

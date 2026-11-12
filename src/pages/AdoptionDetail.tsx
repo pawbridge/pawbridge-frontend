@@ -153,7 +153,7 @@ export default function AdoptionDetail() {
           {/* 헤더 */}
           <div className="flex justify-between items-start mb-4">
             <div>
-              <span className="inline-block px-3 py-1 bg-brand/20 dark:bg-brand/30 text-brand-accent text-sm font-semibold rounded-full mb-3">
+              <span className="inline-block px-3 py-1 bg-brand-selected text-brand-accent text-sm font-semibold rounded-full mb-3">
                 입양후기
               </span>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -240,7 +240,7 @@ export default function AdoptionDetail() {
               <button
                 onClick={handleCommentSubmit}
                 disabled={!user || createCommentMutation.isPending}
-                className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createCommentMutation.isPending ? '작성 중...' : '댓글 작성'}
               </button>

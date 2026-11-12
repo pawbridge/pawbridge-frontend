@@ -61,7 +61,7 @@ export default function PrivateNotes() {
               type="button"
               onClick={() => navigate(value)}
               aria-pressed={box === value}
-              className={`${contactButton} ${box === value ? 'border-brand bg-brand font-bold text-brand-ink' : ''}`}
+              className={`${contactButton} ${box === value ? 'border-brand-focus bg-brand-selected font-bold text-brand-selected-ink' : ''}`}
             >
               {value === 'INBOX' ? '받은 쪽지' : '보낸 쪽지'}
             </button>
@@ -156,7 +156,7 @@ export default function PrivateNotes() {
               disabled={busy !== null}
               aria-label={`${note.counterpartNickname} 쪽지 즐겨찾기 ${note.favorite ? '해제' : '추가'}`}
               aria-pressed={note.favorite}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus disabled:opacity-50"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-brand-selected focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-focus disabled:opacity-50"
             >
               <img
                 src={note.favorite ? '/contact/star-filled.svg' : '/contact/star.svg'}

@@ -143,7 +143,7 @@ export default function PrivateNoteDetail() {
             {note.canReply && (
               <Link
                 to={`/notes/new?to=${note.counterpartId}&replyTo=${id}`}
-                className={`${contactButton} border-brand bg-brand text-brand-ink`}
+                className={`${contactButton} border-brand bg-brand text-brand-contrast`}
               >
                 답장하기
               </Link>

@@ -217,7 +217,7 @@ export default function AnimalEdit() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">동물 정보를 불러올 수 없습니다.</p>
           <Link
             to={fromMyPage ? '/mypage' : '/animals'}
-            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
+            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
           >
             돌아가기
           </Link>
@@ -242,7 +242,7 @@ export default function AnimalEdit() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">보호소가 직접 등록한 동물만 수정할 수 있습니다.</p>
           <Link
             to={`/animals/${id}`}
-            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
+            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
           >
             돌아가기
           </Link>
@@ -267,7 +267,7 @@ export default function AnimalEdit() {
             <NoteNotificationBell />
             <div className="h-6 w-px bg-brand-border dark:border-stone-800"></div>
             <div className="flex items-center gap-3">
-              <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-brand-focus bg-brand/20 flex items-center justify-center">
+              <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-2 ring-brand-focus bg-brand-selected flex items-center justify-center">
                 <PersonIcon aria-hidden="true" className="icon text-brand-accent" />
               </div>
               <div className="hidden md:flex flex-col text-right">
@@ -302,7 +302,7 @@ export default function AnimalEdit() {
 
             <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
               <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
-                <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold">
+                <div className="size-8 rounded-full bg-brand-selected flex items-center justify-center text-brand-accent font-bold">
                   1
                 </div>
                 <h2 className="text-brand-ink dark:text-white text-lg font-bold">기본 정보</h2>
@@ -451,7 +451,7 @@ export default function AnimalEdit() {
                       </button>
                     </div>
                   ) : (
-                    <label className="flex-1 min-h-[240px] border-2 border-dashed border-brand-border dark:border-stone-700 rounded-xl bg-white dark:bg-stone-900 flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-brand-focus hover:bg-brand/5 transition-colors group/upload">
+                    <label className="flex-1 min-h-[240px] border-2 border-dashed border-brand-border dark:border-stone-700 rounded-xl bg-white dark:bg-stone-900 flex flex-col items-center justify-center gap-3 p-4 text-center cursor-pointer hover:border-brand-focus hover:bg-brand-soft transition-colors group/upload">
                       <div className="size-14 rounded-full bg-white dark:bg-stone-800 shadow-sm flex items-center justify-center text-brand-muted group-hover/upload:text-brand-accent transition-colors border border-brand-border dark:border-stone-700">
                         <AddPhotoAlternateIcon aria-hidden="true" className="icon text-[32px]" />
                       </div>
@@ -475,7 +475,7 @@ export default function AnimalEdit() {
 
             <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
               <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
-                <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">2</div>
+                <div className="size-8 rounded-full bg-brand-selected flex items-center justify-center text-brand-accent font-bold font-display">2</div>
                 <h2 className="text-brand-ink dark:text-white text-lg font-bold">발견 정보</h2>
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -508,7 +508,7 @@ export default function AnimalEdit() {
 
             <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
               <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
-                <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">3</div>
+                <div className="size-8 rounded-full bg-brand-selected flex items-center justify-center text-brand-accent font-bold font-display">3</div>
                 <h2 className="text-brand-ink dark:text-white text-lg font-bold">공고 정보</h2>
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -544,7 +544,7 @@ export default function AnimalEdit() {
 
             <section className="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-brand-border dark:border-stone-800 overflow-hidden">
               <div className="px-6 py-4 border-b border-brand-soft dark:border-stone-800 flex items-center gap-3 bg-white dark:bg-stone-800">
-                <div className="size-8 rounded-full bg-brand/20 flex items-center justify-center text-brand-accent font-bold font-display">4</div>
+                <div className="size-8 rounded-full bg-brand-selected flex items-center justify-center text-brand-accent font-bold font-display">4</div>
                 <h2 className="text-brand-ink dark:text-white text-lg font-bold">보호소 설명</h2>
               </div>
               <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -574,7 +574,7 @@ export default function AnimalEdit() {
               <button
                 onClick={handleSubmit}
                 disabled={updateAnimalMutation.isPending || uploadImageMutation.isPending}
-                className="px-4 py-2 text-sm font-bold text-brand-ink bg-brand rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-bold text-brand-contrast bg-brand rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {updateAnimalMutation.isPending || uploadImageMutation.isPending
                   ? '수정 중...'

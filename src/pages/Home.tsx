@@ -13,8 +13,8 @@ import HomeVideoSection from '../components/home/HomeVideoSection';
 import { useAuthStore } from '../store/authStore';
 import { canSeePetMarket } from '../lib/petMarket';
 
-const focus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-ink dark:focus-visible:outline-brand';
-const textLink = `inline-flex min-h-11 items-center text-sm font-bold text-brand-ink hover:underline dark:text-brand ${focus}`;
+const focus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-ink dark:focus-visible:outline-brand-focus';
+const textLink = `inline-flex min-h-11 items-center text-sm font-bold text-brand-ink hover:underline dark:text-brand-accent ${focus}`;
 const selectStyle = 'h-11 w-full min-w-0 rounded-lg border-brand-border bg-white text-base text-brand-ink focus:border-brand-ink focus:ring-brand-ink dark:border-border-dark dark:bg-card-dark dark:text-gray-200';
 
 export default function Home() {
@@ -68,7 +68,7 @@ export default function Home() {
                 </select>
               </label>
             </div>
-            <button type="submit" className={`mt-4 min-h-12 w-full rounded-lg bg-brand px-4 py-3 text-sm font-bold text-brand-ink transition-colors hover:bg-brand-hover ${focus}`}>동물 찾아보기</button>
+            <button type="submit" className={`mt-4 min-h-12 w-full rounded-lg bg-brand px-4 py-3 text-sm font-bold text-brand-contrast transition-colors hover:bg-brand-hover ${focus}`}>동물 찾아보기</button>
           </form>
         </div>
         <figure className="relative min-w-0">
@@ -101,7 +101,7 @@ export default function Home() {
                   <p className="text-xs text-brand-muted dark:text-gray-400">입양 후기 · {new Date(post.createdAt).toLocaleDateString('ko-KR')}</p>
                   <h3 className="mt-3 break-words text-lg font-bold group-hover:underline">{post.title}</h3>
                   <p className="mt-3 line-clamp-2 break-words text-sm leading-relaxed text-brand-muted dark:text-gray-300">{post.content.replace(/\s+/g, ' ').trim()}</p>
-                  <span className="mt-4 inline-block text-sm font-bold text-brand-ink dark:text-brand">이야기 읽기 →</span>
+                  <span className="mt-4 inline-block text-sm font-bold text-brand-ink dark:text-brand-accent">이야기 읽기 →</span>
                 </Link>
               ))}</div>}
       </section>

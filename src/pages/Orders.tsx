@@ -94,7 +94,7 @@ export default function Orders() {
             <p className="text-red-500 mb-4 dark:text-red-300">주문 내역을 불러오는 중 오류가 발생했습니다.</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
+              className="px-4 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors"
             >
               다시 시도
             </button>
@@ -326,7 +326,7 @@ export default function Orders() {
                 onClick={() => setCurrentPage(page)}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   currentPage === page
-                    ? 'bg-brand text-brand-ink'
+                    ? 'bg-brand text-brand-contrast'
                     : 'bg-white dark:bg-surface-dark text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >

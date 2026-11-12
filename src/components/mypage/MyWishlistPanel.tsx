@@ -186,7 +186,7 @@ export default function MyWishlistPanel({
                           <button
                             onClick={() => onAddToCart(item.skuId)}
                             disabled={isSoldOut || isAddingToCart}
-                            className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-brand py-2 px-3 text-sm font-bold text-brand-ink hover:bg-brand-hover transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
+                            className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-brand py-2 px-3 text-sm font-bold text-brand-contrast hover:bg-brand-hover transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
                           >
                             {isSoldOut ? (
                               <>
@@ -233,7 +233,7 @@ export default function MyWishlistPanel({
                       onClick={() => onPageChange(page)}
                       className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                         wishlistPage === page
-                          ? 'bg-brand text-brand-ink'
+                          ? 'bg-brand text-brand-contrast'
                           : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -258,7 +258,7 @@ export default function MyWishlistPanel({
             <p className="text-gray-400 dark:text-gray-400 text-sm mb-6">마음에 드는 상품을 찾아 위시리스트에 담아보세요.</p>
             <Link
               to="/products"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-contrast shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑하러 가기
               <ArrowForwardIcon aria-hidden="true" className="icon text-sm" />

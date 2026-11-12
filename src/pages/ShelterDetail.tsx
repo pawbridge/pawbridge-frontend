@@ -53,7 +53,7 @@ export default function ShelterDetail() {
     <Link to={returnTo} state={{ ...location.state?.shelterReturnState, shelterRestoreKey: location.state?.shelterReturnKey }} className="mb-6 inline-flex min-h-11 items-center text-sm font-semibold text-brand-accent">← {/^\/animals\/\d+/.test(returnTo) ? '동물 상세로 돌아가기' : returnTo.startsWith('/animals') ? '동물 검색으로 돌아가기' : '보호소 목록으로 돌아가기'}</Link>
     {!/^\d{15}$/.test(registration) ? <h1 className="text-2xl font-bold">보호소 주소를 확인해 주세요</h1>
       : result.isPending ? <p role="status" className="py-16 text-center">보호소 정보를 불러오고 있어요.</p>
-      : result.isError || !shelter ? <div role="alert"><h1 className="text-2xl font-bold">보호소 정보를 불러오지 못했어요</h1><button onClick={() => void result.refetch()} className="mt-5 min-h-12 rounded-lg bg-brand px-6 font-bold text-brand-ink">다시 시도</button></div>
+      : result.isError || !shelter ? <div role="alert"><h1 className="text-2xl font-bold">보호소 정보를 불러오지 못했어요</h1><button onClick={() => void result.refetch()} className="mt-5 min-h-12 rounded-lg bg-brand px-6 font-bold text-brand-contrast">다시 시도</button></div>
       : <>
         <p className="text-sm text-gray-600 dark:text-gray-400">{shelter.organizationName}</p>
         <h1 className="mt-2 break-words text-[28px] font-bold leading-[42px] tracking-tight [overflow-wrap:anywhere] sm:text-[34px]">{shelter.name}</h1>
@@ -91,7 +91,7 @@ export default function ShelterDetail() {
         </section>
         <div className="mt-8"><ShelterAnimalSummary shelterId={shelter.id} /></div>
         <nav aria-label="보호소 상세 바로가기" className="my-6 grid grid-cols-3 gap-2 sm:flex">
-          {[['shelter-information', '보호소 정보'], ['shelter-animals', '보호 동물'], ['shelter-history', '보호 현황']].map(([id, label], index) => <a key={id} href={`#${id}`} className={`flex min-h-11 items-center justify-center rounded-2xl border border-brand-border px-2 text-sm font-medium sm:min-w-[150px] sm:px-5 ${index === 0 ? 'bg-brand text-brand-ink' : ''}`}>{label}</a>)}
+          {[['shelter-information', '보호소 정보'], ['shelter-animals', '보호 동물'], ['shelter-history', '보호 현황']].map(([id, label], index) => <a key={id} href={`#${id}`} className={`flex min-h-11 items-center justify-center rounded-2xl border border-brand-border px-2 text-sm font-medium sm:min-w-[150px] sm:px-5 ${index === 0 ? 'bg-brand-selected text-brand-selected-ink' : ''}`}>{label}</a>)}
         </nav>
         <ShelterAnimals key={shelter.id} shelterId={shelter.id} shelterName={shelter.name} />
         <section id="shelter-history" aria-labelledby="shelter-history-heading" className="mt-12 scroll-mt-24">

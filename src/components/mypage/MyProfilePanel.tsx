@@ -139,7 +139,7 @@ export default function MyProfilePanel({
               <button
                 type="submit"
                 disabled={isPending}
-                className="px-6 py-2 bg-brand text-text-main rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50"
+                className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50"
               >
                 {isPending ? '변경 중...' : '변경하기'}
               </button>

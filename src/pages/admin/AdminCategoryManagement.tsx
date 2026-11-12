@@ -27,7 +27,7 @@ function CategoryTreeNode({ category, selectedId, onSelect, level = 0 }: Categor
           aria-current={isSelected ? 'true' : undefined}
           className={`flex cursor-pointer items-center justify-between min-h-11 gap-2 p-2 rounded-lg transition-colors ${
             isSelected
-              ? 'bg-brand/10 border border-brand-focus'
+              ? 'bg-brand-selected border border-brand-focus'
               : 'hover:bg-background-light dark:hover:bg-background-dark/50'
           }`}
           onClick={(e) => {

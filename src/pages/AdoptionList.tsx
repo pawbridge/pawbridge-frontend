@@ -82,7 +82,7 @@ export default function AdoptionList() {
           </div>
           <button
             onClick={handleWriteClick}
-            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-brand text-brand-ink text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
+            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-brand text-brand-contrast text-sm font-bold leading-normal tracking-[0.015em] hover:opacity-90 transition-opacity"
           >
             <span className="truncate">작성하기</span>
           </button>
