@@ -26,7 +26,8 @@ export default function Toast({ message, type = 'info', isVisible, onClose, dura
   const typeStyles = {
     success: 'bg-emerald-500 dark:bg-emerald-600 text-white',
     error: 'bg-red-500 dark:bg-red-600 text-white',
-    info: 'bg-blue-500 dark:bg-blue-600 text-white',
+    // 안내는 브랜드 파랑과 겹치지 않게 반전 무채색으로 둔다(bg/inverse).
+    info: 'bg-brand-ink text-white dark:bg-gray-200 dark:text-brand-ink',
   };
 
   const iconMap = {

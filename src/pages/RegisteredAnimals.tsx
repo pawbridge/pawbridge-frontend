@@ -82,7 +82,7 @@ export default function RegisteredAnimals() {
                             animal.status === 'AVAILABLE' || animal.status === 'PROTECT'
                               ? 'bg-green-500 dark:bg-green-700 text-white'
                               : animal.status === 'ADOPTED'
-                              ? 'bg-blue-500 dark:bg-blue-700 text-white'
+                              ? 'bg-brand-ink dark:bg-stone-800 text-white'
                               : animal.status === 'RESERVED' || animal.status === 'ADOPTION_PENDING'
                               ? 'bg-yellow-500 dark:bg-yellow-700 text-white'
                               : 'bg-gray-500 text-white'
@@ -98,12 +98,12 @@ export default function RegisteredAnimals() {
                         </span>
                       )}
                       {animal.gender === 'MALE' && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-100">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                           수컷
                         </span>
                       )}
                       {animal.gender === 'FEMALE' && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-100">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                           암컷
                         </span>
                       )}
