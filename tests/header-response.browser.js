@@ -44,9 +44,10 @@ async page => {
     await page.keyboard.press('Enter');
     await page.locator('#lost-animal-navigation').waitFor();
     await page.keyboard.press('Escape');
-    await protectedButton.click();
+    // 호버 없이 누르는 터치는 클릭으로 열고 닫는다.
+    await protectedButton.dispatchEvent('click');
     await page.locator('#protected-animal-navigation').waitFor();
-    await protectedButton.click();
+    await protectedButton.dispatchEvent('click');
     if (await protectedButton.getAttribute('aria-expanded') !== 'false') throw new Error('Click toggle failed');
     await page.mouse.move(0, 0);
     await protectedButton.hover();
