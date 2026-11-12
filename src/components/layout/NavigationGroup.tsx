@@ -36,11 +36,14 @@ export default function NavigationGroup({ id, title, destinations, current, mode
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aimWatch = useRef<((event: PointerEvent) => void) | null>(null);
   const modeRef = useRef(mode);
   const { pathname, search } = useLocation();
   const clearTimer = useCallback(() => {
     if (timer.current !== null) clearTimeout(timer.current);
     timer.current = null;
+    if (aimWatch.current) document.removeEventListener('pointermove', aimWatch.current);
+    aimWatch.current = null;
   }, []);
   const changeMode = useCallback((next: OpenMode) => {
     clearTimer();
@@ -81,8 +84,19 @@ export default function NavigationGroup({ id, title, destinations, current, mode
       if (!document.getElementById(`${id}-animal-navigation`)?.contains(document.activeElement)) changeMode(null);
     };
     // 바로 닫되, 패널로 비스듬히 내려가며 옆 칸을 지나는 동안만 짧게 기다린다.
-    if (canOpenOnHover(event.clientX, event.clientY)) close();
-    else timer.current = setTimeout(close, 150);
+    if (canOpenOnHover(event.clientX, event.clientY)) {
+      close();
+      return;
+    }
+    timer.current = setTimeout(close, 150);
+    // 벗어난 지점보다 위로 가거나, 내려간 거리에 비해 옆으로 너무 멀리 가면 옆으로 벗어난 것으로 보고 바로 닫는다.
+    // 가장 먼 링크로 가는 길도 기울기가 0.15 안팎이라 기울기 0.1(10배)까지는 내려가는 중으로 본다.
+    const start = { x: event.clientX, y: event.clientY };
+    aimWatch.current = move => {
+      const down = move.clientY - start.y;
+      if (down < 0 || Math.abs(move.clientX - start.x) > down * 10 + 16) close();
+    };
+    document.addEventListener('pointermove', aimWatch.current);
   };
 
   const hoverTrigger = (event: ReactPointerEvent<HTMLButtonElement>) => {

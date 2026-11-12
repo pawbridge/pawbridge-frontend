@@ -56,6 +56,28 @@ async page => {
     await closedWithin(400, 'Menu stayed open after downward movement stopped outside the panel');
     await button.hover();
     await shown(panel);
+    // 옆으로 벗어나며 손떨림처럼 살짝 내려가도 유예 없이 닫힌다.
+    // 이동 자체가 유예보다 오래 걸릴 수 있어, 메뉴 영역을 벗어난 순간부터 닫힐 때까지를 페이지 안에서 잰다.
+    await page.evaluate(() => {
+      const trigger = document.querySelector('[aria-controls="protected-animal-navigation"]');
+      const root = trigger.parentElement;
+      window.__leftAt = null;
+      window.__closeDelay = null;
+      const onMove = event => { if (window.__leftAt === null && !root.contains(event.target)) window.__leftAt = performance.now(); };
+      document.addEventListener('pointermove', onMove, true);
+      new MutationObserver((_, observer) => {
+        if (trigger.getAttribute('aria-expanded') !== 'false') return;
+        observer.disconnect();
+        document.removeEventListener('pointermove', onMove, true);
+        window.__closeDelay = window.__leftAt === null ? 0 : performance.now() - window.__leftAt;
+      }).observe(trigger, { attributes: true });
+    });
+    await page.mouse.move(trigger.x + trigger.width + 200, trigger.y + trigger.height / 2 + 2, { steps: 10 });
+    await hidden(panel);
+    const sidewaysDelay = await page.evaluate(() => window.__closeDelay);
+    check(sidewaysDelay !== null && sidewaysDelay < 50, `Sideways movement with a slight downward drift waited ${sidewaysDelay}ms`);
+    await button.hover();
+    await shown(panel);
     const first = await links.nth(0).boundingBox();
     const last = await links.nth(2).boundingBox();
     check(first && last && Math.abs(first.y - last.y) < 1 && last.x > first.x, 'Desktop links must be three columns');
