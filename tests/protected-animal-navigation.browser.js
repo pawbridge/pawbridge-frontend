@@ -6,6 +6,9 @@ async page => {
   const check = (condition, message) => { if (!condition) throw new Error(message); };
   const shown = locator => locator.waitFor({ state: 'visible', timeout: 5000 });
   const hidden = locator => locator.waitFor({ state: 'hidden', timeout: 5000 });
+  const closedWithin = (ms, message) => page.waitForFunction(
+    () => document.querySelector('[aria-controls="protected-animal-navigation"]').getAttribute('aria-expanded') === 'false',
+    null, { timeout: ms }).catch(() => { throw new Error(message); });
   const checks = [];
   await page.unroute('**/api/v1/**');
   const emptyPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true };
@@ -44,11 +47,15 @@ async page => {
     await shown(panel);
     check(await button.getAttribute('aria-expanded') === 'true', 'Hover must open menu immediately');
     await page.mouse.move(0, 0);
-    await page.waitForTimeout(100); // Deliberately verify the 300ms close grace period.
-    check(await panel.isVisible(), 'Menu closed before pointer leave grace period');
+    await closedWithin(100, 'Hover-open menu must close without a grace period');
     await button.hover();
-    await page.waitForTimeout(350);
-    check(await panel.isVisible(), 'Returning to trigger must cancel pending close');
+    await shown(panel);
+    const trigger = await button.boundingBox();
+    // 패널 쪽으로 내려가다 헤더 안에서 멈추면 유예 뒤에 닫힌다.
+    await page.mouse.move(trigger.x + trigger.width + 4, 60, { steps: 4 });
+    await closedWithin(400, 'Menu stayed open after downward movement stopped outside the panel');
+    await button.hover();
+    await shown(panel);
     const first = await links.nth(0).boundingBox();
     const last = await links.nth(2).boundingBox();
     check(first && last && Math.abs(first.y - last.y) < 1 && last.x > first.x, 'Desktop links must be three columns');
@@ -92,19 +99,23 @@ async page => {
     await hidden(panel);
     checks.push('Enter, Space, Tab, Shift+Tab, Escape, focus ring and explicit-open retention');
 
-    await button.click();
-    await shown(panel);
-    await button.click();
-    await hidden(panel);
+    // 호버 없이 누르는 터치는 클릭으로 열고 닫는다.
     await page.mouse.move(0, 0);
+    await button.dispatchEvent('click');
+    await shown(panel);
+    await button.dispatchEvent('click');
+    await hidden(panel);
     await button.hover();
     await shown(panel);
-    await button.click(); // A click pins an already hover-open menu.
+    await button.click(); // 호버로 열린 메뉴는 클릭해도 고정되지 않는다.
+    check(await panel.isVisible(), 'Click must keep hover-open menu open');
+    check(await button.evaluate(el => el === document.activeElement), 'Mouse click should focus trigger for this check');
     await page.mouse.move(5, 700);
-    await page.waitForTimeout(350);
-    check(await panel.isVisible(), 'Click did not pin hover-open menu');
-    await page.mouse.click(5, 700);
-    await hidden(panel);
+    await closedWithin(100, 'Click pinned hover-open menu');
+    await button.hover();
+    await shown(panel);
+    await page.mouse.move(5, 700);
+    await closedWithin(100, 'Trigger focus kept hover-open menu open');
     await button.click();
     await shown(panel);
     await links.nth(1).click();
@@ -116,7 +127,7 @@ async page => {
     check(await links.nth(1).getAttribute('aria-describedby'), 'Description must be separately associated');
     await links.first().click();
     check(page.url() === origin + '/animals', 'Animal search route failed');
-    checks.push('click toggle, hover pinning, outside click, route close and current destination');
+    checks.push('touch click toggle, no click pinning, trigger focus close, route close and current destination');
 
     for (const width of [1920, 1440, 1280]) {
       await page.setViewportSize({ width, height: 900 });
