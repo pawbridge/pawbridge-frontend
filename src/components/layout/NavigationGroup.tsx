@@ -73,11 +73,16 @@ export default function NavigationGroup({ id, title, destinations, current, mode
       document.removeEventListener('keydown', escape);
     };
   }, [mode, changeMode]);
-  const scheduleClose = () => {
+  const scheduleClose = (event: ReactPointerEvent) => {
     clearTimer();
-    if (modeRef.current === 'hover') timer.current = setTimeout(() => {
-      if (!rootRef.current?.contains(document.activeElement)) changeMode(null);
-    }, 150);
+    if (modeRef.current !== 'hover') return;
+    // 버튼에 남은 포커스는 닫기를 막지 않는다. 패널 링크에 포커스가 있을 때만 남겨 포커스를 잃지 않게 한다.
+    const close = () => {
+      if (!document.getElementById(`${id}-animal-navigation`)?.contains(document.activeElement)) changeMode(null);
+    };
+    // 바로 닫되, 패널로 비스듬히 내려가며 옆 칸을 지나는 동안만 짧게 기다린다.
+    if (canOpenOnHover(event.clientX, event.clientY)) close();
+    else timer.current = setTimeout(close, 150);
   };
 
   const hoverTrigger = (event: ReactPointerEvent<HTMLButtonElement>) => {
@@ -97,7 +102,10 @@ export default function NavigationGroup({ id, title, destinations, current, mode
       onPointerMove={hoverTrigger}
       aria-current={current ? 'page' : undefined}
       className={`rounded-lg px-3 py-2 text-sm leading-5 text-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${current ? 'bg-brand font-bold hover:bg-brand-hover dark:text-brand-ink' : 'font-medium hover:bg-neutral-100 dark:text-gray-200 dark:hover:bg-gray-800'}`}
-      onClick={() => changeMode(modeRef.current === 'explicit' ? null : 'explicit')}>{title}</button>
+      onClick={() => {
+        // 호버로 열린 메뉴는 클릭해도 고정하지 않는다. 클릭 열고 닫기는 호버가 없는 터치와 키보드용이다.
+        if (modeRef.current !== 'hover') changeMode(modeRef.current ? null : 'explicit');
+      }}>{title}</button>
     {mode && <>
       <div aria-hidden="true" className="absolute inset-x-0 top-full z-40 h-[calc(100dvh-4rem)] bg-black/15" onPointerEnter={scheduleClose} onPointerDown={() => changeMode(null)} />
       <div id={`${id}-animal-navigation`} className="absolute inset-x-0 top-full z-50 border-b border-brand-border bg-white px-6 py-6 dark:border-border-dark dark:bg-background-dark" onPointerEnter={clearTimer}>
