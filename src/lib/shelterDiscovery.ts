@@ -58,3 +58,15 @@ export function observationDays<T extends { date: string; protectedCount: number
   for (let date = from; date <= to; date = shiftDate(date, 1)) days.push({ date, point: byDate.get(date) ?? null });
   return days;
 }
+
+// 보호중 꺾은선의 세로축 범위. 보호중 수는 쌓인 양이라 날마다 조금씩만 바뀌므로 0이 아닌 값에서 시작해 흐름이 보이게 한다.
+// 다만 작은 흔들림이 크게 보여 입양으로 오해되지 않도록 폭을 최댓값의 20% 이상으로 둔다.
+export function protectedCountRange(values: number[]): { low: number; high: number } {
+  if (!values.length) return { low: 0, high: 5 };
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = Math.max(max - min, max * 0.2, 4);
+  const middle = (min + max) / 2;
+  const step = span >= 50 ? 10 : span >= 10 ? 5 : 1;
+  return { low: Math.max(0, Math.floor((middle - span) / step) * step), high: Math.ceil((middle + span) / step) * step };
+}

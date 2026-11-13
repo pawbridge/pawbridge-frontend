@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { koreaToday, readShelterDiscovery, writeShelterDiscovery, validIntakeRange, shelterAnimalUrl, shelterListReturnTo, observationDays } from '../src/lib/shelterDiscovery.ts';
+import { koreaToday, readShelterDiscovery, writeShelterDiscovery, validIntakeRange, shelterAnimalUrl, shelterListReturnTo, observationDays, protectedCountRange } from '../src/lib/shelterDiscovery.ts';
 import { readAnimalSearch, writeAnimalSearch } from '../src/lib/animalSearch.ts';
 import { isPublicShelterRequest } from '../src/lib/shelters.ts';
 
@@ -46,4 +46,17 @@ test('목록 복귀는 내부 경로만, 신규 API는 공개 GET만 허용한�
     assert.ok(isPublicShelterRequest(url, 'GET'));
     assert.equal(isPublicShelterRequest(url, 'POST'), false);
   }
+});
+
+test('보호중 꺾은선 세로축은 흐름이 보이되 작은 흔들림을 키우지 않는다', () => {
+  // 240~260마리: 0부터가 아니라 흐름이 보이는 범위, 폭은 최댓값의 20% 이상
+  const { low, high } = protectedCountRange([240, 255, 260]);
+  assert.ok(low > 0 && low <= 240 && high >= 260);
+  assert.ok(high - low >= 260 * 0.2);
+  // 0마리가 있으면 0부터, 기록이 없으면 0~5
+  assert.equal(protectedCountRange([0, 12]).low, 0);
+  assert.deepEqual(protectedCountRange([]), { low: 0, high: 5 });
+  // 모두 같은 값이어도 폭이 생긴다
+  const flat = protectedCountRange([3, 3]);
+  assert.ok(flat.high > flat.low);
 });

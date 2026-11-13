@@ -180,7 +180,7 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
         const mine = message.senderId === owner;
         return <li key={message.sequence} data-sequence={message.sequence} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
           <div className={`max-w-[85%] break-words rounded-xl p-4 ${mine ? 'bg-brand text-brand-contrast' : 'bg-gray-100 dark:bg-gray-800'}`}>
-            {message.contextHref && <Link className="mb-2 inline-flex min-h-11 items-center text-sm underline" to={message.contextHref}>관련 글 보기</Link>}
+            {message.contextHref && <Link className="mb-2 inline-flex min-h-11 items-center text-sm underline-offset-4 hover:underline" to={message.contextHref}>관련 글 보기</Link>}
             <p className="whitespace-pre-wrap text-base leading-7">{message.body}</p>
             <div className="mt-2 flex flex-wrap justify-end gap-2 text-xs">
               <time dateTime={message.createdAt}>{new Date(message.createdAt).toLocaleString('ko-KR')}</time>

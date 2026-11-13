@@ -78,7 +78,7 @@ export default function PrivateNoteDetail() {
   }
   return (
     <ContactLayout>
-      <Link to={back} className="text-sm underline underline-offset-4">
+      <Link to={back} className="text-sm underline-offset-4 hover:underline">
         쪽지 목록으로
       </Link>
       <h2 className="mt-5 text-xl font-bold">
@@ -124,7 +124,7 @@ export default function PrivateNoteDetail() {
           {readFailed && !note.readAt && (
             <div role="alert" className="mt-4 text-sm">
               읽음 상태를 반영하지 못했습니다.{' '}
-              <button className="underline" onClick={() => void change(() => readNote(id))}>
+              <button className="underline-offset-4 font-semibold hover:underline" onClick={() => void change(() => readNote(id))}>
                 읽음 반영 재시도
               </button>
             </div>

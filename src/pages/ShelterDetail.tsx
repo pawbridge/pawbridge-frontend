@@ -58,6 +58,10 @@ export default function ShelterDetail() {
         <p className="text-sm text-gray-600 dark:text-gray-400">{shelter.organizationName}</p>
         <h1 className="mt-2 break-words text-[28px] font-bold leading-[42px] tracking-tight [overflow-wrap:anywhere] sm:text-[34px]">{shelter.name}</h1>
         <p className="mt-2 text-base leading-7 text-brand-muted dark:text-gray-300">위치와 운영시간을 확인하고, 보호 중인 동물들을 만나보세요.</p>
+        {/* 같은 페이지 안 구역으로 내려가는 바로가기다. 탭이 아니라서 선택 표시를 두지 않는다. */}
+        <nav aria-label="보호소 상세 바로가기" className="mt-5 grid grid-cols-3 gap-2 sm:flex">
+          {[['shelter-information', '보호소 정보'], ['shelter-animals', '보호 동물'], ['shelter-history', '보호 현황']].map(([id, label]) => <a key={id} href={`#${id}`} className="flex min-h-11 items-center justify-center rounded-2xl border border-brand-border px-2 text-sm font-medium hover:bg-neutral-100 dark:hover:bg-gray-800 sm:min-w-[150px] sm:px-5">{label}</a>)}
+        </nav>
         <section id="shelter-information" aria-labelledby="shelter-information-heading" className="mt-6 scroll-mt-24">
           <h2 id="shelter-information-heading" className="text-xl font-bold">보호소 정보</h2>
           <div className="my-6 grid items-stretch gap-6 lg:grid-cols-2" data-testid="shelter-information">
@@ -71,7 +75,7 @@ export default function ShelterDetail() {
               </dl>
               <div className="mt-3 mb-5 sm:ml-[5.25rem]"><AddressActions key={shelter.address} name={shelter.name} address={shelter.address} /></div>
               <dl className="space-y-5 text-sm leading-6">
-                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">전화</dt><dd className="break-words">{telephone ? <a href={telephone} className="underline underline-offset-4">{phone}</a> : phone || '등록된 정보가 없어요'}</dd></div>
+                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">전화</dt><dd className="break-words">{telephone ? <a href={telephone} className="underline-offset-4 hover:underline">{phone}</a> : phone || '등록된 정보가 없어요'}</dd></div>
                 <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">관할기관</dt><dd className="break-words">{shelter.organizationName || '등록된 정보가 없어요'}</dd></div>
               </dl>
               {telephone && <a href={telephone} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-border-light px-5 text-sm font-semibold hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800 sm:w-auto">전화로 문의하기</a>}
@@ -90,9 +94,6 @@ export default function ShelterDetail() {
           {shelter.adoptionProcedure && <section className="mb-8"><h3 className="text-xl font-bold">입양 절차</h3><p className="mt-3 whitespace-pre-wrap break-words leading-7">{shelter.adoptionProcedure}</p></section>}
         </section>
         <div className="mt-8"><ShelterAnimalSummary shelterId={shelter.id} /></div>
-        <nav aria-label="보호소 상세 바로가기" className="my-6 grid grid-cols-3 gap-2 sm:flex">
-          {[['shelter-information', '보호소 정보'], ['shelter-animals', '보호 동물'], ['shelter-history', '보호 현황']].map(([id, label], index) => <a key={id} href={`#${id}`} className={`flex min-h-11 items-center justify-center rounded-2xl border border-brand-border px-2 text-sm font-medium sm:min-w-[150px] sm:px-5 ${index === 0 ? 'bg-brand-selected text-brand-selected-ink' : ''}`}>{label}</a>)}
-        </nav>
         <ShelterAnimals key={shelter.id} shelterId={shelter.id} shelterName={shelter.name} />
         <section id="shelter-history" aria-labelledby="shelter-history-heading" className="mt-12 scroll-mt-24">
           <h2 id="shelter-history-heading" className="text-xl font-bold">보호 현황</h2>

@@ -133,7 +133,7 @@ export default function CommunityDetail() {
       <main className="flex-grow flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg text-red-600 dark:text-red-300">게시글을 찾을 수 없습니다.</p>
-          <Link to="/community" className="mt-4 inline-block text-brand-accent underline">
+          <Link to="/community" className="mt-4 inline-block text-brand-accent underline-offset-4 hover:underline">
             목록으로 돌아가기
           </Link>
         </div>
