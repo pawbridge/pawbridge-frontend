@@ -33,8 +33,8 @@ test('같은 품종이어도 다른 동물이면 제목이나 설명이 다르�
 
 test('비어 있는 값은 문장에서 빼고, 설명은 150자를 넘지 않는다', () => {
   const sparse = animalPageText({ id: 1, name: '', species: 'CAT', gender: 'UNKNOWN', status: 'ADOPTED', shelterId: 1 });
-  assert.equal(sparse.title, '고양이, 종료 (입양) - 포우브릿지');
-  assert.equal(sparse.description, '고양이입니다. 종료 (입양).');
+  assert.equal(sparse.title, '고양이, 입양 완료 - 포우브릿지');
+  assert.equal(sparse.description, '고양이입니다. 입양 완료.');
   const long = animalPageText({ ...animal, specialMark: '가'.repeat(400) });
   assert.equal(long.description.length, 150);
   assert.ok(long.description.endsWith('…'));

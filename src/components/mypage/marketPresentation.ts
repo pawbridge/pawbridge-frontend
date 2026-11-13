@@ -23,27 +23,13 @@ export const getStatusBadge = (status: ProductStatus) => {
 
 // 주문 상태 배지
 export const getOrderStatusBadge = (status: OrderStatus) => {
-  const statusMap = {
-    PENDING: {
-      label: '주문 대기',
-      className: 'bg-yellow-100 text-yellow-800 dark:bg-amber-950 dark:text-amber-50',
-    },
-    PAID: {
-      label: '결제 완료',
-      className: 'bg-green-100 text-green-800 dark:bg-[#163126] dark:text-[#DDEFE9]',
-    },
-    COMPLETED: {
-      label: '주문 완료',
-      className: 'bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200',
-    },
-    CANCELLED: {
-      label: '주문 취소',
-      className: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
-    },
-    FAILED: {
-      label: '결제 실패',
-      className: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-    },
+  // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(무채색 배지). 색은 오류, 마감 임박, 주 동작에만 쓴다.
+  const labels: Record<string, string> = {
+    PENDING: '주문 대기',
+    PAID: '결제 완료',
+    COMPLETED: '주문 완료',
+    CANCELLED: '주문 취소',
+    FAILED: '결제 실패',
   };
-  return statusMap[status] || statusMap.PENDING;
+  return { label: labels[status] ?? labels.PENDING, className: 'bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200' };
 };
