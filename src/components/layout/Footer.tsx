@@ -10,8 +10,9 @@ export default function Footer() {
   const focusColor = 'focus-visible:outline-brand-focus';
   const linkClass = `inline-flex min-h-8 items-center text-sm ${mutedColor} transition-colors ${hoverColor} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${focusColor}`;
 
+  // 위 경계는 머리글 아래 선과 같은 1px 무채색이다. 파랑은 누르는 주 동작에만 쓴다(Figma Footer v1.6).
   return (
-    <footer className={`mt-16 w-full border-t-4 border-brand bg-white dark:bg-background-dark md:mt-24`}>
+    <footer className={`mt-16 w-full border-t border-brand-border bg-white dark:border-border-dark dark:bg-background-dark md:mt-24`}>
       <div className="mx-auto w-full max-w-[1504px] px-4 py-8 md:px-6 md:py-9">
         <div className="grid gap-8 md:grid-cols-[minmax(260px,2fr)_repeat(3,minmax(120px,1fr))]">
           <div>
