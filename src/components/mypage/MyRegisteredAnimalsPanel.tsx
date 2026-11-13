@@ -69,12 +69,12 @@ export default function MyRegisteredAnimalsPanel({
                             </span>
                           )}
                           {animal.gender === 'MALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-100">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               수컷
                             </span>
                           )}
                           {animal.gender === 'FEMALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-100">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               암컷
                             </span>
                           )}

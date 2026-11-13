@@ -200,7 +200,7 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
             )}
 
             {safetyNotice && (
-              <p className="mb-2 rounded-lg bg-blue-50 px-3 py-2 text-[11px] leading-5 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
+              <p className="mb-2 rounded-lg bg-neutral-100 px-3 py-2 text-[11px] leading-5 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                 {safetyNotice}
               </p>
             )}

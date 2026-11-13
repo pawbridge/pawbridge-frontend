@@ -54,7 +54,7 @@ export default function Orders() {
       },
       COMPLETED: {
         label: '주문 완료',
-        className: 'bg-blue-100 text-blue-800 dark:bg-[#102A33] dark:text-[#E2EBEF]',
+        className: 'bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200',
       },
       CANCELLED: {
         label: '주문 취소',
