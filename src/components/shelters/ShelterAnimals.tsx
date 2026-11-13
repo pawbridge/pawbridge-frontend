@@ -29,7 +29,7 @@ export function ShelterAnimalSummary({ shelterId }: { shelterId: number }) {
         <dd className={index === 0 ? 'my-3 text-[28px] font-bold leading-[42px]' : 'text-sm font-bold xl:text-[28px] xl:leading-[42px]'}>
           {count.isError ? '확인 불가' : count.isPending ? '확인 중…' : <>{count.data.totalElements.toLocaleString()}<span className="ml-1 text-sm font-normal">마리</span></>}
         </dd>
-        <dd className={index === 0 ? 'text-xs text-brand-muted dark:text-gray-300' : 'hidden text-xs text-brand-muted dark:text-gray-300 xl:block'}>{index === 0 ? '접수기간 전체 · 수집 정보 기준' : '현재 보호중인 동물'}</dd>
+        <dd className={index === 0 ? 'text-xs text-brand-muted dark:text-gray-300' : 'hidden text-xs text-brand-muted dark:text-gray-300 xl:block'}>{index === 0 ? '접수기간 전체, 수집 정보 기준' : '현재 보호중인 동물'}</dd>
       </div>)}
     </dl>
     {counts.some(count => count.isError) && <p role="alert" className="text-sm">일부 마릿수를 불러오지 못했어요. <button type="button" onClick={() => counts.forEach(count => { if (count.isError) void count.refetch(); })} className="min-h-11 underline-offset-4 font-semibold hover:underline">마릿수 다시 불러오기</button></p>}
