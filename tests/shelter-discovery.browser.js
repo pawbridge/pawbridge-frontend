@@ -36,6 +36,10 @@ async page => {
   if (requests.some(url => url.includes('/observations'))) throw Error('History eagerly fetched');
   await page.getByRole('button', { name: '보호 현황 펼치기 +' }).first().click();
   await page.getByRole('img', { name: /최근 30일 일별/ }).waitFor();
+  // 그래프 위 수치: 처음에는 마지막 기록일(오늘 0마리), 첫날 칸에 마우스를 올리면 그날(12마리)로 바뀐다.
+  await page.getByText(/보호중 0마리$/).first().waitFor();
+  await page.locator('svg[role="img"]:visible rect[fill="transparent"]').first().hover();
+  await page.getByText(/보호중 12마리$/).first().waitFor();
   // The toggle for the daily numbers was renamed from '날짜별 수치와 관측 시각 보기'.
   await page.getByText('날짜별 마릿수 보기', { exact: true }).click();
   if (!(await page.getByRole('cell', { name: '기록 없음', exact: true }).count())) throw Error('Missing days were fabricated');
