@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRegisteredAnimals } from '../api/user.api';
 import { useAuthStore } from '../store/authStore';
-import { animalStatusLabel } from '../lib/animalDisplay';
+import { animalSpeciesLabel, animalStatusLabel } from '../lib/animalDisplay';
 import CakeIcon from '../assets/icons/material-symbols/cake.svg?react';
 import CategoryIcon from '../assets/icons/material-symbols/category.svg?react';
 import ChevronLeftIcon from '../assets/icons/material-symbols/chevron_left.svg?react';
@@ -129,7 +129,7 @@ export default function RegisteredAnimals() {
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-2">
                       <CategoryIcon aria-hidden="true" className="icon text-base" />
-                      <span>{animal.species || '종 정보 없음'}</span>
+                      <span>{animalSpeciesLabel(animal.species)}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
