@@ -1,6 +1,7 @@
 import MyPageListState, { type MyPageListFeedback } from './MyPageListState';
 import { Link } from 'react-router-dom';
 import type { Animal, PageResponse } from '../../types/api.types';
+import { animalStatusLabel } from '../../lib/animalDisplay';
 import AddIcon from '../../assets/icons/material-symbols/add.svg?react';
 import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
 
@@ -57,15 +58,11 @@ export default function MyRegisteredAnimalsPanel({
                         </div>
                       )}
                       <div className="p-4">
-                        {/* 상태 + 성별 + 중성화 배지 */}
+                        {/* 상태 + 성별 + 중성화 배지. 글자로 구분하고 색은 쓰지 않는다(무채색 배지). */}
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {animal.status && (
-                            <span className={`text-xs font-bold rounded-full px-2 py-1 ${
-                              animal.status === 'PROTECT'
-                                ? 'bg-green-100 text-green-700 dark:bg-[#163126] dark:text-[#DDEFE9]'
-                                : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
-                            }`}>
-                              {animal.status === 'PROTECT' ? '보호중' : animal.status}
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                              {animalStatusLabel(animal.status)}
                             </span>
                           )}
                           {animal.gender === 'MALE' && (
@@ -79,22 +76,22 @@ export default function MyRegisteredAnimalsPanel({
                             </span>
                           )}
                           {(!animal.gender || (animal.gender as string) === 'UNKNOWN') && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               미상
                             </span>
                           )}
                           {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-100">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               중성화 완료
                             </span>
                           )}
                           {(animal.neuterStatus === 'NO' || animal.neutered === false) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               중성화 미완료
                             </span>
                           )}
                           {animal.neuterStatus === 'UNKNOWN' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               중성화 미상
                             </span>
                           )}

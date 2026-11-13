@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getRegisteredAnimals } from '../api/user.api';
 import { useAuthStore } from '../store/authStore';
+import { animalStatusLabel } from '../lib/animalDisplay';
 import CakeIcon from '../assets/icons/material-symbols/cake.svg?react';
 import CategoryIcon from '../assets/icons/material-symbols/category.svg?react';
 import ChevronLeftIcon from '../assets/icons/material-symbols/chevron_left.svg?react';
@@ -74,27 +75,11 @@ export default function RegisteredAnimals() {
                       alt={animal.breed || '동물'}
                       className="w-full h-full object-cover"
                     />
-                    {/* 상태 + 성별 + 중성화 배지 */}
+                    {/* 상태 + 성별 + 중성화 배지. 글자로 구분하고 색은 쓰지 않는다(무채색 배지). */}
                     <div className="absolute top-3 right-3 flex items-center gap-2 flex-wrap justify-end">
                       {animal.status && (
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${
-                            animal.status === 'AVAILABLE' || animal.status === 'PROTECT'
-                              ? 'bg-green-500 dark:bg-green-700 text-white'
-                              : animal.status === 'ADOPTED'
-                              ? 'bg-brand-ink dark:bg-stone-800 text-white'
-                              : animal.status === 'RESERVED' || animal.status === 'ADOPTION_PENDING'
-                              ? 'bg-yellow-500 dark:bg-yellow-700 text-white'
-                              : 'bg-gray-500 text-white'
-                          }`}
-                        >
-                          {animal.status === 'AVAILABLE' || animal.status === 'PROTECT'
-                            ? '보호중'
-                            : animal.status === 'ADOPTED'
-                            ? '입양완료'
-                            : animal.status === 'RESERVED' || animal.status === 'ADOPTION_PENDING'
-                            ? '입양대기'
-                            : animal.status}
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                          {animalStatusLabel(animal.status)}
                         </span>
                       )}
                       {animal.gender === 'MALE' && (
@@ -108,22 +93,22 @@ export default function RegisteredAnimals() {
                         </span>
                       )}
                       {(!animal.gender || (animal.gender as string) === 'UNKNOWN') && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                           미상
                         </span>
                       )}
                       {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-100">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                           중성화 완료
                         </span>
                       )}
                       {(animal.neuterStatus === 'NO' || animal.neutered === false) && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                           중성화 미완료
                         </span>
                       )}
                       {animal.neuterStatus === 'UNKNOWN' && (
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                           중성화 미상
                         </span>
                       )}

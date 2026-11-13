@@ -8,7 +8,7 @@ import placeholder from '../assets/image-placeholder.svg';
 import uploadIcon from '../assets/lost-search-upload.svg';
 
 const statusLabels: Record<string, string> = {
-  NOTICE: '공고 중', PROTECT: '보호 중', ADOPTION_PENDING: '입양 대기', ADOPTED: '종료(입양)',
+  NOTICE: '공고 중', PROTECT: '보호 중', ADOPTION_PENDING: '입양 대기', ADOPTED: '입양 완료',
   RETURNED: '종료(반환)', EUTHANIZED: '종료(안락사)', NATURAL_DEATH: '종료(자연사)',
   DONATED: '종료(기증)', RELEASED: '종료(방사)', ESCAPED: '종료(탈출)', UNKNOWN: '상태 미상',
 };
