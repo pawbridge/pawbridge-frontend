@@ -1,7 +1,7 @@
 import MyPageListState, { type MyPageListFeedback } from './MyPageListState';
 import { Link } from 'react-router-dom';
 import type { Animal, PageResponse } from '../../types/api.types';
-import { animalStatusLabel } from '../../lib/animalDisplay';
+import { animalSpeciesLabel, animalStatusLabel } from '../../lib/animalDisplay';
 import AddIcon from '../../assets/icons/material-symbols/add.svg?react';
 import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
 
@@ -99,7 +99,7 @@ export default function MyRegisteredAnimalsPanel({
 
                         <h3 className="font-bold text-text-main dark:text-white mb-2">{animal.breed || '품종 정보 없음'}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {animal.species || '종 정보 없음'} • {animal.age ? `${animal.age}세` : '나이 정보 없음'}
+                          {animalSpeciesLabel(animal.species)} • {animal.age ? `${animal.age}세` : '나이 정보 없음'}
                         </p>
                       </div>
                     </Link>
