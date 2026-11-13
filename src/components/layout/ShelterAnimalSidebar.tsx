@@ -8,7 +8,7 @@ import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
 const menuLink = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:bg-stone-800 dark:hover:text-white transition-colors';
 const subLink = 'block px-3 py-2 rounded-lg text-sm transition-colors';
 const subLinkIdle = 'text-brand-muted hover:text-brand-ink hover:bg-brand-soft dark:hover:text-white dark:hover:bg-stone-800';
-const subLinkActive = 'font-bold text-brand-accent bg-brand/10';
+const subLinkActive = 'font-bold text-brand-accent bg-brand-selected';
 
 // 보호소 회원의 동물 등록, 수정 화면 사이드바. 관리자 콘솔 메뉴는 보호소 회원이 들어갈 수 없어 따로 둔다.
 // current: 지금 화면이 속한 하위 메뉴 (수정은 등록한 동물 목록에서 들어오므로 'registered')

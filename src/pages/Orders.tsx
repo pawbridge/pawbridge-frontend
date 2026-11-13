@@ -43,29 +43,15 @@ export default function Orders() {
 
   // 주문 상태 배지
   const getStatusBadge = (status: OrderStatus) => {
-    const statusMap = {
-      PENDING: {
-        label: '주문 대기',
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-amber-950 dark:text-amber-50',
-      },
-      PAID: {
-        label: '결제 완료',
-        className: 'bg-green-100 text-green-800 dark:bg-[#163126] dark:text-[#DDEFE9]',
-      },
-      COMPLETED: {
-        label: '주문 완료',
-        className: 'bg-blue-100 text-blue-800 dark:bg-[#102A33] dark:text-[#E2EBEF]',
-      },
-      CANCELLED: {
-        label: '주문 취소',
-        className: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300',
-      },
-      FAILED: {
-        label: '결제 실패',
-        className: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
-      },
+    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(무채색 배지). 색은 오류, 마감 임박, 주 동작에만 쓴다.
+    const labels: Record<string, string> = {
+      PENDING: '주문 대기',
+      PAID: '결제 완료',
+      COMPLETED: '주문 완료',
+      CANCELLED: '주문 취소',
+      FAILED: '결제 실패',
     };
-    return statusMap[status] || statusMap.PENDING;
+    return { label: labels[status] ?? labels.PENDING, className: 'bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200' };
   };
 
   // 주문 상세 페이지로 이동
@@ -94,7 +80,7 @@ export default function Orders() {
             <p className="text-red-500 mb-4 dark:text-red-300">주문 내역을 불러오는 중 오류가 발생했습니다.</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors"
+              className="px-4 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors"
             >
               다시 시도
             </button>
@@ -326,7 +312,7 @@ export default function Orders() {
                 onClick={() => setCurrentPage(page)}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   currentPage === page
-                    ? 'bg-brand text-brand-ink'
+                    ? 'bg-brand text-brand-contrast'
                     : 'bg-white dark:bg-surface-dark text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >

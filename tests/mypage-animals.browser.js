@@ -98,6 +98,8 @@ async page => {
         registeredCount = count;
         await reset('registeredAnimals');
         await page.getByText(`총 ${count}마리의 동물을 등록했습니다`, { exact: true }).waitFor();
+        // 종은 영문 값(DOG) 대신 한글 이름으로 보인다.
+        assert((await cards().first().innerText()).includes('개 •'), 'Registered species not in Korean');
         await next().click();
         await cards().locator('h3').first().getByText('동물 21', { exact: true }).waitFor();
         await favorites().click();

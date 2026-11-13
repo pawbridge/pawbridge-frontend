@@ -14,7 +14,7 @@ export function LoginRequiredCard({ className = '' }: { className?: string }) {
         <Link
           to="/login"
           state={{ from: location.pathname + location.search }}
-          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-gray-900 text-sm font-bold hover:opacity-90 transition-opacity"
+          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
         >
           로그인
         </Link>

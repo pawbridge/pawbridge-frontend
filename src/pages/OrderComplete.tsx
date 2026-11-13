@@ -110,7 +110,7 @@ export default function OrderComplete() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">잘못된 접근입니다.</p>
           <Link
             to="/"
-            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover inline-block"
+            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover inline-block"
           >
             홈으로
           </Link>
@@ -143,7 +143,7 @@ export default function OrderComplete() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/products"
-              className="px-6 py-2 bg-brand text-gray-900 font-bold rounded-lg hover:bg-brand-hover"
+              className="px-6 py-2 bg-brand text-brand-contrast font-bold rounded-lg hover:bg-brand-hover"
             >
               쇼핑 계속하기
             </Link>
@@ -176,7 +176,7 @@ export default function OrderComplete() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => refetch()}
-              className="px-6 py-2 bg-brand text-gray-900 font-bold rounded-lg hover:bg-brand-hover"
+              className="px-6 py-2 bg-brand text-brand-contrast font-bold rounded-lg hover:bg-brand-hover"
             >
               다시 시도
             </button>
@@ -224,7 +224,7 @@ export default function OrderComplete() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">주문 정보를 불러올 수 없습니다.</p>
           <Link
             to="/"
-            className="px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover inline-block"
+            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover inline-block"
           >
             홈으로
           </Link>
@@ -239,7 +239,7 @@ export default function OrderComplete() {
       <div className="flex flex-col w-full max-w-3xl gap-8">
         {/* 성공 아이콘 및 메시지 */}
         <div className="flex flex-col items-center text-center gap-4 pt-8">
-          <div className="flex items-center justify-center size-24 bg-brand/20 dark:bg-brand/30 rounded-full">
+          <div className="flex items-center justify-center size-24 bg-brand-selected rounded-full">
             <CheckFillIcon aria-hidden="true" className="icon text-brand-accent text-6xl" />
           </div>
           <div className="flex flex-col gap-2">
@@ -319,7 +319,7 @@ export default function OrderComplete() {
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link
             to="/"
-            className="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-gray-900 text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90"
+            className="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-brand text-brand-contrast text-base font-bold leading-normal tracking-[0.015em] hover:opacity-90"
           >
             홈으로
           </Link>

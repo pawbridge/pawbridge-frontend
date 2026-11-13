@@ -1,8 +1,10 @@
-// Approved Figma: PawBridge Yellow v1 (main v2.3).
+// Approved Figma: SHYU Semantic PawBridge Blue v1 (F안, 2026-11-12).
 const brand = {
-  DEFAULT: '#FFF2A6',
-  hover: '#F7E58C',
-  soft: '#FFFCE9',
+  DEFAULT: '#006CF3',
+  hover: '#0060DA',
+  // 파랑 바탕 위 글자(action/primary-text). 흰 글자 대비 4.73:1
+  contrast: '#FFFFFF',
+  soft: '#F2F7FF',
   ink: '#30302E',
   muted: '#646460',
   border: '#DDDDD8',
@@ -43,8 +45,12 @@ export default {
           stone: neutralStone,
           brand: {
             ...brand,
-            // 테두리, 보조 글자, 연노랑 배경은 다크에서 SHYU 다크 값으로 바뀐다(index.css의 .dark).
+            // 테두리, 보조 글자, 연한 바탕, 선택 바탕은 다크에서 다크 값으로 바뀐다(index.css의 .dark).
             soft: 'rgb(var(--brand-soft) / <alpha-value>)',
+            // 선택된 탭, 칩, 메뉴의 바탕과 그 위 글자(bg/accent). 주 버튼(bg-brand)과 구분한다.
+            selected: 'rgb(var(--brand-selected) / <alpha-value>)',
+            'selected-hover': 'rgb(var(--brand-selected-hover) / <alpha-value>)',
+            'selected-ink': 'rgb(var(--brand-selected-ink) / <alpha-value>)',
             muted: 'rgb(var(--brand-muted) / <alpha-value>)',
             border: 'rgb(var(--brand-border) / <alpha-value>)',
             accent: 'rgb(var(--brand-accent) / <alpha-value>)',
@@ -60,8 +66,8 @@ export default {
           "card-dark": "#1a1a1a",
           "border-light": "#e5e7eb",
           "border-dark": "#333333",
-          // SHYU border/accent 다크: 연노랑 배경 자리(#1A1A1A)를 구분하는 35% 노랑 테두리
-          "accent-border-dark": "rgb(255 242 166 / 0.35)",
+          // 다크에서 연한 바탕 자리를 구분하는 35% 파랑 테두리(blue-dark-line #5196FD)
+          "accent-border-dark": "rgb(81 150 253 / 0.35)",
           'text-main': brand.ink,
           'text-secondary': brand.muted,
           'subtext-light': brand.muted,

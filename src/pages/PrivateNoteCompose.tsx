@@ -131,7 +131,7 @@ export default function PrivateNoteCompose() {
             <button
               type="submit"
               disabled={sending || !body.trim() || count > 5000}
-              className={`${contactButton} border-brand bg-brand text-brand-ink`}
+              className={`${contactButton} border-brand bg-brand text-brand-contrast`}
             >
               {sending ? '전송 중…' : pending.current ? '같은 쪽지 전송 확인' : '쪽지 보내기'}
             </button>

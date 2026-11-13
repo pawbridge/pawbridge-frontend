@@ -115,7 +115,7 @@ export default function NavigationGroup({ id, title, destinations, current, mode
       onPointerEnter={hoverTrigger}
       onPointerMove={hoverTrigger}
       aria-current={current ? 'page' : undefined}
-      className={`rounded-lg px-3 py-2 text-sm leading-5 text-brand-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${current ? 'bg-brand font-bold hover:bg-brand-hover dark:text-brand-ink' : 'font-medium hover:bg-neutral-100 dark:text-gray-200 dark:hover:bg-gray-800'}`}
+      className={`rounded-lg px-3 py-2 text-sm leading-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus ${current ? 'bg-brand-selected text-brand-selected-ink font-bold hover:bg-brand-selected-hover' : 'font-medium text-brand-ink hover:bg-neutral-100 dark:text-gray-200 dark:hover:bg-gray-800'}`}
       onClick={() => {
         // 호버로 열린 메뉴는 클릭해도 고정하지 않는다. 클릭 열고 닫기는 호버가 없는 터치와 키보드용이다.
         if (modeRef.current !== 'hover') changeMode(modeRef.current ? null : 'explicit');

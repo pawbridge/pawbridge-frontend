@@ -131,7 +131,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset, shelter
           placeholder={mode === 'feature' ? '예: 검은 털, 흰 가슴 무늬, 파란 목줄, 수원역 근처' : '공고번호를 정확히 입력하세요'}
           className={`${fieldClass} flex-1`}
         />
-        <button type="button" onClick={submitSearch} className="h-12 rounded-2xl bg-brand px-8 text-sm font-bold text-brand-ink transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
+        <button type="button" onClick={submitSearch} className="h-12 rounded-2xl bg-brand px-8 text-sm font-bold text-brand-contrast transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
           검색
         </button>
       </div>
@@ -155,22 +155,22 @@ export default function AnimalSearchFilters({ filters, onApply, onReset, shelter
       <div className="relative rounded-2xl bg-stone-50 dark:bg-stone-900 px-4 py-4 md:px-5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-bold text-brand-ink dark:text-text-dark">검색 조건</span>
-          <button type="button" onClick={() => onApply({ ...filters, species: undefined })} className={`${chipClass} ${!filters.species ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" onClick={() => onApply({ ...filters, species: undefined })} className={`${chipClass} ${!filters.species ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {!filters.species && <span aria-hidden="true" className="mr-1">✓</span>}전체 동물
           </button>
-          <button type="button" onClick={() => openPicker('breed')} className={`${chipClass} ${filters.breed ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" onClick={() => openPicker('breed')} className={`${chipClass} ${filters.breed ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {filters.breed || '품종'}
           </button>
-          <button type="button" onClick={() => openPicker('region')} className={`${chipClass} ${filters.region ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" onClick={() => openPicker('region')} className={`${chipClass} ${filters.region ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {filters.city || filters.region || '지역'}
           </button>
-          <button type="button" disabled={shelterContext} title={shelterContext ? '보호소 목록에서 선택한 보호중 조건입니다.' : undefined} onClick={() => onApply({ ...filters, status: filters.status === 'PROTECT' ? undefined : 'PROTECT' })} className={`${chipClass} ${filters.status === 'PROTECT' ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" disabled={shelterContext} title={shelterContext ? '보호소 목록에서 선택한 보호중 조건입니다.' : undefined} onClick={() => onApply({ ...filters, status: filters.status === 'PROTECT' ? undefined : 'PROTECT' })} className={`${chipClass} ${filters.status === 'PROTECT' ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {filters.status === 'PROTECT' && <span aria-hidden="true" className="mr-1">✓</span>}보호중
           </button>
-          <button type="button" onClick={() => setDetailsOpen(true)} className={`${chipClass} ${filters.gender ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" onClick={() => setDetailsOpen(true)} className={`${chipClass} ${filters.gender ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             {filters.gender === 'MALE' ? '수컷' : filters.gender === 'FEMALE' ? '암컷' : filters.gender === 'UNKNOWN' ? '성별 미상' : '성별'}
           </button>
-          <button type="button" onClick={() => setDetailsOpen(true)} className={`${chipClass} ${filters.minAge !== undefined || filters.maxAge !== undefined ? 'border-brand-focus bg-brand text-brand-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
+          <button type="button" onClick={() => setDetailsOpen(true)} className={`${chipClass} ${filters.minAge !== undefined || filters.maxAge !== undefined ? 'border-brand-focus bg-brand-selected text-brand-selected-ink' : 'border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark'}`}>
             나이
           </button>
           <button type="button" onClick={() => setDetailsOpen((open) => !open)} className={`${chipClass} ml-0 border-brand-border bg-white dark:bg-card-dark text-brand-ink dark:text-text-dark md:ml-auto`} aria-expanded={detailsOpen}>
@@ -234,7 +234,7 @@ export default function AnimalSearchFilters({ filters, onApply, onReset, shelter
 
               <div className={`flex gap-3 p-4 ${picker === 'region' ? 'border-t border-brand-border' : 'pt-5'}`}>
                 <button type="button" onClick={resetPicker} className="h-12 flex-1 rounded-2xl border border-brand-border text-sm font-medium text-brand-accent">초기화</button>
-                <button type="button" onClick={picker === 'breed' ? applyBreed : applyRegion} className="h-12 flex-1 rounded-2xl bg-brand text-sm font-bold text-brand-ink">적용</button>
+                <button type="button" onClick={picker === 'breed' ? applyBreed : applyRegion} className="h-12 flex-1 rounded-2xl bg-brand text-sm font-bold text-brand-contrast">적용</button>
               </div>
             </div>
           </>

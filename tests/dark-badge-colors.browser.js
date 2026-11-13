@@ -1,14 +1,15 @@
-// 모의 데이터로 주문 상태 칩과 등록 동물 속성 칩이 SHYU color/badge 값을 따르는지 본다.
-// 라이트는 기존 Tailwind 100 바탕, 800 글자 그대로, 다크는 SHYU 상태색(진한 바탕, 흰빛 글자)이어야 한다.
+// 모의 데이터로 주문 상태 칩과 등록 동물 상태, 속성 칩이 무채색 배지인지 본다.
+// 색은 오류, 마감 임박, 주 동작에만 쓰고 상태와 속성은 글자로 구분한다.
+// 무채색 배지는 PawBridge Blue v1의 badge/info 값(라이트 #F5F5F5 바탕에 #30302E, 다크 #262626 바탕에 #E7E5E4)이다.
 async page => {
   const origin = 'http://127.0.0.1:5274';
   const checks = [], pageErrors = [];
   const assert = (condition, name) => { if (!condition) throw new Error(name); checks.push(name); };
   const user = { id: 98, userId: 98, name: '검수보호소', nickname: '검수보호소', email: 'shelter@example.invalid', provider: 'LOCAL', role: 'ROLE_SHELTER', careRegNo: '311000000001', createdAt: '2026-09-01T00:00:00' };
   const order = (orderId, status) => ({ orderId, orderUuid: `00000000-0000-0000-0000-00000000000${orderId}`, totalAmount: 19000, status, receiverName: '검수', receiverPhone: '010-0000-0000', deliveryAddress: '서울시 검수구', createdAt: '2026-11-01T10:00:00', items: [{ productName: '산책 하네스', skuCode: 'SKU-1', price: 19000, quantity: 1 }] });
-  const orders = { content: [order(1, 'PENDING'), order(2, 'PAID'), order(3, 'COMPLETED'), order(4, 'CANCELLED')], totalElements: 4, totalPages: 1, number: 0, size: 10 };
-  const animal = (id, gender) => ({ id, animalId: id, species: 'DOG', breed: '믹스견', gender, neuterStatus: 'YES', status: 'PROTECT', imageUrl: origin + '/favicon-96.png', createdAt: '2026-11-01T10:00:00', favoriteCount: 0 });
-  const animals = { content: [animal(1, 'MALE'), animal(2, 'FEMALE')], totalElements: 2, totalPages: 1, number: 0, size: 20 };
+  const orders = { content: [order(1, 'PENDING'), order(2, 'PAID'), order(3, 'COMPLETED'), order(4, 'CANCELLED'), order(5, 'FAILED')], totalElements: 5, totalPages: 1, number: 0, size: 10 };
+  const animal = (id, gender, status) => ({ id, animalId: id, species: 'DOG', breed: '믹스견', gender, neuterStatus: 'YES', status, imageUrl: origin + '/favicon-96.png', createdAt: '2026-11-01T10:00:00', favoriteCount: 0 });
+  const animals = { content: [animal(1, 'MALE', 'PROTECT'), animal(2, 'FEMALE', 'ADOPTED')], totalElements: 2, totalPages: 1, number: 0, size: 20 };
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.route('**/*', async route => {
     const parts = /^https?:\/\/([^/:]+)(?::\d+)?(\/[^?]*)?/.exec(route.request().url());
@@ -44,20 +45,13 @@ async page => {
   };
 
   await page.setViewportSize({ width: 1920, height: 900 });
+  // 모든 칩은 같은 무채색 배지 값이다.
+  const neutral = ['rgb(245, 245, 245) / rgb(48, 48, 46)', 'rgb(38, 38, 38) / rgb(231, 229, 228)'];
   await page.goto(origin + '/orders');
-  await expectChips([
-    ['주문 대기', 'rgb(254, 249, 195) / rgb(133, 77, 14)', 'rgb(69, 26, 3) / rgb(255, 251, 235)'],
-    ['결제 완료', 'rgb(220, 252, 231) / rgb(22, 101, 52)', 'rgb(22, 49, 38) / rgb(221, 239, 233)'],
-    ['주문 완료', 'rgb(219, 234, 254) / rgb(30, 64, 175)', 'rgb(16, 42, 51) / rgb(226, 235, 239)'],
-    ['주문 취소', 'rgb(254, 226, 226) / rgb(153, 27, 27)', 'rgb(69, 10, 10) / rgb(252, 165, 165)'],
-  ], 'orders');
+  await expectChips(['주문 대기', '결제 완료', '주문 완료', '주문 취소', '결제 실패'].map(label => [label, ...neutral]), 'orders');
 
   await page.goto(origin + '/registered-animals');
-  await expectChips([
-    ['수컷', 'rgb(219, 234, 254) / rgb(30, 64, 175)', 'rgb(23, 37, 84) / rgb(219, 234, 254)'],
-    ['암컷', 'rgb(252, 231, 243) / rgb(157, 23, 77)', 'rgb(80, 7, 36) / rgb(252, 231, 243)'],
-    ['중성화 완료', 'rgb(243, 232, 255) / rgb(107, 33, 168)', 'rgb(59, 7, 100) / rgb(243, 232, 255)'],
-  ], 'registered');
+  await expectChips(['보호 중', '입양 완료', '수컷', '암컷', '중성화 완료'].map(label => [label, ...neutral]), 'registered');
 
   assert(pageErrors.length === 0, 'no-page-errors: ' + pageErrors.join(' | '));
   return checks;

@@ -9,7 +9,7 @@ interface AnimalSearchCardProps {
 }
 
 const statusLabels: Record<string, string> = {
-  PROTECT: '보호중', ADOPTION_PENDING: '입양대기중', ADOPTED: '종료(입양)', EUTHANIZED: '종료(안락사)',
+  PROTECT: '보호중', ADOPTION_PENDING: '입양대기중', ADOPTED: '입양완료', EUTHANIZED: '종료(안락사)',
   NATURAL_DEATH: '종료(자연사)', RETURNED: '종료(반환)', DONATED: '종료(기증)', RELEASED: '종료(방사)', ESCAPED: '탈출', UNKNOWN: '미상',
 };
 
@@ -71,7 +71,8 @@ export default function AnimalSearchCard({ animal, searchReturnTo }: AnimalSearc
 
       <div className="min-w-0 py-0.5">
         <div className="flex flex-wrap items-center gap-2 pr-0 md:pr-20">
-          <span className="rounded-full bg-[#ddefe9] px-3 py-1 text-xs font-medium text-[#02542d]">{statusLabels[animal.status] || animal.status}</span>
+          {/* 상태는 글자로 구분하고 무채색 배지로 둔다. 색은 마감 임박(D-day)에만 쓴다. */}
+          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-brand-ink dark:bg-stone-800 dark:text-gray-200">{statusLabels[animal.status] || animal.status}</span>
           {deadline && <span className="rounded-full bg-[#fffbeb] px-3 py-1 text-xs font-bold text-[#b45309]">{deadline}</span>}
         </div>
         <span className="mt-3 hidden text-xs font-bold text-brand-accent md:absolute md:right-4 md:top-4 md:block">상세 보기</span>

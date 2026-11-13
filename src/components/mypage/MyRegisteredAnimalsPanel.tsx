@@ -1,6 +1,7 @@
 import MyPageListState, { type MyPageListFeedback } from './MyPageListState';
 import { Link } from 'react-router-dom';
 import type { Animal, PageResponse } from '../../types/api.types';
+import { animalSpeciesLabel, animalStatusLabel } from '../../lib/animalDisplay';
 import AddIcon from '../../assets/icons/material-symbols/add.svg?react';
 import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
 
@@ -25,7 +26,7 @@ export default function MyRegisteredAnimalsPanel({
         </h2>
         <Link
           to="/animals/new"
-          className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
         >
           <AddIcon aria-hidden="true" className="icon text-[18px]" />
           새 동물 등록
@@ -57,44 +58,40 @@ export default function MyRegisteredAnimalsPanel({
                         </div>
                       )}
                       <div className="p-4">
-                        {/* 상태 + 성별 + 중성화 배지 */}
+                        {/* 상태 + 성별 + 중성화 배지. 글자로 구분하고 색은 쓰지 않는다(무채색 배지). */}
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {animal.status && (
-                            <span className={`text-xs font-bold rounded-full px-2 py-1 ${
-                              animal.status === 'PROTECT'
-                                ? 'bg-green-100 text-green-700 dark:bg-[#163126] dark:text-[#DDEFE9]'
-                                : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
-                            }`}>
-                              {animal.status === 'PROTECT' ? '보호중' : animal.status}
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                              {animalStatusLabel(animal.status)}
                             </span>
                           )}
                           {animal.gender === 'MALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-100">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               수컷
                             </span>
                           )}
                           {animal.gender === 'FEMALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-100">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               암컷
                             </span>
                           )}
                           {(!animal.gender || (animal.gender as string) === 'UNKNOWN') && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               미상
                             </span>
                           )}
                           {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-100">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               중성화 완료
                             </span>
                           )}
                           {(animal.neuterStatus === 'NO' || animal.neutered === false) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               중성화 미완료
                             </span>
                           )}
                           {animal.neuterStatus === 'UNKNOWN' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
                               중성화 미상
                             </span>
                           )}
@@ -102,7 +99,7 @@ export default function MyRegisteredAnimalsPanel({
 
                         <h3 className="font-bold text-text-main dark:text-white mb-2">{animal.breed || '품종 정보 없음'}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {animal.species || '종 정보 없음'} • {animal.age ? `${animal.age}세` : '나이 정보 없음'}
+                          {animalSpeciesLabel(animal.species)} • {animal.age ? `${animal.age}세` : '나이 정보 없음'}
                         </p>
                       </div>
                     </Link>
@@ -131,7 +128,7 @@ export default function MyRegisteredAnimalsPanel({
                             onClick={() => onPageChange(page)}
                             className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                               currentPage === page
-                                ? 'bg-brand text-brand-ink'
+                                ? 'bg-brand text-brand-contrast'
                                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                             }`}
                           >

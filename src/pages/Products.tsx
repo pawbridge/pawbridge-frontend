@@ -108,7 +108,7 @@ export default function Products() {
             <p className="text-gray-500 dark:text-gray-400">상품을 불러오는데 실패했습니다.</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 px-6 py-2 bg-brand text-brand-ink rounded-lg hover:bg-brand-hover"
+              className="mt-4 px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
             >
               다시 시도
             </button>
@@ -154,8 +154,8 @@ export default function Products() {
               onClick={() => handleSortChange('skuId', 'desc')}
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('skuId', 'desc')
-                  ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
+                  ? 'bg-brand-selected text-brand-selected-ink'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand-selected'
               }`}
             >
               <p className="text-sm font-medium">기본순</p>
@@ -164,8 +164,8 @@ export default function Products() {
               onClick={() => handleSortChange('createdAt', 'desc')}
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('createdAt', 'desc')
-                  ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
+                  ? 'bg-brand-selected text-brand-selected-ink'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand-selected'
               }`}
             >
               <p className="text-sm font-medium">신상품순</p>
@@ -174,8 +174,8 @@ export default function Products() {
               onClick={() => handleSortChange('price', 'asc')}
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('price', 'asc')
-                  ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
+                  ? 'bg-brand-selected text-brand-selected-ink'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand-selected'
               }`}
             >
               <p className="text-sm font-medium">가격 낮은순</p>
@@ -184,8 +184,8 @@ export default function Products() {
               onClick={() => handleSortChange('price', 'desc')}
               className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 ${
                 isActiveSort('price', 'desc')
-                  ? 'bg-brand text-brand-ink'
-                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand/20'
+                  ? 'bg-brand-selected text-brand-selected-ink'
+                  : 'bg-secondary-light dark:bg-gray-700 hover:bg-brand-selected'
               }`}
             >
               <p className="text-sm font-medium">가격 높은순</p>
@@ -199,7 +199,7 @@ export default function Products() {
               <p className="text-lg text-gray-500 dark:text-gray-400 mb-4">검색 결과가 없습니다</p>
               <button
                 onClick={handleReset}
-                className="px-6 py-3 bg-brand text-brand-ink font-semibold rounded-lg hover:opacity-90 transition-opacity"
+                className="px-6 py-3 bg-brand text-brand-contrast font-semibold rounded-lg hover:opacity-90 transition-opacity"
               >
                 필터 초기화
               </button>
@@ -227,7 +227,7 @@ export default function Products() {
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${
                   currentPage === 0
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                    : 'bg-secondary-light dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-brand/20 hover:text-brand-accent'
+                    : 'bg-secondary-light dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-brand-selected hover:text-brand-accent'
                 }`}
               >
                 <ChevronLeftIcon aria-hidden="true" className="icon text-xl" />
@@ -252,8 +252,8 @@ export default function Products() {
                     onClick={() => handlePageChange(pageNum)}
                     className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium ${
                       currentPage === pageNum
-                        ? 'bg-brand text-brand-ink'
-                        : 'hover:bg-brand/20 hover:text-brand-accent'
+                        ? 'bg-brand text-brand-contrast'
+                        : 'hover:bg-brand-selected hover:text-brand-accent'
                     }`}
                   >
                     {pageNum + 1}
@@ -269,7 +269,7 @@ export default function Products() {
                 className={`flex h-9 w-9 items-center justify-center rounded-full ${
                   !data?.hasNext
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                    : 'bg-secondary-light dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-brand/20 hover:text-brand-accent'
+                    : 'bg-secondary-light dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-brand-selected hover:text-brand-accent'
                 }`}
               >
                 <ChevronRightIcon aria-hidden="true" className="icon text-xl" />

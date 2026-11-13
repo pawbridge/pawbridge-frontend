@@ -60,9 +60,9 @@ export default function Pagination({ currentPage, totalPages, onPageChange, show
             <li key={`page-${pageNum}`} className={separated && (index < mobileStart || index >= mobileStart + 3) ? 'hidden sm:list-item' : undefined}>
               <button
                 onClick={() => onPageChange(pageNum)}
-                className={separated ? `${separatedButton} ${isActive ? '!border-brand-focus !bg-brand !text-brand-ink font-bold' : ''}` : `flex items-center justify-center px-4 h-10 leading-tight transition-colors ${
+                className={separated ? `${separatedButton} ${isActive ? '!border-brand !bg-brand !text-brand-contrast font-bold' : ''}` : `flex items-center justify-center px-4 h-10 leading-tight transition-colors ${
                   isActive
-                    ? 'text-brand-accent bg-brand/20 border border-brand-focus dark:border-brand-focus font-bold'
+                    ? 'text-brand-accent bg-brand-selected border border-brand-focus dark:border-brand-focus font-bold'
                     : 'text-gray-500 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white'
                 }`}
                 aria-label={`${pageNum + 1}페이지`}

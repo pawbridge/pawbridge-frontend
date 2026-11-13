@@ -120,7 +120,7 @@ export default function ProductFilterSidebar({
         {/* 검색 버튼 */}
         <button
           onClick={handleSearch}
-          className="w-full h-10 bg-brand text-brand-ink rounded-lg font-medium hover:bg-brand-hover transition-colors"
+          className="w-full h-10 bg-brand text-brand-contrast rounded-lg font-medium hover:bg-brand-hover transition-colors"
         >
           검색
         </button>
@@ -136,7 +136,7 @@ export default function ProductFilterSidebar({
               onClick={() => handleCategoryClick(undefined)}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
                 !filters.categoryId
-                  ? 'bg-brand/20 text-brand-accent'
+                  ? 'bg-brand-selected text-brand-accent'
                   : 'hover:bg-secondary-light dark:hover:bg-gray-700'
               }`}
             >
@@ -158,7 +158,7 @@ export default function ProductFilterSidebar({
                     onClick={() => handleCategoryClick(category.id)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left ${
                       filters.categoryId === category.id
-                        ? 'bg-brand/20 text-brand-accent'
+                        ? 'bg-brand-selected text-brand-accent'
                         : 'hover:bg-secondary-light dark:hover:bg-gray-700'
                     }`}
                   >

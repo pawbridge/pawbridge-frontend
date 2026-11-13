@@ -271,7 +271,7 @@ export default function Wishlist() {
         {/* 상품 목록 */}
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-dashed">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand/10 mb-6">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-soft mb-6">
               <FavoriteIcon aria-hidden="true" className="icon text-4xl text-brand-accent" />
             </div>
             <h3 className="text-xl font-bold text-text-light dark:text-text-dark">찜한 상품이 없습니다.</h3>
@@ -280,7 +280,7 @@ export default function Wishlist() {
             </p>
             <Link
               to="/products"
-              className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
+              className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-6 py-3 text-sm font-bold text-brand-contrast shadow-lg shadow-brand/20 hover:bg-brand-hover transition-all"
             >
               쇼핑하러 가기
               <ArrowForwardIcon aria-hidden="true" className="icon text-sm" />
@@ -388,7 +388,7 @@ export default function Wishlist() {
                         <button
                           onClick={() => addToCartMutation.mutate(item.skuId)}
                           disabled={isSoldOut || addToCartMutation.isPending}
-                          className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-brand py-2.5 px-3 text-sm font-bold text-brand-ink shadow-sm hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
+                          className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-brand py-2.5 px-3 text-sm font-bold text-brand-contrast shadow-sm hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
                         >
                           {isSoldOut ? (
                             <>
@@ -438,7 +438,7 @@ export default function Wishlist() {
                     onClick={() => setCurrentPage(i)}
                     className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium transition-colors ${
                       i === currentPage
-                        ? 'bg-brand dark:bg-brand text-brand-ink border-brand-focus'
+                        ? 'bg-brand dark:bg-brand text-brand-contrast border-brand'
                         : 'text-subtext-light dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-brand-accent'
                     }`}
                   >

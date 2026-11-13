@@ -38,7 +38,7 @@ export default function ShelterDiscoveryCard({ shelter, filters }: { shelter: Sh
     </div><Link to={detailUrl} state={detailState} className="min-h-11 shrink-0 self-start py-3 text-sm underline underline-offset-4">보호소 상세 →</Link></div>
     <p className="mt-4 text-xs leading-5 text-brand-muted dark:text-gray-300">선택한 접수기간의 최근 동물 3마리를 미리 보여드려요. 상세에서 전체 기간의 동물과 보호 현황을 볼 수 있어요.</p>
     <div aria-label={`${shelter.name} 보호중 동물 미리보기`} className="mt-3 flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3">{shelter.animals.map(animal => <Preview key={animal.id} animal={animal} returnTo={animalUrl} />)}</div>
-    <div className="mt-4 flex flex-col gap-3 sm:flex-row"><Link to={detailUrl} state={detailState} className="flex min-h-11 items-center justify-center rounded-lg bg-brand px-6 text-sm font-bold text-brand-ink hover:bg-brand-hover">보호소 상세 보기 →</Link>
+    <div className="mt-4 flex flex-col gap-3 sm:flex-row"><Link to={detailUrl} state={detailState} className="flex min-h-11 items-center justify-center rounded-lg bg-brand px-6 text-sm font-bold text-brand-contrast hover:bg-brand-hover">보호소 상세 보기 →</Link>
       <button type="button" aria-expanded={historyOpen} aria-controls={`shelter-history-${shelter.id}`} onClick={toggleHistory} className="min-h-11 rounded-lg border border-brand-border px-6 text-sm font-medium">보호 현황 {historyOpen ? '접기 −' : '펼치기 +'}</button></div>
     <div id={`shelter-history-${shelter.id}`}>{historyOpen && <ShelterHistory shelterId={shelter.id} />}</div>
   </article>;

@@ -70,7 +70,7 @@ export default function AnimalReportDetail() {
     <article className="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800 md:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <span className="mb-3 inline-block rounded-full bg-brand/20 px-3 py-1 text-sm font-semibold text-brand-accent">
+          <span className="mb-3 inline-block rounded-full bg-brand-selected px-3 py-1 text-sm font-semibold text-brand-accent">
             {report.kind === 'MISSING' ? '실종 알림' : '목격 제보'}
           </span>
           <h1 className="text-2xl font-bold md:text-3xl">{report.title}</h1>

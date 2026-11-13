@@ -148,7 +148,7 @@ export default function AnimalReportForm() {
                 <button key={option.kind} type="button" disabled={reportId !== null}
                   aria-pressed={form.kind === option.kind}
                   onClick={() => update('kind', option.kind)}
-                  className={`min-h-24 rounded-xl border p-4 text-left transition-colors disabled:cursor-not-allowed ${form.kind === option.kind ? 'border-brand-ink bg-brand/20 dark:border-brand' : 'border-gray-300 hover:border-brand-ink dark:border-gray-600'}`}>
+                  className={`min-h-24 rounded-xl border p-4 text-left transition-colors disabled:cursor-not-allowed ${form.kind === option.kind ? 'border-brand-ink bg-brand-selected dark:border-brand' : 'border-gray-300 hover:border-brand-ink dark:border-gray-600'}`}>
                   <span className="block font-bold">{option.label}</span>
                   <span className="mt-1 block text-sm text-gray-600 dark:text-gray-300">{option.hint}</span>
                 </button>
@@ -227,7 +227,7 @@ export default function AnimalReportForm() {
           </section>
           <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:justify-end">
             <Link className="inline-flex min-h-12 items-center justify-center rounded-lg bg-gray-100 px-6 font-bold hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600" to={reportListPath(form.kind)}>취소</Link>
-            <button className="min-h-12 rounded-lg bg-brand px-8 font-bold text-brand-ink hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={mutation.isPending}>
+            <button className="min-h-12 rounded-lg bg-brand px-8 font-bold text-brand-contrast hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? '저장 중...' : reportId === null ? '제보 등록' : '수정 완료'}
             </button>
           </div>

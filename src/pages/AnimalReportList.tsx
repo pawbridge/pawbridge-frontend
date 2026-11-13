@@ -71,7 +71,7 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
     </div>
     <nav aria-label="제보 종류" className="grid grid-cols-2 gap-3 sm:flex">
       {(['MISSING', 'SIGHTING'] as const).map(tab => <Link key={tab} to={`${reportListPath(tab)}${query}`} aria-current={tab === kind ? 'page' : undefined}
-        className={`flex min-h-12 items-center justify-center rounded-lg border px-4 text-sm sm:w-[180px] ${tab === kind ? 'border-brand bg-brand font-bold text-brand-ink' : 'border-brand-border font-medium hover:bg-neutral-100 dark:border-gray-700 dark:hover:bg-gray-800'}`}>
+        className={`flex min-h-12 items-center justify-center rounded-lg border px-4 text-sm sm:w-[180px] ${tab === kind ? 'border-brand-focus bg-brand-selected font-bold text-brand-selected-ink' : 'border-brand-border font-medium hover:bg-neutral-100 dark:border-gray-700 dark:hover:bg-gray-800'}`}>
         {tab === 'MISSING' ? '실종 알림' : '목격 제보'}
       </Link>)}
     </nav>
@@ -88,7 +88,7 @@ export default function AnimalReportList({ kind }: { kind: AnimalReportKind }) {
           <p className="mt-2 text-sm text-brand-muted dark:text-gray-300">{data && !isError ? `현재 페이지 ${data.content.length}건 · 최신 등록순` : '최신 등록순'}{keyword && ` · 검색어: ${keyword}`}</p>
         </div>
         <div className="flex flex-col gap-2 sm:items-end">
-          <Link to={`/reports/new?kind=${kind}`} className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand px-6 text-sm font-bold text-brand-ink hover:bg-brand-hover">{missing ? '실종 알리기' : '목격 제보하기'}</Link>
+          <Link to={`/reports/new?kind=${kind}`} className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand px-6 text-sm font-bold text-brand-contrast hover:bg-brand-hover">{missing ? '실종 알리기' : '목격 제보하기'}</Link>
           <p className="text-xs leading-[18px] text-brand-muted dark:text-gray-400">열람은 누구나 · 작성은 로그인 후</p>
         </div>
       </div>

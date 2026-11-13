@@ -110,7 +110,7 @@ async page => {
       await breed.waitFor({ state: 'visible' });
       await breed.fill('');
       await page.locator('label').filter({ hasText: '보호 상태' }).getByRole('button').first().click();
-      await page.getByRole('button', { name: '종료 (입양)', exact: true }).click();
+      await page.getByRole('button', { name: '입양 완료', exact: true }).click();
       const statusResponse = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/v1/animals/100/status'));
       await page.getByRole('button', { name: '수정하기', exact: true }).click();
       await statusResponse;

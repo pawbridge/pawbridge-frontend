@@ -31,7 +31,7 @@ export default function ContactLayout({
               key={item.id}
               to={item.href}
               aria-current={active === item.id ? 'page' : undefined}
-              className={`${contactButton} flex-1 !justify-start lg:flex-none ${active === item.id ? 'border-brand bg-brand font-bold text-brand-ink' : ''}`}
+              className={`${contactButton} flex-1 !justify-start lg:flex-none ${active === item.id ? 'border-brand-focus bg-brand-selected font-bold text-brand-selected-ink' : ''}`}
             >
               {item.label}
             </Link>

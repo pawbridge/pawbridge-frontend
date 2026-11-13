@@ -43,7 +43,7 @@ export default function MyPageListState({
           type="button"
           onClick={onRetry}
           disabled={isFetching}
-          className="mt-6 min-h-12 rounded-lg bg-brand px-7 text-sm font-bold text-brand-ink hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus disabled:cursor-wait disabled:opacity-60"
+          className="mt-6 min-h-12 rounded-lg bg-brand px-7 text-sm font-bold text-brand-contrast hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-focus disabled:cursor-wait disabled:opacity-60"
         >
           {isFetching ? '다시 불러오는 중...' : '다시 시도'}
         </button>
