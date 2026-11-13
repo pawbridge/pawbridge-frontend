@@ -32,7 +32,7 @@ export function ShelterAnimalSummary({ shelterId }: { shelterId: number }) {
         <dd className={index === 0 ? 'text-xs text-brand-muted dark:text-gray-300' : 'hidden text-xs text-brand-muted dark:text-gray-300 xl:block'}>{index === 0 ? '접수기간 전체 · 수집 정보 기준' : '현재 보호중인 동물'}</dd>
       </div>)}
     </dl>
-    {counts.some(count => count.isError) && <p role="alert" className="text-sm">일부 마릿수를 불러오지 못했어요. <button type="button" onClick={() => counts.forEach(count => { if (count.isError) void count.refetch(); })} className="min-h-11 underline">마릿수 다시 불러오기</button></p>}
+    {counts.some(count => count.isError) && <p role="alert" className="text-sm">일부 마릿수를 불러오지 못했어요. <button type="button" onClick={() => counts.forEach(count => { if (count.isError) void count.refetch(); })} className="min-h-11 underline-offset-4 font-semibold hover:underline">마릿수 다시 불러오기</button></p>}
     <p className="text-xs leading-5 text-brand-muted dark:text-gray-300">APMS 수집 정보 기준입니다. 실제 보호 상태는 보호소에 확인해 주세요.</p>
   </section>;
 }

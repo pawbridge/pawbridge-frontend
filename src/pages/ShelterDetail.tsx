@@ -71,7 +71,7 @@ export default function ShelterDetail() {
               </dl>
               <div className="mt-3 mb-5 sm:ml-[5.25rem]"><AddressActions key={shelter.address} name={shelter.name} address={shelter.address} /></div>
               <dl className="space-y-5 text-sm leading-6">
-                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">전화</dt><dd className="break-words">{telephone ? <a href={telephone} className="underline underline-offset-4">{phone}</a> : phone || '등록된 정보가 없어요'}</dd></div>
+                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">전화</dt><dd className="break-words">{telephone ? <a href={telephone} className="underline-offset-4 hover:underline">{phone}</a> : phone || '등록된 정보가 없어요'}</dd></div>
                 <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3"><dt className="text-gray-600 dark:text-gray-400">관할기관</dt><dd className="break-words">{shelter.organizationName || '등록된 정보가 없어요'}</dd></div>
               </dl>
               {telephone && <a href={telephone} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-border-light px-5 text-sm font-semibold hover:bg-gray-50 dark:border-border-dark dark:hover:bg-gray-800 sm:w-auto">전화로 문의하기</a>}

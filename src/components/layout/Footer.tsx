@@ -41,7 +41,7 @@ export default function Footer() {
         </div>
 
         <div className={`mt-8 border-t border-brand-border text-brand-muted pt-5 text-xs leading-5 dark:border-gray-700 dark:text-gray-400`}>
-          <p>반려동물 동반여행 정보는 <a href="https://api.visitkorea.or.kr/" target="_blank" rel="noopener noreferrer" className={`underline underline-offset-2 ${hoverColor}`}>한국관광공사 TourAPI</a>를 활용합니다.</p>
+          <p>반려동물 동반여행 정보는 <a href="https://api.visitkorea.or.kr/" target="_blank" rel="noopener noreferrer" className={`underline-offset-2 ${hoverColor} font-semibold hover:underline`}>한국관광공사 TourAPI</a>를 활용합니다.</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 sm:justify-start">
               <p>© 2026 포우 브릿지</p>
