@@ -35,7 +35,7 @@ function Detail() {
         <section className={`${adminPanel} space-y-5`}><h2 className="text-xl font-bold">신청 정보</h2><AdminDetailFields fields={[['신청자', data.applicantName], ['이메일', data.applicantEmail], ['신청일', date(application.requestedAt)]]} /></section>
         {application.status === 'PENDING' ? <section className={`${adminPanel} space-y-4`}>
           <h2 className="text-xl font-bold">보호소 확인</h2><p className="text-sm text-brand-muted dark:text-stone-300">소속을 확인한 보호소의 등록번호를 입력해 주세요.</p>
-          <Link className="inline-flex min-h-11 items-center text-sm underline" to="/admin/shelters" target="_blank" rel="noreferrer">보호소 목록에서 확인 (새 탭)</Link>
+          <Link className="inline-flex min-h-11 items-center text-sm underline-offset-4 hover:underline" to="/admin/shelters" target="_blank" rel="noreferrer">보호소 목록에서 확인 (새 탭)</Link>
           <form className="space-y-5" onSubmit={event => { event.preventDefault(); if (!locked && registration.trim() && note.trim()) setMode('approve'); }}>
             <fieldset disabled={locked} className="space-y-5">
               <div><label htmlFor="registration" className="text-sm font-medium">연결할 보호소 등록번호 (필수)</label><input id="registration" className={adminInput} required maxLength={50} value={registration} onChange={event => setRegistration(event.target.value)} /><p className="mt-2 text-xs text-brand-muted dark:text-stone-300">필수 입력 · 최대 50자</p></div>

@@ -68,7 +68,7 @@ export default function PrivateNoteCompose() {
   }
   return (
     <ContactLayout>
-      <Link to="/notes" className="text-sm underline underline-offset-4">
+      <Link to="/notes" className="text-sm underline-offset-4 hover:underline">
         쪽지함으로
       </Link>
       <h2 className="mt-5 text-xl font-bold">

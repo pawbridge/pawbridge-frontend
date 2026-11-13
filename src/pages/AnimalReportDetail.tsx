@@ -43,7 +43,7 @@ export default function AnimalReportDetail() {
     const missing = !Number.isSafeInteger(reportId) || reportId <= 0 || (isAxiosError(error) && error.response?.status === 404);
     return shell(<div className="mx-auto max-w-4xl px-4 py-16" role="alert">
       <h1 className="text-2xl font-bold">{missing ? '제보를 찾을 수 없습니다' : '제보를 불러오지 못했습니다'}</h1>
-      <Link to={reportListPath(report?.kind)} className="mt-4 inline-block text-brand-accent underline">목록으로 돌아가기</Link>
+      <Link to={reportListPath(report?.kind)} className="mt-4 inline-block text-brand-accent underline-offset-4 hover:underline">목록으로 돌아가기</Link>
     </div>);
   }
 

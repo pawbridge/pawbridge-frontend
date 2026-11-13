@@ -128,13 +128,13 @@ export default function AnimalReportForm() {
     return <main className="mx-auto max-w-3xl px-4 py-16" role="status">제보를 불러오는 중입니다.</main>;
   }
   if (reportId !== null && isError) {
-    return <main className="mx-auto max-w-3xl px-4 py-16">제보를 불러오지 못했습니다. <Link className="underline" to={reportListPath(form.kind)}>목록으로</Link></main>;
+    return <main className="mx-auto max-w-3xl px-4 py-16">제보를 불러오지 못했습니다. <Link className="underline-offset-4 font-semibold hover:underline" to={reportListPath(form.kind)}>목록으로</Link></main>;
   }
 
   const missing = form.kind === 'MISSING';
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
-      <Link to={reportListPath(form.kind)} className="text-sm font-semibold underline underline-offset-4">제보 목록으로</Link>
+      <Link to={reportListPath(form.kind)} className="text-sm font-semibold underline-offset-4 hover:underline">제보 목록으로</Link>
       <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:p-9">
         <p className="text-sm font-bold text-brand-accent">동물을 다시 만날 수 있도록</p>
         <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">{reportId === null ? (missing ? '실종 동물 알리기' : '목격 제보하기') : '제보 수정'}</h1>

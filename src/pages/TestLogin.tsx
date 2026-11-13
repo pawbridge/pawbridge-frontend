@@ -71,7 +71,7 @@ export default function TestLogin() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">시험 계정 로그인</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               운영 점검용 이메일 계정만 쓸 수 있어요. 회원은{' '}
-              <Link to="/login" className="underline">네이버·구글 로그인</Link>을 이용해주세요.
+              <Link to="/login" className="underline-offset-4 font-semibold hover:underline">네이버·구글 로그인</Link>을 이용해주세요.
             </p>
           </div>
 

@@ -70,25 +70,25 @@ export default function NoteNotificationBell() {
             <Link
               to="/notes"
               onClick={() => setOpen(false)}
-              className="flex min-h-11 items-center text-sm underline"
+              className="flex min-h-11 items-center text-sm underline-offset-4 hover:underline"
             >
               쪽지함
             </Link>
           </div>
           <div className="max-h-[50dvh] overflow-y-auto">
             {memberChatEnabled && <section aria-label="채팅 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:border dark:border-accent-border-dark">
-              <div className="flex items-center justify-between gap-3"><h3 className="font-bold">채팅 알림</h3><Link to="/chats" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline">대화 목록</Link></div>
+              <div className="flex items-center justify-between gap-3"><h3 className="font-bold">채팅 알림</h3><Link to="/chats" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline-offset-4 hover:underline">대화 목록</Link></div>
               {chat.notifications.map((room) => <Link key={room.roomId} to={`/chats/${room.roomId}`}
                 onClick={() => setOpen(false)} className="my-2 block rounded-lg bg-white p-3 focus-visible:outline-brand-focus dark:bg-gray-900">
                 <p className="text-sm font-medium">{room.counterpartNickname}님에게 새 메시지가 왔어요</p>
                 <time dateTime={room.updatedAt} className="mt-1 block text-xs text-brand-muted dark:text-gray-400">{new Date(room.updatedAt).toLocaleString('ko-KR')}</time>
               </Link>)}
               {!chat.notifications.length && !chat.error && <p className="py-3 text-sm">새 채팅 알림이 없습니다.</p>}
-              {chat.error && <p role="status" className="text-sm">채팅 알림을 불러오지 못했어요. <button className="min-h-11 underline" onClick={() => void chat.refresh()}>다시 시도</button></p>}
+              {chat.error && <p role="status" className="text-sm">채팅 알림을 불러오지 못했어요. <button className="min-h-11 underline-offset-4 font-semibold hover:underline" onClick={() => void chat.refresh()}>다시 시도</button></p>}
               {chat.hasMore && <button className="min-h-11 w-full rounded-lg border border-brand-border" disabled={chat.loading} onClick={() => void chat.more()}>{chat.loading ? '불러오는 중…' : '이전 채팅 알림 더 보기'}</button>}
             </section>}
             {(favorites.items.length > 0 || favorites.error) && <section aria-label="관심 동물 알림" className="mb-4 rounded-xl bg-brand-soft p-3 dark:border dark:border-accent-border-dark">
-              <div className="flex items-center justify-between gap-3"><h3 className="font-bold">관심 동물</h3><Link to="/favorite-animals" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline">관심 목록</Link></div>
+              <div className="flex items-center justify-between gap-3"><h3 className="font-bold">관심 동물</h3><Link to="/favorite-animals" onClick={() => setOpen(false)} className="flex min-h-11 items-center underline-offset-4 hover:underline">관심 목록</Link></div>
               {favorites.items.map((item) => <Link key={item.animalId} to={`/animals/${item.animalId}`}
                 onClick={() => setOpen(false)} className="my-2 flex items-center gap-3 rounded-lg bg-white p-3 focus-visible:outline-brand-focus dark:bg-gray-900">
                 {item.imageUrl && <img src={item.imageUrl} alt="" width={48} height={48} loading="lazy" className="h-12 w-12 shrink-0 rounded-lg object-cover" />}
@@ -98,7 +98,7 @@ export default function NoteNotificationBell() {
                   <time dateTime={item.changedAt} className="mt-1 block text-xs text-brand-muted dark:text-gray-400">{new Date(item.changedAt).toLocaleString('ko-KR')}</time>
                 </span>
               </Link>)}
-              {favorites.error && <p role="status" className="text-sm">관심 동물 소식을 불러오지 못했어요. <button type="button" className="min-h-11 underline" onClick={favorites.retry}>다시 시도</button></p>}
+              {favorites.error && <p role="status" className="text-sm">관심 동물 소식을 불러오지 못했어요. <button type="button" className="min-h-11 underline-offset-4 font-semibold hover:underline" onClick={favorites.retry}>다시 시도</button></p>}
             </section>}
             {notifications.items.map((item) => (
               <Link
@@ -126,7 +126,7 @@ export default function NoteNotificationBell() {
                 <button
                   type="button"
                   onClick={() => void notifications.refresh()}
-                  className="min-h-11 underline"
+                  className="min-h-11 underline-offset-4 font-semibold hover:underline"
                 >
                   다시 시도
                 </button>

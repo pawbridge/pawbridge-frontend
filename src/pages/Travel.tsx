@@ -55,7 +55,7 @@ export default function Travel() {
       ) : page === null ? (
         <div className="space-y-4">
           <TravelFeedback error title="페이지 주소를 확인해 주세요" description="올바른 페이지 번호가 아닙니다. 첫 페이지에서 다시 살펴보세요." />
-          <Link className="inline-flex min-h-11 items-center font-semibold underline" to={travelListPath(areaCode)}>첫 페이지로</Link>
+          <Link className="inline-flex min-h-11 items-center font-semibold underline-offset-4 hover:underline" to={travelListPath(areaCode)}>첫 페이지로</Link>
         </div>
       ) : (
         <section aria-labelledby="travel-results-title" className="space-y-6">
@@ -80,7 +80,7 @@ export default function Travel() {
           ) : page > 0 && (places.data.page !== page || !places.data.items.length) ? (
             <div className="space-y-4">
               <TravelFeedback title="이 페이지를 표시할 수 없어요" description="목록이 변경되었거나 해당 페이지를 제공하지 못하고 있습니다. 첫 페이지에서 다시 살펴보세요." />
-              <Link className="inline-flex min-h-11 items-center font-semibold underline" to={travelListPath(areaCode)}>첫 페이지로</Link>
+              <Link className="inline-flex min-h-11 items-center font-semibold underline-offset-4 hover:underline" to={travelListPath(areaCode)}>첫 페이지로</Link>
             </div>
           ) : !places.data.items.length && (places.data.availability === 'PREPARING' || places.data.availability === 'FAILED') ? (
             <TravelFeedback title="장소 정보를 준비 중이에요" description="아직 수집을 마치지 못했습니다. 이 지역에 장소가 없다는 뜻은 아니에요." />
