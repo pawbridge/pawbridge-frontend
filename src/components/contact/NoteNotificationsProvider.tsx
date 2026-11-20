@@ -95,6 +95,7 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     streamAbortController.current = controller;
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let delay = 1000;
+    let rateLimitStreak = 0;
     knownNoteIds.current = new Set();
     loadingMore.current = false;
     visibleSessionVersion.current = -1;
@@ -120,6 +121,7 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
           (event) => {
             if (!isCurrentSession() || controller.signal.aborted) return;
             delay = 1000;
+            rateLimitStreak = 0;
             if (event.event === 'ready' || event.event === 'resync') {
               void refresh();
               return;
@@ -166,9 +168,11 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
         }
       }
       if (!controller.signal.aborted && isCurrentSession()) {
+        if ((retryFailure as { status?: number } | undefined)?.status === 429) rateLimitStreak += 1;
         retryTimer = setTimeout(() => {
+          retryTimer = undefined;
           void connect();
-        }, noteStreamRetryDelay(retryFailure, delay));
+        }, noteStreamRetryDelay(retryFailure, delay, Math.random, rateLimitStreak));
         delay = Math.min(delay * 2, 30000);
       }
     }
@@ -176,9 +180,21 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     const resume = () => {
       if (document.visibilityState === 'visible') void refresh();
     };
+    // 탭을 다시 보거나 네트워크가 돌아오면 늘어난 대기를 버리고 바로 한 번 붙는다.
+    // 60초 점검과 focus에는 걸지 않는다. 걸면 보이는 탭이 한도에 막혔을 때 1분마다 다시 붙는다.
+    const retryNow = () => {
+      if (retryTimer === undefined || document.visibilityState !== 'visible') return;
+      clearTimeout(retryTimer);
+      retryTimer = undefined;
+      delay = 1000;
+      rateLimitStreak = 0;
+      void connect();
+    };
     window.addEventListener('focus', resume);
     window.addEventListener('online', resume);
+    window.addEventListener('online', retryNow);
     document.addEventListener('visibilitychange', resume);
+    document.addEventListener('visibilitychange', retryNow);
     // Repairs a missed after-commit push, rolling overlap or a saturated SSE queue even while connected.
     const repair = setInterval(resume, 60000);
     return () => {
@@ -187,7 +203,9 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       clearInterval(repair);
       window.removeEventListener('focus', resume);
       window.removeEventListener('online', resume);
+      window.removeEventListener('online', retryNow);
       document.removeEventListener('visibilitychange', resume);
+      document.removeEventListener('visibilitychange', retryNow);
     };
   }, [accessToken, currentUserId, sessionVersion, isCurrentSession, refresh]);
   const visible =

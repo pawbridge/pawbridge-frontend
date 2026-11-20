@@ -4,7 +4,7 @@ import { Client } from '@stomp/stompjs';
 import { useQueryClient } from '@tanstack/react-query';
 import { getChatNotifications, issueChatTicket } from '../../api/memberChat.api';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
-import { chatSocketUrl, memberChatEnabled } from '../../lib/memberChat';
+import { chatReconnectDelayMs, chatReconnectExtraWait, chatSocketUrl, memberChatEnabled } from '../../lib/memberChat';
 import { requestChatTicket } from '../../lib/chatTicket';
 import type { ChatReceipt, ChatRoom, ChatSend, ChatSignal } from '../../types/memberChat';
 import { MemberChatContext } from './useMemberChat';
@@ -129,6 +129,20 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
     const pending = new Map<string, AwaitingReceipt>();
     awaiting.current = pending;
     let authenticationRetry: ReturnType<typeof setTimeout> | undefined;
+    // 마지막 연결 성공 뒤 시도 횟수. 연결표 실패로 다시 activate해도 이어서 센다.
+    let attempts = 0;
+    let skipWait: (() => void) | undefined;
+    const waitBeforeAttempt = (milliseconds: number) => new Promise<void>((resolve) => {
+      const done = () => {
+        clearTimeout(timer);
+        abort.signal.removeEventListener('abort', done);
+        if (skipWait === done) skipWait = undefined;
+        resolve();
+      };
+      const timer = setTimeout(done, milliseconds);
+      abort.signal.addEventListener('abort', done, { once: true });
+      skipWait = done;
+    });
     const rejectPending = () => {
       pending.forEach((receipt) => {
         clearTimeout(receipt.timer);
@@ -139,12 +153,16 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
     if (!memberChatEnabled || !token || !owner) return () => abort.abort();
     const client = new Client({
       brokerURL: chatSocketUrl(import.meta.env.VITE_API_BASE_URL || '', window.location.origin),
-      reconnectDelay: 5000,
+      reconnectDelay: chatReconnectDelayMs,
       connectionTimeout: 10000,
       heartbeatIncoming: 15000,
       heartbeatOutgoing: 15000,
       debug: () => { /* Never print CONNECT credentials or private frames. */ },
       beforeConnect: async () => {
+        if (abort.signal.aborted || !current()) return;
+        // stompjs의 지수 모드는 연결에 성공해도 간격을 되돌리지 않아 여기서 직접 늘린다.
+        const extraWait = chatReconnectExtraWait(attempts++);
+        if (extraWait > 0) await waitBeforeAttempt(extraWait);
         if (abort.signal.aborted || !current()) return;
         try {
           const ticket = await requestChatTicket(owner, abort.signal, () => issueChatTicket(abort.signal));
@@ -165,6 +183,7 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
       onConnect: () => {
         if (!current() || abort.signal.aborted) { void client.deactivate({ force: true }); return; }
         client.connectHeaders = {};
+        attempts = 0;
         setConnected(true);
         client.subscribe('/user/queue/chat', (frame) => {
           if (!current() || abort.signal.aborted) return;
@@ -203,10 +222,18 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
     client.activate();
     void refresh();
     const resume = () => { if (document.visibilityState === 'visible') void refresh(); };
+    // 탭을 다시 보거나 네트워크가 돌아오면 늘어난 대기를 버린다. 남는 대기는 stompjs의 5초뿐이다.
+    const retryNow = () => {
+      if (document.visibilityState !== 'visible') return;
+      attempts = 0;
+      skipWait?.();
+    };
     const repair = setInterval(resume, 60000);
     window.addEventListener('focus', resume);
     window.addEventListener('online', resume);
+    window.addEventListener('online', retryNow);
     document.addEventListener('visibilitychange', resume);
+    document.addEventListener('visibilitychange', retryNow);
     return () => {
       abort.abort(); rejectPending(); clearInterval(repair);
       clearTimeout(authenticationRetry);
@@ -215,7 +242,9 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
       if (socket.current === client) socket.current = null;
       window.removeEventListener('focus', resume);
       window.removeEventListener('online', resume);
+      window.removeEventListener('online', retryNow);
       document.removeEventListener('visibilitychange', resume);
+      document.removeEventListener('visibilitychange', retryNow);
     };
   }, [token, owner, session, current, refresh]);
   const visible = !!token && !!owner && visibleSession.current === session;

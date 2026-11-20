@@ -32,10 +32,22 @@ export class NoteStreamError extends Error {
   }
 }
 
-export function noteStreamRetryDelay(failure: unknown, delay: number, random = Math.random): number {
-  const wait = failure instanceof NoteStreamError && failure.status === 429
-    ? (failure.retryAfterMs ?? 30_000)
-    : delay;
+// 429가 이어질 때 기다리는 시간의 상한. 회원당 연결 한도를 넘은 탭이 고정 간격으로 끝없이 다시 붙지 않게 한다.
+const maxRateLimitedWaitMs = 300_000;
+
+export function noteStreamRetryDelay(
+  failure: unknown,
+  delay: number,
+  random = Math.random,
+  rateLimitStreak = 1,
+): number {
+  let wait = delay;
+  if (failure instanceof NoteStreamError && failure.status === 429) {
+    // 서버가 준 대기 시간을 최소로 지키고, 연달아 거절되면 두 배씩 늘린다.
+    const minimum = failure.retryAfterMs ?? 30_000;
+    const growth = 2 ** Math.max(0, rateLimitStreak - 1);
+    wait = Math.max(minimum, Math.min(minimum * growth, maxRateLimitedWaitMs));
+  }
   // Add jitter after the server's minimum delay, never before it.
   return wait + Math.floor(random() * 1000);
 }

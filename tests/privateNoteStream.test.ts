@@ -45,6 +45,17 @@ test('429 retries add bounded jitter after the server delay and preserve the old
   assert.equal(noteStreamRetryDelay(undefined, 1000, () => 0), 1000);
 });
 
+test('consecutive 429s double the wait from the server delay up to five minutes', () => {
+  const zero = () => 0;
+  const waits = [1, 2, 3, 4, 5, 6, 7].map((streak) =>
+    noteStreamRetryDelay(new NoteStreamError(429, 15_000), 1000, zero, streak));
+  assert.deepEqual(waits, [15_000, 30_000, 60_000, 120_000, 240_000, 300_000, 300_000]);
+  // 서버가 상한보다 긴 시간을 주면 그 값을 지킨다.
+  assert.equal(noteStreamRetryDelay(new NoteStreamError(429, 300_000), 1000, zero, 3), 300_000);
+  // 429가 아닌 실패는 이어진 429 횟수와 상관없이 기존 지연을 쓴다.
+  assert.equal(noteStreamRetryDelay(new TypeError('synthetic network failure'), 4000, zero, 5), 4000);
+});
+
 test('transport preserves 429 retry metadata and releases the error response without reading private contents', async (t) => {
   let cancelled = false;
   t.mock.method(globalThis, 'fetch', async () => new Response(new ReadableStream({
