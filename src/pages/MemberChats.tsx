@@ -215,6 +215,9 @@ function ChatConversation({ roomId, recipientId }: { roomId?: string; recipientI
 
 export default function MemberChats() {
   const { roomId } = useParams();
+  const { openSocket } = useMemberChat();
+  // 채팅 화면에 있는 동안만 웹소켓을 연다. 방을 옮겨도 이 화면은 그대로라 연결이 유지된다.
+  useEffect(() => openSocket(), [openSocket]);
   const [params] = useSearchParams();
   const owner = useAuthStore((state) => state.user?.id);
   const recipient = Number(params.get('to'));
