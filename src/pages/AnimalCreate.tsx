@@ -18,6 +18,8 @@ import CloseIcon from '../assets/icons/material-symbols/close.svg?react';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import LogoutIcon from '../assets/icons/material-symbols/logout.svg?react';
 import PersonIcon from '../assets/icons/material-symbols/person.svg?react';
+import Button from '../components/common/Button';
+import { buttonClass } from '../lib/button';
 
 export default function AnimalCreate() {
   const navigate = useNavigate();
@@ -209,7 +211,7 @@ export default function AnimalCreate() {
             <p className="text-gray-500 dark:text-gray-400 mb-4">보호소 회원만 동물을 등록할 수 있습니다.</p>
             <Link
               to="/mypage"
-              className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
+              className={buttonClass()}
             >
               마이페이지로 돌아가기
             </Link>
@@ -531,19 +533,18 @@ export default function AnimalCreate() {
           <div className="flex justify-end gap-4 pt-6 border-t border-brand-border dark:border-stone-800">
             <Link
               to="/mypage"
-              className="px-4 py-2 text-sm font-bold text-brand-muted bg-transparent border border-brand-border rounded-lg hover:bg-white hover:text-brand-accent dark:border-stone-800 dark:hover:bg-stone-800 transition-colors"
+              className={buttonClass({ variant: 'secondary' })}
             >
               취소
             </Link>
-            <button
+            <Button
               onClick={handleSubmit}
               disabled={createAnimalMutation.isPending || uploadImageMutation.isPending}
-              className="px-4 py-2 text-sm font-bold text-brand-contrast bg-brand rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createAnimalMutation.isPending || uploadImageMutation.isPending
                 ? '등록 중...'
                 : '등록하기'}
-            </button>
+            </Button>
           </div>
         </div>
         </main>
