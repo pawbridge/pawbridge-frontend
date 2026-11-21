@@ -357,6 +357,15 @@
       "group": "mock"
     },
     {
+      "name": "notification-toast-position",
+      "origin": "http://127.0.0.1:5186",
+      "server": "preview",
+      "profile": "preview-chat",
+      "call": "page-origin",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "private-note-notifications",
       "origin": "http://127.0.0.1:5184",
       "server": "dev",
