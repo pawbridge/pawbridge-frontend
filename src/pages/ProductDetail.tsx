@@ -8,6 +8,7 @@ import AddShoppingCartIcon from '../assets/icons/material-symbols/add_shopping_c
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
+import Button from '../components/common/Button';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -162,12 +163,11 @@ export default function ProductDetail() {
         <div className="text-center">
           <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">상품을 찾을 수 없습니다.</p>
-          <button
+          <Button
             onClick={() => navigate('/products')}
-            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
           >
             상품 목록으로
-          </button>
+          </Button>
         </div>
       </main>
     );
