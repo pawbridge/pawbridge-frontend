@@ -173,6 +173,15 @@
       "group": "mock"
     },
     {
+      "name": "chat-socket-scope",
+      "origin": "http://127.0.0.1:5186",
+      "server": "preview",
+      "profile": "preview-chat",
+      "call": "page-origin",
+      "preNavigate": false,
+      "group": "mock"
+    },
+    {
       "name": "dependency-security",
       "origin": "http://127.0.0.1:5260",
       "server": "dev",

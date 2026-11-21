@@ -10,11 +10,13 @@ import { getNoteStreamClientId } from '../../lib/noteStreamClient';
 import { loadNoteNotificationWindow } from '../../lib/noteNotificationWindow';
 import type { NoteNotification } from '../../types/privateNotes';
 import { NotificationsContext } from './useNoteNotifications';
+import { useChatStreamSignal } from './useMemberChat';
 export default function NoteNotificationsProvider({ children }: { children: ReactNode }) {
   const accessToken = useAuthStore((state) => state.accessToken);
   const currentUserId = useAuthStore((state) => state.user?.id);
   const sessionVersion = getAuthSessionVersion();
   const client = useQueryClient();
+  const onChatSignal = useChatStreamSignal();
   const [items, setItems] = useState<NoteNotification[]>([]);
   const [unread, setUnread] = useState(0);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -126,6 +128,11 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
               void refresh();
               return;
             }
+            if (event.event === 'chat') {
+              // 본문 없는 채팅 신호. 확인과 처리는 채팅 알림 쪽이 한다.
+              onChatSignal(event.data);
+              return;
+            }
             if (event.event !== 'note') return;
             const item = JSON.parse(event.data) as NoteNotification;
             // Reject malformed paths before exposing a notification link.
@@ -207,7 +214,7 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       document.removeEventListener('visibilitychange', resume);
       document.removeEventListener('visibilitychange', retryNow);
     };
-  }, [accessToken, currentUserId, sessionVersion, isCurrentSession, refresh]);
+  }, [accessToken, currentUserId, sessionVersion, isCurrentSession, refresh, onChatSignal]);
   const visible =
     !!accessToken && !!currentUserId && visibleSessionVersion.current === sessionVersion;
   return (
