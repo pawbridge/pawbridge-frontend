@@ -103,10 +103,12 @@ async page => {
   await edit.getByLabel('닉네임 (선택)').fill('a');
   await edit.getByLabel('보호소 등록번호 (필수)').fill('');
   await edit.getByRole('button', { name: '저장', exact: true }).click();
-  check(await edit.getByText('닉네임은 2~10자의 한글, 영문, 숫자만 가능합니다.').isVisible(), 'Nickname validation');
+  check(await edit.getByText('닉네임은 2~16자의 한글, 영문, 숫자만 가능합니다.').isVisible(), 'Nickname validation');
   check(await edit.getByText('보호소 회원은 보호소 등록번호가 필요합니다.').isVisible(), 'Shelter registration validation');
   check(writes.length === 0, 'Invalid form must not send request');
-  await edit.getByLabel('닉네임 (선택)').fill('포우회원');
+  // 소셜 가입 때 자동으로 붙는 가장 긴 닉네임(16자)도 잘리지 않고 저장된다.
+  const longest = '굉장히사랑스러운기니피그9999';
+  await edit.getByLabel('닉네임 (선택)').fill(longest);
   await edit.getByLabel('보호소 등록번호 (필수)').fill(shelter.careRegNo);
   mode = 'pending';
   await edit.getByRole('button', { name: '저장', exact: true }).click();
@@ -118,6 +120,7 @@ async page => {
   releaseMutation(); mode = 'normal';
   await edit.waitFor({ state: 'hidden' });
   check(writes[0].method === 'PUT' && writes[0].body.role === 'ROLE_SHELTER', 'Existing user update contract');
+  check(writes[0].body.nickname === longest, 'A 16-character nickname must be saved whole');
   results.push('member search/filter/validation/update contract/pending modal');
   mode = 'nickname-conflict';
   await page.getByRole('button', { name: '수정', exact: true }).click();

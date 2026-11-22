@@ -211,8 +211,8 @@ export default function MyPage() {
       alert('닉네임을 입력해주세요.');
       return;
     }
-    if (nicknameInput.length < 2 || nicknameInput.length > 30) {
-      alert('닉네임은 2~30자여야 합니다.');
+    if (nicknameInput.length < 2 || nicknameInput.length > 16) {
+      alert('닉네임은 2~16자여야 합니다.');
       return;
     }
     updateNicknameMutation.mutate({ nickname: nicknameInput });

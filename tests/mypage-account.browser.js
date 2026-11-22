@@ -58,7 +58,7 @@ async page => {
   page.on('pageerror', onError);
   await page.route('**/api/v1/**', handler);
   const profile = () => page.getByRole('button', { name: '프로필 정보' });
-  const nickname = () => page.getByPlaceholder('2~30자의 한글, 영문, 숫자');
+  const nickname = () => page.getByPlaceholder('2~16자의 한글, 영문, 숫자');
   const submit = () => page.locator('main button[type="submit"]');
   const cancel = () => page.getByRole('button', { name: '취소', exact: true });
   const setUser = async (provider = 'LOCAL', role = 'ROLE_USER', tab = 'profile') => {
@@ -107,7 +107,10 @@ async page => {
       checks.push(`draft preservation/cancel/layout ${width}`);
     }
     await profile().click();
-    for (const invalid of ['', 'a', 'a'.repeat(31)]) {
+    // 17자부터는 입력칸이 받지 않는다.
+    await nickname().fill('a'.repeat(17));
+    await value(nickname(), 'a'.repeat(16), 'Nickname input must stop at 16 characters');
+    for (const invalid of ['', 'a']) {
       await nickname().fill(invalid);
       const count = (await dialogs()).length;
       await submit().click();
