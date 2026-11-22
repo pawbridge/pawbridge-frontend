@@ -120,7 +120,8 @@ export default function MyProfilePanel({
                 autoComplete="nickname"
                 value={nickname}
                 onChange={(e) => onNicknameChange(e.target.value)}
-                placeholder="2~30자의 한글, 영문, 숫자"
+                maxLength={16}
+                placeholder="2~16자의 한글, 영문, 숫자"
                 className="w-full rounded-lg border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:border-brand-focus focus:ring-brand-focus"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
