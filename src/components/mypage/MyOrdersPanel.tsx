@@ -4,6 +4,7 @@ import type { OrderListResponse, OrderStatus } from '../../types/api.types';
 import { formatPrice, getOrderStatusBadge } from './marketPresentation';
 import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.svg?react';
 import ReceiptLongIcon from '../../assets/icons/material-symbols/receipt_long.svg?react';
+import Badge from '../common/Badge';
 
 interface MyOrdersPanelProps {
   feedback: MyPageListFeedback;
@@ -95,11 +96,9 @@ export default function MyOrdersPanel({
                         </div>
 
                         <div className="flex flex-col gap-2 items-start md:items-center">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.className}`}
-                          >
+                          <Badge>
                             {statusBadge.label}
-                          </span>
+                          </Badge>
                           <button
                             onClick={() => onOrderDetail(order.orderId)}
                             className="text-sm text-brand-accent hover:underline font-medium"

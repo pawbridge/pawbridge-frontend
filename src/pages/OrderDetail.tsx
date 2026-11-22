@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
+import Badge from '../components/common/Badge';
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -35,7 +36,7 @@ export default function OrderDetail() {
 
   // 주문 상태 배지
   const getStatusBadge = (status: string) => {
-    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(무채색 배지). 색은 오류, 마감 임박, 주 동작에만 쓴다.
+    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral). 색은 오류, 마감 임박, 주 동작에만 쓴다.
     const labels: Record<string, string> = {
       PENDING: '주문 대기',
       PAID: '결제 완료',
@@ -43,7 +44,7 @@ export default function OrderDetail() {
       CANCELLED: '주문 취소',
       FAILED: '결제 실패',
     };
-    return { label: labels[status] ?? labels.PENDING, className: 'bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200' };
+    return { label: labels[status] ?? labels.PENDING };
   };
 
   if (isLoading) {
@@ -118,9 +119,9 @@ export default function OrderDetail() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">주문 상태</p>
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${statusBadge.className}`}>
+            <Badge size="medium">
               {statusBadge.label}
-            </span>
+            </Badge>
           </div>
           <div className="text-right">
             <p className="text-sm text-text-secondary dark:text-gray-400 mb-1">주문 일시</p>

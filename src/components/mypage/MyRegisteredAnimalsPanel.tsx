@@ -4,6 +4,7 @@ import type { Animal, PageResponse } from '../../types/api.types';
 import { animalSpeciesLabel, animalStatusLabel } from '../../lib/animalDisplay';
 import AddIcon from '../../assets/icons/material-symbols/add.svg?react';
 import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
+import Badge from '../common/Badge';
 
 interface MyRegisteredAnimalsPanelProps {
   feedback: MyPageListFeedback;
@@ -61,39 +62,39 @@ export default function MyRegisteredAnimalsPanel({
                         {/* 상태 + 성별 + 중성화 배지. 글자로 구분하고 색은 쓰지 않는다(무채색 배지). */}
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {animal.status && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               {animalStatusLabel(animal.status)}
-                            </span>
+                            </Badge>
                           )}
                           {animal.gender === 'MALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               수컷
-                            </span>
+                            </Badge>
                           )}
                           {animal.gender === 'FEMALE' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               암컷
-                            </span>
+                            </Badge>
                           )}
                           {(!animal.gender || (animal.gender as string) === 'UNKNOWN') && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               미상
-                            </span>
+                            </Badge>
                           )}
                           {(animal.neuterStatus === 'YES' || animal.neutered === true) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               중성화 완료
-                            </span>
+                            </Badge>
                           )}
                           {(animal.neuterStatus === 'NO' || animal.neutered === false) && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               중성화 미완료
-                            </span>
+                            </Badge>
                           )}
                           {animal.neuterStatus === 'UNKNOWN' && (
-                            <span className="text-xs font-bold rounded-full px-2 py-1 bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200">
+                            <Badge>
                               중성화 미상
-                            </span>
+                            </Badge>
                           )}
                         </div>
 
