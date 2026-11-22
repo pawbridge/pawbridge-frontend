@@ -1,6 +1,7 @@
 import { resolveSeoMetadata, SITE_NAME, type SeoMetadata } from '../src/lib/seo';
 import { CSP_REPORT_PATH, receiveCspReport } from './cspReport';
 import { resolveDetailMetadata, type DetailMetadata } from './detailMetadata';
+import { isSitemapPath, serveSitemap } from './sitemap';
 
 function shellRequest(request: Request): Request {
   const url = new URL('/', request.url);
@@ -75,10 +76,16 @@ export default {
       });
     }
 
+    const development = env.DEPLOYMENT_ENVIRONMENT === 'dev';
+    if (isSitemapPath(url.pathname)) {
+      // tsconfig의 WebWorker lib가 Workers의 caches.default 선언을 가려서 Workers 타입으로 읽는다.
+      const cache = (caches as unknown as { default: Cache }).default;
+      return serveSitemap(request, { development, cache });
+    }
+
     const shell = await env.ASSETS.fetch(shellRequest(request));
     if (!shell.ok) return shell;
 
-    const development = env.DEPLOYMENT_ENVIRONMENT === 'dev';
     // dev 환경은 운영 API를 부르지 않는다.
     const detail = development ? null : await resolveDetailMetadata(url.pathname);
     const transformed = transformShell(shell, url.pathname, url.search, development, detail);
