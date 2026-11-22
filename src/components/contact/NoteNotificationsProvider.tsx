@@ -22,10 +22,8 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [toast, setToast] = useState<NoteNotification | null>(null);
   const streamAbortController = useRef<AbortController | null>(null);
   const loadingMore = useRef(false);
-  const knownNoteIds = useRef(new Set<string>());
   const visibleSessionVersion = useRef(-1);
   const refreshRevision = useRef(0);
   const loadedPages = useRef(1);
@@ -48,9 +46,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       if (!isCurrentSession() || requestRevision !== refreshRevision.current) return;
       visibleSessionVersion.current = sessionVersion;
       loadedPages.current = data.pagesLoaded;
-      data.content.forEach((item) => knownNoteIds.current.add(item.noteId));
-      while (knownNoteIds.current.size > 1024)
-        knownNoteIds.current.delete(knownNoteIds.current.values().next().value!);
       setItems(data.content);
       setCursor(data.nextCursor);
       setUnread(data.unreadCount);
@@ -78,7 +73,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       setItems((previous) => [
         ...new Map([...previous, ...data.content].map((item) => [item.noteId, item])).values(),
       ]);
-      data.content.forEach((item) => knownNoteIds.current.add(item.noteId));
       if (data.content.length > 0) loadedPages.current += 1;
       setCursor(data.nextCursor);
       setUnread(data.unreadCount);
@@ -98,7 +92,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let delay = 1000;
     let rateLimitStreak = 0;
-    knownNoteIds.current = new Set();
     loadingMore.current = false;
     visibleSessionVersion.current = -1;
     refreshRevision.current += 1;
@@ -106,7 +99,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     setItems([]);
     setUnread(0);
     setCursor(null);
-    setToast(null);
     setError(false);
     setLoading(false);
     if (!accessToken || !currentUserId) return () => controller.abort();
@@ -133,21 +125,8 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
               onChatSignal(event.data);
               return;
             }
-            if (event.event !== 'note') return;
-            const item = JSON.parse(event.data) as NoteNotification;
-            // Reject malformed paths before exposing a notification link.
-            if (
-              item.kind !== 'PRIVATE_NOTE' ||
-              !/^[0-9a-f-]{36}$/i.test(item.noteId) ||
-              item.href !== `/notes/${item.noteId}`
-            )
-              return;
-            if (!knownNoteIds.current.has(item.noteId)) {
-              knownNoteIds.current.add(item.noteId);
-              visibleSessionVersion.current = sessionVersion;
-              setToast(item);
-            }
-            void refresh();
+            // 새 쪽지 신호. 신호의 내용은 쓰지 않고 목록과 읽지 않은 개수를 다시 받는다.
+            if (event.event === 'note') void refresh();
           },
         );
       } catch (failure) {
@@ -227,8 +206,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
         hasMore: visible && cursor !== null,
         refresh,
         more,
-        toast: visible ? toast : null,
-        dismissToast: () => setToast(null),
       }}
     >
       {children}

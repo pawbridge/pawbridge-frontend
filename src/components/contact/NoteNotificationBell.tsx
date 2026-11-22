@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { useNoteNotifications } from './useNoteNotifications';
 import { useMemberChat } from './useMemberChat';
@@ -9,18 +8,11 @@ import { favoriteAnimalName, favoriteNotificationPhrase } from '../../lib/favori
 // 선 아이콘이라 글자색(currentColor)을 선 색으로 쓴다. 다크에서 버튼 글자색을 따라 밝아진다.
 import BellIcon from '../../assets/icons/contact/bell.svg?react';
 
-const toastBox =
-  'flex max-w-full items-center gap-3 rounded-xl border border-brand-border bg-white p-4 shadow-lg dark:bg-gray-900';
-// 닉네임이 길면 줄을 바꾼다. 띄어쓰기 없는 긴 닉네임도 상자 밖으로 넘치지 않는다.
-const toastText = 'min-h-11 min-w-0 content-center break-words text-sm';
-
 export default function NoteNotificationBell() {
   const notifications = useNoteNotifications();
   const chat = useMemberChat();
   const favorites = useFavoriteNotifications();
   const totalUnread = notifications.unread + chat.unread + favorites.unread;
-  const noteToast = notifications.toast;
-  const chatToast = memberChatEnabled ? chat.toast : null;
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -153,44 +145,6 @@ export default function NoteNotificationBell() {
           </div>
         </section>
       )}
-      {(noteToast || chatToast) &&
-        createPortal(
-          // 머리말은 backdrop-filter 때문에 fixed 자식의 기준 영역이 된다. 머리말 안에 두면 토스트가 화면 위로 밀려나
-          // 보이지 않으므로, 화면 기준으로 놓이도록 body에 그린다. 둘이 함께 뜨면 채팅 알림이 위, 쪽지 알림이 아래다.
-          <div className="fixed bottom-4 right-4 z-50 flex max-w-[calc(100vw-32px)] flex-col items-end gap-2">
-            {chatToast && (
-              <div role="status" className={toastBox}>
-                <Link to={`/chats/${chatToast.roomId}`} onClick={chat.dismissToast} className={toastText}>
-                  {chatToast.counterpartNickname}님에게 새 메시지가 왔어요
-                </Link>
-                <button
-                  type="button"
-                  aria-label="새 채팅 알림 닫기"
-                  onClick={chat.dismissToast}
-                  className="h-11 w-11 shrink-0"
-                >
-                  ×
-                </button>
-              </div>
-            )}
-            {noteToast && (
-              <div role="status" className={toastBox}>
-                <Link to={noteToast.href} onClick={notifications.dismissToast} className={toastText}>
-                  {noteToast.actorNickname}님에게 새 쪽지가 왔어요
-                </Link>
-                <button
-                  type="button"
-                  aria-label="새 쪽지 알림 닫기"
-                  onClick={notifications.dismissToast}
-                  className="h-11 w-11 shrink-0"
-                >
-                  ×
-                </button>
-              </div>
-            )}
-          </div>,
-          document.body,
-        )}
     </div>
   );
 }

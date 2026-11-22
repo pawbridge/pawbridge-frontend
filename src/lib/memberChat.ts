@@ -46,15 +46,6 @@ export function chatSignalFor(value: unknown, owner: number): ChatSignal | null 
   return { memberId, kind: kind as ChatSignal['kind'], roomId, sequence };
 }
 
-// 방마다 마지막으로 알린 순번을 기억한다. 같은 새 메시지 신호가 웹소켓과 쪽지 알림 스트림으로
-// 두 번 오거나 다시 와도 처음 한 번만 true다.
-export function isNewChatMessage(known: Map<string, number>, signal: ChatSignal, limit = 1024) {
-  if (signal.kind !== 'MESSAGE' || signal.sequence <= (known.get(signal.roomId) ?? 0)) return false;
-  known.set(signal.roomId, signal.sequence);
-  while (known.size > limit) known.delete(known.keys().next().value!);
-  return true;
-}
-
 export function mergeChatMessages(previous: ChatMessage[], incoming: ChatMessage[]) {
   return [...new Map([...previous, ...incoming].map((message) => [message.sequence, message])).values()]
     .sort((left, right) => left.sequence - right.sequence);

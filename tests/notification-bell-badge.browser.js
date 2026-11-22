@@ -1,4 +1,5 @@
-// Synthetic API/auth/socket only. 새 쪽지와 새 채팅 토스트는 화면 안에 놓이고, 눌러서 닫을 수 있어야 한다.
+// Synthetic API/auth/socket only. 새 쪽지와 새 채팅이 오면 화면을 덮는 알림 상자 없이 종 숫자만 바뀌고,
+// 종을 누르면 두 알림으로 가는 링크가 보여야 한다.
 async (page, origin = 'http://127.0.0.1:5186') => {
   if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(origin)) throw new Error('Loopback test origin required');
   const roomId = '12345678-1234-4567-89ab-123456789abc';
@@ -48,8 +49,6 @@ async (page, origin = 'http://127.0.0.1:5186') => {
     if (arrived && url.pathname === '/api/v1/notes/notifications') data = { content: [note], nextCursor: null, unreadCount: 1 };
     return route.fulfill({ json: { code: 200, data } });
   };
-  const inside = (box, viewport) => box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height;
-  const describe = box => `[${[box.x, box.y, box.x + box.width, box.y + box.height].map(Math.round).join(', ')}]`;
   await page.addInitScript(() => localStorage.setItem('auth-storage', JSON.stringify({
     state: { user: { id: 1, name: '합성 사용자', role: 'ROLE_USER' }, accessToken: 'synthetic-test-token', refreshToken: null }, version: 0,
   })));
@@ -72,31 +71,37 @@ async (page, origin = 'http://127.0.0.1:5186') => {
   try {
     await page.goto(`${origin}/notes`, { waitUntil: 'domcontentloaded' });
     await page.getByRole('heading', { name: '쪽지', exact: true }).waitFor();
-    await page.getByRole('button', { name: /^알림,/ }).waitFor();
-    const noteToast = page.getByRole('status').filter({ hasText: '합성 회원님에게 새 쪽지가 왔어요' });
-    const chatToast = page.getByRole('status').filter({ hasText: '합성 상대님에게 새 메시지가 왔어요' });
+    const bell = page.getByRole('button', { name: /^알림,/ });
+    await bell.waitFor();
     release();
-    await noteToast.waitFor({ state: 'attached' });
-    await chatToast.waitFor({ state: 'attached' });
+    await page.waitForFunction(() => {
+      const label = document.querySelector('[aria-controls="private-note-notifications"]')?.getAttribute('aria-label') ?? '';
+      return label.includes('읽지 않은 쪽지 1개') && label.includes('새 메시지가 있는 대화 1개');
+    });
+    // 신호를 받은 뒤 공급자가 할 일을 마칠 틈을 둔다. 예전 코드는 이 사이에 알림 상자를 그렸다.
+    await page.waitForTimeout(500);
 
-    // PC 폭과 모바일 폭에서 두 토스트가 화면 안에 있고 서로 겹치지 않는다.
+    // PC 폭과 모바일 폭에서 알림 상자는 없고 종 숫자만 2가 된다.
+    const arrivedText = /님에게 (새 )?(쪽지|메시지)가 왔어요/;
     for (const viewport of [original, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
-      const noteBox = await noteToast.boundingBox();
-      const chatBox = await chatToast.boundingBox();
-      check(noteBox && inside(noteBox, viewport), `The note toast is outside the ${viewport.width}x${viewport.height} viewport: ${noteBox && describe(noteBox)}`);
-      check(chatBox && inside(chatBox, viewport), `The chat toast is outside the ${viewport.width}x${viewport.height} viewport: ${chatBox && describe(chatBox)}`);
-      check(chatBox.y + chatBox.height <= noteBox.y, `The toasts overlap at ${viewport.width}px: chat ${describe(chatBox)}, note ${describe(noteBox)}`);
+      check(await page.getByText(arrivedText).count() === 0, `A notification box covers the page at ${viewport.width}px`);
+      check((await bell.innerText()).trim() === '2', `The bell badge is not 2 at ${viewport.width}px`);
     }
     await page.setViewportSize(original);
 
-    await noteToast.getByRole('button', { name: '새 쪽지 알림 닫기' }).click();
-    await noteToast.waitFor({ state: 'detached' });
-    await chatToast.getByRole('button', { name: '새 채팅 알림 닫기' }).click();
-    await chatToast.waitFor({ state: 'detached' });
+    // 종을 누르면 두 알림이 목록에 있고, 각각 대화와 쪽지로 간다.
+    await bell.click();
+    const list = page.getByRole('region', { name: '알림 목록' });
+    const chatLink = list.getByRole('link', { name: /합성 상대님에게 새 메시지가 왔어요/ });
+    const noteLink = list.getByRole('link', { name: /합성 회원님에게 쪽지가 왔어요/ });
+    await chatLink.waitFor();
+    await noteLink.waitFor();
+    check(await chatLink.getAttribute('href') === `/chats/${roomId}`, 'The chat notification link is wrong');
+    check(await noteLink.getAttribute('href') === `/notes/${noteId}`, 'The note notification link is wrong');
     if (errors.length) throw new Error(`Uncaught page errors: ${errors.join('; ')}`);
     return {
-      checks: ['toasts-inside-desktop-viewport', 'toasts-inside-mobile-viewport', 'toasts-do-not-overlap', 'toasts-close-on-click'],
+      checks: ['no-notification-box-desktop', 'no-notification-box-mobile', 'bell-badge-counts-both', 'bell-list-links-both'],
       mocked: ['auth', 'all-api-responses', 'note-stream', 'chat-socket'], productionVerified: false,
     };
   } finally {

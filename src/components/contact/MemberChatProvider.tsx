@@ -5,10 +5,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getChatNotifications, issueChatTicket } from '../../api/memberChat.api';
 import { getAuthSessionVersion, useAuthStore } from '../../store/authStore';
 import {
-  chatReconnectDelayMs, chatReconnectExtraWait, chatSignalFor, chatSocketUrl, isNewChatMessage, memberChatEnabled,
+  chatReconnectDelayMs, chatReconnectExtraWait, chatSignalFor, chatSocketUrl, memberChatEnabled,
 } from '../../lib/memberChat';
 import { requestChatTicket } from '../../lib/chatTicket';
-import type { ChatReceipt, ChatRoom, ChatSend, ChatSignal } from '../../types/memberChat';
+import type { ChatReceipt, ChatRoom, ChatSend } from '../../types/memberChat';
 import { ChatStreamSignalContext, MemberChatContext } from './useMemberChat';
 
 type AwaitingReceipt = {
@@ -30,7 +30,6 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
   const loadedPages = useRef(1);
   const refreshState = useRef({ running: false, queued: false });
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const known = useRef(new Map<string, number>());
   const visibleSession = useRef(-1);
   const [connected, setConnected] = useState(false);
   const [notifications, setNotifications] = useState<ChatRoom[]>([]);
@@ -38,7 +37,6 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
   const [cursor, setCursor] = useState<string | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<ChatRoom | null>(null);
   // 웹소켓을 쓰는 화면 수. 채팅 화면이 떠 있는 동안만 0보다 크다.
   const [socketUsers, setSocketUsers] = useState(0);
   const current = useCallback(() => token === useAuthStore.getState().accessToken
@@ -120,29 +118,15 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
     }
   }), [current]);
 
-  // 새 메시지 신호를 방마다 한 번만 토스트로 알린다. 웹소켓과 쪽지 알림 스트림이 같이 쓴다.
-  const announce = useCallback((signal: ChatSignal) => {
-    if (!isNewChatMessage(known.current, signal)) return;
-    const abort = controller.current;
-    // A signal has no message body. Resolve the room display through authorized REST.
-    void getChatNotifications(undefined, abort?.signal).then((data) => {
-      if (!current() || abort?.signal.aborted) return;
-      const room = data.content.find((item) => item.roomId === signal.roomId);
-      if (room) setToast(room);
-    }).catch(() => {});
-  }, [current]);
-
   // 쪽지 알림 스트림으로 온 채팅 신호. 채팅 화면 밖의 탭은 웹소켓이 없어 이 길로만 새 메시지를 안다.
   // 이 탭의 웹소켓이 연결돼 있으면 같은 신호가 그쪽으로 오므로 건너뛴다.
   const streamSignal = useCallback((data: string) => {
     if (!memberChatEnabled || !owner || !current() || socket.current?.connected) return;
     let value: unknown;
     try { value = JSON.parse(data); } catch { return; }
-    const signal = chatSignalFor(value, owner);
-    if (!signal) return;
-    announce(signal);
+    if (!chatSignalFor(value, owner)) return;
     void refresh();
-  }, [owner, current, announce, refresh]);
+  }, [owner, current, refresh]);
 
   const openSocket = useCallback(() => {
     let open = true;
@@ -161,11 +145,10 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
     controller.current = abort;
     visibleSession.current = -1;
     revision.current++;
-    known.current.clear();
     loadedPages.current = 1;
     refreshState.current = { running: false, queued: false };
     paging.current = false;
-    setNotifications([]); setUnread(0); setCursor(null); setToast(null); setError(false); setLoading(false);
+    setNotifications([]); setUnread(0); setCursor(null); setError(false); setLoading(false);
     if (!memberChatEnabled || !token || !owner) return () => abort.abort();
     void refresh();
     const resume = () => { if (document.visibilityState === 'visible') void refresh(); };
@@ -257,13 +240,11 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
               if ('status' in value) receipt.reject(Object.assign(new Error(value.message), { status: value.status }));
               else if ('roomId' in value) receipt.resolve(value);
             }
-          } else {
-            const signal = chatSignalFor(value, owner);
-            if (signal) announce(signal);
           }
           void refresh();
         });
-        void refresh(); // Recovery is authoritative, not a replay of old toasts.
+        // 다시 연결되면 그사이 놓친 신호 대신 목록을 REST로 다시 받는다.
+        void refresh();
       },
       onWebSocketClose: () => { if (current() && !abort.signal.aborted) setConnected(false); rejectPending(); },
       onStompError: () => { if (current() && !abort.signal.aborted) setError(true); },
@@ -286,11 +267,11 @@ export default function MemberChatProvider({ children }: { children: ReactNode }
       window.removeEventListener('online', retryNow);
       document.removeEventListener('visibilitychange', retryNow);
     };
-  }, [token, owner, session, current, refresh, announce, socketWanted]);
+  }, [token, owner, session, current, refresh, socketWanted]);
   const visible = !!token && !!owner && visibleSession.current === session;
   return <MemberChatContext.Provider value={{
     connected, unread: visible ? unread : 0, notifications: visible ? notifications : [],
-    error, hasMore: visible && cursor !== null, loading, toast: visible ? toast : null,
-    send, refresh, more, dismissToast: () => setToast(null), openSocket,
+    error, hasMore: visible && cursor !== null, loading,
+    send, refresh, more, openSocket,
   }}><ChatStreamSignalContext.Provider value={streamSignal}>{children}</ChatStreamSignalContext.Provider></MemberChatContext.Provider>;
 }

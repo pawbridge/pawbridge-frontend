@@ -8,11 +8,9 @@ export interface MemberChatState {
   error: boolean;
   hasMore: boolean;
   loading: boolean;
-  toast: ChatRoom | null;
   send: (input: ChatSend) => Promise<ChatReceipt>;
   refresh: () => Promise<void>;
   more: () => Promise<void>;
-  dismissToast: () => void;
   // 채팅 화면이 떠 있는 동안만 웹소켓을 연다. 돌려받은 함수를 부르면 닫는다.
   openSocket: () => () => void;
 }
