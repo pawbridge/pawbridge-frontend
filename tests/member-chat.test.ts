@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   existingChatPath, mergeChatMessages, validChatBody, chatSocketUrl, chatReconnectDelayMs, chatReconnectExtraWait,
-  chatSignalFor, isNewChatMessage,
+  chatSignalFor,
 } from '../src/lib/memberChat.ts';
-import type { ChatMessage, ChatSignal } from '../src/types/memberChat.ts';
+import type { ChatMessage } from '../src/types/memberChat.ts';
 
 function message(sequence: number, body = '합성 메시지'): ChatMessage {
   return { roomId: 'synthetic-room', sequence, body, senderId: 1, contextHref: null, createdAt: '2026-10-10T01:00:00Z' };
@@ -50,26 +50,4 @@ test('chat signal is accepted only in the server shape and only for the signed-i
     { ...signal, sequence: 1.5 }, { ...signal, sequence: 2 ** 53 }, { ...signal, memberId: '7' }]) {
     assert.equal(chatSignalFor(value, 7), null);
   }
-});
-
-test('the same new message signal is announced once even when the socket and the note stream both deliver it', () => {
-  const known = new Map<string, number>();
-  const signal = (kind: ChatSignal['kind'], roomId: string, sequence: number): ChatSignal => ({ memberId: 7, kind, roomId, sequence });
-  assert.equal(isNewChatMessage(known, signal('MESSAGE', 'a', 3)), true);
-  assert.equal(isNewChatMessage(known, signal('MESSAGE', 'a', 3)), false);
-  assert.equal(isNewChatMessage(known, signal('MESSAGE', 'a', 2)), false);
-  assert.equal(isNewChatMessage(known, signal('MESSAGE', 'b', 3)), true);
-  assert.equal(isNewChatMessage(known, signal('MESSAGE', 'a', 4)), true);
-  // 보냄, 읽음, 숨김 신호는 알리지 않고 기억한 순번도 바꾸지 않는다.
-  for (const kind of ['SENT', 'READ', 'HIDDEN'] as const) assert.equal(isNewChatMessage(known, signal(kind, 'a', 9)), false);
-  assert.equal(isNewChatMessage(known, signal('MESSAGE', 'a', 5)), true);
-  assert.deepEqual([...known], [['a', 5], ['b', 3]]);
-});
-
-test('remembered rooms are bounded and the oldest room is forgotten first', () => {
-  const known = new Map<string, number>();
-  for (const roomId of ['a', 'b', 'c']) {
-    assert.equal(isNewChatMessage(known, { memberId: 7, kind: 'MESSAGE', roomId, sequence: 1 }, 2), true);
-  }
-  assert.deepEqual([...known.keys()], ['b', 'c']);
 });

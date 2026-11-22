@@ -87,28 +87,25 @@ async (page, origin = 'http://127.0.0.1:5186') => {
     const bell = page.getByRole('button', { name: /^알림,/ });
     await page.getByRole('button', { name: /^알림,.*새 메시지가 있는 대화 0개/ }).waitFor();
     await settle();
-    const toast = page.getByRole('status').filter({ hasText: '새 메시지가 왔어요' });
-    check(await toast.count() === 0, 'A chat toast appeared before any signal');
+    // 새 메시지 알림은 종 숫자와 알림 목록에만 나온다. 화면을 덮는 알림 상자는 없다.
+    const arrivedBox = page.getByText(/님에게 새 메시지가 왔어요/);
     check(tickets === 0 && sockets.opened === 0, `A page other than chat opened the chat socket before any signal (tickets ${tickets}, sockets ${sockets.opened})`);
 
     gates[0].open();
-    await toast.getByText('합성 상대님에게 새 메시지가 왔어요', { exact: true }).waitFor({ state: 'attached' });
     await page.getByRole('button', { name: /^알림,.*새 메시지가 있는 대화 1개/ }).waitFor();
     check(tickets === 0 && sockets.opened === 0, `A page other than chat opened the chat socket (tickets ${tickets}, sockets ${sockets.opened})`);
-
-    await toast.getByRole('button', { name: '새 채팅 알림 닫기' }).dispatchEvent('click');
-    await toast.waitFor({ state: 'detached' });
     await settle();
+    check(await arrivedBox.count() === 0, 'A notification box appeared for the stream signal');
     const beforeRepeat = lists;
     const repeated = streamServed(1);
     gates[1].open();
     await (await repeated).finished();
-    // 되풀이된 신호도 목록은 다시 맞추지만 알림은 다시 띄우지 않는다.
+    // 되풀이된 신호도 목록은 다시 맞춘다.
     const deadline = Date.now() + 5000;
     while (lists === beforeRepeat && Date.now() < deadline) await page.waitForTimeout(50);
     check(lists > beforeRepeat, 'The repeated signal did not refresh the chat notification list');
     await settle();
-    check(await toast.count() === 0, 'The same signal was announced twice');
+    check(await arrivedBox.count() === 0, 'A notification box appeared for the repeated signal');
     check(tickets === 0 && sockets.opened === 0, `Stream signals opened the chat socket (tickets ${tickets}, sockets ${sockets.opened})`);
 
     await bell.click();
@@ -143,7 +140,7 @@ async (page, origin = 'http://127.0.0.1:5186') => {
     check(tickets === 1 && sockets.opened === 1, `Leaving must not reconnect (tickets ${tickets}, sockets ${sockets.opened})`);
     if (errors.length) throw new Error(`Uncaught page errors: ${errors.join('; ')}`);
     return {
-      checks: ['other-page-no-ticket-no-socket', 'stream-signal-sets-toast-and-count', 'repeated-signal-announced-once',
+      checks: ['other-page-no-ticket-no-socket', 'stream-signal-sets-count-without-box', 'repeated-signal-refreshes-list',
         'chat-page-opens-one-socket', 'stream-signal-skipped-while-socket-connected', 'room-change-keeps-socket', 'leaving-closes-socket'],
       mocked: ['auth', 'all-api-responses', 'note-stream', 'chat-socket'], productionVerified: false,
     };
