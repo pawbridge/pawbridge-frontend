@@ -42,7 +42,7 @@ export type AdminUserListResponse = PageResponse<AdminUserListItem>;
 
 // 회원 수정 요청 (관리자용)
 export interface UpdateUserRequest {
-  nickname?: string | null;  // 닉네임 (2~10자)
+  nickname?: string | null;  // 닉네임 (2~16자)
   role?: UserRole;  // 역할
   careRegNo?: string;  // 보호소 등록번호 (ROLE_SHELTER인 경우)
 }

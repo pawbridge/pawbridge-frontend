@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existingChatPath, mergeChatMessages, validChatBody, chatSocketUrl } from '../src/lib/memberChat.ts';
+import {
+  existingChatPath, mergeChatMessages, validChatBody, chatSocketUrl, chatReconnectDelayMs, chatReconnectExtraWait,
+  chatSignalFor,
+} from '../src/lib/memberChat.ts';
 import type { ChatMessage } from '../src/types/memberChat.ts';
 
 function message(sequence: number, body = '합성 메시지'): ChatMessage {
@@ -25,4 +28,26 @@ test('body uses Unicode code points and rejects empty, null and unpaired surroga
 test('WebSocket URL preserves TLS and never contains authentication values', () => {
   assert.equal(chatSocketUrl('https://api.example.invalid', 'https://site.example.invalid'), 'wss://api.example.invalid/api/v1/chats/socket');
   assert.equal(chatSocketUrl('', 'http://localhost:5184'), 'ws://localhost:5184/api/v1/chats/socket');
+});
+
+test('chat reconnect waits double from ten seconds up to five minutes until a connection succeeds', () => {
+  const zero = () => 0;
+  const totals = [0, 1, 2, 3, 4, 5, 6, 7].map((attempt) => chatReconnectExtraWait(attempt, zero) + (attempt ? chatReconnectDelayMs : 0));
+  assert.deepEqual(totals, [0, 10_000, 20_000, 40_000, 80_000, 160_000, 300_000, 300_000]);
+  assert.equal(chatReconnectExtraWait(2, () => 0.999), 15_999);
+  assert.equal(chatReconnectExtraWait(-1, () => 0.999), 0);
+});
+
+test('chat signal is accepted only in the server shape and only for the signed-in member', () => {
+  const signal = { memberId: 7, kind: 'MESSAGE', roomId: 'synthetic-room', sequence: 3 };
+  assert.deepEqual(chatSignalFor(signal, 7), signal);
+  assert.deepEqual(chatSignalFor({ ...signal, body: '합성 본문' }, 7), signal);
+  for (const kind of ['SENT', 'READ', 'HIDDEN']) assert.equal(chatSignalFor({ ...signal, kind }, 7)?.kind, kind);
+  assert.equal(chatSignalFor({ ...signal, kind: 'HIDDEN', sequence: 0 }, 7)?.sequence, 0);
+  assert.equal(chatSignalFor(signal, 8), null);
+  for (const value of [null, 'MESSAGE', 3, [], { ...signal, kind: 'WITHDRAWN' }, { ...signal, kind: 1 },
+    { ...signal, roomId: '' }, { ...signal, roomId: 5 }, { ...signal, sequence: '3' }, { ...signal, sequence: -1 },
+    { ...signal, sequence: 1.5 }, { ...signal, sequence: 2 ** 53 }, { ...signal, memberId: '7' }]) {
+    assert.equal(chatSignalFor(value, 7), null);
+  }
 });

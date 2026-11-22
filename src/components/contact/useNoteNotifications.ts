@@ -9,8 +9,6 @@ export interface NotificationsState {
   hasMore: boolean;
   refresh: () => Promise<void>;
   more: () => Promise<void>;
-  toast: NoteNotification | null;
-  dismissToast: () => void;
 }
 export const NotificationsContext = createContext<NotificationsState | null>(null);
 export function useNoteNotifications() {

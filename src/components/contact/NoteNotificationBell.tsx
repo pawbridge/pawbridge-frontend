@@ -145,32 +145,6 @@ export default function NoteNotificationBell() {
           </div>
         </section>
       )}
-      {notifications.toast && (
-        <div
-          role="status"
-          className="fixed bottom-4 right-4 z-50 flex max-w-[calc(100vw-32px)] items-center gap-3 rounded-xl border border-brand-border bg-white p-4 shadow-lg dark:bg-gray-900"
-        >
-          <Link
-            to={notifications.toast.href}
-            onClick={notifications.dismissToast}
-            className="min-h-11 content-center text-sm"
-          >
-            {notifications.toast.actorNickname}님에게 새 쪽지가 왔어요
-          </Link>
-          <button
-            type="button"
-            aria-label="새 쪽지 알림 닫기"
-            onClick={notifications.dismissToast}
-            className="h-11 w-11"
-          >
-            ×
-          </button>
-        </div>
-      )}
-      {memberChatEnabled && chat.toast && <div role="status" className="fixed bottom-24 right-4 z-50 flex max-w-[calc(100vw-32px)] items-center gap-3 rounded-xl border border-brand-border bg-white p-4 shadow-lg dark:bg-gray-900">
-        <Link to={`/chats/${chat.toast.roomId}`} onClick={chat.dismissToast} className="min-h-11 content-center text-sm">{chat.toast.counterpartNickname}님에게 새 메시지가 왔어요</Link>
-        <button type="button" className="h-11 w-11" aria-label="새 채팅 알림 닫기" onClick={chat.dismissToast}>×</button>
-      </div>}
     </div>
   );
 }

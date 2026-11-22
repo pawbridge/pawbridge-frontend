@@ -10,20 +10,20 @@ import { getNoteStreamClientId } from '../../lib/noteStreamClient';
 import { loadNoteNotificationWindow } from '../../lib/noteNotificationWindow';
 import type { NoteNotification } from '../../types/privateNotes';
 import { NotificationsContext } from './useNoteNotifications';
+import { useChatStreamSignal } from './useMemberChat';
 export default function NoteNotificationsProvider({ children }: { children: ReactNode }) {
   const accessToken = useAuthStore((state) => state.accessToken);
   const currentUserId = useAuthStore((state) => state.user?.id);
   const sessionVersion = getAuthSessionVersion();
   const client = useQueryClient();
+  const onChatSignal = useChatStreamSignal();
   const [items, setItems] = useState<NoteNotification[]>([]);
   const [unread, setUnread] = useState(0);
   const [cursor, setCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [toast, setToast] = useState<NoteNotification | null>(null);
   const streamAbortController = useRef<AbortController | null>(null);
   const loadingMore = useRef(false);
-  const knownNoteIds = useRef(new Set<string>());
   const visibleSessionVersion = useRef(-1);
   const refreshRevision = useRef(0);
   const loadedPages = useRef(1);
@@ -46,9 +46,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       if (!isCurrentSession() || requestRevision !== refreshRevision.current) return;
       visibleSessionVersion.current = sessionVersion;
       loadedPages.current = data.pagesLoaded;
-      data.content.forEach((item) => knownNoteIds.current.add(item.noteId));
-      while (knownNoteIds.current.size > 1024)
-        knownNoteIds.current.delete(knownNoteIds.current.values().next().value!);
       setItems(data.content);
       setCursor(data.nextCursor);
       setUnread(data.unreadCount);
@@ -76,7 +73,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       setItems((previous) => [
         ...new Map([...previous, ...data.content].map((item) => [item.noteId, item])).values(),
       ]);
-      data.content.forEach((item) => knownNoteIds.current.add(item.noteId));
       if (data.content.length > 0) loadedPages.current += 1;
       setCursor(data.nextCursor);
       setUnread(data.unreadCount);
@@ -95,7 +91,7 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     streamAbortController.current = controller;
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let delay = 1000;
-    knownNoteIds.current = new Set();
+    let rateLimitStreak = 0;
     loadingMore.current = false;
     visibleSessionVersion.current = -1;
     refreshRevision.current += 1;
@@ -103,7 +99,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     setItems([]);
     setUnread(0);
     setCursor(null);
-    setToast(null);
     setError(false);
     setLoading(false);
     if (!accessToken || !currentUserId) return () => controller.abort();
@@ -120,25 +115,18 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
           (event) => {
             if (!isCurrentSession() || controller.signal.aborted) return;
             delay = 1000;
+            rateLimitStreak = 0;
             if (event.event === 'ready' || event.event === 'resync') {
               void refresh();
               return;
             }
-            if (event.event !== 'note') return;
-            const item = JSON.parse(event.data) as NoteNotification;
-            // Reject malformed paths before exposing a notification link.
-            if (
-              item.kind !== 'PRIVATE_NOTE' ||
-              !/^[0-9a-f-]{36}$/i.test(item.noteId) ||
-              item.href !== `/notes/${item.noteId}`
-            )
+            if (event.event === 'chat') {
+              // 본문 없는 채팅 신호. 확인과 처리는 채팅 알림 쪽이 한다.
+              onChatSignal(event.data);
               return;
-            if (!knownNoteIds.current.has(item.noteId)) {
-              knownNoteIds.current.add(item.noteId);
-              visibleSessionVersion.current = sessionVersion;
-              setToast(item);
             }
-            void refresh();
+            // 새 쪽지 신호. 신호의 내용은 쓰지 않고 목록과 읽지 않은 개수를 다시 받는다.
+            if (event.event === 'note') void refresh();
           },
         );
       } catch (failure) {
@@ -166,9 +154,11 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
         }
       }
       if (!controller.signal.aborted && isCurrentSession()) {
+        if ((retryFailure as { status?: number } | undefined)?.status === 429) rateLimitStreak += 1;
         retryTimer = setTimeout(() => {
+          retryTimer = undefined;
           void connect();
-        }, noteStreamRetryDelay(retryFailure, delay));
+        }, noteStreamRetryDelay(retryFailure, delay, Math.random, rateLimitStreak));
         delay = Math.min(delay * 2, 30000);
       }
     }
@@ -176,9 +166,21 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
     const resume = () => {
       if (document.visibilityState === 'visible') void refresh();
     };
+    // 탭을 다시 보거나 네트워크가 돌아오면 늘어난 대기를 버리고 바로 한 번 붙는다.
+    // 60초 점검과 focus에는 걸지 않는다. 걸면 보이는 탭이 한도에 막혔을 때 1분마다 다시 붙는다.
+    const retryNow = () => {
+      if (retryTimer === undefined || document.visibilityState !== 'visible') return;
+      clearTimeout(retryTimer);
+      retryTimer = undefined;
+      delay = 1000;
+      rateLimitStreak = 0;
+      void connect();
+    };
     window.addEventListener('focus', resume);
     window.addEventListener('online', resume);
+    window.addEventListener('online', retryNow);
     document.addEventListener('visibilitychange', resume);
+    document.addEventListener('visibilitychange', retryNow);
     // Repairs a missed after-commit push, rolling overlap or a saturated SSE queue even while connected.
     const repair = setInterval(resume, 60000);
     return () => {
@@ -187,9 +189,11 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
       clearInterval(repair);
       window.removeEventListener('focus', resume);
       window.removeEventListener('online', resume);
+      window.removeEventListener('online', retryNow);
       document.removeEventListener('visibilitychange', resume);
+      document.removeEventListener('visibilitychange', retryNow);
     };
-  }, [accessToken, currentUserId, sessionVersion, isCurrentSession, refresh]);
+  }, [accessToken, currentUserId, sessionVersion, isCurrentSession, refresh, onChatSignal]);
   const visible =
     !!accessToken && !!currentUserId && visibleSessionVersion.current === sessionVersion;
   return (
@@ -202,8 +206,6 @@ export default function NoteNotificationsProvider({ children }: { children: Reac
         hasMore: visible && cursor !== null,
         refresh,
         more,
-        toast: visible ? toast : null,
-        dismissToast: () => setToast(null),
       }}
     >
       {children}

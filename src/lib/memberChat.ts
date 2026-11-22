@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../types/memberChat';
+import type { ChatMessage, ChatSignal } from '../types/memberChat';
 
 // Deployment remains a separate approval: expose UI only with an explicit environment flag.
 export const memberChatEnabled = import.meta.env?.VITE_MEMBER_CHAT_ENABLED === 'true';
@@ -15,10 +15,35 @@ export function existingChatPath(roomId: string, search: URLSearchParams) {
   return `/chats/${roomId}${params.size ? `?${params}` : ''}`;
 }
 
+// 끊긴 뒤 stompjs가 먼저 기다리는 시간.
+export const chatReconnectDelayMs = 5000;
+const maxChatReconnectWaitMs = 300_000;
+
+// 마지막 연결 성공 뒤 attempt번째 시도 전에 stompjs의 5초에 더해 기다릴 시간.
+// 회원당 연결 한도를 넘은 탭은 연결표는 받고 CONNECT에서 거절되므로, 성공 전까지 10초, 20초 … 5분으로 늘린다.
+export function chatReconnectExtraWait(attempt: number, random = Math.random) {
+  if (attempt <= 0) return 0;
+  const total = Math.min(chatReconnectDelayMs * 2 ** attempt, maxChatReconnectWaitMs);
+  return total - chatReconnectDelayMs + Math.floor(random() * 1000);
+}
+
 export function chatSocketUrl(apiBase: string, origin: string) {
   const url = new URL('/api/v1/chats/socket', apiBase || origin);
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
   return url.toString();
+}
+
+const chatSignalKinds: readonly string[] = ['SENT', 'MESSAGE', 'READ', 'HIDDEN'];
+
+// 서버가 보낸 본문 없는 채팅 신호를 확인한다. 웹소켓 프레임과 쪽지 알림 스트림의 chat 이벤트가 같은 모양이다.
+// 모양이 다르거나 다른 회원 앞으로 온 값은 null이다.
+export function chatSignalFor(value: unknown, owner: number): ChatSignal | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const { memberId, kind, roomId, sequence } = value as Record<string, unknown>;
+  if (memberId !== owner || typeof kind !== 'string' || !chatSignalKinds.includes(kind)) return null;
+  if (typeof roomId !== 'string' || !roomId) return null;
+  if (typeof sequence !== 'number' || !Number.isSafeInteger(sequence) || sequence < 0) return null;
+  return { memberId, kind: kind as ChatSignal['kind'], roomId, sequence };
 }
 
 export function mergeChatMessages(previous: ChatMessage[], incoming: ChatMessage[]) {
