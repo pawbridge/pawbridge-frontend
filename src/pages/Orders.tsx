@@ -6,6 +6,7 @@ import type { OrderStatus } from '../types/api.types';
 import { useAuthStore } from '../store/authStore';
 import ExpandMoreIcon from '../assets/icons/material-symbols/expand_more.svg?react';
 import ReceiptLongIcon from '../assets/icons/material-symbols/receipt_long.svg?react';
+import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 
 export default function Orders() {
@@ -44,7 +45,7 @@ export default function Orders() {
 
   // 주문 상태 배지
   const getStatusBadge = (status: OrderStatus) => {
-    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(무채색 배지). 색은 오류, 마감 임박, 주 동작에만 쓴다.
+    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral). 색은 오류, 마감 임박, 주 동작에만 쓴다.
     const labels: Record<string, string> = {
       PENDING: '주문 대기',
       PAID: '결제 완료',
@@ -52,7 +53,7 @@ export default function Orders() {
       CANCELLED: '주문 취소',
       FAILED: '결제 실패',
     };
-    return { label: labels[status] ?? labels.PENDING, className: 'bg-neutral-100 text-brand-ink dark:bg-stone-800 dark:text-gray-200' };
+    return { label: labels[status] ?? labels.PENDING };
   };
 
   // 주문 상세 페이지로 이동
@@ -168,11 +169,9 @@ export default function Orders() {
                       </span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">No. {order.orderUuid.slice(0, 13)}</span>
                     </div>
-                    <span
-                      className={`flex-shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.className}`}
-                    >
+                    <Badge className="flex-shrink-0">
                       {statusBadge.label}
-                    </span>
+                    </Badge>
                   </div>
                   <div className="flex gap-3">
                     <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"></div>
@@ -272,11 +271,9 @@ export default function Orders() {
                         </td>
                         <td className="p-4 md:pr-6 align-top text-center">
                           <div className="flex flex-col gap-2 items-center">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.className}`}
-                            >
+                            <Badge>
                               {statusBadge.label}
-                            </span>
+                            </Badge>
                             <button
                               onClick={() => handleViewDetail(order.orderId)}
                               className="w-full max-w-[100px] py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 text-xs font-medium hover:bg-white hover:border-brand-focus hover:text-brand-accent dark:hover:bg-gray-700 transition-colors bg-transparent"

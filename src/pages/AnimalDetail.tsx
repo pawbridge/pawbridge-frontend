@@ -16,6 +16,7 @@ import AnimalChatbot from '../components/common/AnimalChatbot';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
 import { usePageText } from '../components/seo/usePageText';
 import { animalPageText } from '../lib/seoDetail';
+import Badge from '../components/common/Badge';
 
 const dateLabel = (date?: string) => date ? date.slice(0, 10).replace(/-/g, '.') : null;
 const errorMessage = (error: unknown, fallback: string) =>
@@ -174,8 +175,8 @@ export default function AnimalDetail() {
           </div>
           <div className="min-w-0">
             <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-brand-soft px-4 py-2 text-sm font-semibold text-brand-ink dark:border dark:border-accent-border-dark dark:text-gray-200">{animalStatusLabel(animal.status)}</span>
-              {daysLeft !== null && daysLeft >= 0 && <span className="rounded-full border border-border-light px-3 py-2 text-sm font-medium dark:border-gray-700">공고 D-{daysLeft}</span>}
+              <Badge size="medium">{animalStatusLabel(animal.status)}</Badge>
+              {daysLeft !== null && daysLeft >= 0 && <Badge tone="warning" size="medium">공고 D-{daysLeft}</Badge>}
             </div>
             <h1 className="break-words text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">{animal.breed || '품종 정보 없음'}</h1>
             {noticeNo && <p className="mt-3 break-all text-sm text-gray-600 dark:text-gray-300">공고번호 {noticeNo}</p>}

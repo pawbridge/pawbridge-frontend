@@ -8,6 +8,7 @@ import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.
 import BlockIcon from '../../assets/icons/material-symbols/block.svg?react';
 import DeleteIcon from '../../assets/icons/material-symbols/delete.svg?react';
 import FavoriteIcon from '../../assets/icons/material-symbols/favorite.svg?react';
+import Badge from '../common/Badge';
 import Button from '../common/Button';
 
 export type WishlistSortOption = 'latest' | 'priceAsc' | 'priceDesc' | 'nameAsc';
@@ -146,9 +147,9 @@ export default function MyWishlistPanel({
                             }}
                           />
                         </Link>
-                        <span className={`absolute bottom-2 right-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-bold ring-1 ring-inset ${statusBadge.className}`}>
+                        <Badge className="absolute bottom-2 right-2">
                           {statusBadge.text}
-                        </span>
+                        </Badge>
                       </div>
 
                       {/* 상품 정보 */}

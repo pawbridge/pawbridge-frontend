@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Animal } from '../../types/api.types';
 import { animalWeightLabel } from '../../lib/animalDisplay';
+import Badge from '../common/Badge';
 
 interface AnimalSearchCardProps {
   animal: Animal;
@@ -72,8 +73,8 @@ export default function AnimalSearchCard({ animal, searchReturnTo }: AnimalSearc
       <div className="min-w-0 py-0.5">
         <div className="flex flex-wrap items-center gap-2 pr-0 md:pr-20">
           {/* 상태는 글자로 구분하고 무채색 배지로 둔다. 색은 마감 임박(D-day)에만 쓴다. */}
-          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-brand-ink dark:bg-stone-800 dark:text-gray-200">{statusLabels[animal.status] || animal.status}</span>
-          {deadline && <span className="rounded-full bg-[#fffbeb] px-3 py-1 text-xs font-bold text-[#b45309]">{deadline}</span>}
+          <Badge>{statusLabels[animal.status] || animal.status}</Badge>
+          {deadline && <Badge tone="warning">{deadline}</Badge>}
         </div>
         <span className="mt-3 hidden text-xs font-bold text-brand-accent md:absolute md:right-4 md:top-4 md:block">상세 보기</span>
         <h2 className="mt-3 truncate text-lg font-bold text-brand-ink dark:text-text-dark md:text-xl">{animal.breed || '품종 정보 없음'}</h2>

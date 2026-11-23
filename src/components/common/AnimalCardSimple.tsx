@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel } from '../../lib/animalDisplay';
 import type { Animal } from '../../types/api.types';
+import { badgeClass } from '../../lib/badge';
 
 interface AnimalCardSimpleProps {
   animal: Animal;
@@ -19,7 +20,7 @@ export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo, 
   const noticeNumber = animal.apmsNoticeNo || animal.noticeNo;
   const feature = animal.specialMark || animal.description;
   const date = animal.happenDate || animal.createdAt;
-  const statusClassName = 'w-fit rounded-full bg-gray-100 px-3 py-2 text-xs font-medium leading-[18px] text-brand-ink dark:bg-gray-800 dark:text-text-dark';
+  const statusClassName = badgeClass({ className: 'w-fit' });
 
   return (
     <Link
@@ -46,7 +47,7 @@ export default function AnimalCardSimple({ animal, onCardClick, searchReturnTo, 
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex items-start gap-3">
           <h3 className="min-w-0 flex-1 break-keep text-xl font-bold leading-7 [overflow-wrap:anywhere] line-clamp-2">{title}</h3>
-          <span className={`${statusClassName} hidden shrink-0 xl:block`}>{status}</span>
+          <span className={`${statusClassName} hidden shrink-0 xl:inline-flex`}>{status}</span>
         </div>
         <p className="flex flex-wrap gap-x-3 text-sm leading-6">
           <span>{animalGenderLabel(animal.gender)}</span>

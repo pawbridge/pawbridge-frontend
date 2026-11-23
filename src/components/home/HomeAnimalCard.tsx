@@ -14,7 +14,7 @@ export default function HomeAnimalCard({ animal }: { animal: Animal }) {
           : <span className="absolute inset-0 flex items-center justify-center px-2 text-center text-xs text-brand-muted dark:text-gray-300">사진을 준비 중이에요</span>}
       </div>
       <div className="min-w-0 flex-1 p-4">
-        <p className="text-xs font-bold text-brand-ink dark:text-brand-accent">{animal.status === 'PROTECT' ? '보호중' : '보호 상태는 상세에서 확인'}</p>
+        <p className="text-xs font-bold text-brand-ink dark:text-gray-200">{animal.status === 'PROTECT' ? '보호중' : '보호 상태는 상세에서 확인'}</p>
         <h3 className="mt-2 break-words text-lg font-bold group-hover:underline">{title}</h3>
         <p className="mt-1 text-xs leading-relaxed text-brand-muted dark:text-gray-300">{age} · {gender}</p>
         <p className="mt-1 break-words text-xs leading-relaxed text-brand-muted dark:text-gray-300">{animal.shelter?.name || animal.shelterName || '보호소 정보는 상세에서 확인'}</p>
