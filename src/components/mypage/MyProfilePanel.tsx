@@ -1,5 +1,6 @@
 import type { FormEventHandler } from 'react';
 import type { UserInfoResponse } from '../../types/user.types';
+import Button from '../common/Button';
 
 interface MyProfilePanelProps {
   userInfo: Pick<UserInfoResponse, 'email' | 'name' | 'nickname'>;
@@ -130,20 +131,19 @@ export default function MyProfilePanel({
             </div>
 
             <div className="flex justify-end gap-3">
-              <button
+              <Button
                 type="button"
                 onClick={() => onNicknameChange('')}
-                className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-text-main dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                variant="secondary"
               >
                 취소
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={isPending}
-                className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50"
               >
                 {isPending ? '변경 중...' : '변경하기'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

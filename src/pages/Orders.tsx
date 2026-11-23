@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore';
 import ExpandMoreIcon from '../assets/icons/material-symbols/expand_more.svg?react';
 import ReceiptLongIcon from '../assets/icons/material-symbols/receipt_long.svg?react';
 import Badge from '../components/common/Badge';
+import Button from '../components/common/Button';
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -79,12 +80,11 @@ export default function Orders() {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <p className="text-red-500 mb-4 dark:text-red-300">주문 내역을 불러오는 중 오류가 발생했습니다.</p>
-            <button
+            <Button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors"
             >
               다시 시도
-            </button>
+            </Button>
           </div>
         </div>
       </main>

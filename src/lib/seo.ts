@@ -1,3 +1,5 @@
+import { animalRegions } from './animalRegions.ts';
+
 export const SITE_ORIGIN = 'https://www.pawbridge.kr';
 export const SITE_NAME = '포우브릿지';
 
@@ -172,6 +174,31 @@ function canonicalUrl(pathname: string): string {
   return new URL(pathname, `${SITE_ORIGIN}/`).toString();
 }
 
+// 동물 목록에서 시도 하나만 고른 주소(/animals?region=부산광역시)는 지역 이름으로 검색하는 사람에게 맞는 화면이라 색인을 연다.
+// 다른 조건이 붙거나 줄인 이름(region=부산)이면 지금처럼 noindex다. 같은 목록이 여러 주소로 퍼지지 않게 하려는 것이다.
+// 화면 목록의 지역 고르기가 만드는 주소(writeAnimalSearch)와 모양이 같다.
+const animalRegionNames = new Set(animalRegions.map(region => region.value));
+
+export function animalRegionPath(region: string): string {
+  return `/animals?${new URLSearchParams({ region }).toString()}`;
+}
+
+function animalRegionPage(pathname: string, search: string): SeoMetadata | null {
+  if (pathname !== '/animals') return null;
+  const params = new URLSearchParams(search);
+  // size는 같은 이름이 두 번 와도 둘로 센다. region 하나만 있을 때만 통과한다.
+  if (params.size !== 1 || !params.has('region')) return null;
+  const region = params.get('region') ?? '';
+  if (!animalRegionNames.has(region)) return null;
+  return {
+    title: `${region} 보호 동물 - ${SITE_NAME}`,
+    description: `${region} 동물보호소에서 새로운 가족을 기다리는 보호 동물을 찾아보세요. 시군구, 동물 종류, 특징으로 좁혀 볼 수 있어요.`,
+    canonicalUrl: canonicalUrl(animalRegionPath(region)),
+    robots: 'index,follow',
+    knownRoute: true,
+  };
+}
+
 export function resolveSeoMetadata(pathname: string, search = ''): SeoMetadata {
   const normalizedPathname = normalizePathname(pathname);
   const exactPage = exactPages.get(normalizedPathname);
@@ -186,6 +213,9 @@ export function resolveSeoMetadata(pathname: string, search = ''): SeoMetadata {
       knownRoute: true,
     };
   }
+
+  const regionPage = animalRegionPage(normalizedPathname, search);
+  if (regionPage) return regionPage;
 
   const detailPage = detailPages.find(({ pattern }) => pattern.test(normalizedPathname))?.page;
   const page = exactPage ?? detailPage;

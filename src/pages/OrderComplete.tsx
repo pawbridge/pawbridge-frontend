@@ -9,6 +9,8 @@ import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import HourglassEmptyIcon from '../assets/icons/material-symbols/hourglass_empty.svg?react';
 import Inventory2Icon from '../assets/icons/material-symbols/inventory_2.svg?react';
 import CheckFillIcon from '../assets/icons/material-symbols/check-fill.svg?react';
+import Button from '../components/common/Button';
+import { buttonClass } from '../lib/button';
 
 export default function OrderComplete() {
   const userId = useAuthStore(state => state.user?.id);
@@ -110,7 +112,7 @@ export default function OrderComplete() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">잘못된 접근입니다.</p>
           <Link
             to="/"
-            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover inline-block"
+            className={buttonClass()}
           >
             홈으로
           </Link>
@@ -143,13 +145,13 @@ export default function OrderComplete() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               to="/products"
-              className="px-6 py-2 bg-brand text-brand-contrast font-bold rounded-lg hover:bg-brand-hover"
+              className={buttonClass()}
             >
               쇼핑 계속하기
             </Link>
             <Link
               to="/"
-              className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+              className={buttonClass({ variant: 'secondary' })}
             >
               홈으로
             </Link>
@@ -174,15 +176,14 @@ export default function OrderComplete() {
           <p className="text-gray-500 dark:text-gray-400 mb-2">결제 승인 상태를 확인하고 있습니다.</p>
           <p className="text-gray-400 text-sm mb-6">잠시 후 새로고침하거나, 처리 지연 시 문의해 주세요.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
+            <Button
               onClick={() => refetch()}
-              className="px-6 py-2 bg-brand text-brand-contrast font-bold rounded-lg hover:bg-brand-hover"
             >
               다시 시도
-            </button>
+            </Button>
             <Link
               to="/"
-              className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+              className={buttonClass({ variant: 'secondary' })}
             >
               홈으로
             </Link>
@@ -224,7 +225,7 @@ export default function OrderComplete() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">주문 정보를 불러올 수 없습니다.</p>
           <Link
             to="/"
-            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover inline-block"
+            className={buttonClass()}
           >
             홈으로
           </Link>

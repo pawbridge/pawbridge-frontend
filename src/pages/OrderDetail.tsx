@@ -4,6 +4,7 @@ import { getOrderById } from '../api/orders.api';
 import { useAuthStore } from '../store/authStore';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 import Badge from '../components/common/Badge';
+import Button from '../components/common/Button';
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -66,12 +67,11 @@ export default function OrderDetail() {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <p className="text-red-500 mb-4 dark:text-red-300">주문 정보를 불러올 수 없습니다.</p>
-            <button
+            <Button
               onClick={() => navigate('/orders')}
-              className="px-4 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors"
             >
               주문 내역으로 돌아가기
-            </button>
+            </Button>
           </div>
         </div>
       </main>

@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import ImageIcon from '../assets/icons/material-symbols/image.svg?react';
 import ShoppingCartOffIcon from '../assets/icons/material-symbols/shopping_cart_off.svg?react';
+import Button from '../components/common/Button';
 
 const SHIPPING_FEE = 3000;
 const FREE_SHIPPING_THRESHOLD = 50000;
@@ -83,12 +84,11 @@ export default function Cart() {
           <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">장바구니를 불러오는데 실패했습니다.</p>
           <p className="text-gray-400 text-sm mb-4">로그인이 필요합니다.</p>
-          <button
+          <Button
             onClick={() => navigate('/login')}
-            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
           >
             로그인하기
-          </button>
+          </Button>
         </div>
       </main>
     );

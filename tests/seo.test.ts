@@ -72,3 +72,23 @@ test('전용 제보 목록과 상세는 기존 색인 제한을 유지하고 작
   }
   assert.notEqual(resolveSeoMetadata('/reports/missing').title, resolveSeoMetadata('/reports/sightings').title);
 });
+
+test('동물 목록에서 시도 하나만 고른 주소는 지역 이름으로 색인한다', () => {
+  const region = resolveSeoMetadata('/animals', '?region=부산광역시');
+
+  assert.equal(region.robots, 'index,follow');
+  assert.equal(region.title, '부산광역시 보호 동물 - 포우브릿지');
+  assert.match(region.description, /^부산광역시 동물보호소에서/);
+  assert.equal(region.canonicalUrl, `https://www.pawbridge.kr/animals?region=${encodeURIComponent('부산광역시')}`);
+  assert.equal(resolveSeoMetadata('/animals/', `?region=${encodeURIComponent('제주특별자치도')}`).robots, 'index,follow');
+});
+
+test('지역 말고 다른 조건이 붙거나 목록에 없는 지역이면 지금처럼 색인하지 않는다', () => {
+  for (const search of ['?region=부산광역시&city=해운대구', '?region=부산광역시&page=1', '?region=부산', '?region=없는도', '?region=', '?region=부산광역시&region=경기도', '?city=해운대구']) {
+    const metadata = resolveSeoMetadata('/animals', search);
+    assert.equal(metadata.robots, 'noindex,follow', search);
+    assert.equal(metadata.canonicalUrl, 'https://www.pawbridge.kr/animals', search);
+    assert.equal(metadata.title, '보호 동물 검색 - 포우브릿지', search);
+  }
+  assert.equal(resolveSeoMetadata('/shelters', '?region=부산광역시').robots, 'noindex,follow');
+});

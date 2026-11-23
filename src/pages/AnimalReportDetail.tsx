@@ -10,6 +10,8 @@ import { deleteAnimalReport, getAnimalReport } from '../api/animalReports.api';
 import { useAuthStore } from '../store/authStore';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 import { isMissingResponse, useNotFoundNoindex } from '../components/seo/useNotFoundNoindex';
+import Button from '../components/common/Button';
+import { buttonClass } from '../lib/button';
 
 export default function AnimalReportDetail() {
   const { id } = useParams<{ id: string }>();
@@ -79,8 +81,8 @@ export default function AnimalReportDetail() {
           </p>
         </div>
         {user?.id === report.authorId && <div className="flex gap-2">
-          <Link to={`/reports/${reportId}/edit`} className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold dark:bg-gray-700">수정</Link>
-          <button type="button" onClick={handleDelete} disabled={deleteMutation.isPending} className="rounded-lg bg-red-100 px-4 py-2 text-sm font-semibold text-red-700 disabled:opacity-50 dark:bg-red-950 dark:text-red-300">삭제</button>
+          <Link to={`/reports/${reportId}/edit`} className={buttonClass({ variant: 'secondary' })}>수정</Link>
+          <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>삭제</Button>
         </div>}
       </div>
       {deleteMutation.isError && <p role="alert" className="mt-4 text-sm text-red-600 dark:text-red-300">삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>}
