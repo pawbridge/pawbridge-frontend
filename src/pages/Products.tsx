@@ -8,6 +8,7 @@ import ChevronLeftIcon from '../assets/icons/material-symbols/chevron_left.svg?r
 import ChevronRightIcon from '../assets/icons/material-symbols/chevron_right.svg?react';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import Inventory2Icon from '../assets/icons/material-symbols/inventory_2.svg?react';
+import Button from '../components/common/Button';
 
 export default function Products() {
   const queryClient = useQueryClient();
@@ -106,12 +107,12 @@ export default function Products() {
           <div className="text-center">
             <ErrorIcon aria-hidden="true" className="icon text-5xl text-red-500 mb-4 dark:text-red-300" />
             <p className="text-gray-500 dark:text-gray-400">상품을 불러오는데 실패했습니다.</p>
-            <button
+            <Button
               onClick={() => window.location.reload()}
-              className="mt-4 px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
+              className="mt-4"
             >
               다시 시도
-            </button>
+            </Button>
           </div>
         </div>
       </main>

@@ -13,6 +13,8 @@
     --brand-selected-ink: 48 48 46;
     --brand-muted: 100 100 96;
     --brand-border: 221 221 216;
+    --brand-disabled: 217 217 217;
+    --brand-disabled-ink: 126 138 143;
     /* 지도 색: 라이트에서는 진할수록 구조 동물이 많다 */
     --chart-zero: #e7e5e4;
     --chart-low: #e0ecff;
@@ -34,6 +36,8 @@
     --brand-selected-ink: 231 229 228;
     --brand-muted: 168 162 158;
     --brand-border: 51 51 51;
+    --brand-disabled: 38 38 38;
+    --brand-disabled-ink: 120 113 108;
     /* 지도 색: 다크에서는 밝을수록 구조 동물이 많다(Figma 21 다크) */
     --chart-zero: #2a2a2a;
     --chart-low: #192e4e;

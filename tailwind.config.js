@@ -55,6 +55,9 @@ export default {
             border: 'rgb(var(--brand-border) / <alpha-value>)',
             accent: 'rgb(var(--brand-accent) / <alpha-value>)',
             focus: 'rgb(var(--brand-focus) / <alpha-value>)',
+            // 비활성 버튼 바탕과 글자(action/disabled, action/disabled-text)
+            disabled: 'rgb(var(--brand-disabled) / <alpha-value>)',
+            'disabled-ink': 'rgb(var(--brand-disabled-ink) / <alpha-value>)',
           },
           // Compatibility names for existing page contracts; all point to the same brand.
           primary: brand.DEFAULT,

@@ -16,6 +16,8 @@ import CloseIcon from '../assets/icons/material-symbols/close.svg?react';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import LogoutIcon from '../assets/icons/material-symbols/logout.svg?react';
 import PersonIcon from '../assets/icons/material-symbols/person.svg?react';
+import Button from '../components/common/Button';
+import { buttonClass } from '../lib/button';
 
 const editableStatuses: AnimalStatusValue[] = [
   'PROTECT', 'ADOPTION_PENDING', 'ADOPTED', 'RETURNED', 'DONATED', 'RELEASED', 'ESCAPED', 'EUTHANIZED', 'NATURAL_DEATH', 'UNKNOWN',
@@ -217,7 +219,7 @@ export default function AnimalEdit() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">동물 정보를 불러올 수 없습니다.</p>
           <Link
             to={fromMyPage ? '/mypage' : '/animals'}
-            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
+            className={buttonClass()}
           >
             돌아가기
           </Link>
@@ -242,7 +244,7 @@ export default function AnimalEdit() {
           <p className="text-gray-500 dark:text-gray-400 mb-4">보호소가 직접 등록한 동물만 수정할 수 있습니다.</p>
           <Link
             to={`/animals/${id}`}
-            className="px-6 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover"
+            className={buttonClass()}
           >
             돌아가기
           </Link>
@@ -567,19 +569,18 @@ export default function AnimalEdit() {
               <Link
                 to={`/animals/${id}`}
                 state={{ from: fromMyPage ? 'mypage' : undefined, tab: previousTab }}
-                className="px-4 py-2 text-sm font-bold text-brand-muted bg-transparent border border-brand-border rounded-lg hover:bg-white hover:text-brand-accent dark:border-stone-800 dark:hover:bg-stone-800 transition-colors"
+                className={buttonClass({ variant: 'secondary' })}
               >
                 취소
               </Link>
-              <button
+              <Button
                 onClick={handleSubmit}
                 disabled={updateAnimalMutation.isPending || uploadImageMutation.isPending}
-                className="px-4 py-2 text-sm font-bold text-brand-contrast bg-brand rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {updateAnimalMutation.isPending || uploadImageMutation.isPending
                   ? '수정 중...'
                   : '수정하기'}
-              </button>
+              </Button>
             </div>
           </div>
         </main>

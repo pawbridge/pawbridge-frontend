@@ -4,6 +4,7 @@ import type { Animal, PageResponse } from '../../types/api.types';
 import { animalSpeciesLabel, animalStatusLabel } from '../../lib/animalDisplay';
 import AddIcon from '../../assets/icons/material-symbols/add.svg?react';
 import PetsIcon from '../../assets/icons/material-symbols/pets.svg?react';
+import { buttonClass } from '../../lib/button';
 
 interface MyRegisteredAnimalsPanelProps {
   feedback: MyPageListFeedback;
@@ -26,7 +27,7 @@ export default function MyRegisteredAnimalsPanel({
         </h2>
         <Link
           to="/animals/new"
-          className="flex items-center gap-2 px-4 py-2 bg-brand text-brand-contrast rounded-lg hover:bg-brand-hover transition-colors font-bold text-sm"
+          className={buttonClass()}
         >
           <AddIcon aria-hidden="true" className="icon text-[18px]" />
           새 동물 등록
