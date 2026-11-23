@@ -8,6 +8,8 @@ import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.
 import BlockIcon from '../../assets/icons/material-symbols/block.svg?react';
 import DeleteIcon from '../../assets/icons/material-symbols/delete.svg?react';
 import FavoriteIcon from '../../assets/icons/material-symbols/favorite.svg?react';
+import Badge from '../common/Badge';
+import Button from '../common/Button';
 
 export type WishlistSortOption = 'latest' | 'priceAsc' | 'priceDesc' | 'nameAsc';
 interface MyWishlistPanelProps {
@@ -145,9 +147,9 @@ export default function MyWishlistPanel({
                             }}
                           />
                         </Link>
-                        <span className={`absolute bottom-2 right-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-bold ring-1 ring-inset ${statusBadge.className}`}>
+                        <Badge className="absolute bottom-2 right-2">
                           {statusBadge.text}
-                        </span>
+                        </Badge>
                       </div>
 
                       {/* 상품 정보 */}
@@ -183,10 +185,10 @@ export default function MyWishlistPanel({
 
                         {/* 버튼 */}
                         <div className="flex items-center gap-2 mt-3">
-                          <button
+                          <Button
                             onClick={() => onAddToCart(item.skuId)}
                             disabled={isSoldOut || isAddingToCart}
-                            className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-brand py-2 px-3 text-sm font-bold text-brand-contrast hover:bg-brand-hover transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
+                            className="flex-1"
                           >
                             {isSoldOut ? (
                               <>
@@ -199,11 +201,11 @@ export default function MyWishlistPanel({
                                 담기
                               </>
                             )}
-                          </button>
+                          </Button>
                           <button
                             onClick={() => onDeleteItem(item.wishlistId)}
                             disabled={isDeletingItem}
-                            className="inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-colors disabled:opacity-50"
+                            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-colors disabled:opacity-50"
                             title="삭제"
                           >
                             <DeleteIcon aria-hidden="true" className="icon text-[18px]" />

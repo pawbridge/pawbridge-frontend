@@ -5,6 +5,7 @@ import { removeFavorite } from '../../api/animals.api';
 import { useAuthStore } from '../../store/authStore';
 import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel } from '../../lib/animalDisplay';
 import type { FavoriteWithAnimalDto } from '../../types/api.types';
+import Badge from '../common/Badge';
 
 export default function FavoriteAnimalCard({ favorite, fromMyPage = false }: { favorite: FavoriteWithAnimalDto; fromMyPage?: boolean }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -33,9 +34,9 @@ export default function FavoriteAnimalCard({ favorite, fromMyPage = false }: { f
           )}
         </div>
         <div className="flex min-w-0 flex-col p-5 sm:p-6">
-          <span className="mb-3 w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold dark:border dark:border-accent-border-dark">
+          <Badge className="mb-3 w-fit">
             {animalStatusLabel(favorite.status)}
-          </span>
+          </Badge>
           <h3 className="break-words text-xl font-bold">{deleted ? '현재 동물 정보를 볼 수 없습니다' : favorite.breed || '품종 정보 없음'}</h3>
           {!deleted && (
             <>

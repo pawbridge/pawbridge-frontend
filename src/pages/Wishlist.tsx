@@ -14,6 +14,7 @@ import DeleteIcon from '../assets/icons/material-symbols/delete.svg?react';
 import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import FavoriteIcon from '../assets/icons/material-symbols/favorite.svg?react';
 import RefreshIcon from '../assets/icons/material-symbols/refresh.svg?react';
+import Badge from '../components/common/Badge';
 
 type SortOption = 'latest' | 'priceAsc' | 'priceDesc' | 'nameAsc';
 
@@ -126,19 +127,19 @@ export default function Wishlist() {
     },
   });
 
-  // 상태 배지
+  // 상태 배지. 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral).
   const getStatusBadge = (status: ProductStatus) => {
     switch (status) {
       case 'ACTIVE':
-        return { text: '판매중', className: 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-[#163126] dark:text-[#DDEFE9]' };
+        return { text: '판매중' };
       case 'SOLD_OUT':
-        return { text: '품절', className: 'bg-gray-600 text-white ring-gray-600/20' };
+        return { text: '품절' };
       case 'HIDDEN':
-        return { text: '숨김', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-300' };
+        return { text: '숨김' };
       case 'DELETED':
-        return { text: '삭제됨', className: 'bg-red-50 text-red-600 ring-red-600/20 dark:text-red-300 dark:bg-red-950' };
+        return { text: '삭제됨' };
       default:
-        return { text: '알 수 없음', className: 'bg-gray-50 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-300' };
+        return { text: '알 수 없음' };
     }
   };
 
@@ -329,9 +330,9 @@ export default function Wishlist() {
                         />
                       </div>
                       <div className="absolute top-3 right-3 z-10">
-                        <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-bold ring-1 ring-inset backdrop-blur-md ${statusBadge.className}`}>
+                        <Badge>
                           {statusBadge.text}
-                        </span>
+                        </Badge>
                       </div>
                     </div>
 
