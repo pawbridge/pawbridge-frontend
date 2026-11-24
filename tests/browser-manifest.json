@@ -610,6 +610,15 @@
       "call": "page",
       "preNavigate": false,
       "group": "mock"
+    },
+    {
+      "name": "detail-long-title",
+      "origin": "http://127.0.0.1:5277",
+      "server": "preview",
+      "profile": "preview-local",
+      "call": "page",
+      "preNavigate": false,
+      "group": "mock"
     }
   ]
 }
