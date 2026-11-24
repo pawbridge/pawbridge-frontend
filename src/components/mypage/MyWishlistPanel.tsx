@@ -125,12 +125,12 @@ export default function MyWishlistPanel({
                   return (
                     <div
                       key={item.wishlistId}
-                      className={`group grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 sm:grid-rows-[1fr_auto] bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 p-4 ${
+                      className={`group grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 sm:max-md:grid-rows-[1fr_auto] xl:grid-rows-[1fr_auto] bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 p-4 ${
                         isSoldOut ? 'opacity-75' : ''
                       }`}
                     >
-                      {/* 체크박스 + 이미지. 640px 이상에서는 정보와 버튼 두 줄에 걸친다. */}
-                      <div className="relative sm:row-span-2">
+                      {/* 체크박스 + 이미지. 버튼을 옆에 두는 폭에서는 정보와 버튼 두 줄에 걸친다. */}
+                      <div className="relative sm:max-md:row-span-2 xl:row-span-2">
                         <input
                           type="checkbox"
                           checked={isSelected}
@@ -183,8 +183,9 @@ export default function MyWishlistPanel({
                         </p>
                       </div>
 
-                      {/* 버튼. 모바일에서는 사진 옆 칸이 좁아 글자가 한 자씩 꺾이므로 카드 전체 폭으로 내린다. */}
-                      <div className="col-span-2 flex items-center gap-2 sm:col-span-1 sm:col-start-2">
+                      {/* 버튼. 사진 옆 칸이 좁으면(640px 미만, 카드가 두 열인 768~1279px) 글자가 한 자씩 꺾이므로
+                          카드 전체 폭으로 내린다. 한 열로 넓은 640~767px와 1280px 이상만 사진 옆에 둔다. */}
+                      <div className="col-span-2 flex items-center gap-2 sm:max-md:col-span-1 sm:max-md:col-start-2 xl:col-span-1 xl:col-start-2">
                         <Button
                           onClick={() => onAddToCart(item.skuId)}
                           disabled={!cart.canAdd || isAddingToCart}

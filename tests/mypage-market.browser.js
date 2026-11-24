@@ -113,6 +113,12 @@ async page => {
       assert(await button('담기').count() === 0, 'Hidden or deleted shows add');
       // 버튼 글자가 한 줄이어야 한다. 390에서 사진 옆 좁은 칸에 두면 한 자씩 꺾여 높이가 두 배 넘게 컸다.
       assert((await stopped.nth(0).boundingBox()).height < 56, `Stopped label wraps at ${width}`);
+      if (width === 390) {
+        // 카드가 두 열이 되는 1024에서도 사진 옆 칸이 좁아진다.
+        await page.setViewportSize({ width: 1024, height: 844 });
+        assert((await stopped.nth(0).boundingBox()).height < 56, 'Stopped label wraps at 1024');
+        await page.setViewportSize({ width, height: 844 });
+      }
       wishlist = Array.from({ length: 21 }, (_, i) => wish(i + 1)); await open('wishlist');
       await button('다음').click(); await page.getByRole('heading', { name: '상품 21', exact: true }).waitFor();
       await tab('프로필 정보').click(); await tab('나의 위시리스트').click();
