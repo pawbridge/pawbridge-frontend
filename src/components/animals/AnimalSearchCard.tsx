@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Animal } from '../../types/api.types';
-import { animalWeightLabel } from '../../lib/animalDisplay';
+import { animalWeightLabel, noticeDday } from '../../lib/animalDisplay';
 import Badge from '../common/Badge';
 
 interface AnimalSearchCardProps {
@@ -13,17 +13,6 @@ const statusLabels: Record<string, string> = {
   PROTECT: '보호중', ADOPTION_PENDING: '입양대기중', ADOPTED: '입양완료', EUTHANIZED: '종료(안락사)',
   NATURAL_DEATH: '종료(자연사)', RETURNED: '종료(반환)', DONATED: '종료(기증)', RELEASED: '종료(방사)', ESCAPED: '탈출', UNKNOWN: '미상',
 };
-
-function dday(endDate?: string): string | null {
-  if (!endDate) return null;
-  const end = new Date(`${endDate}T00:00:00`);
-  if (Number.isNaN(end.getTime())) return null;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const days = Math.ceil((end.getTime() - today.getTime()) / 86_400_000);
-  if (days < 0) return null;
-  return days === 0 ? 'D-DAY' : `D-${days}`;
-}
 
 function dateLabel(value?: string): string | null {
   if (!value) return null;
@@ -53,7 +42,7 @@ export default function AnimalSearchCard({ animal, searchReturnTo }: AnimalSearc
   const weight = animalWeightLabel(animal.weight);
   const neuter = neuterLabel(animal);
   const feature = animal.specialMark || animal.description;
-  const deadline = dday(animal.noticeEndDate);
+  const deadline = noticeDday(animal.noticeEndDate);
 
   return (
     <Link
