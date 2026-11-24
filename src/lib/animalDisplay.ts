@@ -29,7 +29,7 @@ export function animalWeightLabel(weight?: string | null): string | null {
 }
 
 // 공고 마감까지 남은 날. 시각은 보지 않고 날짜만 세서, 마감일 당일은 D-DAY, 지난 공고는 null이다.
-// 마감일 23:59:59에서 지금 시각을 빼고 올림하면 오후에 하루가 더 붙어 카드와 상세가 달라졌다.
+// 예전 상세는 마감일 23:59:59에서 지금 시각을 빼고 올림해서, 시각과 상관없이 카드보다 늘 하루가 많았다.
 export function noticeDday(endDate?: string | null, now = new Date()): string | null {
   const match = endDate?.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) return null;
