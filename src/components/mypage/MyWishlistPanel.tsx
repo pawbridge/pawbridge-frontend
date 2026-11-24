@@ -2,7 +2,7 @@ import MyPageListState, { type MyPageListFeedback } from './MyPageListState';
 import { Link } from 'react-router-dom';
 import placeholderImg from '../../assets/image-placeholder.svg';
 import type { WishlistItem, WishlistSearchResponse } from '../../types/api.types';
-import { getStatusBadge } from './marketPresentation';
+import { getCartAvailability, getStatusBadge } from './marketPresentation';
 import AddShoppingCartIcon from '../../assets/icons/material-symbols/add_shopping_cart.svg?react';
 import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.svg?react';
 import BlockIcon from '../../assets/icons/material-symbols/block.svg?react';
@@ -119,6 +119,7 @@ export default function MyWishlistPanel({
                 {filteredAndSortedWishlist.map((item) => {
                   const statusBadge = getStatusBadge(item.productStatus);
                   const isSoldOut = item.productStatus === 'SOLD_OUT';
+                  const cart = getCartAvailability(item.productStatus);
                   const isSelected = selectedWishlistItems.includes(item.wishlistId);
 
                   return (
@@ -187,13 +188,13 @@ export default function MyWishlistPanel({
                         <div className="flex items-center gap-2 mt-3">
                           <Button
                             onClick={() => onAddToCart(item.skuId)}
-                            disabled={isSoldOut || isAddingToCart}
+                            disabled={!cart.canAdd || isAddingToCart}
                             className="flex-1"
                           >
-                            {isSoldOut ? (
+                            {!cart.canAdd ? (
                               <>
                                 <BlockIcon aria-hidden="true" className="icon text-[16px]" />
-                                품절
+                                {cart.label}
                               </>
                             ) : (
                               <>

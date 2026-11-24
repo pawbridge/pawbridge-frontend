@@ -106,6 +106,11 @@ async page => {
       await page.mouse.move(0,0); await page.evaluate(() => document.fonts.ready);
       layouts.push({ panel: 'wishlist', width, overflow: await page.evaluate(() => document.documentElement.scrollWidth > innerWidth) });
       await page.screenshot({ path: `/tmp/mypage-market-wishlist-${width}.png`, fullPage: true, animations: 'disabled' });
+      // 숨김이나 삭제된 상품은 담기 버튼이 막히고 이유를 글자로 보인다.
+      wishlist = [wish(4, 'HIDDEN'), wish(5, 'DELETED')]; await open('wishlist'); await wishCards().nth(1).waitFor();
+      const stopped = button('판매 중지');
+      assert(await stopped.count() === 2 && await stopped.nth(0).isDisabled() && await stopped.nth(1).isDisabled(), 'Hidden or deleted add enabled');
+      assert(await button('담기').count() === 0, 'Hidden or deleted shows add');
       wishlist = Array.from({ length: 21 }, (_, i) => wish(i + 1)); await open('wishlist');
       await button('다음').click(); await page.getByRole('heading', { name: '상품 21', exact: true }).waitFor();
       await tab('프로필 정보').click(); await tab('나의 위시리스트').click();
