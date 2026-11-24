@@ -3,8 +3,9 @@
 //
 // 파일을 나누는 이유는 Cloudflare Workers 무료 요금제 한도 때문이다.
 // 요청 한 번에 외부 호출(fetch와 Cache API를 합쳐) 50번, CPU 10ms까지만 쓸 수 있다.
-// 동물 목록 API는 한 번에 100마리까지 주므로 파일 하나에 10쪽(1,000마리)만 담는다.
-// 지역 파일은 17개 시도 수를 한 번씩 묻는다(17번).
+// 동물 목록 API는 한 번에 100마리까지 주므로 파일 하나에 5쪽(500마리)만 담는다.
+// 2026-11-22 운영 Workers Logs에서 1,000마리 파일을 새로 만든 요청의 CPU가 8~23ms여서 한도 안으로 들도록 절반으로 줄였다.
+// 지역 파일은 API를 부르지 않고 고정 목록으로 만든다.
 //
 // 동물 목록 API는 한 조건에서 앞쪽 10,000건까지만 넘겨 준다.
 // 그래서 최근 입소한 보호 중 동물 10,000마리까지만 담는다. 실종 동물을 찾는 보호자가 찾는 것도 최근 입소 동물이다.
@@ -20,7 +21,7 @@ const SHELTERS_FILE = '/sitemaps/shelters.xml';
 const ANIMALS_FILE = /^\/sitemaps\/animals-(\d+)\.xml$/;
 
 const ANIMAL_PAGE_SIZE = 100;
-const ANIMAL_PAGES_PER_FILE = 10;
+const ANIMAL_PAGES_PER_FILE = 5;
 const ANIMAL_LIMIT = 10_000;
 const MAX_ANIMAL_FILES = ANIMAL_LIMIT / (ANIMAL_PAGE_SIZE * ANIMAL_PAGES_PER_FILE);
 const SHELTER_PAGE_SIZE = 1000;
@@ -70,7 +71,7 @@ export function isSitemapPath(pathname: string): boolean {
 export async function serveSitemap(request: Request, options: SitemapOptions): Promise<Response> {
   const cache = options.cache;
   const url = new URL(request.url);
-  // 저장 키에서 ?뒤를 뺀다. 아무 값이나 붙여 저장을 건너뛰면 요청마다 백엔드 API를 최대 17번 부르게 된다.
+  // 저장 키에서 ?뒤를 뺀다. 아무 값이나 붙여 저장을 건너뛰면 요청마다 백엔드 API를 다시 부르게 된다.
   const key = new Request(new URL(url.pathname, url.origin).toString(), { method: 'GET' });
   const stored = cache ? await cache.match(key) : undefined;
   if (stored) return forClient(stored, request.method);
@@ -94,7 +95,7 @@ async function buildSitemap(pathname: string, options: SitemapOptions): Promise<
     // dev 환경은 운영 API를 부르지 않는다.
     if (options.development) return notFound();
     if (pathname === REGIONS_FILE) {
-      return xml(urlSet(await regionPaths(fetcher)));
+      return xml(urlSet(regionPaths()));
     }
     if (pathname === SHELTERS_FILE) {
       return xml(urlSet(await shelterPaths(fetcher)));
@@ -134,14 +135,10 @@ async function indexDocument(fetcher: Fetcher, development: boolean): Promise<st
 }
 
 // 시도별 동물 목록 주소(src/lib/seo.ts가 색인을 여는 주소)를 담는다.
-// 보호 중 동물이 0마리인 지역은 뺀다. 빈 목록을 색인하면 내용 없는 페이지로 잡힌다.
-// 예: 보호소 주소가 "전남광주통합특별시"로 바뀐 뒤 광주광역시로는 한 마리도 검색되지 않는다.
-async function regionPaths(fetcher: Fetcher): Promise<string[]> {
-  const counts = await Promise.all(animalRegions.map(async region => {
-    const result = await readPage<AnimalRow>(fetcher, `${animalQuery(0, 1)}&region=${encodeURIComponent(region.value)}`);
-    return { region: region.value, count: result.totalElements };
-  }));
-  return counts.filter(({ count }) => count > 0).map(({ region }) => animalRegionPath(region));
+// 예전에는 시도마다 동물 수를 물어 0마리인 지역을 뺐다(17번 호출).
+// 백엔드가 통합 주소와 옛 이름을 찾게 고친 뒤(backend #486) 17개 시도 모두 보호 중 동물이 있어 고정 목록으로 둔다.
+function regionPaths(): string[] {
+  return animalRegions.map(region => animalRegionPath(region.value));
 }
 
 async function shelterPaths(fetcher: Fetcher): Promise<string[]> {

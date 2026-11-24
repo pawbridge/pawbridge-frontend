@@ -61,18 +61,20 @@ test('색인은 목록 화면, 보호소, 동물 수에 맞는 동물 파일을 
     `${SITE}/sitemaps/animals-1.xml`,
     `${SITE}/sitemaps/animals-2.xml`,
     `${SITE}/sitemaps/animals-3.xml`,
+    `${SITE}/sitemaps/animals-4.xml`,
+    `${SITE}/sitemaps/animals-5.xml`,
   ]);
   assert.equal(calls.length, 1, '색인은 동물 수만 한 번 묻는다');
   assert.equal(new URL(calls[0].url).searchParams.get('status'), 'PROTECT');
 });
 
-test('동물이 10,000마리를 넘어도 목록 API가 넘겨 주는 10개 파일까지만 가리킨다', async () => {
+test('동물이 10,000마리를 넘어도 목록 API가 넘겨 주는 20개 파일까지만 가리킨다', async () => {
   const { fetcher } = fakeApi(() => ({ status: 200, body: animalPage([1], 13_020) }));
   const body = await (await serveSitemap(get('/sitemap.xml'), { development: false, fetcher })).text();
 
   const animalFiles = locs(body).filter(loc => loc.includes('/animals-'));
-  assert.equal(animalFiles.length, 10);
-  assert.equal(animalFiles.at(-1), `${SITE}/sitemaps/animals-10.xml`);
+  assert.equal(animalFiles.length, 20);
+  assert.equal(animalFiles.at(-1), `${SITE}/sitemaps/animals-20.xml`);
 });
 
 test('목록 화면 파일은 API 없이 기존 8개 화면을 담는다', async () => {
@@ -85,24 +87,17 @@ test('목록 화면 파일은 API 없이 기존 8개 화면을 담는다', async
   assert.equal(calls.length, 0);
 });
 
-test('지역 파일은 보호 중 동물이 있는 시도의 목록 주소만 담는다', async () => {
-  const { calls, fetcher } = fakeApi(url => {
-    const region = url.searchParams.get('region');
-    const count = region === '광주광역시' ? 0 : 5;
-    return { status: 200, body: animalPage(count ? [1] : [], count) };
-  });
-  const body = await (await serveSitemap(get('/sitemaps/regions.xml'), { development: false, fetcher })).text();
-  const urls = locs(body);
+test('지역 파일은 API를 부르지 않고 17개 시도의 목록 주소를 담는다', async () => {
+  const { calls, fetcher } = fakeApi(() => ({ status: 500 }));
+  const response = await serveSitemap(get('/sitemaps/regions.xml'), { development: false, fetcher });
+  const urls = locs(await response.text());
 
-  assert.equal(calls.length, 17, '17개 시도를 한 번씩 묻는다');
-  for (const call of calls) {
-    const url = new URL(call.url);
-    assert.equal(url.searchParams.get('status'), 'PROTECT');
-    assert.equal(url.searchParams.get('size'), '1');
-  }
-  assert.equal(urls.length, 16);
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 0);
+  assert.equal(urls.length, 17);
+  assert.equal(new Set(urls).size, 17);
   assert.ok(urls.includes(`${SITE}/animals?region=${encodeURIComponent('부산광역시')}`));
-  assert.ok(!urls.some(url => url.includes(encodeURIComponent('광주광역시'))));
+  assert.ok(urls.includes(`${SITE}/animals?region=${encodeURIComponent('광주광역시')}`));
 });
 
 test('지역 파일의 주소는 그 주소의 정규 URL과 같다', async () => {
@@ -134,7 +129,7 @@ test('보호소 파일은 15자리 등록번호가 있는 보호소만 상세 �
   assert.equal(new URL(calls[0].url).pathname, '/api/v1/shelters');
 });
 
-test('동물 파일 2번은 최근 입소 순서의 10~19쪽을 100마리씩 읽는다', async () => {
+test('동물 파일 2번은 최근 입소 순서의 5~9쪽을 100마리씩 읽는다', async () => {
   const { calls, fetcher } = fakeApi(url => {
     const page = Number(url.searchParams.get('page'));
     return { status: 200, body: animalPage([page * 1000 + 1, page * 1000 + 2], 13_020) };
@@ -142,7 +137,7 @@ test('동물 파일 2번은 최근 입소 순서의 10~19쪽을 100마리씩 읽
   const body = await (await serveSitemap(get('/sitemaps/animals-2.xml'), { development: false, fetcher })).text();
 
   const pages = calls.map(call => new URL(call.url).searchParams.get('page'));
-  assert.deepEqual(pages, ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19']);
+  assert.deepEqual(pages, ['5', '6', '7', '8', '9']);
   for (const call of calls) {
     const url = new URL(call.url);
     assert.equal(url.origin, API_ORIGIN);
@@ -151,8 +146,8 @@ test('동물 파일 2번은 최근 입소 순서의 10~19쪽을 100마리씩 읽
     assert.equal(url.searchParams.get('sort'), 'createdAt,desc');
     assert.ok(call.init.signal, '느린 API를 끊을 시간 제한이 있어야 한다');
   }
-  assert.equal(locs(body).length, 20);
-  assert.equal(locs(body)[0], `${SITE}/animals/10001`);
+  assert.equal(locs(body).length, 10);
+  assert.equal(locs(body)[0], `${SITE}/animals/5001`);
 });
 
 test('쪽이 바뀌며 겹친 동물은 한 번만 담는다', async () => {
@@ -211,7 +206,7 @@ test('주소 뒤에 아무 값을 붙여도 같은 저장본을 쓰고 API를 �
 test('없는 동물 파일 번호와 모르는 파일은 404다', async () => {
   const { calls, fetcher } = fakeApi(() => ({ status: 200, body: animalPage([1], 1) }));
 
-  for (const path of ['/sitemaps/animals-0.xml', '/sitemaps/animals-11.xml', '/sitemaps/unknown.xml']) {
+  for (const path of ['/sitemaps/animals-0.xml', '/sitemaps/animals-21.xml', '/sitemaps/unknown.xml']) {
     const response = await serveSitemap(get(path), { development: false, fetcher });
     assert.equal(response.status, 404, path);
   }
