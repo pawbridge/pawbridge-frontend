@@ -8,6 +8,7 @@ import ExpandMoreIcon from '../assets/icons/material-symbols/expand_more.svg?rea
 import ReceiptLongIcon from '../assets/icons/material-symbols/receipt_long.svg?react';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
+import { getOrderStatusBadge } from '../components/mypage/marketPresentation';
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -41,19 +42,6 @@ export default function Orders() {
   // 금액 포맷팅
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('ko-KR').format(price);
-  };
-
-  // 주문 상태 배지
-  const getStatusBadge = (status: OrderStatus) => {
-    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral). 색은 오류, 마감 임박, 주 동작에만 쓴다.
-    const labels: Record<string, string> = {
-      PENDING: '주문 대기',
-      PAID: '결제 완료',
-      COMPLETED: '주문 완료',
-      CANCELLED: '주문 취소',
-      FAILED: '결제 실패',
-    };
-    return { label: labels[status] ?? labels.PENDING };
   };
 
   // 주문 상세 페이지로 이동
@@ -156,7 +144,7 @@ export default function Orders() {
           <ul className="md:hidden flex flex-col gap-3">
             {orders.map((order) => {
               const firstItem = order.items[0];
-              const statusBadge = getStatusBadge(order.status);
+              const statusBadge = getOrderStatusBadge(order.status);
               return (
                 <li
                   key={order.orderId}
@@ -223,7 +211,7 @@ export default function Orders() {
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
                   {orders.map((order) => {
                     const firstItem = order.items[0];
-                    const statusBadge = getStatusBadge(order.status);
+                    const statusBadge = getOrderStatusBadge(order.status);
                     return (
                       <tr
                         key={order.orderId}
