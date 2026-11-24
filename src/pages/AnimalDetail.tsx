@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAnimalById, checkFavorite, addFavorite, removeFavorite, getSimilarAnimals } from '../api/animals.api';
 import { publicShelterById } from '../api/publicShelters.api';
 import { shelterTelephone } from '../lib/shelters';
-import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel } from '../lib/animalDisplay';
+import { animalAgeLabel, animalGenderLabel, animalSpeciesLabel, animalStatusLabel, animalWeightLabel, noticeDday } from '../lib/animalDisplay';
 import { readLostSearchSession } from '../lib/lostSearchSession';
 import { animalSearchReturnTo } from '../lib/animalSearch';
 import { useAuthStore } from '../store/authStore';
@@ -146,9 +146,7 @@ export default function AnimalDetail() {
   const isMyShelter = user?.role === 'ROLE_SHELTER' && !!user.careRegNo &&
     user.careRegNo === (animal.careRegNo || shelter?.careRegNo);
   const isMyAnimal = isManualAnimal && isMyShelter;
-  const daysLeft = animal.noticeEndDate
-    ? Math.ceil((new Date(animal.noticeEndDate.slice(0, 10) + 'T23:59:59').getTime() - Date.now()) / 86400000)
-    : null;
+  const deadline = noticeDday(animal.noticeEndDate);
 
   return (
     <>
@@ -176,7 +174,7 @@ export default function AnimalDetail() {
           <div className="min-w-0">
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <Badge size="medium">{animalStatusLabel(animal.status)}</Badge>
-              {daysLeft !== null && daysLeft >= 0 && <Badge tone="warning" size="medium">공고 D-{daysLeft}</Badge>}
+              {deadline && <Badge tone="warning" size="medium">공고 {deadline}</Badge>}
             </div>
             <h1 className="break-words text-[28px] font-bold leading-tight tracking-tight sm:text-4xl">{animal.breed || '품종 정보 없음'}</h1>
             {noticeNo && <p className="mt-3 break-all text-sm text-gray-600 dark:text-gray-300">공고번호 {noticeNo}</p>}
