@@ -21,6 +21,13 @@ export const getStatusBadge = (status: ProductStatus) => {
   }
 };
 
+// 관심 상품의 담기 버튼. 판매중인 상품만 담을 수 있고, 나머지는 담을 수 없는 이유를 버튼 글자로 보인다.
+export const getCartAvailability = (status: ProductStatus) => {
+  if (status === 'ACTIVE') return { canAdd: true, label: '담기' };
+  if (status === 'SOLD_OUT') return { canAdd: false, label: '품절' };
+  return { canAdd: false, label: '판매 중지' };
+};
+
 // 주문 상태 배지
 export const getOrderStatusBadge = (status: OrderStatus) => {
   // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral). 색은 오류, 마감 임박, 주 동작에만 쓴다.

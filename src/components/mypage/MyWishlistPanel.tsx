@@ -2,7 +2,7 @@ import MyPageListState, { type MyPageListFeedback } from './MyPageListState';
 import { Link } from 'react-router-dom';
 import placeholderImg from '../../assets/image-placeholder.svg';
 import type { WishlistItem, WishlistSearchResponse } from '../../types/api.types';
-import { getStatusBadge } from './marketPresentation';
+import { getCartAvailability, getStatusBadge } from './marketPresentation';
 import AddShoppingCartIcon from '../../assets/icons/material-symbols/add_shopping_cart.svg?react';
 import ArrowForwardIcon from '../../assets/icons/material-symbols/arrow_forward.svg?react';
 import BlockIcon from '../../assets/icons/material-symbols/block.svg?react';
@@ -119,17 +119,18 @@ export default function MyWishlistPanel({
                 {filteredAndSortedWishlist.map((item) => {
                   const statusBadge = getStatusBadge(item.productStatus);
                   const isSoldOut = item.productStatus === 'SOLD_OUT';
+                  const cart = getCartAvailability(item.productStatus);
                   const isSelected = selectedWishlistItems.includes(item.wishlistId);
 
                   return (
                     <div
                       key={item.wishlistId}
-                      className={`group flex gap-4 bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 p-4 ${
+                      className={`group grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 sm:max-md:grid-rows-[1fr_auto] xl:grid-rows-[1fr_auto] bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 p-4 ${
                         isSoldOut ? 'opacity-75' : ''
                       }`}
                     >
-                      {/* 체크박스 + 이미지 */}
-                      <div className="relative flex-shrink-0">
+                      {/* 체크박스 + 이미지. 버튼을 옆에 두는 폭에서는 정보와 버튼 두 줄에 걸친다. */}
+                      <div className="relative sm:max-md:row-span-2 xl:row-span-2">
                         <input
                           type="checkbox"
                           checked={isSelected}
@@ -153,64 +154,63 @@ export default function MyWishlistPanel({
                       </div>
 
                       {/* 상품 정보 */}
-                      <div className="flex-1 flex flex-col justify-between min-w-0">
-                        <div>
-                          {item.categoryName && (
-                            <p className="text-xs text-subtext-light dark:text-subtext-dark mb-1">
-                              {item.categoryName}
-                            </p>
-                          )}
-                          <Link to={`/products/${item.productId}`}>
-                            <h3 className="text-base font-bold text-text-light dark:text-text-dark hover:text-brand-accent transition-colors line-clamp-2">
-                              {item.productName}
-                            </h3>
-                          </Link>
-                          {Object.keys(item.options).length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-1">
-                              {Object.entries(item.options).map(([key, value]) => (
-                                <span
-                                  key={`${key}-${value}`}
-                                  className="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300"
-                                >
-                                  {key}: {value}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          <p className="text-lg font-bold text-text-light dark:text-text-dark mt-2">
-                            {item.price.toLocaleString()}
-                            <span className="text-sm font-normal ml-0.5">원</span>
+                      <div className="min-w-0">
+                        {item.categoryName && (
+                          <p className="text-xs text-subtext-light dark:text-subtext-dark mb-1">
+                            {item.categoryName}
                           </p>
-                        </div>
+                        )}
+                        <Link to={`/products/${item.productId}`}>
+                          <h3 className="text-base font-bold text-text-light dark:text-text-dark hover:text-brand-accent transition-colors line-clamp-2">
+                            {item.productName}
+                          </h3>
+                        </Link>
+                        {Object.keys(item.options).length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-1">
+                            {Object.entries(item.options).map(([key, value]) => (
+                              <span
+                                key={`${key}-${value}`}
+                                className="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300"
+                              >
+                                {key}: {value}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="text-lg font-bold text-text-light dark:text-text-dark mt-2">
+                          {item.price.toLocaleString()}
+                          <span className="text-sm font-normal ml-0.5">원</span>
+                        </p>
+                      </div>
 
-                        {/* 버튼 */}
-                        <div className="flex items-center gap-2 mt-3">
-                          <Button
-                            onClick={() => onAddToCart(item.skuId)}
-                            disabled={isSoldOut || isAddingToCart}
-                            className="flex-1"
-                          >
-                            {isSoldOut ? (
-                              <>
-                                <BlockIcon aria-hidden="true" className="icon text-[16px]" />
-                                품절
-                              </>
-                            ) : (
-                              <>
-                                <AddShoppingCartIcon aria-hidden="true" className="icon text-[16px]" />
-                                담기
-                              </>
-                            )}
-                          </Button>
-                          <button
-                            onClick={() => onDeleteItem(item.wishlistId)}
-                            disabled={isDeletingItem}
-                            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-colors disabled:opacity-50"
-                            title="삭제"
-                          >
-                            <DeleteIcon aria-hidden="true" className="icon text-[18px]" />
-                          </button>
-                        </div>
+                      {/* 버튼. 사진 옆 칸이 좁으면(640px 미만, 카드가 두 열인 768~1279px) 글자가 한 자씩 꺾이므로
+                          카드 전체 폭으로 내린다. 한 열로 넓은 640~767px와 1280px 이상만 사진 옆에 둔다. */}
+                      <div className="col-span-2 flex items-center gap-2 sm:max-md:col-span-1 sm:max-md:col-start-2 xl:col-span-1 xl:col-start-2">
+                        <Button
+                          onClick={() => onAddToCart(item.skuId)}
+                          disabled={!cart.canAdd || isAddingToCart}
+                          className="flex-1"
+                        >
+                          {!cart.canAdd ? (
+                            <>
+                              <BlockIcon aria-hidden="true" className="icon text-[16px]" />
+                              {cart.label}
+                            </>
+                          ) : (
+                            <>
+                              <AddShoppingCartIcon aria-hidden="true" className="icon text-[16px]" />
+                              담기
+                            </>
+                          )}
+                        </Button>
+                        <button
+                          onClick={() => onDeleteItem(item.wishlistId)}
+                          disabled={isDeletingItem}
+                          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 p-2 text-subtext-light dark:text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-300 transition-colors disabled:opacity-50"
+                          title="삭제"
+                        >
+                          <DeleteIcon aria-hidden="true" className="icon text-[18px]" />
+                        </button>
                       </div>
                     </div>
                   );
