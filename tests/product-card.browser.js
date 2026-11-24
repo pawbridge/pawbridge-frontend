@@ -38,8 +38,9 @@ async page => {
     assert(await page.getByRole('button', { name: '검수 상품 2 장바구니에 담기', exact: true }).isDisabled(), `sold-out-button-disabled-${width}`);
     // The cart button adds to the cart without opening the detail page.
     const before = cartRequests.length;
+    // 요청이 나간 시점에는 가로채기 처리기가 아직 cartRequests에 넣기 전일 수 있다. 처리기가 응답한 뒤를 기다린다.
     await Promise.all([
-      page.waitForRequest(request => request.method() === 'POST' && request.url().endsWith('/api/v1/carts/items')),
+      page.waitForResponse(response => response.request().method() === 'POST' && response.url().endsWith('/api/v1/carts/items')),
       cartButton.click(),
     ]);
     assert(cartRequests.length === before + 1 && cartRequests.at(-1).skuId === 101, `cart-button-adds-${width}`);
