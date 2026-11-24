@@ -27,3 +27,15 @@ export function animalWeightLabel(weight?: string | null): string | null {
   if (!value) return null;
   return /^\d+(?:\.\d+)?$/.test(value) ? `${value} kg` : value;
 }
+
+// 공고 마감까지 남은 날. 시각은 보지 않고 날짜만 세서, 마감일 당일은 D-DAY, 지난 공고는 null이다.
+// 마감일 23:59:59에서 지금 시각을 빼고 올림하면 오후에 하루가 더 붙어 카드와 상세가 달라졌다.
+export function noticeDday(endDate?: string | null, now = new Date()): string | null {
+  const match = endDate?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return null;
+  const end = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = Math.round((end - today) / 86_400_000);
+  if (days < 0) return null;
+  return days === 0 ? 'D-DAY' : `D-${days}`;
+}
