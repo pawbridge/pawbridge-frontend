@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
 import { getWishlists, deleteWishlist, addToCart } from '../api/products.api';
-import type { ProductStatus } from '../types/api.types';
 import placeholderImg from '../assets/image-placeholder.svg';
 import AddShoppingCartIcon from '../assets/icons/material-symbols/add_shopping_cart.svg?react';
 import ArrowForwardIcon from '../assets/icons/material-symbols/arrow_forward.svg?react';
@@ -15,6 +14,7 @@ import ErrorIcon from '../assets/icons/material-symbols/error.svg?react';
 import FavoriteIcon from '../assets/icons/material-symbols/favorite.svg?react';
 import RefreshIcon from '../assets/icons/material-symbols/refresh.svg?react';
 import Badge from '../components/common/Badge';
+import { getCartAvailability, getStatusBadge } from '../components/mypage/marketPresentation';
 
 type SortOption = 'latest' | 'priceAsc' | 'priceDesc' | 'nameAsc';
 
@@ -126,22 +126,6 @@ export default function Wishlist() {
       alert('장바구니 추가에 실패했습니다.');
     },
   });
-
-  // 상태 배지. 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral).
-  const getStatusBadge = (status: ProductStatus) => {
-    switch (status) {
-      case 'ACTIVE':
-        return { text: '판매중' };
-      case 'SOLD_OUT':
-        return { text: '품절' };
-      case 'HIDDEN':
-        return { text: '숨김' };
-      case 'DELETED':
-        return { text: '삭제됨' };
-      default:
-        return { text: '알 수 없음' };
-    }
-  };
 
   // 날짜 포맷
   const formatDate = (dateString: string) => {
@@ -298,6 +282,7 @@ export default function Wishlist() {
               {displayItems.map((item) => {
                 const statusBadge = getStatusBadge(item.productStatus);
                 const isSoldOut = item.productStatus === 'SOLD_OUT';
+                const cart = getCartAvailability(item.productStatus);
                 const isSelected = selectedItems.includes(item.wishlistId);
                 
                 return (
@@ -388,13 +373,13 @@ export default function Wishlist() {
                       <div className="mt-4 flex items-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <button
                           onClick={() => addToCartMutation.mutate(item.skuId)}
-                          disabled={isSoldOut || addToCartMutation.isPending}
+                          disabled={!cart.canAdd || addToCartMutation.isPending}
                           className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-brand py-2.5 px-3 text-sm font-bold text-brand-contrast shadow-sm hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus transition-all disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
                         >
-                          {isSoldOut ? (
+                          {!cart.canAdd ? (
                             <>
                               <BlockIcon aria-hidden="true" className="icon text-[18px]" />
-                              품절
+                              {cart.label}
                             </>
                           ) : (
                             <>

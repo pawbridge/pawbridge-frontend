@@ -163,12 +163,12 @@ export default function CommunityDetail() {
         <BlockedAuthorContent key={postId} state={blocks} authorId={post.authorId}>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 md:p-8 mb-6">
           {/* 헤더 */}
-          <div className="flex justify-between items-start mb-4">
-            <div>
+          <div className="flex justify-between items-start gap-4 mb-4">
+            <div className="min-w-0">
               <span className="inline-block px-3 py-1 bg-brand-selected text-brand-accent text-sm font-semibold rounded-full mb-3">
                 {boardLabel[post.boardType] || post.boardType}
               </span>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 break-words">
                 {post.title}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -176,7 +176,7 @@ export default function CommunityDetail() {
               </p>
             </div>
             {isAuthor && (
-              <div className="flex gap-2">
+              <div className="flex shrink-0 gap-2">
                 <Link
                   to={`/community/${postId}/edit`}
                   className={buttonClass({ variant: 'secondary' })}

@@ -95,6 +95,8 @@ async page => {
   mode = 'ok';
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.getByRole('button', { name: '실종동물 찾기', exact: true }).click();
+  // 마우스로 누르면 호버로 먼저 열리고 화면 반영이 한 박자 늦다. 패널이 뜰 때까지 기다린다.
+  await page.locator('#lost-animal-navigation').waitFor();
   check(!(await page.locator('header').innerText()).includes('현재 페이지'), '내비게이션 문구 잔존');
   check(await page.locator('header a[aria-current="page"]').count() > 0, '현재 메뉴 접근성 표시 유실');
   await page.screenshot({ path: '/tmp/pawbridge-report-search-navigation.png', fullPage: true });

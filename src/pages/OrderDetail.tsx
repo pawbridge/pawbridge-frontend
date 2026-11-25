@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import ArrowBackIcon from '../assets/icons/material-symbols/arrow_back.svg?react';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
+import { getOrderStatusBadge } from '../components/mypage/marketPresentation';
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>();
@@ -33,19 +34,6 @@ export default function OrderDetail() {
   // 금액 포맷팅
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('ko-KR').format(price);
-  };
-
-  // 주문 상태 배지
-  const getStatusBadge = (status: string) => {
-    // 주문 상태는 글자로 구분하고 색은 쓰지 않는다(Badge neutral). 색은 오류, 마감 임박, 주 동작에만 쓴다.
-    const labels: Record<string, string> = {
-      PENDING: '주문 대기',
-      PAID: '결제 완료',
-      COMPLETED: '주문 완료',
-      CANCELLED: '주문 취소',
-      FAILED: '결제 실패',
-    };
-    return { label: labels[status] ?? labels.PENDING };
   };
 
   if (isLoading) {
@@ -78,7 +66,7 @@ export default function OrderDetail() {
     );
   }
 
-  const statusBadge = getStatusBadge(order.status);
+  const statusBadge = getOrderStatusBadge(order.status);
   const totalItemsPrice = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingFee = 0; // 배송비는 API에 포함되지 않을 수 있음
 
