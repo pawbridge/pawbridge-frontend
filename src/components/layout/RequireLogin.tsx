@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { buttonClass } from '../../lib/button';
 
 // 로그인이 필요한 화면에 비로그인으로 들어왔을 때 보여 주는 안내 카드
 export function LoginRequiredCard({ className = '' }: { className?: string }) {
@@ -14,13 +15,13 @@ export function LoginRequiredCard({ className = '' }: { className?: string }) {
         <Link
           to="/login"
           state={{ from: location.pathname + location.search }}
-          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
+          className={buttonClass({ className: 'w-full' })}
         >
           로그인
         </Link>
         <Link
           to="/"
-          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className={buttonClass({ variant: 'secondary', className: 'w-full' })}
         >
           홈으로
         </Link>

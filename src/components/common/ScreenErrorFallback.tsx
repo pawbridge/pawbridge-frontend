@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import Button from './Button';
+import { buttonClass } from '../../lib/button';
 
 // 화면을 그리다 오류가 났을 때의 안내 카드. 모양은 LoginRequiredCard와 같다.
 // 라우터 밖(main.tsx 최상위)에서도 쓰므로 Link 대신 <a>로 홈에 간다(앱을 새로 불러와 상태도 초기화).
@@ -10,16 +12,12 @@ export function ScreenErrorCard() {
         일시적인 문제일 수 있습니다. 새로고침하거나 홈으로 이동해 주세요.
       </p>
       <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
-        >
+        <Button onClick={() => window.location.reload()} className="w-full">
           새로고침
-        </button>
+        </Button>
         <a
           href="/"
-          className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className={buttonClass({ variant: 'secondary', className: 'w-full' })}
         >
           홈으로
         </a>

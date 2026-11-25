@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { buttonClass } from '../lib/button';
 
 export default function NotFound() {
   return (
@@ -10,10 +11,7 @@ export default function NotFound() {
         <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
           페이지를 찾을 수 없습니다
         </p>
-        <Link 
-          to="/" 
-          className="px-6 py-3 bg-brand text-brand-contrast rounded-lg font-semibold hover:bg-brand-hover inline-block"
-        >
+        <Link to="/" className={buttonClass()}>
           홈으로 돌아가기
         </Link>
       </div>
