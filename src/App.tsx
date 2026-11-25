@@ -7,6 +7,7 @@ import SiteLayout from './components/layout/SiteLayout';
 import AdminLayout from './components/layout/AdminLayout';
 import RequireLogin, { LoginRequiredCard } from './components/layout/RequireLogin';
 import PageLoading from './components/common/PageLoading';
+import { buttonClass } from './lib/button';
 
 // 화면 코드는 처음 들어갈 때 따로 받아 온다(첫 화면 크기를 줄임). 홈은 가장 많이 들어오는 첫 화면이라 바로 싣는다.
 // import() 경로는 고정 문자열로 둔다(빌드 도구가 화면별 파일을 미리 나눌 수 있게).
@@ -112,13 +113,13 @@ function AdminRoute({ children }: { children: ReactElement }) {
             <Link
               to="/login"
               state={{ from: location.pathname }}
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
+              className={buttonClass({ className: 'w-full' })}
             >
               로그인
             </Link>
             <Link
               to="/"
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-gray-100 dark:bg-gray-800 text-text-light dark:text-text-dark text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className={buttonClass({ variant: 'secondary', className: 'w-full' })}
             >
               홈으로
             </Link>
@@ -140,7 +141,7 @@ function AdminRoute({ children }: { children: ReactElement }) {
           <div className="flex flex-col gap-3">
             <Link
               to="/"
-              className="w-full inline-flex justify-center items-center rounded-lg h-11 bg-brand text-brand-contrast text-sm font-bold hover:opacity-90 transition-opacity"
+              className={buttonClass({ className: 'w-full' })}
             >
               홈으로
             </Link>
