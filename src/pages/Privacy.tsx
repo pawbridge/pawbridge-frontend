@@ -6,7 +6,7 @@ export default function Privacy() {
       <header>
         <p className="text-sm font-bold text-brand-accent dark:text-brand-accent">개인정보 안내</p>
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.02em] sm:text-4xl">개인정보처리방침</h1>
-        <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 10월 24일</p>
+        <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">시행일: 2026년 11월 29일</p>
       </header>
 
       <div className="mt-10 space-y-8 text-sm leading-7 text-gray-700 dark:text-gray-200">
@@ -20,6 +20,7 @@ export default function Privacy() {
             <li>비공개 쪽지: 발신·수신 회원, 본문, 발송·읽음 시각과 개인 즐겨찾기·차단 상태를 회원 간 연락과 쪽지함 제공에 사용합니다. 알림에는 본문을 표시하지 않습니다.</li>
             <li>회원 간 1:1 채팅: 참여 회원, 메시지, 관련 글 참조, 전송·읽음 시각과 개인 숨김 상태를 대화 제공에 사용합니다. 알림에는 본문을 표시하지 않습니다.</li>
             <li>주문 기능: 수령인, 연락처, 배송지와 주문·결제 결과를 주문 처리에 사용합니다.</li>
+            <li>AI 입양 준비 도우미: 질문과 답변, 질문한 동물 공고와 시각, 기기 종류, 로그인한 경우 회원 번호를 답변 제공과 서비스 개선에 사용합니다. 자세한 내용은 아래 AI 입양 준비 도우미 항목에 적었습니다.</li>
             <li>접속 기록: 서비스 안정성, 오류 대응과 보안 확인을 위해 기술적 기록이 생성될 수 있습니다.</li>
           </ul>
         </section>
@@ -42,6 +43,28 @@ export default function Privacy() {
         </section>
 
         <section className={sectionClass}>
+          <h2 className="text-xl font-bold text-text-light dark:text-white">AI 입양 준비 도우미</h2>
+          <p className="mt-4">동물 상세 화면의 AI 입양 준비 도우미에 질문하면 다음 정보를 저장합니다.</p>
+          <ul className="mt-4 list-disc space-y-2 pl-5">
+            <li>질문과 답변, 질문한 동물 공고, 질문 시각</li>
+            <li>같은 브라우저의 대화를 묶기 위한 무작위 번호 쿠키. 웹페이지 스크립트로 읽을 수 없게 설정하며 180일 뒤 만료됩니다.</li>
+            <li>기기 종류(휴대기기 또는 PC). 브라우저가 보내는 기기 정보로 구분하며, 기기 정보 원문은 저장하지 않습니다.</li>
+            <li>로그인한 상태로 질문한 경우 회원 번호</li>
+            <li>이용 한도나 질문 제한에 걸린 경우 제한 사유, 질문 길이, 질문 앞부분(최대 200자), IP 주소를 되돌릴 수 없게 변환한 값. 민감한 개인정보 때문에 막힌 질문은 내용을 저장하지 않습니다.</li>
+          </ul>
+          <p className="mt-4">저장한 정보는 답변 제공, 이어지는 질문의 대화 흐름 유지, 남용 방지, 그리고 어떤 질문이 많은지와 답변이 적절했는지 확인하는 서비스 개선에만 사용합니다. 광고나 마케팅에는 사용하지 않습니다.</p>
+          <p className="mt-4">휴대폰 번호와 이메일 주소로 보이는 부분은 가린 뒤 저장하고 전달합니다. 주민등록번호, 계좌번호, 상세 주소로 보이는 질문에는 답하지 않습니다. 이 확인은 자동으로 이루어져 모든 개인정보를 걸러내지 못하므로, 이름·주소·연락처 같은 개인정보는 질문에 적지 말아 주세요.</p>
+          <p className="mt-4">답변을 만들기 위해 질문, 같은 대화의 최근 질문과 답변(최대 6개), 질문한 동물과 보호소의 공개 정보를 아래 외부 AI 서비스로 전달합니다. 쿠키 번호, 회원 번호, IP 주소는 전달하지 않습니다.</p>
+          <ul className="mt-4 list-disc space-y-2 pl-5">
+            <li>받는 곳: Anthropic, PBC(미국). 장애 등으로 답변을 받지 못하면 OpenAI(미국)로 대신 전달합니다.</li>
+            <li>시기와 방법: 질문할 때마다 암호화된 통신으로 전달합니다.</li>
+            <li>받는 곳의 보관 기간과 연락처: 각 사업자의 개인정보처리방침(<a href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noreferrer" className="underline underline-offset-4">Anthropic</a>, <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noreferrer" className="underline underline-offset-4">OpenAI</a>)을 따릅니다.</li>
+            <li>근거: 이용자가 요청한 답변을 제공하는 데 필요한 전달로, 개인정보 보호법 제28조의8 제1항 제3호에 따라 이 방침에 공개합니다.</li>
+            <li>거부 방법: 도우미에 질문하지 않으면 전달되지 않습니다. 도우미를 쓰지 않아도 다른 기능 이용에는 제한이 없습니다.</li>
+          </ul>
+        </section>
+
+        <section className={sectionClass}>
           <h2 className="text-xl font-bold text-text-light dark:text-white">YouTube 영상</h2>
           <p className="mt-4">홈 영상 정보는 YouTube Data API Services로 제공합니다. 썸네일·플레이어 이용 시 IP 주소 등 접속 정보가 Google에 전달될 수 있습니다. YouTube는 쿠키를 사용하거나 광고를 표시할 수 있습니다.</p>
           <p className="mt-4">영상 이용에는 <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="underline underline-offset-4">YouTube 서비스 약관</a>과 <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="underline underline-offset-4">Google 개인정보처리방침</a>이 적용됩니다.</p>
@@ -51,6 +74,7 @@ export default function Privacy() {
           <h2 className="text-xl font-bold text-text-light dark:text-white">보관과 이용자 권리</h2>
           <p className="mt-4">채팅 메시지는 발송일부터 최대 1년간 보관하며 기간이 지난 원문은 주기적으로 삭제합니다. 내 목록에서 숨기기는 상대방 기록이나 원문을 삭제하지 않습니다. 탈퇴 시 해당 회원의 접근과 회원 연결 정보를 제거하고, 남은 상대의 기록은 보관 기간 안에서 유지할 수 있습니다. 본문에 직접 작성한 개인정보는 자동으로 익명화되지 않으므로 처리 요청으로 문의해 주세요. 남은 참여자가 없으면 원문을 정리합니다.</p>
           <p className="mt-4">쪽지는 발송일부터 1년이 지나면 조회할 수 없으며 원문을 주기적으로 정리합니다. 양쪽 쪽지함에서 모두 제거되면 그 전에 삭제합니다. 회원 삭제 시 해당 회원의 쪽지함과 연결 정보를 제거하지만 상대방 쪽지함의 본문은 남을 수 있습니다. 본문에 직접 작성한 개인정보는 자동으로 지워지지 않으므로 개인정보 처리 요청으로 문의해 주세요. 임시 전송 기록은 발송일부터 48시간이 지났고 원문이 삭제된 경우 주기적으로 정리합니다. 이 기록은 재전송 중복과 발송 제한 우회를 막기 위한 것이며 쪽지 본문을 보관하지 않습니다.</p>
+          <p className="mt-4">AI 입양 준비 도우미 기록은 질문일부터 1년간 보관하며 기간이 지난 기록은 주기적으로 삭제합니다. 회원이 탈퇴하면 대화에 연결된 회원 번호를 지우고, 남은 대화는 회원과 연결되지 않은 상태로 보관 기간까지 유지합니다. 대화에 직접 적은 개인정보는 자동으로 지워지지 않으므로 삭제가 필요하면 아래 메일로 요청해 주세요.</p>
           <p className="mt-4">
             정보는 서비스 제공 목적을 달성할 때까지 보관하며, 관계 법령에 별도 보관 의무가 있는 경우 해당
             기간 동안 보관할 수 있습니다. 이용자는 계정 정보를 확인·수정하거나 개인정보 처리에 관한 요청을
