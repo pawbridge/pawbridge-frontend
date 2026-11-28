@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { FormEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { sendAnimalChatbotMessage } from '../../api/animals.api';
 import ChatIcon from '../../assets/icons/material-symbols/chat.svg?react';
 import CloseIcon from '../../assets/icons/material-symbols/close.svg?react';
@@ -227,9 +228,17 @@ export default function AnimalChatbot({ animalId, animalName }: AnimalChatbotPro
                 <SendIcon aria-hidden="true" className="icon text-[20px]" />
               </button>
             </form>
-            <p className="mt-2 text-right text-[11px] text-gray-500 dark:text-gray-400">
-              {question.length}/{MAX_QUESTION_LENGTH}
-            </p>
+            <div className="mt-2 flex items-start justify-between gap-3 text-[11px] leading-4 text-gray-500 dark:text-gray-400">
+              <p>
+                대화는 저장되고, 답변을 만들기 위해 외부 AI 서비스로 전달됩니다. 이름·주소·연락처는 적지 말아 주세요.{' '}
+                <Link to="/privacy" className="underline underline-offset-2 hover:text-text-light dark:hover:text-text-dark">
+                  자세히
+                </Link>
+              </p>
+              <p className="shrink-0">
+                {question.length}/{MAX_QUESTION_LENGTH}
+              </p>
+            </div>
           </div>
         </section>
       )}
